@@ -1,0 +1,1258 @@
+{
+  "_comment": "Single source of truth for drills (design doc section 5). code = station code shown on signs, cues and logs (B build, P piece control, E edit). Steps are actions, never raw keys. advance = [right, forward, up] cells between reps (each rep gets a fresh track). lane = geometry for tools/build_map.py: kind gap (catch floor one level below the cells in front) or flat, forward/up = cells the drill needs. principle = id from principles; why = one plain-language reason shown before the set; reflect = one question shown after it; tip = one coaching sentence shown on the results card when a set is not clean (no quotes, braces or backslashes). check kind exposure = the step fails if the player takes damage during that step's window (needs a pressure source, see design/training-ground-spec.md). Run tools/gen_drills.py after editing. loadout = melee means the lane pad strips weapons and consumables (pickaxe and materials stay) so the player practises movement and building without a gun; default is any. Check kind target_hit needs the drill device's GunHit or PickaxeHit trigger wired to a target's hit event (see design/training-ground-spec.md).",
+  "tempo_ladder": [
+    40,
+    60,
+    80,
+    100,
+    120,
+    150,
+    180,
+    220
+  ],
+  "audio_cues": {
+    "arena_three": "Three.",
+    "arena_two": "Two.",
+    "arena_one": "One.",
+    "arena_go": "Go!",
+    "arena_ready": "Both players, step onto a platform. Press start when you're ready.",
+    "arena_reset": "Round over. Return to your platform.",
+    "arena_melee": "Melee only.",
+    "arena_standard": "Standard loadout.",
+    "bot_ready": "Practice target ready.",
+    "piece_control_brief": "Build your cover. Move through the tunnel. Control the next box before you open a peek."
+  },
+  "actions": [
+    "wall",
+    "floor",
+    "ramp",
+    "cone",
+    "edit",
+    "edit_confirm",
+    "reset",
+    "jump",
+    "crouch",
+    "turn_left",
+    "turn_right",
+    "fire",
+    "swap_weapon",
+    "pickaxe"
+  ],
+  "action_hints": {
+    "wall": "Crosshair at chest height on the tile edge you want to block.",
+    "floor": "Look slightly down: crosshair on the tile edge just ahead of your feet.",
+    "ramp": "Face the way you will climb, crosshair on the next tile.",
+    "cone": "Look up so the crosshair is overhead, then place the roof.",
+    "edit": "Edit aim: middle of the wall at chest height. A window is the centre tile.",
+    "edit_confirm": "Confirm while the crosshair is still on the chosen tiles.",
+    "reset": "Reset right after the peek so the wall is whole again.",
+    "jump": "Jump as you place, not before.",
+    "turn_right": "Flick to the next wall while you are in the air.",
+    "fire": "Fire once the crosshair is on the target, not before.",
+    "swap_weapon": "One press of your gun slot, then fire.",
+    "pickaxe": "One press of your pickaxe slot."
+  },
+  "principles": [
+    {
+      "id": "slow_is_smooth",
+      "name": "Accuracy before speed",
+      "rule": "Use a pace where you can place the intended piece, then test it faster.",
+      "why": "Controlled practice makes aim and placement errors easier to notice. Faster reps test whether the movement holds under time pressure.",
+      "creative": "Use your own binds and building settings. Adjust the pace when accuracy drops, and include movement once placement is reliable."
+    },
+    {
+      "id": "cover_first",
+      "name": "Cover the threat",
+      "rule": "Identify the threat direction and place useful cover before exposing yourself.",
+      "why": "A wall helps only when it blocks the relevant angle. Cover placement and your position work together.",
+      "creative": "Choose the piece and order for the threat, terrain and route. A drill sequence is one setup to practise, not a rule for every fight."
+    },
+    {
+      "id": "seal_then_open",
+      "name": "Check before opening",
+      "rule": "Check the exposed angles before opening an edit toward the threat.",
+      "why": "An edit changes who can see and shoot you. Cover on the other sides helps isolate the angle you intend to take.",
+      "creative": "Choose the opening and timing for the situation. Keep a route back to cover instead of enclosing yourself without an exit."
+    },
+    {
+      "id": "reset_always",
+      "name": "Recover cover",
+      "rule": "After a peek, decide whether to reset, reposition or continue the safe angle.",
+      "why": "A reset can close a return-shot angle. Repositioning may be better when the piece is weak or another side is threatened.",
+      "creative": "This drill practises resetting after the peek. In a fight, reassess the threat instead of repeating the sequence automatically."
+    },
+    {
+      "id": "claim_first",
+      "name": "Check piece control",
+      "rule": "Check control of the piece before relying on its edit.",
+      "why": "An edit plan depends on access to the piece and a usable angle. Piece control supports the plan but does not guarantee a safe peek.",
+      "creative": "Choose whether to contest, defend or move to another cell. Track the opponent and your escape route while you build."
+    },
+    {
+      "id": "vary_the_peek",
+      "name": "Read the peek",
+      "rule": "Use cover and crosshair placement, then adapt if the opponent reads your angle.",
+      "why": "Repeated timing can become predictable. A useful peek depends on exposure, target position and whether the opponent is ready.",
+      "creative": "Repeat a stable setup while learning it. Add different angles and timing once you can return to cover reliably."
+    },
+    {
+      "id": "right_tool",
+      "name": "Right tool, ready early",
+      "rule": "Prepare the item for the next action while maintaining useful cover.",
+      "why": "A deliberate swap reduces time spent correcting the selected item and keeps attention on the target.",
+      "creative": "Use a comfortable inventory layout and your preferred input method. Practise finding the intended item without unnecessary cycling."
+    }
+  ],
+  "sections": [
+    {
+      "id": "build",
+      "name": "BUILD",
+      "blurb": "Floor, ramp and piece switching",
+      "zone": "Build",
+      "drills": [
+        "floor_front",
+        "ramp_forward",
+        "piece_switch"
+      ]
+    },
+    {
+      "id": "movement",
+      "name": "MOVEMENT",
+      "blurb": "Ramp rush, 90s and tunneling",
+      "zone": "Piece",
+      "drills": [
+        "ramp_rush",
+        "nineties",
+        "tunnel"
+      ],
+      "loadout": "melee"
+    },
+    {
+      "id": "boxes",
+      "name": "BOXES AND TUNNELS",
+      "blurb": "Box up, tunnel with a window, re-box",
+      "zone": "Piece",
+      "drills": [
+        "box_up",
+        "tunnel_edit_peek",
+        "box_reboxing"
+      ]
+    },
+    {
+      "id": "editing",
+      "name": "EDITING",
+      "blurb": "Window peek, half-wall jump shot, edit and reset, edit and peek",
+      "zone": "Edit",
+      "drills": [
+        "edit_window",
+        "edit_half_wall",
+        "edit_reset",
+        "edit_peek"
+      ]
+    },
+    {
+      "id": "weapons",
+      "name": "WEAPONS",
+      "blurb": "Gun swap, pickaxe swap, build to gun",
+      "zone": "Armory",
+      "drills": [
+        "swap_shoot",
+        "pickaxe_swap",
+        "build_swap_shoot"
+      ]
+    }
+  ],
+  "drills": [
+    {
+      "id": "wall_front",
+      "code": "B1",
+      "tier": 1,
+      "name": "Wall (front)",
+      "steps": [
+        "wall"
+      ],
+      "reps": 10,
+      "advance": [
+        1,
+        0,
+        0
+      ],
+      "lane": {
+        "kind": "flat",
+        "forward": 2,
+        "up": 1
+      },
+      "tip": "Aim at the intended wall cell, check the build preview, and place one wall with your normal build controls.",
+      "checks": [
+        {
+          "step": 0,
+          "kind": "wall_check",
+          "cell": [
+            0,
+            1,
+            0
+          ],
+          "dir": "front"
+        }
+      ],
+      "principle": "slow_is_smooth",
+      "why": "This isolates wall placement so you can connect crosshair position, preview and the piece that appears.",
+      "reflect": "Did the wall occupy the intended cell and cover the angle you chose?",
+      "retired": true
+    },
+    {
+      "id": "floor_front",
+      "code": "B2",
+      "tier": 1,
+      "name": "Floor (front)",
+      "steps": [
+        "floor"
+      ],
+      "reps": 10,
+      "advance": [
+        1,
+        0,
+        0
+      ],
+      "lane": {
+        "kind": "gap",
+        "forward": 2,
+        "up": 1
+      },
+      "tip": "Aim into the intended floor cell and check the preview before committing your movement.",
+      "checks": [
+        {
+          "step": 0,
+          "kind": "stand_level",
+          "cell": [
+            0,
+            1,
+            0
+          ]
+        }
+      ],
+      "principle": "slow_is_smooth",
+      "why": "Floor placement and movement must agree so the landing surface is where you expect it.",
+      "reflect": "Did the floor appear in the intended cell before you moved onto it?"
+    },
+    {
+      "id": "ramp_forward",
+      "code": "B3",
+      "tier": 1,
+      "name": "Ramp (forward)",
+      "steps": [
+        "ramp"
+      ],
+      "reps": 10,
+      "advance": [
+        1,
+        0,
+        0
+      ],
+      "lane": {
+        "kind": "gap",
+        "forward": 2,
+        "up": 2
+      },
+      "tip": "Check the ramp preview and climb direction before moving onto it.",
+      "checks": [
+        {
+          "step": 0,
+          "kind": "climb",
+          "cell": [
+            0,
+            1,
+            0
+          ]
+        }
+      ],
+      "principle": "slow_is_smooth",
+      "why": "A correctly placed ramp needs the intended cell and orientation, not just a gain in height.",
+      "reflect": "Did the ramp face the intended route, or did you correct it after moving?"
+    },
+    {
+      "id": "cone",
+      "code": "B4",
+      "tier": 1,
+      "name": "Cone",
+      "steps": [
+        "cone"
+      ],
+      "reps": 10,
+      "advance": [
+        1,
+        0,
+        0
+      ],
+      "lane": {
+        "kind": "flat",
+        "forward": 2,
+        "up": 1
+      },
+      "tip": "Aim at the intended cell and check the cone preview before placing it.",
+      "checks": [],
+      "principle": "slow_is_smooth",
+      "why": "Cones can control space or provide cover. Their placement order depends on the setup and the threat.",
+      "reflect": "Did the cone occupy the cell you meant to control?",
+      "retired": true
+    },
+    {
+      "id": "piece_switch",
+      "code": "B5",
+      "tier": 1,
+      "name": "Piece switching",
+      "steps": [
+        "wall",
+        "floor",
+        "ramp",
+        "cone"
+      ],
+      "reps": 10,
+      "advance": [
+        1,
+        0,
+        0
+      ],
+      "lane": {
+        "kind": "gap",
+        "forward": 2,
+        "up": 2
+      },
+      "tip": "For this exercise, switch wall, floor, ramp, cone while keeping each preview in its intended cell.",
+      "checks": [
+        {
+          "step": 1,
+          "kind": "stand_level",
+          "cell": [
+            0,
+            1,
+            0
+          ]
+        },
+        {
+          "step": 2,
+          "kind": "climb",
+          "cell": [
+            0,
+            1,
+            0
+          ]
+        }
+      ],
+      "principle": "slow_is_smooth",
+      "why": "A fixed sequence isolates the transitions between pieces. Other situations need different orders.",
+      "reflect": "Which transition moved your crosshair away from the intended cell?"
+    },
+    {
+      "id": "ramp_rush",
+      "code": "P2",
+      "tier": 2,
+      "name": "Ramp rush",
+      "steps": [
+        "wall",
+        "ramp",
+        "wall",
+        "ramp",
+        "wall",
+        "ramp",
+        "wall",
+        "ramp"
+      ],
+      "reps": 10,
+      "advance": [
+        1,
+        0,
+        0
+      ],
+      "lane": {
+        "kind": "gap",
+        "forward": 5,
+        "up": 5
+      },
+      "tip": "For this exercise, alternate wall and ramp while checking front cover and the next climb.",
+      "loadout": "melee",
+      "checks": [
+        {
+          "step": 1,
+          "kind": "climb",
+          "cell": [
+            0,
+            1,
+            0
+          ]
+        },
+        {
+          "step": 7,
+          "kind": "climb",
+          "cell": [
+            0,
+            4,
+            3
+          ]
+        }
+      ],
+      "principle": "cover_first",
+      "why": "This sequence practises gaining height with front cover. Side angles still need attention.",
+      "reflect": "Where did you lose front cover or place the next ramp off your route?",
+      "accepts": [
+        [
+          "ramp",
+          "wall",
+          "ramp",
+          "wall",
+          "ramp",
+          "wall",
+          "ramp",
+          "wall"
+        ]
+      ],
+      "basis": "Completepatrick: layer walls in front while advancing, simple wall-ramp combos. Ramp-first is accepted."
+    },
+    {
+      "id": "wall_ramp_floor",
+      "code": "P1",
+      "tier": 2,
+      "name": "Wall, ramp, floor",
+      "steps": [
+        "wall",
+        "ramp",
+        "floor"
+      ],
+      "reps": 10,
+      "advance": [
+        1,
+        0,
+        0
+      ],
+      "lane": {
+        "kind": "gap",
+        "forward": 2,
+        "up": 2
+      },
+      "tip": "For this exercise, place wall, ramp, floor and check the cell and orientation of each piece.",
+      "loadout": "melee",
+      "checks": [
+        {
+          "step": 0,
+          "kind": "wall_check",
+          "cell": [
+            0,
+            1,
+            0
+          ],
+          "dir": "front"
+        },
+        {
+          "step": 1,
+          "kind": "climb",
+          "cell": [
+            0,
+            1,
+            0
+          ]
+        },
+        {
+          "step": 2,
+          "kind": "stand_level",
+          "cell": [
+            0,
+            1,
+            1
+          ]
+        }
+      ],
+      "principle": "cover_first",
+      "why": "The sequence connects front cover, a climb and a landing surface. Placement quality matters more than completing the inputs.",
+      "reflect": "Which piece missed its intended cell or left an angle exposed?",
+      "accepts": [
+        [
+          "ramp",
+          "wall",
+          "floor"
+        ]
+      ],
+      "basis": "Derived from the cover-first principle; no direct source for the exact order.",
+      "retired": true
+    },
+    {
+      "id": "protected_ramp",
+      "code": "P3",
+      "tier": 2,
+      "name": "Protected ramp",
+      "steps": [
+        "wall",
+        "ramp",
+        "wall",
+        "floor"
+      ],
+      "reps": 10,
+      "advance": [
+        2,
+        0,
+        0
+      ],
+      "lane": {
+        "kind": "gap",
+        "forward": 2,
+        "up": 2
+      },
+      "tip": "Check the threat side and add the side wall before moving into the exposed part of this route.",
+      "loadout": "melee",
+      "checks": [
+        {
+          "step": 1,
+          "kind": "climb",
+          "cell": [
+            0,
+            1,
+            0
+          ]
+        },
+        {
+          "step": 3,
+          "kind": "stand_level",
+          "cell": [
+            0,
+            1,
+            1
+          ]
+        }
+      ],
+      "principle": "cover_first",
+      "why": "Side cover can protect the climb, but only if its position matches the threat angle.",
+      "reflect": "Was the threat side covered as you moved onto the floor?",
+      "accepts": [
+        [
+          "ramp",
+          "wall",
+          "wall",
+          "floor"
+        ]
+      ],
+      "basis": "Derived from cover-first. Guides describe ramp then two side walls then a front wall for a one-sided climb, which is accepted.",
+      "retired": true
+    },
+    {
+      "id": "tunnel",
+      "code": "P5",
+      "tier": 2,
+      "name": "Tunnel run",
+      "steps": [
+        "floor",
+        "wall",
+        "wall",
+        "cone"
+      ],
+      "reps": 10,
+      "advance": [
+        2,
+        0,
+        0
+      ],
+      "lane": {
+        "kind": "gap",
+        "forward": 5,
+        "up": 1,
+        "goal": true
+      },
+      "tip": "Repeat floor, side walls and cone for every open cell until you reach the goal ledge. Stepping onto the goal ends the rep.",
+      "checks": [
+        {
+          "step": 3,
+          "kind": "stand_level",
+          "cell": [
+            0,
+            5,
+            0
+          ]
+        }
+      ],
+      "principle": "cover_first",
+      "why": "A tunnel is moving cover. The floor gives footing, the side walls stop flanking shots, and the cone keeps fire from above out.",
+      "reflect": "Which angle stayed exposed while you moved into the next cell?",
+      "accepts": [
+        [
+          "floor",
+          "cone",
+          "wall",
+          "wall"
+        ],
+        [
+          "wall",
+          "ramp",
+          "wall",
+          "ramp"
+        ]
+      ],
+      "basis": "Guides agree on floor, walls around you, then a roof, then edit the front to go on. Cone-first and wall-ramp tunnels are accepted. Sources disagree on one canonical order (secondary guides, not verified in the live game), so the reference is one valid order and accepts lists the others."
+    },
+    {
+      "id": "box_up",
+      "code": "P4",
+      "tier": 2,
+      "name": "Box up",
+      "steps": [
+        "floor",
+        "wall",
+        "floor",
+        "wall",
+        "wall",
+        "wall"
+      ],
+      "reps": 10,
+      "advance": [
+        2,
+        0,
+        0
+      ],
+      "lane": {
+        "kind": "flat",
+        "forward": 1,
+        "up": 2
+      },
+      "tip": "Floor for footing, a wall toward the threat, a floor overhead, then close the other three sides.",
+      "checks": [],
+      "principle": "cover_first",
+      "why": "Each piece has a job: the floor gives you footing, the first wall blocks the shot you can see, the overhead floor stops a build-over, and the last walls finish the box.",
+      "reflect": "Did you know the threat direction and your next exit before enclosing the cell?",
+      "accepts": [
+        [
+          "wall",
+          "wall",
+          "wall",
+          "wall",
+          "floor",
+          "cone"
+        ],
+        [
+          "wall",
+          "wall",
+          "floor",
+          "ramp"
+        ],
+        [
+          "wall",
+          "floor",
+          "cone"
+        ]
+      ],
+      "basis": "Reference order set by the project owner (floor, wall, floor, then close the other walls). Four walls then floor and cone, wall-wall-floor-ramp and wall-floor-cone appear in guides and are accepted."
+    },
+    {
+      "id": "nineties",
+      "code": "P6",
+      "tier": 2,
+      "name": "90s",
+      "steps": [
+        "wall",
+        "wall",
+        "jump",
+        "floor",
+        "ramp",
+        "turn_right"
+      ],
+      "reps": 10,
+      "advance": [
+        2,
+        0,
+        0
+      ],
+      "lane": {
+        "kind": "flat",
+        "forward": 2,
+        "up": 3
+      },
+      "tip": "Two walls, jump, floor then ramp underneath, then turn into the next 90.",
+      "loadout": "melee",
+      "checks": [
+        {
+          "step": 4,
+          "kind": "climb",
+          "cell": [
+            0,
+            0,
+            0
+          ]
+        }
+      ],
+      "principle": "slow_is_smooth",
+      "why": "This isolated sequence practises gaining height through a turn. Compare the pieces and landing, not just the jump height.",
+      "reflect": "Did the turn leave your crosshair on the next placement or inside an obstructing piece?",
+      "accepts": [
+        [
+          "wall",
+          "floor",
+          "ramp",
+          "turn_right",
+          "jump"
+        ],
+        [
+          "wall",
+          "ramp",
+          "jump",
+          "turn_right"
+        ]
+      ],
+      "basis": "Two walls, jump, then floor and ramp underneath, then turn into the next 90 (Voicetube, GGRecon). Red Bull and Gamertag Mythras describe slightly different orders; those are accepted. Sources disagree on one canonical order (secondary guides, not verified in the live game), so the reference is one valid order and accepts lists the others."
+    },
+    {
+      "id": "tunnel_edit_peek",
+      "code": "P7",
+      "tier": 2,
+      "name": "Tunnel and window",
+      "steps": [
+        "floor",
+        "wall",
+        "wall",
+        "cone",
+        "edit",
+        "edit_confirm",
+        "edit",
+        "reset"
+      ],
+      "reps": 10,
+      "advance": [
+        2,
+        0,
+        0
+      ],
+      "lane": {
+        "kind": "gap",
+        "forward": 2,
+        "up": 1
+      },
+      "tip": "Seal the tunnel (floor, sides, roof) before you edit. Open one side window for a sightline, then reset it at once.",
+      "checks": [
+        {
+          "step": 0,
+          "kind": "stand_level",
+          "cell": [
+            0,
+            1,
+            0
+          ]
+        },
+        {
+          "step": 3,
+          "kind": "exposure"
+        },
+        {
+          "step": 7,
+          "kind": "exposure"
+        }
+      ],
+      "principle": "seal_then_open",
+      "why": "Checking the other angles before opening an edit helps keep attention on the threat you intend to face.",
+      "reflect": "Which other angle was exposed while the window was open?",
+      "accepts": [
+        [
+          "floor",
+          "cone",
+          "wall",
+          "wall",
+          "edit",
+          "edit_confirm",
+          "edit",
+          "reset"
+        ]
+      ],
+      "basis": "Tunnel part follows tunnel. Edit a window for a sightline and reset it: FullBoosts and Boosteria."
+    },
+    {
+      "id": "box_reboxing",
+      "code": "P8",
+      "tier": 2,
+      "name": "Box and re-box",
+      "steps": [
+        "floor",
+        "wall",
+        "floor",
+        "wall",
+        "wall",
+        "wall",
+        "edit",
+        "edit_confirm",
+        "reset",
+        "wall"
+      ],
+      "reps": 10,
+      "advance": [
+        2,
+        0,
+        0
+      ],
+      "lane": {
+        "kind": "flat",
+        "forward": 1,
+        "up": 2
+      },
+      "tip": "Build the box, peek and reset, then replace any wall that took damage before you do anything else.",
+      "checks": [
+        {
+          "step": 5,
+          "kind": "exposure"
+        },
+        {
+          "step": 9,
+          "kind": "exposure"
+        }
+      ],
+      "principle": "reset_always",
+      "why": "Recovering cover can mean a reset, repair or movement into another cell. This sequence isolates the reset and next wall.",
+      "reflect": "After the peek, would holding this cell or moving give you better cover?",
+      "accepts": [
+        [
+          "wall",
+          "wall",
+          "wall",
+          "wall",
+          "floor",
+          "cone",
+          "edit",
+          "edit_confirm",
+          "reset",
+          "wall"
+        ]
+      ],
+      "basis": "Box part follows box_up. Peek, reset and replace-the-damaged-wall come from the FullBoosts and Boosteria guides."
+    },
+    {
+      "id": "edit_door",
+      "code": "E1",
+      "tier": 3,
+      "name": "Door edit",
+      "steps": [
+        "edit",
+        "edit_confirm"
+      ],
+      "reps": 10,
+      "advance": [
+        1,
+        0,
+        0
+      ],
+      "lane": {
+        "kind": "flat",
+        "forward": 2,
+        "up": 1
+      },
+      "tip": "Create the intended door opening, confirm it with your edit settings, and move through under control.",
+      "checks": [
+        {
+          "step": 1,
+          "kind": "volume",
+          "volume": "door"
+        }
+      ],
+      "principle": "slow_is_smooth",
+      "why": "This exercise connects a deliberate opening with movement through it. Check the final shape before committing.",
+      "reflect": "Did the opening match your plan and leave enough room for the movement?",
+      "retired": true
+    },
+    {
+      "id": "edit_window",
+      "code": "E2",
+      "edit_guide": {
+        "tiles": [
+          4
+        ],
+        "start": 4,
+        "end": 4,
+        "guided_reps": 5,
+        "note": "Crosshair on the ring in the centre tile, then edit. The window is the centre tile only."
+      },
+      "tier": 3,
+      "name": "Window edit and peek",
+      "steps": [
+        "edit",
+        "edit_confirm",
+        "fire"
+      ],
+      "reps": 10,
+      "advance": [
+        1,
+        0,
+        0
+      ],
+      "lane": {
+        "kind": "flat",
+        "forward": 2,
+        "up": 1
+      },
+      "tip": "Edit the window, peek out on your right-hand side, and shoot the dummy behind the wall.",
+      "checks": [
+        {
+          "step": 2,
+          "kind": "target_hit",
+          "target": "gun"
+        }
+      ],
+      "principle": "slow_is_smooth",
+      "why": "A window gives you a sightline while the rest of the wall still covers you. The point of the edit is the shot you take through it, so the drill ends on a hit.",
+      "reflect": "Did you aim at the dummy before the window opened, or after?"
+    },
+    {
+      "id": "edit_arch",
+      "code": "E3",
+      "tier": 3,
+      "name": "Arch edit",
+      "steps": [
+        "edit",
+        "edit_confirm"
+      ],
+      "reps": 10,
+      "advance": [
+        1,
+        0,
+        0
+      ],
+      "lane": {
+        "kind": "flat",
+        "forward": 2,
+        "up": 1
+      },
+      "tip": "Create the intended arch opening, confirm it, and move through without a corrective edit.",
+      "checks": [
+        {
+          "step": 1,
+          "kind": "volume",
+          "volume": "arch"
+        }
+      ],
+      "principle": "slow_is_smooth",
+      "why": "This exercise links a wider opening with controlled movement. Inspect the final shape rather than rushing the selection.",
+      "reflect": "Did the finished opening match the route you intended to take?",
+      "retired": true
+    },
+    {
+      "id": "edit_half_wall",
+      "code": "E4",
+      "edit_guide": {
+        "tiles": [
+          6,
+          7,
+          8
+        ],
+        "start": 6,
+        "end": 8,
+        "guided_reps": 5,
+        "note": "Start in the top-left tile and drag right between the two red lines, release in the top-right tile."
+      },
+      "tier": 3,
+      "name": "Half-wall edit and jump shot",
+      "steps": [
+        "edit",
+        "edit_confirm",
+        "jump",
+        "fire"
+      ],
+      "reps": 10,
+      "advance": [
+        1,
+        0,
+        0
+      ],
+      "lane": {
+        "kind": "flat",
+        "forward": 2,
+        "up": 1
+      },
+      "tip": "Take the top half off, jump, and shoot the dummy standing behind the wall.",
+      "checks": [
+        {
+          "step": 3,
+          "kind": "target_hit",
+          "target": "gun"
+        }
+      ],
+      "principle": "slow_is_smooth",
+      "why": "A half wall keeps your legs covered and opens a line above it. A jump shot lifts you into that line for a moment, which is when the shot has to land.",
+      "reflect": "Did you shoot at the top of your jump or on the way down?"
+    },
+    {
+      "id": "edit_reset",
+      "code": "E5",
+      "edit_guide": {
+        "tiles": [
+          4
+        ],
+        "start": 4,
+        "end": 4,
+        "guided_reps": 5,
+        "note": "Crosshair on the ring in the centre tile before you press edit; no travel needed."
+      },
+      "tier": 3,
+      "name": "Edit + reset",
+      "steps": [
+        "edit",
+        "edit_confirm",
+        "edit",
+        "reset"
+      ],
+      "reps": 10,
+      "advance": [
+        1,
+        0,
+        0
+      ],
+      "lane": {
+        "kind": "flat",
+        "forward": 2,
+        "up": 1
+      },
+      "tip": "For this exercise, make the opening and reset it after the peek while returning to cover.",
+      "checks": [],
+      "principle": "reset_always",
+      "why": "Resetting practises closing the sightline you opened. In a fight, also check whether moving would be safer.",
+      "reflect": "Were you behind cover while the wall was returning to its closed shape?"
+    },
+    {
+      "id": "piece_claim",
+      "code": "E6",
+      "tier": 3,
+      "name": "Claim the wall",
+      "steps": [
+        "wall",
+        "wall",
+        "edit",
+        "edit_confirm",
+        "reset"
+      ],
+      "reps": 10,
+      "advance": [
+        1,
+        0,
+        0
+      ],
+      "lane": {
+        "kind": "flat",
+        "forward": 2,
+        "up": 1
+      },
+      "tip": "Check that you control the intended wall before relying on its edit, then recover cover.",
+      "checks": [
+        {
+          "step": 1,
+          "kind": "exposure"
+        },
+        {
+          "step": 4,
+          "kind": "exposure"
+        }
+      ],
+      "principle": "claim_first",
+      "why": "This exercise links piece control with a planned opening. Owning a wall does not remove the need to track the opponent.",
+      "reflect": "Did you confirm control and the threat position before opening the wall?",
+      "retired": true
+    },
+    {
+      "id": "edit_peek",
+      "code": "E7",
+      "edit_guide": {
+        "tiles": [
+          5
+        ],
+        "start": 5,
+        "end": 5,
+        "guided_reps": 5,
+        "note": "Rest the crosshair on the ring in the right-middle tile before editing; peek from the side, not the middle."
+      },
+      "tier": 3,
+      "name": "Edit, peek, reset",
+      "steps": [
+        "edit",
+        "edit_confirm",
+        "fire",
+        "reset"
+      ],
+      "reps": 10,
+      "advance": [
+        1,
+        0,
+        0
+      ],
+      "lane": {
+        "kind": "flat",
+        "forward": 2,
+        "up": 1
+      },
+      "tip": "Peek from a side tile, not the obvious middle. Fire once at the dummy, reset, and never repeat the same timing.",
+      "checks": [
+        {
+          "step": 2,
+          "kind": "target_hit",
+          "target": "gun"
+        },
+        {
+          "step": 3,
+          "kind": "exposure"
+        }
+      ],
+      "principle": "vary_the_peek",
+      "why": "Starting near the target reduces correction during exposure. Repeat the setup to learn it, then vary timing and angle as the threat changes.",
+      "reflect": "How far did you move your crosshair after exposing yourself, and did you recover cover?"
+    },
+    {
+      "id": "swap_shoot",
+      "code": "W1",
+      "tier": 3,
+      "name": "Gun swap, shoot",
+      "steps": [
+        "swap_weapon",
+        "fire"
+      ],
+      "reps": 10,
+      "advance": [
+        1,
+        0,
+        0
+      ],
+      "lane": {
+        "kind": "flat",
+        "forward": 2,
+        "up": 1
+      },
+      "tip": "Select the intended gun with your normal controls, settle the crosshair on the target, then fire.",
+      "principle": "right_tool",
+      "why": "This exercise links a deliberate item swap with a controlled shot. The input sequence depends on your layout.",
+      "reflect": "Was the intended gun ready before you committed to the shot?",
+      "checks": [
+        {
+          "step": 1,
+          "kind": "target_hit",
+          "target": "gun"
+        }
+      ]
+    },
+    {
+      "id": "pickaxe_swap",
+      "code": "W2",
+      "tier": 3,
+      "name": "Pickaxe and gun",
+      "steps": [
+        "pickaxe",
+        "fire",
+        "swap_weapon",
+        "fire"
+      ],
+      "reps": 10,
+      "advance": [
+        1,
+        0,
+        0
+      ],
+      "lane": {
+        "kind": "flat",
+        "forward": 2,
+        "up": 1
+      },
+      "tip": "Select the intended tool for each target and avoid unnecessary item changes between actions.",
+      "principle": "right_tool",
+      "why": "Practising the transition between breaking and shooting reduces corrections while keeping attention on the target.",
+      "reflect": "Which transition needed an extra correction or pulled your crosshair away?",
+      "checks": [
+        {
+          "step": 1,
+          "kind": "target_hit",
+          "target": "pickaxe"
+        },
+        {
+          "step": 3,
+          "kind": "target_hit",
+          "target": "gun"
+        }
+      ]
+    },
+    {
+      "id": "build_swap_shoot",
+      "code": "W3",
+      "tier": 3,
+      "name": "Build, swap, shoot",
+      "steps": [
+        "wall",
+        "swap_weapon",
+        "fire"
+      ],
+      "reps": 10,
+      "advance": [
+        1,
+        0,
+        0
+      ],
+      "lane": {
+        "kind": "flat",
+        "forward": 2,
+        "up": 1
+      },
+      "tip": "After placing the wall, select the intended gun, aim at the target, and fire from useful cover.",
+      "principle": "right_tool",
+      "why": "This exercise connects a build with a shot. Check both the selected item and your exposure during the transition.",
+      "reflect": "Was the gun ready and the crosshair on target before you exposed yourself?",
+      "checks": [
+        {
+          "step": 2,
+          "kind": "target_hit",
+          "target": "gun"
+        }
+      ]
+    }
+  ],
+  "practice_court": {
+    "build_header": "01 BUILD ACCURACY",
+    "build_instruction": "Copy the ghost pieces. Check each intended cell and orientation, then compare your placements with the guide.",
+    "rebox_header": "02 REBOX AND AWARENESS",
+    "rebox_instruction": "Choose a threat direction. Cover it as you move into the next cell, then check the sides and your escape route.",
+    "peek_header": "03 CROSSHAIR AND PEEK",
+    "peek_instruction": "Start behind cover with your crosshair at target height. Open a right-hand angle, shoot, then return to cover.",
+    "free_header": "04 FREE BUILD",
+    "free_instruction": "Choose one skill and repeat the setup. Inspect placement and exposure, then increase speed when the result is reliable."
+  },
+  "adaptive_edit": {
+    "title": "EDIT ROUTES",
+    "idle": "Aim at a practice wall",
+    "reference": "Aim guide only - not selected edit tiles",
+    "trace": "Trace the numbered tiles; confirm, then reset.",
+    "reselect": "Look off the wall briefly to choose another route.",
+    "alternate": "ALTERNATE",
+    "routes": [
+      {
+        "name": "Lower left corner",
+        "tiles": [
+          1,
+          0,
+          3
+        ]
+      },
+      {
+        "name": "Lower right corner",
+        "tiles": [
+          1,
+          2,
+          5
+        ]
+      },
+      {
+        "name": "Upper left corner",
+        "tiles": [
+          3,
+          6,
+          7
+        ]
+      },
+      {
+        "name": "Upper right corner",
+        "tiles": [
+          5,
+          8,
+          7
+        ]
+      },
+      {
+        "name": "Center window",
+        "tiles": [
+          4
+        ]
+      }
+    ]
+  }
+}

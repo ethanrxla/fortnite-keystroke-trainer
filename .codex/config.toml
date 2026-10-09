@@ -1,0 +1,4 @@
+# Codex reads this for trusted projects. Same server as .mcp.json (Epic's UEFN MCP, built into UEFN).
+# Equivalent one-off command: codex mcp add unreal-mcp --url http://127.0.0.1:8000/mcp
+[mcp_servers.unreal-mcp]
+url = "http://127.0.0.1:8000/mcp"

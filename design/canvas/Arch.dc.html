@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Drill Architecture</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600&family=Barlow+Condensed:wght@600;700&family=JetBrains+Mono:wght@500&display=swap">
+<style>
+body{margin:0}
+.k{font:500 10px 'JetBrains Mono',monospace;letter-spacing:.08em;text-transform:uppercase}
+.lg{font:400 13px/1.45 'Barlow',sans-serif;color:#a9b4ca}
+.lg b{color:#e8ecf4;font-weight:600}
+.h{font:700 22px/1.1 'Barlow Condensed',sans-serif;color:#e8ecf4}
+.bx{position:absolute;box-sizing:border-box;background:#182033;border:1.5px solid var(--c,#2c3750);border-radius:6px;padding:10px 12px}
+.bx .n{font:700 20px/1.1 'Barlow Condensed',sans-serif;color:var(--c,#e8ecf4)}
+.ln{position:absolute;background:#4a5778}
+.ar{position:absolute;font:500 18px 'JetBrains Mono',monospace;color:#4fe3d6;width:36px;text-align:center}
+.card{position:absolute;box-sizing:border-box;background:#182033;border:1px solid #2c3750;border-radius:6px;padding:14px 16px}
+code{font:500 12px 'JetBrains Mono',monospace;color:#4fe3d6}
+</style>
+</helmet>
+<div style="width:1280px;height:800px;position:relative;background:#10151f;color:#e8ecf4;font-family:'Barlow',sans-serif;overflow:hidden">
+  <div style="position:absolute;left:40px;top:28px">
+    <div class="k" style="color:#4fe3d6">Architecture · Control and reuse</div>
+    <div style="font:700 48px/1 'Barlow Condensed',sans-serif;margin-top:6px">Build one stall, copy it everywhere</div>
+  </div>
+
+  <div class="bx" style="--c:#e8ecf4;left:460px;top:112px;width:360px;height:78px">
+    <div class="n">Hub controller</div>
+    <div class="lg" style="margin-top:2px">Drill selector, door locks, player progress</div>
+  </div>
+  <div class="ln" style="left:639px;top:190px;width:2px;height:36px"></div>
+  <div class="ln" style="left:125px;top:226px;width:1031px;height:2px"></div>
+  <div class="ln" style="left:124px;top:226px;width:2px;height:30px"></div>
+  <div class="ln" style="left:330px;top:226px;width:2px;height:30px"></div>
+  <div class="ln" style="left:536px;top:226px;width:2px;height:30px"></div>
+  <div class="ln" style="left:742px;top:226px;width:2px;height:30px"></div>
+  <div class="ln" style="left:948px;top:226px;width:2px;height:30px"></div>
+  <div class="ln" style="left:1154px;top:226px;width:2px;height:30px"></div>
+
+  <div class="bx" style="--c:#5aa9ff;left:40px;top:256px;width:170px;height:84px"><div class="n">A · Build</div><div class="lg">8 stalls</div></div>
+  <div class="bx" style="--c:#c9a0ff;left:246px;top:256px;width:170px;height:84px"><div class="n">B · Movement</div><div class="lg">4 stalls</div></div>
+  <div class="bx" style="--c:#ffb04d;left:452px;top:256px;width:170px;height:84px"><div class="n">C · Edit</div><div class="lg">5 stalls</div></div>
+  <div class="bx" style="--c:#4fe3d6;left:658px;top:256px;width:170px;height:84px"><div class="n">D · Aim</div><div class="lg">4 lanes</div></div>
+  <div class="bx" style="--c:#ff8a6b;left:864px;top:256px;width:170px;height:84px"><div class="n">E · Arena</div><div class="lg">3 stations</div></div>
+  <div class="bx" style="--c:#f2d95c;left:1070px;top:256px;width:170px;height:84px"><div class="n">F · Scenarios</div><div class="lg">4 bays</div></div>
+  <div class="lg" style="position:absolute;left:40px;top:346px">Each level controller owns its stalls, its door, and its leaderboard slice.</div>
+
+  <div class="h" style="position:absolute;left:40px;top:392px">Inside every stall: the same six parts</div>
+  <div class="bx" style="--c:#4fe3d6;left:40px;top:430px;width:170px;height:122px"><div class="n">1 · Start trigger</div><div class="lg" style="margin-top:4px">Player steps on the pad. Door and loadout lock.</div></div>
+  <div class="ar" style="left:210px;top:480px">→</div>
+  <div class="bx" style="--c:#4fe3d6;left:246px;top:430px;width:170px;height:122px"><div class="n">2 · Timer</div><div class="lg" style="margin-top:4px">Counts the drill. Shown on the stall sign.</div></div>
+  <div class="ar" style="left:416px;top:480px">→</div>
+  <div class="bx" style="--c:#4fe3d6;left:452px;top:430px;width:170px;height:122px"><div class="n">3 · Spawner</div><div class="lg" style="margin-top:4px">Bots and targets for the chosen tier.</div></div>
+  <div class="ar" style="left:622px;top:480px">→</div>
+  <div class="bx" style="--c:#4fe3d6;left:658px;top:430px;width:170px;height:122px"><div class="n">4 · Scorer</div><div class="lg" style="margin-top:4px">Hits, time, eliminations. Compares to personal best.</div></div>
+  <div class="ar" style="left:828px;top:480px">→</div>
+  <div class="bx" style="--c:#4fe3d6;left:864px;top:430px;width:170px;height:122px"><div class="n">5 · Feedback</div><div class="lg" style="margin-top:4px">Pass or fail on the sign and the HUD.</div></div>
+  <div class="ar" style="left:1034px;top:480px">→</div>
+  <div class="bx" style="--c:#4fe3d6;left:1070px;top:430px;width:170px;height:122px"><div class="n">6 · Reset</div><div class="lg" style="margin-top:4px">Clears player pieces, respawns targets, unlocks door.</div></div>
+
+  <div class="card" style="left:40px;top:588px;width:380px;height:176px">
+    <div class="h">Naming and layout</div>
+    <div class="lg" style="margin-top:6px">One folder per level. Every device follows <code>TG_&lt;Level&gt;_&lt;Stall&gt;_&lt;Part&gt;</code>, for example <code>TG_A_03_Timer</code>. Build one template stall, then duplicate it and change only the spawner contents and the sign.</div>
+  </div>
+  <div class="card" style="left:450px;top:588px;width:380px;height:176px">
+    <div class="h">Player data</div>
+    <div class="lg" style="margin-top:6px">Per player: best score for each stall, highest bot tier cleared, last level visited. Use your editor's persistent storage so the hub can show progress. Device and storage names differ by editor version, so check them before building.</div>
+  </div>
+  <div class="card" style="left:860px;top:588px;width:380px;height:176px">
+    <div class="h">Suggested build order</div>
+    <div class="lg" style="margin-top:6px"><b>1</b> Template stall · <b>2</b> Level A · <b>3</b> Hub and doors · <b>4</b> Levels B and C · <b>5</b> Levels D to F · <b>6</b> Tune bot tiers and pass marks with real players.</div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1280,"height":800}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

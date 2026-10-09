@@ -1,0 +1,28 @@
+# Python
+__pycache__/
+*.pyc
+.gauntlet/
+
+# Personal / secrets (keys live in ../.env, never here)
+keybinds.json
+.env
+*.env
+
+# Local working backups and captures from agent sessions (large, regenerable)
+backups/
+
+# Unreal / UEFN generated folders (anywhere, incl. the island snapshot)
+Binaries/
+DerivedDataCache/
+Intermediate/
+Saved/
+.lore/
+.vs/
+.vscode/
+*.VC.db
+*.opensdf
+*.opendb
+*.sdf
+*.sln
+*.suo
+Desktop.ini

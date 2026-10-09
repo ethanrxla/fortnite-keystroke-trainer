@@ -1,0 +1,142 @@
+{
+ "arena_three": {
+  "render_sha": "28065d7106a5c5be35f8ce8d2f89e6c45925f332e5915c420990e05a310300f4",
+  "text": "Three.",
+  "voice": "pFZP5JQG7iQjIQuC4Bku",
+  "model": "eleven_multilingual_v2",
+  "settings": {
+   "stability": 0.5,
+   "similarity_boost": 0.75,
+   "style": 0.15,
+   "use_speaker_boost": true
+  },
+  "format": "pcm_22050",
+  "file": "arena_three.wav"
+ },
+ "arena_two": {
+  "render_sha": "eba0877220295624e80e2115813ceb891273b3d6e91299c3f52b74033642b4ee",
+  "text": "Two.",
+  "voice": "pFZP5JQG7iQjIQuC4Bku",
+  "model": "eleven_multilingual_v2",
+  "settings": {
+   "stability": 0.5,
+   "similarity_boost": 0.75,
+   "style": 0.15,
+   "use_speaker_boost": true
+  },
+  "format": "pcm_22050",
+  "file": "arena_two.wav"
+ },
+ "arena_one": {
+  "render_sha": "a71aa01233ff599b40a94b64fdd6791f07c3b227d1f00565e922b0282100736c",
+  "text": "One.",
+  "voice": "pFZP5JQG7iQjIQuC4Bku",
+  "model": "eleven_multilingual_v2",
+  "settings": {
+   "stability": 0.5,
+   "similarity_boost": 0.75,
+   "style": 0.15,
+   "use_speaker_boost": true
+  },
+  "format": "pcm_22050",
+  "file": "arena_one.wav"
+ },
+ "arena_go": {
+  "render_sha": "352b9e633def7921dffcfae333ab8a85b14614da126f319f60cd38ef757a67d2",
+  "text": "Go!",
+  "voice": "pFZP5JQG7iQjIQuC4Bku",
+  "model": "eleven_multilingual_v2",
+  "settings": {
+   "stability": 0.5,
+   "similarity_boost": 0.75,
+   "style": 0.15,
+   "use_speaker_boost": true
+  },
+  "format": "pcm_22050",
+  "file": "arena_go.wav"
+ },
+ "arena_ready": {
+  "render_sha": "44f08169c7e59f9c08a9ad034e28f9bd210fd2063beeb9d2961eb2ea93601a83",
+  "text": "Both players, step onto a platform. Press start when you're ready.",
+  "voice": "pFZP5JQG7iQjIQuC4Bku",
+  "model": "eleven_multilingual_v2",
+  "settings": {
+   "stability": 0.5,
+   "similarity_boost": 0.75,
+   "style": 0.15,
+   "use_speaker_boost": true
+  },
+  "format": "pcm_22050",
+  "file": "arena_ready.wav"
+ },
+ "arena_reset": {
+  "render_sha": "77e040cfb253b361652aa1b54c800b4971bd39e985de215e3e63d32804c4f8c5",
+  "text": "Round over. Return to your platform.",
+  "voice": "pFZP5JQG7iQjIQuC4Bku",
+  "model": "eleven_multilingual_v2",
+  "settings": {
+   "stability": 0.5,
+   "similarity_boost": 0.75,
+   "style": 0.15,
+   "use_speaker_boost": true
+  },
+  "format": "pcm_22050",
+  "file": "arena_reset.wav"
+ },
+ "arena_melee": {
+  "render_sha": "60447799ec608fa1bdc4d46083d60b74a9b391a3d035a8e01d43b5e922f131bd",
+  "text": "Melee only.",
+  "voice": "pFZP5JQG7iQjIQuC4Bku",
+  "model": "eleven_multilingual_v2",
+  "settings": {
+   "stability": 0.5,
+   "similarity_boost": 0.75,
+   "style": 0.15,
+   "use_speaker_boost": true
+  },
+  "format": "pcm_22050",
+  "file": "arena_melee.wav"
+ },
+ "arena_standard": {
+  "render_sha": "00531a8b397e9519159bd9b480de4d7dc20257e78bab2464fe3eee000ce29725",
+  "text": "Standard loadout.",
+  "voice": "pFZP5JQG7iQjIQuC4Bku",
+  "model": "eleven_multilingual_v2",
+  "settings": {
+   "stability": 0.5,
+   "similarity_boost": 0.75,
+   "style": 0.15,
+   "use_speaker_boost": true
+  },
+  "format": "pcm_22050",
+  "file": "arena_standard.wav"
+ },
+ "bot_ready": {
+  "render_sha": "54cd7f7dde8d7e0f0c813d933299b99a5357549f54e36e0637d49e98299b8d1f",
+  "text": "Practice target ready.",
+  "voice": "pFZP5JQG7iQjIQuC4Bku",
+  "model": "eleven_multilingual_v2",
+  "settings": {
+   "stability": 0.5,
+   "similarity_boost": 0.75,
+   "style": 0.15,
+   "use_speaker_boost": true
+  },
+  "format": "pcm_22050",
+  "file": "bot_ready.wav"
+ },
+ "piece_control_brief": {
+  "render_sha": "feff98fd3104fb1e07282377ed93132090dc1f93b12d55c209738410b749c5f2",
+  "text": "Build your cover. Move through the tunnel. Control the next box before you open a peek.",
+  "voice": "pFZP5JQG7iQjIQuC4Bku",
+  "model": "eleven_multilingual_v2",
+  "settings": {
+   "stability": 0.5,
+   "similarity_boost": 0.75,
+   "style": 0.15,
+   "use_speaker_boost": true
+  },
+  "format": "pcm_22050",
+  "file": "piece_control_brief.wav"
+ }
+}

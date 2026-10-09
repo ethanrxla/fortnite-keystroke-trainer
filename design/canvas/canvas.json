@@ -1,0 +1,124 @@
+{
+  "v": 3,
+  "attachments": {},
+  "boards": {
+    "A_Build.dc.html": {
+      "h": 800,
+      "title": "A \u00b7 Build Basics",
+      "w": 1280,
+      "x": 0,
+      "y": 1420
+    },
+    "Arch.dc.html": {
+      "h": 800,
+      "title": "Drill architecture",
+      "w": 1280,
+      "x": 2840,
+      "y": 0
+    },
+    "B_Movement.dc.html": {
+      "h": 800,
+      "title": "B \u00b7 Movement & Tunneling",
+      "w": 1280,
+      "x": 1360,
+      "y": 1420
+    },
+    "C_Edit.dc.html": {
+      "h": 800,
+      "title": "C \u00b7 Edit Course",
+      "w": 1280,
+      "x": 2720,
+      "y": 1420
+    },
+    "D_Aim.dc.html": {
+      "h": 800,
+      "title": "D \u00b7 Aim Range",
+      "w": 1280,
+      "x": 0,
+      "y": 2640
+    },
+    "E_Arena.dc.html": {
+      "h": 800,
+      "title": "E \u00b7 Bot Arena",
+      "w": 1280,
+      "x": 1360,
+      "y": 2640
+    },
+    "F_Scenarios.dc.html": {
+      "h": 800,
+      "title": "F \u00b7 Scenarios",
+      "w": 1280,
+      "x": 2720,
+      "y": 2640
+    },
+    "Main.dc.html": {
+      "h": 1000,
+      "title": "Master plan",
+      "w": 1400,
+      "x": 178,
+      "y": 0
+    },
+    "Rules.dc.html": {
+      "h": 800,
+      "title": "Space & sizing rules",
+      "w": 1280,
+      "x": 1480,
+      "y": 0
+    },
+    "Coach.dc.html": {
+      "x": 4200,
+      "y": 0,
+      "w": 1280,
+      "h": 960,
+      "title": "Coaching layer"
+    }
+  },
+  "createdOnFiles": {
+    "at": "2026-10-07T12:00:00Z",
+    "v": 1
+  },
+  "designSystems": [],
+  "launch": {
+    "view": "canvas"
+  },
+  "notes": {
+    "t1": {
+      "kind": "title1",
+      "maxW": 5480,
+      "text": "1 \u00b7 Map, rules, architecture, coaching",
+      "w": 240,
+      "x": 0,
+      "y": -300
+    },
+    "t2": {
+      "kind": "title1",
+      "maxW": 4000,
+      "text": "2 \u00b7 Levels A\u2013C: build, move, edit",
+      "w": 240,
+      "x": 0,
+      "y": 1120
+    },
+    "t3": {
+      "kind": "title1",
+      "maxW": 4000,
+      "text": "3 \u00b7 Levels D\u2013F: aim, bots, scenarios",
+      "w": 240,
+      "x": 0,
+      "y": 2340
+    }
+  },
+  "order": [
+    "Main.dc.html",
+    "Rules.dc.html",
+    "Arch.dc.html",
+    "A_Build.dc.html",
+    "B_Movement.dc.html",
+    "C_Edit.dc.html",
+    "D_Aim.dc.html",
+    "E_Arena.dc.html",
+    "F_Scenarios.dc.html",
+    "Coach.dc.html"
+  ],
+  "pages": [],
+  "title": "Training Ground Map"
+}

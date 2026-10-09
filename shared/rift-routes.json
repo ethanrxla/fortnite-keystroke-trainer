@@ -1,0 +1,197 @@
+[
+  {
+    "source": "KT2_QuickStart",
+    "destination": "KT2_CourtArrival",
+    "entry": {
+      "x": 768,
+      "y": -59648,
+      "z": 15
+    },
+    "exit": {
+      "x": 512,
+      "y": -30720,
+      "z": 15
+    },
+    "walk": true
+  },
+  {
+    "source": "KT2_FreeStart",
+    "destination": "KT2_FreeArrival",
+    "entry": {
+      "x": 256,
+      "y": -58624,
+      "z": 15
+    },
+    "exit": {
+      "x": 7680,
+      "y": -33280,
+      "z": 15
+    },
+    "walk": true
+  },
+  {
+    "source": "KT2_CourtReturn",
+    "destination": "KT2_HubArrival",
+    "entry": {
+      "x": 512,
+      "y": -35328,
+      "z": 15
+    },
+    "exit": {
+      "x": -256,
+      "y": -59648,
+      "z": 15
+    },
+    "walk": true
+  },
+  {
+    "source": "KT3_03_Src",
+    "destination": "KT3_03_Dest",
+    "entry": {
+      "x": 2330,
+      "y": -61400,
+      "z": 0
+    },
+    "exit": {
+      "x": 4352,
+      "y": -59648,
+      "z": 0
+    },
+    "walk": false
+  },
+  {
+    "source": "KT3_04_Src",
+    "destination": "KT3_04_Dest",
+    "entry": {
+      "x": 2330,
+      "y": -61240,
+      "z": 0
+    },
+    "exit": {
+      "x": 256,
+      "y": -55552,
+      "z": 0
+    },
+    "walk": false
+  },
+  {
+    "source": "KT3_05_Src",
+    "destination": "KT3_05_Dest",
+    "entry": {
+      "x": 2330,
+      "y": -61080,
+      "z": 0
+    },
+    "exit": {
+      "x": -3840,
+      "y": -59648,
+      "z": 0
+    },
+    "walk": false
+  },
+  {
+    "source": "KT3_06_Src",
+    "destination": "KT3_06_Dest",
+    "entry": {
+      "x": 2330,
+      "y": -60920,
+      "z": 0
+    },
+    "exit": {
+      "x": 256,
+      "y": -63744,
+      "z": 0
+    },
+    "walk": false
+  },
+  {
+    "source": "KT_Portal_Aim",
+    "destination": "KT_Portal_Aim_Return",
+    "entry": {
+      "x": 1792,
+      "y": -58112,
+      "z": 15
+    },
+    "exit": {
+      "x": -35072,
+      "y": -87296,
+      "z": 0
+    },
+    "walk": true
+  },
+  {
+    "source": "KT_Portal_Arena",
+    "destination": "KT_Portal_Arena_Return",
+    "entry": {
+      "x": -1280,
+      "y": -58112,
+      "z": 15
+    },
+    "exit": {
+      "x": -35072,
+      "y": -76544,
+      "z": 0
+    },
+    "walk": true
+  },
+  {
+    "source": "KT_Portal_Scenario",
+    "destination": "KT_Portal_Scenario_Return",
+    "entry": {
+      "x": -1280,
+      "y": -61184,
+      "z": 15
+    },
+    "exit": {
+      "x": -35072,
+      "y": -66304,
+      "z": 0
+    },
+    "walk": true
+  },
+  {
+    "source": "KT_Portal_Aim_Return",
+    "destination": "KT_Portal_Aim",
+    "entry": {
+      "x": -35072,
+      "y": -87296,
+      "z": 0
+    },
+    "exit": {
+      "x": 1792,
+      "y": -58112,
+      "z": 15
+    },
+    "walk": true
+  },
+  {
+    "source": "KT_Portal_Arena_Return",
+    "destination": "KT_Portal_Arena",
+    "entry": {
+      "x": -35072,
+      "y": -76544,
+      "z": 0
+    },
+    "exit": {
+      "x": -1280,
+      "y": -58112,
+      "z": 15
+    },
+    "walk": true
+  },
+  {
+    "source": "KT_Portal_Scenario_Return",
+    "destination": "KT_Portal_Scenario",
+    "entry": {
+      "x": -35072,
+      "y": -66304,
+      "z": 0
+    },
+    "exit": {
+      "x": -1280,
+      "y": -61184,
+      "z": 15
+    },
+    "walk": true
+  }
+]

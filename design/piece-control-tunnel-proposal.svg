@@ -1,0 +1,85 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1240" height="740" viewBox="0 0 1240 740">
+<rect width="1240" height="740" fill="#111923"/>
+<style>text{font-family:Segoe UI,Arial,sans-serif;fill:#ecf2fa;font-size:16px}.small{font-size:13px;fill:#b8c6d8}.title{font-size:27px;font-weight:700}.head{font-size:18px;font-weight:600}</style>
+<defs><marker id="a" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto"><path d="M0 0L7 3.5L0 7" fill="#f9ae67"/></marker></defs>
+<text x="80" y="48" class="title" text-anchor="start">PIECE CONTROL / TUNNEL TO ENCOUNTER</text>
+<text x="80" y="78" class="small" text-anchor="start">Research proposal · October 8, 2026 · local tile coordinates · not placed in UEFN</text>
+<rect x="80" y="170" width="720" height="360" fill="#1c2735" stroke="#465973" stroke-width="2"/>
+<rect x="80" y="170" width="720" height="72" fill="#2b3542" stroke="#465973" stroke-width="2"/>
+<rect x="80" y="458" width="720" height="72" fill="#2b3542" stroke="#465973" stroke-width="2"/>
+<rect x="440" y="242" width="360" height="216" fill="#30312e" stroke="#d8a763" stroke-width="2" stroke-dasharray="7 4"/>
+<rect x="80" y="314" width="144" height="72" fill="#344052" stroke="#465973" stroke-width="2"/>
+<rect x="224" y="314" width="72" height="72" fill="#173e58" stroke="#64caef" stroke-width="2"/>
+<rect x="296" y="314" width="144" height="72" fill="#1e4547" stroke="#70d8ca" stroke-width="2" stroke-dasharray="5 3"/>
+<rect x="440" y="314" width="72" height="72" fill="#423d30" stroke="#465973" stroke-width="2"/>
+<rect x="512" y="314" width="72" height="72" fill="#614431" stroke="#edac72" stroke-width="2"/>
+<rect x="512" y="242" width="72" height="72" fill="#3d3d32" stroke="#465973" stroke-width="2"/>
+<rect x="512" y="386" width="72" height="72" fill="#3d3d32" stroke="#465973" stroke-width="2"/>
+<rect x="584" y="314" width="72" height="72" fill="#3d3d32" stroke="#465973" stroke-width="2"/>
+<line x1="80" y1="170" x2="80" y2="530" stroke="#40536a"/>
+<text x="85" y="160" class="small" text-anchor="start">0</text>
+<line x1="152" y1="170" x2="152" y2="530" stroke="#40536a"/>
+<text x="157" y="160" class="small" text-anchor="start">1</text>
+<line x1="224" y1="170" x2="224" y2="530" stroke="#40536a"/>
+<text x="229" y="160" class="small" text-anchor="start">2</text>
+<line x1="296" y1="170" x2="296" y2="530" stroke="#40536a"/>
+<text x="301" y="160" class="small" text-anchor="start">3</text>
+<line x1="368" y1="170" x2="368" y2="530" stroke="#40536a"/>
+<text x="373" y="160" class="small" text-anchor="start">4</text>
+<line x1="440" y1="170" x2="440" y2="530" stroke="#40536a"/>
+<text x="445" y="160" class="small" text-anchor="start">5</text>
+<line x1="512" y1="170" x2="512" y2="530" stroke="#40536a"/>
+<text x="517" y="160" class="small" text-anchor="start">6</text>
+<line x1="584" y1="170" x2="584" y2="530" stroke="#40536a"/>
+<text x="589" y="160" class="small" text-anchor="start">7</text>
+<line x1="656" y1="170" x2="656" y2="530" stroke="#40536a"/>
+<text x="661" y="160" class="small" text-anchor="start">8</text>
+<line x1="728" y1="170" x2="728" y2="530" stroke="#40536a"/>
+<text x="733" y="160" class="small" text-anchor="start">9</text>
+<line x1="800" y1="170" x2="800" y2="530" stroke="#40536a"/>
+<text x="805" y="160" class="small" text-anchor="start">10</text>
+<line x1="80" y1="170" x2="800" y2="170" stroke="#40536a"/>
+<line x1="80" y1="242" x2="800" y2="242" stroke="#40536a"/>
+<line x1="80" y1="314" x2="800" y2="314" stroke="#40536a"/>
+<line x1="80" y1="386" x2="800" y2="386" stroke="#40536a"/>
+<line x1="80" y1="458" x2="800" y2="458" stroke="#40536a"/>
+<line x1="80" y1="530" x2="800" y2="530" stroke="#40536a"/>
+<text x="440" y="130" class="head" text-anchor="middle">10 tiles forward = 51.20 m  /  +X →</text>
+<text x="70" y="350" class="small" text-anchor="end">+Y</text>
+<text x="70" y="372" class="small" text-anchor="end">right ↓</text>
+<text x="152" y="355.0" class="small" text-anchor="middle">READY</text>
+<text x="260.0" y="355.0" class="small" text-anchor="middle">OWN A</text>
+<text x="368" y="355.0" class="small" text-anchor="middle">TUNNEL</text>
+<text x="476.0" y="355.0" class="small" text-anchor="middle">READ</text>
+<text x="548.0" y="355.0" class="small" text-anchor="middle">BOX B</text>
+<text x="692.0" y="355.0" class="small" text-anchor="middle">EXIT</text>
+<text x="440" y="208" class="small" text-anchor="middle">SERVICE / CLEARANCE — NOT PLAYER COVER</text>
+<text x="440" y="501.2" class="small" text-anchor="middle">SERVICE / HELP AND RESET OUTSIDE BUILD CELLS</text>
+<line x1="296" y1="314" x2="296" y2="386" stroke="#64caef" stroke-width="6"/>
+<line x1="512" y1="314" x2="512" y2="386" stroke="#ff8b74" stroke-width="6"/>
+<line x1="548.0" y1="338.0" x2="548.0" y2="278.0" stroke="#f9ae67" stroke-width="3" marker-end="url(#a)"/>
+<line x1="548.0" y1="362.0" x2="548.0" y2="422.0" stroke="#f9ae67" stroke-width="3" marker-end="url(#a)"/>
+<line x1="574.0" y1="350.0" x2="656" y2="350.0" stroke="#f9ae67" stroke-width="3" marker-end="url(#a)"/>
+<text x="548.0" y="260.0" class="small" text-anchor="middle">LEFT ESCAPE</text>
+<text x="548.0" y="449.36" class="small" text-anchor="middle">RIGHT ESCAPE</text>
+<text x="692.0" y="329.0" class="small" text-anchor="middle">BACK ESCAPE</text>
+<text x="80" y="580" class="head" text-anchor="start">Own box → covered advance → contested piece → react → safe shot or disengage</text>
+<text x="80" y="612" class="small" text-anchor="start">T = 512 cm. H = 384 cm. Proposed active deck Z=H; catch surface Z=0; shell underside Z=4H.</text>
+<text x="80" y="640" class="small" text-anchor="start">No permanent cage around B. With no learner builds, all declared escape routes must work.</text>
+<text x="80" y="669" class="small" text-anchor="start">Diagram marks exercise zones; colored borders are not prebuilt walls or proof of ownership.</text>
+<text x="840" y="181" class="head" text-anchor="start">THE PROGRESSION</text>
+<text x="840" y="215" class="small" text-anchor="start">Learn / full reference</text>
+<text x="840" y="245" class="small" text-anchor="start">Copy / help on request</text>
+<text x="840" y="275" class="small" text-anchor="start">Recall / shape hidden</text>
+<text x="840" y="305" class="small" text-anchor="start">React / one changed condition</text>
+<text x="840" y="335" class="small" text-anchor="start">Transfer / unseen setup</text>
+<text x="840" y="397" class="head" text-anchor="start">WHAT MUST BE REAL</text>
+<text x="840" y="431" class="small" text-anchor="start">Different wall planes at f=3 and f=6</text>
+<text x="840" y="461" class="small" text-anchor="start">A defender can hold or escape</text>
+<text x="840" y="491" class="small" text-anchor="start">Ghosts never seal the route</text>
+<text x="840" y="521" class="small" text-anchor="start">Own/enemy editing differs</text>
+<text x="840" y="582" class="head" text-anchor="start">PROPOSED ENVELOPE</text>
+<text x="840" y="616" class="small" text-anchor="start">10 × 5 tiles = 51.20 × 25.60 m</text>
+<text x="840" y="646" class="small" text-anchor="start">One leased practice bay</text>
+<text x="840" y="676" class="small" text-anchor="start">No world anchor/group allocated</text>
+</svg>

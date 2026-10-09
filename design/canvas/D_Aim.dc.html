@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Level D Aim Range</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600&family=Barlow+Condensed:wght@600;700&family=JetBrains+Mono:wght@500&display=swap">
+<style>
+body{margin:0}
+.k{font:500 10px 'JetBrains Mono',monospace;letter-spacing:.08em;text-transform:uppercase}
+.lg{font:400 13px/1.45 'Barlow',sans-serif;color:#a9b4ca}
+.lg b{color:#e8ecf4;font-weight:600}
+.h{font:700 22px/1.1 'Barlow Condensed',sans-serif;color:#e8ecf4}
+.card{position:absolute;box-sizing:border-box;background:#182033;border:1px solid #2c3750;border-radius:6px;padding:14px 16px}
+.st{position:absolute;box-sizing:border-box;border:1.5px solid var(--c);background:color-mix(in srgb,var(--c) 13%,#10151f);color:var(--c);border-radius:3px;padding:6px 8px}
+.st b{display:inline;font:600 15px/1.1 'Barlow',sans-serif}
+.st i{font:500 10px 'JetBrains Mono',monospace;font-style:normal;margin-left:8px}
+.pl{position:absolute;width:12px;height:12px;border-radius:50%;background:#e8ecf4}
+.tg{position:absolute;width:16px;height:16px;border-radius:50%;border:3px solid var(--c);box-sizing:border-box;background:#10151f}
+.sl{position:absolute;top:0;bottom:0;width:2px;background:rgba(232,236,244,.5)}
+.mk{position:absolute;bottom:4px;font:500 10px 'JetBrains Mono',monospace;color:#a9b4ca}
+.rail{position:absolute;height:2px;background:var(--c);opacity:.6}
+.wl{position:absolute;width:6px;background:var(--c)}
+.r{display:grid;grid-template-columns:28px 1fr 100px;gap:10px;padding:9px 14px;border-top:1px solid #2c3750;font:400 13px/1.35 'Barlow',sans-serif;color:#a9b4ca;align-items:center}
+.r b{color:#e8ecf4;font-weight:600}
+.r .m{font:500 11px 'JetBrains Mono',monospace;color:#e8ecf4}
+.hd{border-top:0;font:500 10px 'JetBrains Mono',monospace;letter-spacing:.08em;text-transform:uppercase;color:#4fe3d6}
+</style>
+</helmet>
+<div style="width:1280px;height:800px;position:relative;background:#10151f;color:#e8ecf4;font-family:'Barlow',sans-serif;overflow:hidden">
+  <div style="position:absolute;left:40px;top:28px">
+    <div class="k" style="color:#4fe3d6">Level D · Step 4 · 24 × 13 tiles</div>
+    <div style="font:700 52px/1 'Barlow Condensed',sans-serif;margin-top:6px">Aim Range</div>
+    <div class="lg" style="margin-top:6px;font-size:14px">Four parallel lanes, 22 tiles long and 3 wide. Distance is the same in every lane, so scores compare fairly.</div>
+  </div>
+
+  <div style="position:absolute;left:40px;top:130px;width:768px;height:416px;box-sizing:border-box;border:1px solid #2c3750;--c:#4fe3d6;background-color:#0c1019;background-image:linear-gradient(rgba(255,255,255,.06) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.06) 1px,transparent 1px);background-size:32px 32px">
+    <div class="st" style="left:32px;top:16px;width:704px;height:96px"><b>1 · Static plates</b><i>22 × 3</i>
+      <div class="sl" style="left:16px"></div><div class="pl" style="left:6px;top:46px;width:10px;height:10px"></div>
+      <div class="tg" style="left:168px;top:46px"></div><div class="tg" style="left:328px;top:46px"></div><div class="tg" style="left:648px;top:46px"></div>
+      <div class="mk" style="left:152px">25 m</div><div class="mk" style="left:312px">50 m</div><div class="mk" style="left:628px">100 m</div></div>
+    <div class="st" style="left:32px;top:112px;width:704px;height:96px"><b>2 · Flick</b><i>22 × 3</i>
+      <div class="sl" style="left:16px"></div><div class="pl" style="left:6px;top:46px;width:10px;height:10px"></div>
+      <div class="tg" style="left:300px;top:30px"></div><div class="tg" style="left:344px;top:56px"></div><div class="tg" style="left:388px;top:36px"></div>
+      <div class="mk" style="left:320px">50 m pop-ups</div></div>
+    <div class="st" style="left:32px;top:208px;width:704px;height:96px"><b>3 · Tracking</b><i>22 × 3</i>
+      <div class="sl" style="left:16px"></div><div class="pl" style="left:6px;top:46px;width:10px;height:10px"></div>
+      <div class="rail" style="left:200px;top:55px;width:360px"></div><div class="tg" style="left:360px;top:48px"></div>
+      <div class="mk" style="left:330px">25 m rail, strafing</div></div>
+    <div class="st" style="left:32px;top:304px;width:704px;height:96px"><b>4 · Recoil wall</b><i>22 × 3</i>
+      <div class="sl" style="left:16px"></div><div class="pl" style="left:6px;top:46px;width:10px;height:10px"></div>
+      <div class="wl" style="left:96px;top:24px;height:56px"></div><div class="wl" style="left:192px;top:24px;height:56px"></div>
+      <div class="mk" style="left:80px">10 m</div><div class="mk" style="left:176px">25 m</div></div>
+    <div style="position:absolute;left:336px;top:408px;width:64px;height:8px;background:#4fe3d6"></div>
+  </div>
+  <div class="k" style="position:absolute;left:328px;top:552px;color:#4fe3d6;width:80px;text-align:center">Door</div>
+  <div class="lg" style="position:absolute;left:40px;top:552px;width:280px;font-size:12px">White line = shoot line. Rings = targets. 5 tiles ≈ 25 m.</div>
+
+  <div class="card" style="left:40px;top:592px;width:376px;height:172px">
+    <div class="h">Props and devices</div>
+    <div class="lg" style="margin-top:6px">Loadout dispenser with infinite ammo at each shoot line. Targets are hit-scored props or dummies on a rail. Glass dividers between lanes so a neighbour never blocks your shot. No building in this level.</div>
+  </div>
+  <div class="card" style="left:432px;top:592px;width:376px;height:172px">
+    <div class="h">Bots</div>
+    <div class="lg" style="margin-top:6px">Lane 3's mover is a scripted dummy on a rail, not AI, so the pattern is repeatable: slow strafe, fast strafe, then stop-start. Other lanes use static or pop-up targets.</div>
+  </div>
+
+  <div class="card" style="left:840px;top:130px;width:400px;height:300px;padding:6px 0 0;overflow:hidden">
+    <div class="r hd"><span>#</span><span>Task and loadout</span><span>Target</span></div>
+    <div class="r"><span class="m">1</span><span><b>Static plates.</b> 15 hits in 30 s. Assault rifle, sniper</span><span class="m">30 → 12 s</span></div>
+    <div class="r"><span class="m">2</span><span><b>Flick.</b> 20 pop-ups. Assault rifle, SMG</span><span class="m">50 → 85 %</span></div>
+    <div class="r"><span class="m">3</span><span><b>Tracking.</b> Stay on the mover. Assault rifle, SMG</span><span class="m">40 → 75 %</span></div>
+    <div class="r"><span class="m">4</span><span><b>Recoil.</b> 30-round spray, hits in the ring</span><span class="m">50 → 85 %</span></div>
+  </div>
+  <div class="card" style="left:840px;top:450px;width:400px;height:98px">
+    <div class="h">Why the lanes match</div>
+    <div class="lg" style="margin-top:6px">Every lane uses the same shoot line and the same 25 / 50 / 100 m marks, so a number means the same thing everywhere.</div>
+  </div>
+  <div class="card" style="left:840px;top:592px;width:400px;height:172px">
+    <div class="h">Run flow</div>
+    <div class="lg" style="margin-top:6px"><b>1</b> Stand on the shoot line. <b>2</b> Press the lane button. <b>3</b> A three-second countdown, then targets appear. <b>4</b> Score shows on the lane sign. Leaving the line cancels the run.</div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1280,"height":800}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

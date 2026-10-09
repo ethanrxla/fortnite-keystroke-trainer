@@ -1,0 +1,8 @@
+Use case: stylized-concept
+Asset type: text-free wall-panel illustration for the existing RXLA Fortnite training-ground onboarding area.
+Primary request: create one polished landscape 3D game illustration showing a clean architectural practice platform and a luminous cyan wireframe wall, floor and inclined ramp build example, suggesting learning where to place structures.
+Scene/backdrop: near-black charcoal studio-like training environment, very restrained flame-orange accent along the lower platform edge. No distracting scenery.
+Subject: one full-size square training tile with a rectangular vertical wall and rising ramp, recognizable simple construction forms with clear open cyan outline edges. Most of the left 40 percent is quiet empty charcoal so native editable text can be placed separately in the editor.
+Style/medium: high quality stylized game-environment artwork, matte surfaces, crisp silhouettes, soft controlled lighting, subtle dimensional depth.
+Composition/framing: wide landscape 3:2, example on right half, entirely within frame, generous dark margins. Not a blueprint or technical measurement diagram.
+Constraints: NO words, letters, numerals, logos, weapons, people, HUD, watermarks, invented badges, glowing bloom fog or busy texture. Illustration only; exact gameplay ghost geometry will be separately authored in-engine. Preserve the calm readable charcoal/cyan/orange scheme of the project.

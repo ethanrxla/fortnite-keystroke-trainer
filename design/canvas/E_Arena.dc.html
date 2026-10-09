@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Level E Bot Arena</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600&family=Barlow+Condensed:wght@600;700&family=JetBrains+Mono:wght@500&display=swap">
+<style>
+body{margin:0}
+.k{font:500 10px 'JetBrains Mono',monospace;letter-spacing:.08em;text-transform:uppercase}
+.lg{font:400 13px/1.45 'Barlow',sans-serif;color:#a9b4ca}
+.lg b{color:#e8ecf4;font-weight:600}
+.h{font:700 22px/1.1 'Barlow Condensed',sans-serif;color:#e8ecf4}
+.card{position:absolute;box-sizing:border-box;background:#182033;border:1px solid #2c3750;border-radius:6px;padding:14px 16px}
+.st{position:absolute;box-sizing:border-box;border:1.5px solid var(--c);background:color-mix(in srgb,var(--c) 13%,#10151f);color:var(--c);border-radius:3px;padding:6px 8px}
+.st b{display:block;font:600 15px/1.1 'Barlow',sans-serif}
+.st i{display:block;font:500 10px 'JetBrains Mono',monospace;font-style:normal;margin-top:2px}
+.pl{position:absolute;width:12px;height:12px;border-radius:50%;background:#e8ecf4}
+.bot{position:absolute;width:14px;height:14px;border-radius:3px;background:#ff8a6b;border:2px solid #10151f;box-sizing:border-box}
+.cv{position:absolute;box-sizing:border-box;border:2px solid var(--c);background:color-mix(in srgb,var(--c) 28%,transparent)}
+.r{display:grid;grid-template-columns:28px 1fr 100px;gap:10px;padding:9px 14px;border-top:1px solid #2c3750;font:400 13px/1.35 'Barlow',sans-serif;color:#a9b4ca;align-items:center}
+.r b{color:#e8ecf4;font-weight:600}
+.r .m{font:500 11px 'JetBrains Mono',monospace;color:#e8ecf4}
+.hd{border-top:0;font:500 10px 'JetBrains Mono',monospace;letter-spacing:.08em;text-transform:uppercase;color:#ff8a6b}
+</style>
+</helmet>
+<div style="width:1280px;height:800px;position:relative;background:#10151f;color:#e8ecf4;font-family:'Barlow',sans-serif;overflow:hidden">
+  <div style="position:absolute;left:40px;top:28px">
+    <div class="k" style="color:#ff8a6b">Level E · Step 5 · 20 × 12 tiles</div>
+    <div style="font:700 52px/1 'Barlow Condensed',sans-serif;margin-top:6px">Bot Arena</div>
+    <div class="lg" style="margin-top:6px;font-size:14px">One 12×12 box-fight arena, four bot tiers, and a ready room that sets the loadout.</div>
+  </div>
+
+  <div style="position:absolute;left:40px;top:130px;width:768px;height:416px;box-sizing:border-box;border:1px solid #2c3750;--c:#ff8a6b;background-color:#0c1019;background-image:linear-gradient(rgba(255,255,255,.06) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.06) 1px,transparent 1px);background-size:32px 32px">
+    <div class="st" style="left:64px;top:16px;width:96px;height:384px"><b>1 · Ready room</b><i>3 × 12</i><div class="lg" style="margin-top:12px;font-size:12px">Loadout rack, tier select.</div></div>
+    <div class="st" style="left:192px;top:16px;width:384px;height:384px"><b>2 · Arena</b><i>12 × 12, 8 high</i>
+      <div class="cv" style="left:160px;top:160px;width:64px;height:64px"></div>
+      <div class="cv" style="left:80px;top:100px;width:32px;height:64px"></div>
+      <div class="cv" style="left:272px;top:220px;width:32px;height:64px"></div>
+      <div class="pl" style="left:50px;top:330px"></div>
+      <div class="bot" style="left:316px;top:56px"></div>
+    </div>
+    <div class="st" style="left:608px;top:16px;width:96px;height:384px;background:#182033"><b>3 · Results</b><i>3 × 12</i><div class="lg" style="margin-top:12px;font-size:12px">Score board, reset, tier unlock.</div></div>
+    <div style="position:absolute;left:80px;top:408px;width:64px;height:8px;background:#ff8a6b"></div>
+  </div>
+  <div class="k" style="position:absolute;left:72px;top:552px;color:#ff8a6b;width:96px;text-align:center">Door · to hub</div>
+  <div class="lg" style="position:absolute;left:180px;top:552px;width:620px;font-size:12px">White dot = player spawn. Orange square = bot spawn. Filled blocks = optional pre-built cover (tier 0 and 1 only). Outer dim area is outside the level.</div>
+
+  <div class="card" style="left:40px;top:592px;width:376px;height:172px">
+    <div class="h">Props and devices</div>
+    <div class="lg" style="margin-top:6px">Kill ceiling at 8 tiles, flat floor, solid outer walls. Round ends at 5 eliminations or 3 minutes. Both players respawn 3 seconds after an elimination and all pieces clear every round.</div>
+  </div>
+  <div class="card" style="left:432px;top:592px;width:376px;height:172px">
+    <div class="h">Bots</div>
+    <div class="lg" style="margin-top:6px">One spawner on the far side, set per tier from the ready room. The bot never leaves the arena. The ready room locks the tier once the round starts.</div>
+  </div>
+
+  <div class="card" style="left:840px;top:130px;width:400px;height:300px;padding:6px 0 0;overflow:hidden">
+    <div class="r hd"><span>T</span><span>Bot tier</span><span>Unlock</span></div>
+    <div class="r"><span class="m">0</span><span><b>Dummy.</b> Stands still, never fires</span><span class="m">Open</span></div>
+    <div class="r"><span class="m">1</span><span><b>Shooter.</b> Strafes and shoots, no building</span><span class="m">Beat T0</span></div>
+    <div class="r"><span class="m">2</span><span><b>Builder.</b> Builds ramps and walls, no edits</span><span class="m">Beat T1 ×3</span></div>
+    <div class="r"><span class="m">3</span><span><b>Fighter.</b> Builds, edits and pushes</span><span class="m">Beat T2 ×3</span></div>
+  </div>
+  <div class="card" style="left:840px;top:450px;width:400px;height:98px">
+    <div class="h">Unlock rule</div>
+    <div class="lg" style="margin-top:6px">Win three rounds in a row at a tier to unlock the next. A loss breaks the streak.</div>
+  </div>
+  <div class="card" style="left:840px;top:592px;width:400px;height:172px">
+    <div class="h">Run flow</div>
+    <div class="lg" style="margin-top:6px"><b>1</b> Pick a tier and loadout in the ready room. <b>2</b> Walk through to the arena. <b>3</b> Fight to five eliminations. <b>4</b> The results room shows score and unlocks. Press reset to go again.</div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1280,"height":800}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

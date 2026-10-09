@@ -1,0 +1,3912 @@
+[
+  {
+    "label": "KT2_Arrival",
+    "kind": "mesh",
+    "xf": {
+      "location": {
+        "x": 768.0,
+        "y": -30720.0,
+        "z": -48
+      },
+      "rotation": {
+        "pitch": 0,
+        "yaw": 0.0,
+        "roll": 0
+      },
+      "scale": {
+        "x": 15.36,
+        "y": 102.4,
+        "z": 0.48
+      }
+    },
+    "mat": "Neutral",
+    "tag": null
+  },
+  {
+    "label": "KT2_Practice",
+    "kind": "mesh",
+    "xf": {
+      "location": {
+        "x": 3840.0,
+        "y": -30720.0,
+        "z": -48
+      },
+      "rotation": {
+        "pitch": 0,
+        "yaw": 0.0,
+        "roll": 0
+      },
+      "scale": {
+        "x": 46.08,
+        "y": 102.4,
+        "z": 0.48
+      }
+    },
+    "mat": "Neutral",
+    "tag": null
+  },
+  {
+    "label": "KT2_Crosswalk",
+    "kind": "mesh",
+    "xf": {
+      "location": {
+        "x": 6656.0,
+        "y": -30720.0,
+        "z": -48
+      },
+      "rotation": {
+        "pitch": 0,
+        "yaw": 0.0,
+        "roll": 0
+      },
+      "scale": {
+        "x": 10.24,
+        "y": 102.4,
+        "z": 0.48
+      }
+    },
+    "mat": "Neutral",
+    "tag": null
+  },
+  {
+    "label": "KT2_FreeBuild",
+    "kind": "mesh",
+    "xf": {
+      "location": {
+        "x": 9728.0,
+        "y": -33280.0,
+        "z": -48
+      },
+      "rotation": {
+        "pitch": 0,
+        "yaw": 0.0,
+        "roll": 0
+      },
+      "scale": {
+        "x": 51.2,
+        "y": 51.2,
+        "z": 0.48
+      }
+    },
+    "mat": "Neutral",
+    "tag": null
+  },
+  {
+    "label": "KT2_Transfer",
+    "kind": "mesh",
+    "xf": {
+      "location": {
+        "x": 9728.0,
+        "y": -28160.0,
+        "z": -48
+      },
+      "rotation": {
+        "pitch": 0,
+        "yaw": 0.0,
+        "roll": 0
+      },
+      "scale": {
+        "x": 51.2,
+        "y": 51.2,
+        "z": 0.48
+      }
+    },
+    "mat": "Neutral",
+    "tag": null
+  },
+  {
+    "label": "KT2_BayStripe_0",
+    "kind": "mesh",
+    "xf": {
+      "location": {
+        "x": 3840.0,
+        "y": -35328.0,
+        "z": 1
+      },
+      "rotation": {
+        "pitch": 0,
+        "yaw": 0.0,
+        "roll": 0
+      },
+      "scale": {
+        "x": 46.08,
+        "y": 0.12,
+        "z": 0.02
+      }
+    },
+    "mat": "Build",
+    "tag": null
+  },
+  {
+    "label": "KT2_BayEnd_0",
+    "kind": "mesh",
+    "xf": {
+      "location": {
+        "x": 6133.76,
+        "y": -34048.0,
+        "z": 1
+      },
+      "rotation": {
+        "pitch": 0,
+        "yaw": 0.0,
+        "roll": 0
+      },
+      "scale": {
+        "x": 0.12,
+        "y": 25.6,
+        "z": 0.02
+      }
+    },
+    "mat": "Build",
+    "tag": null
+  },
+  {
+    "label": "KT2_BayStripe_1",
+    "kind": "mesh",
+    "xf": {
+      "location": {
+        "x": 3840.0,
+        "y": -32256.0,
+        "z": 1
+      },
+      "rotation": {
+        "pitch": 0,
+        "yaw": 0.0,
+        "roll": 0
+      },
+      "scale": {
+        "x": 46.08,
+        "y": 0.12,
+        "z": 0.02
+      }
+    },
+    "mat": "Piece",
+    "tag": null
+  },
+  {
+    "label": "KT2_BayEnd_1",
+    "kind": "mesh",
+    "xf": {
+      "location": {
+        "x": 6133.76,
+        "y": -30976.0,
+        "z": 1
+      },
+      "rotation": {
+        "pitch": 0,
+        "yaw": 0.0,
+        "roll": 0
+      },
+      "scale": {
+        "x": 0.12,
+        "y": 25.6,
+        "z": 0.02
+      }
+    },
+    "mat": "Piece",
+    "tag": null
+  },
+  {
+    "label": "KT2_BayStripe_2",
+    "kind": "mesh",
+    "xf": {
+      "location": {
+        "x": 3840.0,
+        "y": -29184.0,
+        "z": 1
+      },
+      "rotation": {
+        "pitch": 0,
+        "yaw": 0.0,
+        "roll": 0
+      },
+      "scale": {
+        "x": 46.08,
+        "y": 0.12,
+        "z": 0.02
+      }
+    },
+    "mat": "Aim",
+    "tag": null
+  },
+  {
+    "label": "KT2_BayEnd_2",
+    "kind": "mesh",
+    "xf": {
+      "location": {
+        "x": 6133.76,
+        "y": -27904.0,
+        "z": 1
+      },
+      "rotation": {
+        "pitch": 0,
+        "yaw": 0.0,
+        "roll": 0
+      },
+      "scale": {
+        "x": 0.12,
+        "y": 25.6,
+        "z": 0.02
+      }
+    },
+    "mat": "Aim",
+    "tag": null
+  },
+  {
+    "label": "KT2_Perimeter_West",
+    "kind": "mesh",
+    "xf": {
+      "location": {
+        "x": 6144.0,
+        "y": -35852.0,
+        "z": 0
+      },
+      "rotation": {
+        "pitch": 0,
+        "yaw": 0.0,
+        "roll": 0
+      },
+      "scale": {
+        "x": 122.88,
+        "y": 0.24,
+        "z": 0.96
+      }
+    },
+    "mat": "Neutral",
+    "tag": null
+  },
+  {
+    "label": "KT2_Perimeter_East",
+    "kind": "mesh",
+    "xf": {
+      "location": {
+        "x": 6144.0,
+        "y": -25588.0,
+        "z": 0
+      },
+      "rotation": {
+        "pitch": 0,
+        "yaw": 0.0,
+        "roll": 0
+      },
+      "scale": {
+        "x": 122.88,
+        "y": 0.24,
+        "z": 0.96
+      }
+    },
+    "mat": "Neutral",
+    "tag": null
+  },
+  {
+    "label": "KT2_Perimeter_Back",
+    "kind": "mesh",
+    "xf": {
+      "location": {
+        "x": 12300.0,
+        "y": -30720.0,
+        "z": 0
+      },
+      "rotation": {
+        "pitch": 0,
+        "yaw": 0.0,
+        "roll": 0
+      },
+      "scale": {
+        "x": 0.24,
+        "y": 102.4,
+        "z": 0.96
+      }
+    },
+    "mat": "Neutral",
+    "tag": null
+  },
+  {
+    "label": "KT2_GhostWall_0",
+    "kind": "ghost",
+    "xf": {
+      "location": {
+        "x": 3584.0,
+        "y": -35072.0,
+        "z": -3.0
+      },
+      "rotation": {
+        "pitch": 0.0,
+        "yaw": 90.0,
+        "roll": 0
+      },
+      "scale": {
+        "x": 5.12,
+        "y": 0.06,
+        "z": 0.06
+      }
+    },
+    "mat": "Ghost",
+    "tag": "kt_ghost_stage0_tag"
+  },
+  {
+    "label": "KT2_GhostWall_1",
+    "kind": "ghost",
+    "xf": {
+      "location": {
+        "x": 3584.0,
+        "y": -34816.0,
+        "z": 189.0
+      },
+      "rotation": {
+        "pitch": 90.0,
+        "yaw": 0.0,
+        "roll": 0
+      },
+      "scale": {
+        "x": 3.84,
+        "y": 0.06,
+        "z": 0.06
+      }
+    },
+    "mat": "Ghost",
+    "tag": "kt_ghost_stage0_tag"
+  },
+  {
+    "label": "KT2_GhostWall_2",
+    "kind": "ghost",
+    "xf": {
+      "location": {
+        "x": 3584.0,
+        "y": -35072.0,
+        "z": 381.0
+      },
+      "rotation": {
+        "pitch": 0.0,
+        "yaw": -90.0,
+        "roll": 0
+      },
+      "scale": {
+        "x": 5.12,
+        "y": 0.06,
+        "z": 0.06
+      }
+    },
+    "mat": "Ghost",
+    "tag": "kt_ghost_stage0_tag"
+  },
+  {
+    "label": "KT2_GhostWall_3",
+    "kind": "ghost",
+    "xf": {
+      "location": {
+        "x": 3584.0,
+        "y": -35328.0,
+        "z": 189.0
+      },
+      "rotation": {
+        "pitch": -90.0,
+        "yaw": 0.0,
+        "roll": 0
+      },
+      "scale": {
+        "x": 3.84,
+        "y": 0.06,
+        "z": 0.06
+      }
+    },
+    "mat": "Ghost",
+    "tag": "kt_ghost_stage0_tag"
+  },
+  {
+    "label": "KT2_GhostRamp_0",
+    "kind": "ghost",
+    "xf": {
+      "location": {
+        "x": 3328.0,
+        "y": -35328.0,
+        "z": 189.0
+      },
+      "rotation": {
+        "pitch": 36.86989764584402,
+        "yaw": 0.0,
+        "roll": 0
+      },
+      "scale": {
+        "x": 6.4,
+        "y": 0.06,
+        "z": 0.06
+      }
+    },
+    "mat": "Ghost",
+    "tag": "kt_ghost_stage1_tag"
+  },
+  {
+    "label": "KT2_GhostRamp_1",
+    "kind": "ghost",
+    "xf": {
+      "location": {
+        "x": 3584.0,
+        "y": -35072.0,
+        "z": 381.0
+      },
+      "rotation": {
+        "pitch": 0.0,
+        "yaw": 90.0,
+        "roll": 0
+      },
+      "scale": {
+        "x": 5.12,
+        "y": 0.06,
+        "z": 0.06
+      }
+    },
+    "mat": "Ghost",
+    "tag": "kt_ghost_stage1_tag"
+  },
+  {
+    "label": "KT2_GhostRamp_2",
+    "kind": "ghost",
+    "xf": {
+      "location": {
+        "x": 3328.0,
+        "y": -34816.0,
+        "z": 189.0
+      },
+      "rotation": {
+        "pitch": -36.86989764584402,
+        "yaw": 180.0,
+        "roll": 0
+      },
+      "scale": {
+        "x": 6.4,
+        "y": 0.06,
+        "z": 0.06
+      }
+    },
+    "mat": "Ghost",
+    "tag": "kt_ghost_stage1_tag"
+  },
+  {
+    "label": "KT2_GhostRamp_3",
+    "kind": "ghost",
+    "xf": {
+      "location": {
+        "x": 3072.0,
+        "y": -35072.0,
+        "z": -3.0
+      },
+      "rotation": {
+        "pitch": 0.0,
+        "yaw": -90.0,
+        "roll": 0
+      },
+      "scale": {
+        "x": 5.12,
+        "y": 0.06,
+        "z": 0.06
+      }
+    },
+    "mat": "Ghost",
+    "tag": "kt_ghost_stage1_tag"
+  },
+  {
+    "label": "KT2_GhostRampMid",
+    "kind": "ghost",
+    "xf": {
+      "location": {
+        "x": 3328.0,
+        "y": -35072.0,
+        "z": 189.0
+      },
+      "rotation": {
+        "pitch": 36.86989764584402,
+        "yaw": 0.0,
+        "roll": 0
+      },
+      "scale": {
+        "x": 6.4,
+        "y": 0.06,
+        "z": 0.06
+      }
+    },
+    "mat": "Ghost",
+    "tag": "kt_ghost_stage1_tag"
+  },
+  {
+    "label": "KT2_GhostFloor_0",
+    "kind": "ghost",
+    "xf": {
+      "location": {
+        "x": 3840.0,
+        "y": -35328.0,
+        "z": 381.0
+      },
+      "rotation": {
+        "pitch": 0.0,
+        "yaw": 0.0,
+        "roll": 0
+      },
+      "scale": {
+        "x": 5.12,
+        "y": 0.06,
+        "z": 0.06
+      }
+    },
+    "mat": "Ghost",
+    "tag": "kt_ghost_stage2_tag"
+  },
+  {
+    "label": "KT2_GhostFloor_1",
+    "kind": "ghost",
+    "xf": {
+      "location": {
+        "x": 4096.0,
+        "y": -35072.0,
+        "z": 381.0
+      },
+      "rotation": {
+        "pitch": 0.0,
+        "yaw": 90.0,
+        "roll": 0
+      },
+      "scale": {
+        "x": 5.12,
+        "y": 0.06,
+        "z": 0.06
+      }
+    },
+    "mat": "Ghost",
+    "tag": "kt_ghost_stage2_tag"
+  },
+  {
+    "label": "KT2_GhostFloor_2",
+    "kind": "ghost",
+    "xf": {
+      "location": {
+        "x": 3840.0,
+        "y": -34816.0,
+        "z": 381.0
+      },
+      "rotation": {
+        "pitch": 0.0,
+        "yaw": 180.0,
+        "roll": 0
+      },
+      "scale": {
+        "x": 5.12,
+        "y": 0.06,
+        "z": 0.06
+      }
+    },
+    "mat": "Ghost",
+    "tag": "kt_ghost_stage2_tag"
+  },
+  {
+    "label": "KT2_GhostFloor_3",
+    "kind": "ghost",
+    "xf": {
+      "location": {
+        "x": 3584.0,
+        "y": -35072.0,
+        "z": 381.0
+      },
+      "rotation": {
+        "pitch": 0.0,
+        "yaw": -90.0,
+        "roll": 0
+      },
+      "scale": {
+        "x": 5.12,
+        "y": 0.06,
+        "z": 0.06
+      }
+    },
+    "mat": "Ghost",
+    "tag": "kt_ghost_stage2_tag"
+  },
+  {
+    "label": "KT2_CopyOutline_0_0",
+    "kind": "ghost",
+    "xf": {
+      "location": {
+        "x": 3328.0,
+        "y": -34304.0,
+        "z": 0.0
+      },
+      "rotation": {
+        "pitch": 0.0,
+        "yaw": 0.0,
+        "roll": 0
+      },
+      "scale": {
+        "x": 5.12,
+        "y": 0.06,
+        "z": 0.06
+      }
+    },
+    "mat": "Ghost",
+    "tag": null
+  },
+  {
+    "label": "KT2_CopyOutline_0_1",
+    "kind": "ghost",
+    "xf": {
+      "location": {
+        "x": 3584.0,
+        "y": -34048.0,
+        "z": 0.0
+      },
+      "rotation": {
+        "pitch": 0.0,
+        "yaw": 90.0,
+        "roll": 0
+      },
+      "scale": {
+        "x": 5.12,
+        "y": 0.06,
+        "z": 0.06
+      }
+    },
+    "mat": "Ghost",
+    "tag": null
+  },
+  {
+    "label": "KT2_CopyOutline_0_2",
+    "kind": "ghost",
+    "xf": {
+      "location": {
+        "x": 3328.0,
+        "y": -33792.0,
+        "z": 0.0
+      },
+      "rotation": {
+        "pitch": 0.0,
+        "yaw": 180.0,
+        "roll": 0
+      },
+      "scale": {
+        "x": 5.12,
+        "y": 0.06,
+        "z": 0.06
+      }
+    },
+    "mat": "Ghost",
+    "tag": null
+  },
+  {
+    "label": "KT2_CopyOutline_0_3",
+    "kind": "ghost",
+    "xf": {
+      "location": {
+        "x": 3072.0,
+        "y": -34048.0,
+        "z": 0.0
+      },
+      "rotation": {
+        "pitch": 0.0,
+        "yaw": -90.0,
+        "roll": 0
+      },
+      "scale": {
+        "x": 5.12,
+        "y": 0.06,
+        "z": 0.06
+      }
+    },
+    "mat": "Ghost",
+    "tag": null
+  },
+  {
+    "label": "KT2_CopyOutline_1_0",
+    "kind": "ghost",
+    "xf": {
+      "location": {
+        "x": 3328.0,
+        "y": -33792.0,
+        "z": 0.0
+      },
+      "rotation": {
+        "pitch": 0.0,
+        "yaw": 0.0,
+        "roll": 0
+      },
+      "scale": {
+        "x": 5.12,
+        "y": 0.06,
+        "z": 0.06
+      }
+    },
+    "mat": "Ghost",
+    "tag": null
+  },
+  {
+    "label": "KT2_CopyOutline_1_1",
+    "kind": "ghost",
+    "xf": {
+      "location": {
+        "x": 3584.0,
+        "y": -33536.0,
+        "z": 0.0
+      },
+      "rotation": {
+        "pitch": 0.0,
+        "yaw": 90.0,
+        "roll": 0
+      },
+      "scale": {
+        "x": 5.12,
+        "y": 0.06,
+        "z": 0.06
+      }
+    },
+    "mat": "Ghost",
+    "tag": null
+  },
+  {
+    "label": "KT2_CopyOutline_1_2",
+    "kind": "ghost",
+    "xf": {
+      "location": {
+        "x": 3328.0,
+        "y": -33280.0,
+        "z": 0.0
+      },
+      "rotation": {
+        "pitch": 0.0,
+        "yaw": 180.0,
+        "roll": 0
+      },
+      "scale": {
+        "x": 5.12,
+        "y": 0.06,
+        "z": 0.06
+      }
+    },
+    "mat": "Ghost",
+    "tag": null
+  },
+  {
+    "label": "KT2_CopyOutline_1_3",
+    "kind": "ghost",
+    "xf": {
+      "location": {
+        "x": 3072.0,
+        "y": -33536.0,
+        "z": 0.0
+      },
+      "rotation": {
+        "pitch": 0.0,
+        "yaw": -90.0,
+        "roll": 0
+      },
+      "scale": {
+        "x": 5.12,
+        "y": 0.06,
+        "z": 0.06
+      }
+    },
+    "mat": "Ghost",
+    "tag": null
+  },
+  {
+    "label": "KT2_CopyOutline_2_0",
+    "kind": "ghost",
+    "xf": {
+      "location": {
+        "x": 3328.0,
+        "y": -33280.0,
+        "z": 0.0
+      },
+      "rotation": {
+        "pitch": 0.0,
+        "yaw": 0.0,
+        "roll": 0
+      },
+      "scale": {
+        "x": 5.12,
+        "y": 0.06,
+        "z": 0.06
+      }
+    },
+    "mat": "Ghost",
+    "tag": null
+  },
+  {
+    "label": "KT2_CopyOutline_2_1",
+    "kind": "ghost",
+    "xf": {
+      "location": {
+        "x": 3584.0,
+        "y": -33024.0,
+        "z": 0.0
+      },
+      "rotation": {
+        "pitch": 0.0,
+        "yaw": 90.0,
+        "roll": 0
+      },
+      "scale": {
+        "x": 5.12,
+        "y": 0.06,
+        "z": 0.06
+      }
+    },
+    "mat": "Ghost",
+    "tag": null
+  },
+  {
+    "label": "KT2_CopyOutline_2_2",
+    "kind": "ghost",
+    "xf": {
+      "location": {
+        "x": 3328.0,
+        "y": -32768.0,
+        "z": 0.0
+      },
+      "rotation": {
+        "pitch": 0.0,
+        "yaw": 180.0,
+        "roll": 0
+      },
+      "scale": {
+        "x": 5.12,
+        "y": 0.06,
+        "z": 0.06
+      }
+    },
+    "mat": "Ghost",
+    "tag": null
+  },
+  {
+    "label": "KT2_CopyOutline_2_3",
+    "kind": "ghost",
+    "xf": {
+      "location": {
+        "x": 3072.0,
+        "y": -33024.0,
+        "z": 0.0
+      },
+      "rotation": {
+        "pitch": 0.0,
+        "yaw": -90.0,
+        "roll": 0
+      },
+      "scale": {
+        "x": 5.12,
+        "y": 0.06,
+        "z": 0.06
+      }
+    },
+    "mat": "Ghost",
+    "tag": null
+  },
+  {
+    "label": "KT2_ReboxStart_0",
+    "kind": "ghost",
+    "xf": {
+      "location": {
+        "x": 3328.0,
+        "y": -31744.0,
+        "z": 0.0
+      },
+      "rotation": {
+        "pitch": 0.0,
+        "yaw": 0.0,
+        "roll": 0
+      },
+      "scale": {
+        "x": 5.12,
+        "y": 0.06,
+        "z": 0.06
+      }
+    },
+    "mat": "Ghost",
+    "tag": null
+  },
+  {
+    "label": "KT2_ReboxStart_1",
+    "kind": "ghost",
+    "xf": {
+      "location": {
+        "x": 3584.0,
+        "y": -31488.0,
+        "z": 0.0
+      },
+      "rotation": {
+        "pitch": 0.0,
+        "yaw": 90.0,
+        "roll": 0
+      },
+      "scale": {
+        "x": 5.12,
+        "y": 0.06,
+        "z": 0.06
+      }
+    },
+    "mat": "Ghost",
+    "tag": null
+  },
+  {
+    "label": "KT2_ReboxStart_2",
+    "kind": "ghost",
+    "xf": {
+      "location": {
+        "x": 3328.0,
+        "y": -31232.0,
+        "z": 0.0
+      },
+      "rotation": {
+        "pitch": 0.0,
+        "yaw": 180.0,
+        "roll": 0
+      },
+      "scale": {
+        "x": 5.12,
+        "y": 0.06,
+        "z": 0.06
+      }
+    },
+    "mat": "Ghost",
+    "tag": null
+  },
+  {
+    "label": "KT2_ReboxStart_3",
+    "kind": "ghost",
+    "xf": {
+      "location": {
+        "x": 3072.0,
+        "y": -31488.0,
+        "z": 0.0
+      },
+      "rotation": {
+        "pitch": 0.0,
+        "yaw": -90.0,
+        "roll": 0
+      },
+      "scale": {
+        "x": 5.12,
+        "y": 0.06,
+        "z": 0.06
+      }
+    },
+    "mat": "Ghost",
+    "tag": null
+  },
+  {
+    "label": "KT2_ReboxExit_0",
+    "kind": "ghost",
+    "xf": {
+      "location": {
+        "x": 3328.0,
+        "y": -31232.0,
+        "z": 0.0
+      },
+      "rotation": {
+        "pitch": 0.0,
+        "yaw": 0.0,
+        "roll": 0
+      },
+      "scale": {
+        "x": 5.12,
+        "y": 0.06,
+        "z": 0.06
+      }
+    },
+    "mat": "Ghost",
+    "tag": null
+  },
+  {
+    "label": "KT2_ReboxExit_1",
+    "kind": "ghost",
+    "xf": {
+      "location": {
+        "x": 3584.0,
+        "y": -30976.0,
+        "z": 0.0
+      },
+      "rotation": {
+        "pitch": 0.0,
+        "yaw": 90.0,
+        "roll": 0
+      },
+      "scale": {
+        "x": 5.12,
+        "y": 0.06,
+        "z": 0.06
+      }
+    },
+    "mat": "Ghost",
+    "tag": null
+  },
+  {
+    "label": "KT2_ReboxExit_2",
+    "kind": "ghost",
+    "xf": {
+      "location": {
+        "x": 3328.0,
+        "y": -30720.0,
+        "z": 0.0
+      },
+      "rotation": {
+        "pitch": 0.0,
+        "yaw": 180.0,
+        "roll": 0
+      },
+      "scale": {
+        "x": 5.12,
+        "y": 0.06,
+        "z": 0.06
+      }
+    },
+    "mat": "Ghost",
+    "tag": null
+  },
+  {
+    "label": "KT2_ReboxExit_3",
+    "kind": "ghost",
+    "xf": {
+      "location": {
+        "x": 3072.0,
+        "y": -30976.0,
+        "z": 0.0
+      },
+      "rotation": {
+        "pitch": 0.0,
+        "yaw": -90.0,
+        "roll": 0
+      },
+      "scale": {
+        "x": 5.12,
+        "y": 0.06,
+        "z": 0.06
+      }
+    },
+    "mat": "Ghost",
+    "tag": null
+  },
+  {
+    "label": "KT2_ReboxThreat_0",
+    "kind": "ghost",
+    "xf": {
+      "location": {
+        "x": 3584.0,
+        "y": -31488.0,
+        "z": -3.0
+      },
+      "rotation": {
+        "pitch": 0.0,
+        "yaw": 90.0,
+        "roll": 0
+      },
+      "scale": {
+        "x": 5.12,
+        "y": 0.06,
+        "z": 0.06
+      }
+    },
+    "mat": "Ghost",
+    "tag": null
+  },
+  {
+    "label": "KT2_ReboxThreat_1",
+    "kind": "ghost",
+    "xf": {
+      "location": {
+        "x": 3584.0,
+        "y": -31232.0,
+        "z": 189.0
+      },
+      "rotation": {
+        "pitch": 90.0,
+        "yaw": 0.0,
+        "roll": 0
+      },
+      "scale": {
+        "x": 3.84,
+        "y": 0.06,
+        "z": 0.06
+      }
+    },
+    "mat": "Ghost",
+    "tag": null
+  },
+  {
+    "label": "KT2_ReboxThreat_2",
+    "kind": "ghost",
+    "xf": {
+      "location": {
+        "x": 3584.0,
+        "y": -31488.0,
+        "z": 381.0
+      },
+      "rotation": {
+        "pitch": 0.0,
+        "yaw": -90.0,
+        "roll": 0
+      },
+      "scale": {
+        "x": 5.12,
+        "y": 0.06,
+        "z": 0.06
+      }
+    },
+    "mat": "Ghost",
+    "tag": null
+  },
+  {
+    "label": "KT2_ReboxThreat_3",
+    "kind": "ghost",
+    "xf": {
+      "location": {
+        "x": 3584.0,
+        "y": -31744.0,
+        "z": 189.0
+      },
+      "rotation": {
+        "pitch": -90.0,
+        "yaw": 0.0,
+        "roll": 0
+      },
+      "scale": {
+        "x": 3.84,
+        "y": 0.06,
+        "z": 0.06
+      }
+    },
+    "mat": "Ghost",
+    "tag": null
+  },
+  {
+    "label": "KT2_ReboxExitThreat_0",
+    "kind": "ghost",
+    "xf": {
+      "location": {
+        "x": 3584.0,
+        "y": -30976.0,
+        "z": -3.0
+      },
+      "rotation": {
+        "pitch": 0.0,
+        "yaw": 90.0,
+        "roll": 0
+      },
+      "scale": {
+        "x": 5.12,
+        "y": 0.06,
+        "z": 0.06
+      }
+    },
+    "mat": "Ghost",
+    "tag": null
+  },
+  {
+    "label": "KT2_ReboxExitThreat_1",
+    "kind": "ghost",
+    "xf": {
+      "location": {
+        "x": 3584.0,
+        "y": -30720.0,
+        "z": 189.0
+      },
+      "rotation": {
+        "pitch": 90.0,
+        "yaw": 0.0,
+        "roll": 0
+      },
+      "scale": {
+        "x": 3.84,
+        "y": 0.06,
+        "z": 0.06
+      }
+    },
+    "mat": "Ghost",
+    "tag": null
+  },
+  {
+    "label": "KT2_ReboxExitThreat_2",
+    "kind": "ghost",
+    "xf": {
+      "location": {
+        "x": 3584.0,
+        "y": -30976.0,
+        "z": 381.0
+      },
+      "rotation": {
+        "pitch": 0.0,
+        "yaw": -90.0,
+        "roll": 0
+      },
+      "scale": {
+        "x": 5.12,
+        "y": 0.06,
+        "z": 0.06
+      }
+    },
+    "mat": "Ghost",
+    "tag": null
+  },
+  {
+    "label": "KT2_ReboxExitThreat_3",
+    "kind": "ghost",
+    "xf": {
+      "location": {
+        "x": 3584.0,
+        "y": -31232.0,
+        "z": 189.0
+      },
+      "rotation": {
+        "pitch": -90.0,
+        "yaw": 0.0,
+        "roll": 0
+      },
+      "scale": {
+        "x": 3.84,
+        "y": 0.06,
+        "z": 0.06
+      }
+    },
+    "mat": "Ghost",
+    "tag": null
+  },
+  {
+    "label": "KT2_PeekCover",
+    "kind": "mesh",
+    "xf": {
+      "location": {
+        "x": 3072.0,
+        "y": -28672.0,
+        "z": 0
+      },
+      "rotation": {
+        "pitch": 0,
+        "yaw": 0.0,
+        "roll": 0
+      },
+      "scale": {
+        "x": 0.24,
+        "y": 5.12,
+        "z": 3.84
+      }
+    },
+    "mat": "Neutral",
+    "tag": null
+  },
+  {
+    "label": "KT2_PeekTarget_0",
+    "kind": "device",
+    "asset": "/CreativeCoreDevices/SetupAssets/PID_Device_TargetDummy.PID_Device_TargetDummy",
+    "xf": {
+      "location": {
+        "x": 3584.0,
+        "y": -28083.2,
+        "z": 0
+      },
+      "rotation": {
+        "pitch": 0,
+        "yaw": 180,
+        "roll": 0
+      },
+      "scale": {
+        "x": 1.0,
+        "y": 1.0,
+        "z": 1.0
+      }
+    },
+    "props": {
+      "infiniteHealth": true
+    }
+  },
+  {
+    "label": "KT2_PeekTarget_1",
+    "kind": "device",
+    "asset": "/CreativeCoreDevices/SetupAssets/PID_Device_TargetDummy.PID_Device_TargetDummy",
+    "xf": {
+      "location": {
+        "x": 4096.0,
+        "y": -28083.2,
+        "z": 0
+      },
+      "rotation": {
+        "pitch": 0,
+        "yaw": 180,
+        "roll": 0
+      },
+      "scale": {
+        "x": 1.0,
+        "y": 1.0,
+        "z": 1.0
+      }
+    },
+    "props": {
+      "infiniteHealth": true
+    }
+  },
+  {
+    "label": "KT2_FreeGridY_0",
+    "kind": "mesh",
+    "xf": {
+      "location": {
+        "x": 9728.0,
+        "y": -35840.0,
+        "z": 1
+      },
+      "rotation": {
+        "pitch": 0,
+        "yaw": 0.0,
+        "roll": 0
+      },
+      "scale": {
+        "x": 51.2,
+        "y": 0.03,
+        "z": 0.02
+      }
+    },
+    "mat": "Dim",
+    "tag": null
+  },
+  {
+    "label": "KT2_FreeGridY_1",
+    "kind": "mesh",
+    "xf": {
+      "location": {
+        "x": 9728.0,
+        "y": -35328.0,
+        "z": 1
+      },
+      "rotation": {
+        "pitch": 0,
+        "yaw": 0.0,
+        "roll": 0
+      },
+      "scale": {
+        "x": 51.2,
+        "y": 0.03,
+        "z": 0.02
+      }
+    },
+    "mat": "Dim",
+    "tag": null
+  },
+  {
+    "label": "KT2_FreeGridY_2",
+    "kind": "mesh",
+    "xf": {
+      "location": {
+        "x": 9728.0,
+        "y": -34816.0,
+        "z": 1
+      },
+      "rotation": {
+        "pitch": 0,
+        "yaw": 0.0,
+        "roll": 0
+      },
+      "scale": {
+        "x": 51.2,
+        "y": 0.03,
+        "z": 0.02
+      }
+    },
+    "mat": "Dim",
+    "tag": null
+  },
+  {
+    "label": "KT2_FreeGridY_3",
+    "kind": "mesh",
+    "xf": {
+      "location": {
+        "x": 9728.0,
+        "y": -34304.0,
+        "z": 1
+      },
+      "rotation": {
+        "pitch": 0,
+        "yaw": 0.0,
+        "roll": 0
+      },
+      "scale": {
+        "x": 51.2,
+        "y": 0.03,
+        "z": 0.02
+      }
+    },
+    "mat": "Dim",
+    "tag": null
+  },
+  {
+    "label": "KT2_FreeGridY_4",
+    "kind": "mesh",
+    "xf": {
+      "location": {
+        "x": 9728.0,
+        "y": -33792.0,
+        "z": 1
+      },
+      "rotation": {
+        "pitch": 0,
+        "yaw": 0.0,
+        "roll": 0
+      },
+      "scale": {
+        "x": 51.2,
+        "y": 0.03,
+        "z": 0.02
+      }
+    },
+    "mat": "Dim",
+    "tag": null
+  },
+  {
+    "label": "KT2_FreeGridY_5",
+    "kind": "mesh",
+    "xf": {
+      "location": {
+        "x": 9728.0,
+        "y": -33280.0,
+        "z": 1
+      },
+      "rotation": {
+        "pitch": 0,
+        "yaw": 0.0,
+        "roll": 0
+      },
+      "scale": {
+        "x": 51.2,
+        "y": 0.03,
+        "z": 0.02
+      }
+    },
+    "mat": "Dim",
+    "tag": null
+  },
+  {
+    "label": "KT2_FreeGridY_6",
+    "kind": "mesh",
+    "xf": {
+      "location": {
+        "x": 9728.0,
+        "y": -32768.0,
+        "z": 1
+      },
+      "rotation": {
+        "pitch": 0,
+        "yaw": 0.0,
+        "roll": 0
+      },
+      "scale": {
+        "x": 51.2,
+        "y": 0.03,
+        "z": 0.02
+      }
+    },
+    "mat": "Dim",
+    "tag": null
+  },
+  {
+    "label": "KT2_FreeGridY_7",
+    "kind": "mesh",
+    "xf": {
+      "location": {
+        "x": 9728.0,
+        "y": -32256.0,
+        "z": 1
+      },
+      "rotation": {
+        "pitch": 0,
+        "yaw": 0.0,
+        "roll": 0
+      },
+      "scale": {
+        "x": 51.2,
+        "y": 0.03,
+        "z": 0.02
+      }
+    },
+    "mat": "Dim",
+    "tag": null
+  },
+  {
+    "label": "KT2_FreeGridY_8",
+    "kind": "mesh",
+    "xf": {
+      "location": {
+        "x": 9728.0,
+        "y": -31744.0,
+        "z": 1
+      },
+      "rotation": {
+        "pitch": 0,
+        "yaw": 0.0,
+        "roll": 0
+      },
+      "scale": {
+        "x": 51.2,
+        "y": 0.03,
+        "z": 0.02
+      }
+    },
+    "mat": "Dim",
+    "tag": null
+  },
+  {
+    "label": "KT2_FreeGridY_9",
+    "kind": "mesh",
+    "xf": {
+      "location": {
+        "x": 9728.0,
+        "y": -31232.0,
+        "z": 1
+      },
+      "rotation": {
+        "pitch": 0,
+        "yaw": 0.0,
+        "roll": 0
+      },
+      "scale": {
+        "x": 51.2,
+        "y": 0.03,
+        "z": 0.02
+      }
+    },
+    "mat": "Dim",
+    "tag": null
+  },
+  {
+    "label": "KT2_FreeGridY_10",
+    "kind": "mesh",
+    "xf": {
+      "location": {
+        "x": 9728.0,
+        "y": -30720.0,
+        "z": 1
+      },
+      "rotation": {
+        "pitch": 0,
+        "yaw": 0.0,
+        "roll": 0
+      },
+      "scale": {
+        "x": 51.2,
+        "y": 0.03,
+        "z": 0.02
+      }
+    },
+    "mat": "Dim",
+    "tag": null
+  },
+  {
+    "label": "KT2_FreeGridX_14",
+    "kind": "mesh",
+    "xf": {
+      "location": {
+        "x": 7168.0,
+        "y": -33280.0,
+        "z": 1
+      },
+      "rotation": {
+        "pitch": 0,
+        "yaw": 0.0,
+        "roll": 0
+      },
+      "scale": {
+        "x": 0.03,
+        "y": 51.2,
+        "z": 0.02
+      }
+    },
+    "mat": "Dim",
+    "tag": null
+  },
+  {
+    "label": "KT2_FreeGridX_15",
+    "kind": "mesh",
+    "xf": {
+      "location": {
+        "x": 7680.0,
+        "y": -33280.0,
+        "z": 1
+      },
+      "rotation": {
+        "pitch": 0,
+        "yaw": 0.0,
+        "roll": 0
+      },
+      "scale": {
+        "x": 0.03,
+        "y": 51.2,
+        "z": 0.02
+      }
+    },
+    "mat": "Dim",
+    "tag": null
+  },
+  {
+    "label": "KT2_FreeGridX_16",
+    "kind": "mesh",
+    "xf": {
+      "location": {
+        "x": 8192.0,
+        "y": -33280.0,
+        "z": 1
+      },
+      "rotation": {
+        "pitch": 0,
+        "yaw": 0.0,
+        "roll": 0
+      },
+      "scale": {
+        "x": 0.03,
+        "y": 51.2,
+        "z": 0.02
+      }
+    },
+    "mat": "Dim",
+    "tag": null
+  },
+  {
+    "label": "KT2_FreeGridX_17",
+    "kind": "mesh",
+    "xf": {
+      "location": {
+        "x": 8704.0,
+        "y": -33280.0,
+        "z": 1
+      },
+      "rotation": {
+        "pitch": 0,
+        "yaw": 0.0,
+        "roll": 0
+      },
+      "scale": {
+        "x": 0.03,
+        "y": 51.2,
+        "z": 0.02
+      }
+    },
+    "mat": "Dim",
+    "tag": null
+  },
+  {
+    "label": "KT2_FreeGridX_18",
+    "kind": "mesh",
+    "xf": {
+      "location": {
+        "x": 9216.0,
+        "y": -33280.0,
+        "z": 1
+      },
+      "rotation": {
+        "pitch": 0,
+        "yaw": 0.0,
+        "roll": 0
+      },
+      "scale": {
+        "x": 0.03,
+        "y": 51.2,
+        "z": 0.02
+      }
+    },
+    "mat": "Dim",
+    "tag": null
+  },
+  {
+    "label": "KT2_FreeGridX_19",
+    "kind": "mesh",
+    "xf": {
+      "location": {
+        "x": 9728.0,
+        "y": -33280.0,
+        "z": 1
+      },
+      "rotation": {
+        "pitch": 0,
+        "yaw": 0.0,
+        "roll": 0
+      },
+      "scale": {
+        "x": 0.03,
+        "y": 51.2,
+        "z": 0.02
+      }
+    },
+    "mat": "Dim",
+    "tag": null
+  },
+  {
+    "label": "KT2_FreeGridX_20",
+    "kind": "mesh",
+    "xf": {
+      "location": {
+        "x": 10240.0,
+        "y": -33280.0,
+        "z": 1
+      },
+      "rotation": {
+        "pitch": 0,
+        "yaw": 0.0,
+        "roll": 0
+      },
+      "scale": {
+        "x": 0.03,
+        "y": 51.2,
+        "z": 0.02
+      }
+    },
+    "mat": "Dim",
+    "tag": null
+  },
+  {
+    "label": "KT2_FreeGridX_21",
+    "kind": "mesh",
+    "xf": {
+      "location": {
+        "x": 10752.0,
+        "y": -33280.0,
+        "z": 1
+      },
+      "rotation": {
+        "pitch": 0,
+        "yaw": 0.0,
+        "roll": 0
+      },
+      "scale": {
+        "x": 0.03,
+        "y": 51.2,
+        "z": 0.02
+      }
+    },
+    "mat": "Dim",
+    "tag": null
+  },
+  {
+    "label": "KT2_FreeGridX_22",
+    "kind": "mesh",
+    "xf": {
+      "location": {
+        "x": 11264.0,
+        "y": -33280.0,
+        "z": 1
+      },
+      "rotation": {
+        "pitch": 0,
+        "yaw": 0.0,
+        "roll": 0
+      },
+      "scale": {
+        "x": 0.03,
+        "y": 51.2,
+        "z": 0.02
+      }
+    },
+    "mat": "Dim",
+    "tag": null
+  },
+  {
+    "label": "KT2_FreeGridX_23",
+    "kind": "mesh",
+    "xf": {
+      "location": {
+        "x": 11776.0,
+        "y": -33280.0,
+        "z": 1
+      },
+      "rotation": {
+        "pitch": 0,
+        "yaw": 0.0,
+        "roll": 0
+      },
+      "scale": {
+        "x": 0.03,
+        "y": 51.2,
+        "z": 0.02
+      }
+    },
+    "mat": "Dim",
+    "tag": null
+  },
+  {
+    "label": "KT2_FreeGridX_24",
+    "kind": "mesh",
+    "xf": {
+      "location": {
+        "x": 12288.0,
+        "y": -33280.0,
+        "z": 1
+      },
+      "rotation": {
+        "pitch": 0,
+        "yaw": 0.0,
+        "roll": 0
+      },
+      "scale": {
+        "x": 0.03,
+        "y": 51.2,
+        "z": 0.02
+      }
+    },
+    "mat": "Dim",
+    "tag": null
+  },
+  {
+    "label": "KT2_TransferCover_0",
+    "kind": "mesh",
+    "xf": {
+      "location": {
+        "x": 8192.0,
+        "y": -29184.0,
+        "z": 0
+      },
+      "rotation": {
+        "pitch": 0,
+        "yaw": 0.0,
+        "roll": 0
+      },
+      "scale": {
+        "x": 0.24,
+        "y": 5.12,
+        "z": 3.84
+      }
+    },
+    "mat": "Neutral",
+    "tag": null
+  },
+  {
+    "label": "KT2_TransferCover_1",
+    "kind": "mesh",
+    "xf": {
+      "location": {
+        "x": 9728.0,
+        "y": -28160.0,
+        "z": 0
+      },
+      "rotation": {
+        "pitch": 0,
+        "yaw": 0.0,
+        "roll": 0
+      },
+      "scale": {
+        "x": 0.24,
+        "y": 5.12,
+        "z": 3.84
+      }
+    },
+    "mat": "Neutral",
+    "tag": null
+  },
+  {
+    "label": "KT2_TransferCover_2",
+    "kind": "mesh",
+    "xf": {
+      "location": {
+        "x": 11264.0,
+        "y": -29184.0,
+        "z": 0
+      },
+      "rotation": {
+        "pitch": 0,
+        "yaw": 0.0,
+        "roll": 0
+      },
+      "scale": {
+        "x": 0.24,
+        "y": 5.12,
+        "z": 3.84
+      }
+    },
+    "mat": "Neutral",
+    "tag": null
+  },
+  {
+    "label": "KT2_TransferCover_3",
+    "kind": "mesh",
+    "xf": {
+      "location": {
+        "x": 8192.0,
+        "y": -27136.0,
+        "z": 0
+      },
+      "rotation": {
+        "pitch": 0,
+        "yaw": 0.0,
+        "roll": 0
+      },
+      "scale": {
+        "x": 0.24,
+        "y": 5.12,
+        "z": 3.84
+      }
+    },
+    "mat": "Neutral",
+    "tag": null
+  },
+  {
+    "label": "KT2_Build",
+    "kind": "device",
+    "asset": "/CreativeCoreDevices/SetupAssets/PID_Device_Billboard.PID_Device_Billboard",
+    "xf": {
+      "location": {
+        "x": 5120.0,
+        "y": -34304.0,
+        "z": 320
+      },
+      "rotation": {
+        "pitch": 0,
+        "yaw": -90,
+        "roll": 0
+      },
+      "scale": {
+        "x": 2,
+        "y": 2,
+        "z": 2
+      }
+    },
+    "props": {
+      "text": "01 BUILD ACCURACY",
+      "textSize": 18,
+      "showBorder": false,
+      "textJustification": "Center",
+      "textColor": {
+        "r": 1,
+        "g": 1,
+        "b": 1,
+        "a": 1
+      },
+      "backgroundColor": {
+        "r": 0.008,
+        "g": 0.012,
+        "b": 0.02,
+        "a": 1
+      }
+    }
+  },
+  {
+    "label": "KT2_Rebox",
+    "kind": "device",
+    "asset": "/CreativeCoreDevices/SetupAssets/PID_Device_Billboard.PID_Device_Billboard",
+    "xf": {
+      "location": {
+        "x": 5120.0,
+        "y": -31232.0,
+        "z": 320
+      },
+      "rotation": {
+        "pitch": 0,
+        "yaw": -90,
+        "roll": 0
+      },
+      "scale": {
+        "x": 2,
+        "y": 2,
+        "z": 2
+      }
+    },
+    "props": {
+      "text": "02 REBOX AND AWARENESS",
+      "textSize": 18,
+      "showBorder": false,
+      "textJustification": "Center",
+      "textColor": {
+        "r": 1,
+        "g": 1,
+        "b": 1,
+        "a": 1
+      },
+      "backgroundColor": {
+        "r": 0.008,
+        "g": 0.012,
+        "b": 0.02,
+        "a": 1
+      }
+    }
+  },
+  {
+    "label": "KT2_Peek",
+    "kind": "device",
+    "asset": "/CreativeCoreDevices/SetupAssets/PID_Device_Billboard.PID_Device_Billboard",
+    "xf": {
+      "location": {
+        "x": 5120.0,
+        "y": -28160.0,
+        "z": 320
+      },
+      "rotation": {
+        "pitch": 0,
+        "yaw": -90,
+        "roll": 0
+      },
+      "scale": {
+        "x": 2,
+        "y": 2,
+        "z": 2
+      }
+    },
+    "props": {
+      "text": "03 CROSSHAIR AND PEEK",
+      "textSize": 18,
+      "showBorder": false,
+      "textJustification": "Center",
+      "textColor": {
+        "r": 1,
+        "g": 1,
+        "b": 1,
+        "a": 1
+      },
+      "backgroundColor": {
+        "r": 0.008,
+        "g": 0.012,
+        "b": 0.02,
+        "a": 1
+      }
+    }
+  },
+  {
+    "label": "KT2_Free",
+    "kind": "device",
+    "asset": "/CreativeCoreDevices/SetupAssets/PID_Device_Billboard.PID_Device_Billboard",
+    "xf": {
+      "location": {
+        "x": 11776.0,
+        "y": -33280.0,
+        "z": 650
+      },
+      "rotation": {
+        "pitch": 0,
+        "yaw": -90,
+        "roll": 0
+      },
+      "scale": {
+        "x": 3,
+        "y": 3,
+        "z": 3
+      }
+    },
+    "props": {
+      "text": "04 FREE BUILD",
+      "textSize": 18,
+      "showBorder": false,
+      "textJustification": "Center",
+      "textColor": {
+        "r": 1,
+        "g": 1,
+        "b": 1,
+        "a": 1
+      },
+      "backgroundColor": {
+        "r": 0.008,
+        "g": 0.012,
+        "b": 0.02,
+        "a": 1
+      }
+    }
+  },
+  {
+    "label": "KT2_SignTransfer",
+    "kind": "device",
+    "asset": "/CreativeCoreDevices/SetupAssets/PID_Device_Billboard.PID_Device_Billboard",
+    "xf": {
+      "location": {
+        "x": 11776.0,
+        "y": -28160.0,
+        "z": 650
+      },
+      "rotation": {
+        "pitch": 0,
+        "yaw": -90,
+        "roll": 0
+      },
+      "scale": {
+        "x": 3,
+        "y": 3,
+        "z": 3
+      }
+    },
+    "props": {
+      "text": "TRANSFER\nMove between cover",
+      "textSize": 18,
+      "showBorder": false,
+      "textJustification": "Center",
+      "textColor": {
+        "r": 1,
+        "g": 1,
+        "b": 1,
+        "a": 1
+      },
+      "backgroundColor": {
+        "r": 0.008,
+        "g": 0.012,
+        "b": 0.02,
+        "a": 1
+      }
+    }
+  },
+  {
+    "label": "KT2_Welcome",
+    "kind": "device",
+    "asset": "/CreativeCoreDevices/SetupAssets/PID_Device_Billboard.PID_Device_Billboard",
+    "xf": {
+      "location": {
+        "x": 1024.0,
+        "y": -30720.0,
+        "z": 340
+      },
+      "rotation": {
+        "pitch": 0,
+        "yaw": -90,
+        "roll": 0
+      },
+      "scale": {
+        "x": 2.5,
+        "y": 2.5,
+        "z": 2.5
+      }
+    },
+    "props": {
+      "text": "TRAINING COURT\n01 Build  >  02 Re-box  >  03 Peek",
+      "textSize": 18,
+      "showBorder": false,
+      "textJustification": "Center",
+      "textColor": {
+        "r": 1,
+        "g": 1,
+        "b": 1,
+        "a": 1
+      },
+      "backgroundColor": {
+        "r": 0.008,
+        "g": 0.012,
+        "b": 0.02,
+        "a": 1
+      }
+    }
+  },
+  {
+    "label": "KT2_Return",
+    "kind": "device",
+    "asset": "/CreativeCoreDevices/SetupAssets/PID_Device_Billboard.PID_Device_Billboard",
+    "xf": {
+      "location": {
+        "x": 512.0,
+        "y": -35328.0,
+        "z": 220
+      },
+      "rotation": {
+        "pitch": 0,
+        "yaw": -90,
+        "roll": 0
+      },
+      "scale": {
+        "x": 1.2,
+        "y": 1.2,
+        "z": 1.2
+      }
+    },
+    "props": {
+      "text": "HUB",
+      "textSize": 18,
+      "showBorder": false,
+      "textJustification": "Center",
+      "textColor": {
+        "r": 1,
+        "g": 1,
+        "b": 1,
+        "a": 1
+      },
+      "backgroundColor": {
+        "r": 0.008,
+        "g": 0.012,
+        "b": 0.02,
+        "a": 1
+      }
+    }
+  },
+  {
+    "label": "KT2_Instruction_build",
+    "kind": "device",
+    "asset": "/CreativeCoreDevices/SetupAssets/PID_Device_Billboard.PID_Device_Billboard",
+    "xf": {
+      "location": {
+        "x": 1843.2,
+        "y": -34048.0,
+        "z": 355
+      },
+      "rotation": {
+        "pitch": 0,
+        "yaw": -90,
+        "roll": 0
+      },
+      "scale": {
+        "x": 2.1,
+        "y": 2.1,
+        "z": 2.1
+      }
+    },
+    "props": {
+      "text": "Copy the ghost pieces. Check each\nintended cell and orientation, then\ncompare your placements with the guide.",
+      "textSize": 8,
+      "showBorder": false,
+      "textJustification": "Center",
+      "textColor": {
+        "r": 1,
+        "g": 1,
+        "b": 1,
+        "a": 1
+      },
+      "backgroundColor": {
+        "r": 0.008,
+        "g": 0.012,
+        "b": 0.02,
+        "a": 1
+      }
+    }
+  },
+  {
+    "label": "KT2_Instruction_rebox",
+    "kind": "device",
+    "asset": "/CreativeCoreDevices/SetupAssets/PID_Device_Billboard.PID_Device_Billboard",
+    "xf": {
+      "location": {
+        "x": 1843.2,
+        "y": -30976.0,
+        "z": 355
+      },
+      "rotation": {
+        "pitch": 0,
+        "yaw": -90,
+        "roll": 0
+      },
+      "scale": {
+        "x": 2.1,
+        "y": 2.1,
+        "z": 2.1
+      }
+    },
+    "props": {
+      "text": "Choose a threat direction. Cover it as\nyou move into the next cell, then check\nthe sides and your escape route.",
+      "textSize": 8,
+      "showBorder": false,
+      "textJustification": "Center",
+      "textColor": {
+        "r": 1,
+        "g": 1,
+        "b": 1,
+        "a": 1
+      },
+      "backgroundColor": {
+        "r": 0.008,
+        "g": 0.012,
+        "b": 0.02,
+        "a": 1
+      }
+    }
+  },
+  {
+    "label": "KT2_Instruction_peek",
+    "kind": "device",
+    "asset": "/CreativeCoreDevices/SetupAssets/PID_Device_Billboard.PID_Device_Billboard",
+    "xf": {
+      "location": {
+        "x": 1843.2,
+        "y": -27904.0,
+        "z": 355
+      },
+      "rotation": {
+        "pitch": 0,
+        "yaw": -90,
+        "roll": 0
+      },
+      "scale": {
+        "x": 2.1,
+        "y": 2.1,
+        "z": 2.1
+      }
+    },
+    "props": {
+      "text": "Start behind cover with your crosshair\nat target height. Open a right-hand\nangle, shoot, then return to cover.",
+      "textSize": 8,
+      "showBorder": false,
+      "textJustification": "Center",
+      "textColor": {
+        "r": 1,
+        "g": 1,
+        "b": 1,
+        "a": 1
+      },
+      "backgroundColor": {
+        "r": 0.008,
+        "g": 0.012,
+        "b": 0.02,
+        "a": 1
+      }
+    }
+  },
+  {
+    "label": "KT2_ResetBuffer",
+    "kind": "device",
+    "asset": "/CreativeCoreDevices/SetupAssets/PID_Device_Billboard.PID_Device_Billboard",
+    "xf": {
+      "location": {
+        "x": 7168.0,
+        "y": -29952.0,
+        "z": 230
+      },
+      "rotation": {
+        "pitch": 0,
+        "yaw": -90,
+        "roll": 0
+      },
+      "scale": {
+        "x": 1.2,
+        "y": 1.2,
+        "z": 1.2
+      }
+    },
+    "props": {
+      "text": "KEEP CLEAR\nFree-build reset buffer",
+      "textSize": 18,
+      "showBorder": false,
+      "textJustification": "Center",
+      "textColor": {
+        "r": 1,
+        "g": 1,
+        "b": 1,
+        "a": 1
+      },
+      "backgroundColor": {
+        "r": 0.008,
+        "g": 0.012,
+        "b": 0.02,
+        "a": 1
+      }
+    }
+  },
+  {
+    "label": "KT2_GuideButton_watch",
+    "kind": "device",
+    "asset": "/CreativeCoreDevices/SetupAssets/PID_Device_Button.PID_Device_Button",
+    "xf": {
+      "location": {
+        "x": 2048.0,
+        "y": -35430.4,
+        "z": 90
+      },
+      "rotation": {
+        "pitch": 0,
+        "yaw": 180,
+        "roll": 0
+      },
+      "scale": {
+        "x": 1.0,
+        "y": 1.0,
+        "z": 1.0
+      }
+    },
+    "props": {},
+    "tag": "kt_ghost_watch_tag"
+  },
+  {
+    "label": "KT2_ButtonLabel_watch",
+    "kind": "device",
+    "asset": "/CreativeCoreDevices/SetupAssets/PID_Device_Billboard.PID_Device_Billboard",
+    "xf": {
+      "location": {
+        "x": 2201.6,
+        "y": -35430.4,
+        "z": 155
+      },
+      "rotation": {
+        "pitch": 0,
+        "yaw": -90,
+        "roll": 0
+      },
+      "scale": {
+        "x": 0.55,
+        "y": 0.55,
+        "z": 0.55
+      }
+    },
+    "props": {
+      "text": "WATCH",
+      "textSize": 18,
+      "showBorder": false,
+      "textJustification": "Center",
+      "textColor": {
+        "r": 1,
+        "g": 1,
+        "b": 1,
+        "a": 1
+      },
+      "backgroundColor": {
+        "r": 0.008,
+        "g": 0.012,
+        "b": 0.02,
+        "a": 1
+      }
+    }
+  },
+  {
+    "label": "KT2_GuideButton_copy",
+    "kind": "device",
+    "asset": "/CreativeCoreDevices/SetupAssets/PID_Device_Button.PID_Device_Button",
+    "xf": {
+      "location": {
+        "x": 2048.0,
+        "y": -35072.0,
+        "z": 90
+      },
+      "rotation": {
+        "pitch": 0,
+        "yaw": 180,
+        "roll": 0
+      },
+      "scale": {
+        "x": 1.0,
+        "y": 1.0,
+        "z": 1.0
+      }
+    },
+    "props": {},
+    "tag": "kt_ghost_copy_tag"
+  },
+  {
+    "label": "KT2_ButtonLabel_copy",
+    "kind": "device",
+    "asset": "/CreativeCoreDevices/SetupAssets/PID_Device_Billboard.PID_Device_Billboard",
+    "xf": {
+      "location": {
+        "x": 2201.6,
+        "y": -35072.0,
+        "z": 155
+      },
+      "rotation": {
+        "pitch": 0,
+        "yaw": -90,
+        "roll": 0
+      },
+      "scale": {
+        "x": 0.55,
+        "y": 0.55,
+        "z": 0.55
+      }
+    },
+    "props": {
+      "text": "COPY",
+      "textSize": 18,
+      "showBorder": false,
+      "textJustification": "Center",
+      "textColor": {
+        "r": 1,
+        "g": 1,
+        "b": 1,
+        "a": 1
+      },
+      "backgroundColor": {
+        "r": 0.008,
+        "g": 0.012,
+        "b": 0.02,
+        "a": 1
+      }
+    }
+  },
+  {
+    "label": "KT2_GuideButton_recall",
+    "kind": "device",
+    "asset": "/CreativeCoreDevices/SetupAssets/PID_Device_Button.PID_Device_Button",
+    "xf": {
+      "location": {
+        "x": 2048.0,
+        "y": -34713.6,
+        "z": 90
+      },
+      "rotation": {
+        "pitch": 0,
+        "yaw": 180,
+        "roll": 0
+      },
+      "scale": {
+        "x": 1.0,
+        "y": 1.0,
+        "z": 1.0
+      }
+    },
+    "props": {},
+    "tag": "kt_ghost_recall_tag"
+  },
+  {
+    "label": "KT2_ButtonLabel_recall",
+    "kind": "device",
+    "asset": "/CreativeCoreDevices/SetupAssets/PID_Device_Billboard.PID_Device_Billboard",
+    "xf": {
+      "location": {
+        "x": 2201.6,
+        "y": -34713.6,
+        "z": 155
+      },
+      "rotation": {
+        "pitch": 0,
+        "yaw": -90,
+        "roll": 0
+      },
+      "scale": {
+        "x": 0.55,
+        "y": 0.55,
+        "z": 0.55
+      }
+    },
+    "props": {
+      "text": "RECALL",
+      "textSize": 18,
+      "showBorder": false,
+      "textJustification": "Center",
+      "textColor": {
+        "r": 1,
+        "g": 1,
+        "b": 1,
+        "a": 1
+      },
+      "backgroundColor": {
+        "r": 0.008,
+        "g": 0.012,
+        "b": 0.02,
+        "a": 1
+      }
+    }
+  },
+  {
+    "label": "KT2_GuideButton_next",
+    "kind": "device",
+    "asset": "/CreativeCoreDevices/SetupAssets/PID_Device_Button.PID_Device_Button",
+    "xf": {
+      "location": {
+        "x": 2048.0,
+        "y": -34355.2,
+        "z": 90
+      },
+      "rotation": {
+        "pitch": 0,
+        "yaw": 180,
+        "roll": 0
+      },
+      "scale": {
+        "x": 1.0,
+        "y": 1.0,
+        "z": 1.0
+      }
+    },
+    "props": {},
+    "tag": "kt_ghost_next_tag"
+  },
+  {
+    "label": "KT2_ButtonLabel_next",
+    "kind": "device",
+    "asset": "/CreativeCoreDevices/SetupAssets/PID_Device_Billboard.PID_Device_Billboard",
+    "xf": {
+      "location": {
+        "x": 2201.6,
+        "y": -34355.2,
+        "z": 155
+      },
+      "rotation": {
+        "pitch": 0,
+        "yaw": -90,
+        "roll": 0
+      },
+      "scale": {
+        "x": 0.55,
+        "y": 0.55,
+        "z": 0.55
+      }
+    },
+    "props": {
+      "text": "NEXT",
+      "textSize": 18,
+      "showBorder": false,
+      "textJustification": "Center",
+      "textColor": {
+        "r": 1,
+        "g": 1,
+        "b": 1,
+        "a": 1
+      },
+      "backgroundColor": {
+        "r": 0.008,
+        "g": 0.012,
+        "b": 0.02,
+        "a": 1
+      }
+    }
+  },
+  {
+    "label": "KT2_GuideButton_slower",
+    "kind": "device",
+    "asset": "/CreativeCoreDevices/SetupAssets/PID_Device_Button.PID_Device_Button",
+    "xf": {
+      "location": {
+        "x": 2048.0,
+        "y": -33996.8,
+        "z": 90
+      },
+      "rotation": {
+        "pitch": 0,
+        "yaw": 180,
+        "roll": 0
+      },
+      "scale": {
+        "x": 1.0,
+        "y": 1.0,
+        "z": 1.0
+      }
+    },
+    "props": {},
+    "tag": "kt_ghost_slower_tag"
+  },
+  {
+    "label": "KT2_ButtonLabel_slower",
+    "kind": "device",
+    "asset": "/CreativeCoreDevices/SetupAssets/PID_Device_Billboard.PID_Device_Billboard",
+    "xf": {
+      "location": {
+        "x": 2201.6,
+        "y": -33996.8,
+        "z": 155
+      },
+      "rotation": {
+        "pitch": 0,
+        "yaw": -90,
+        "roll": 0
+      },
+      "scale": {
+        "x": 0.55,
+        "y": 0.55,
+        "z": 0.55
+      }
+    },
+    "props": {
+      "text": "SLOWER",
+      "textSize": 18,
+      "showBorder": false,
+      "textJustification": "Center",
+      "textColor": {
+        "r": 1,
+        "g": 1,
+        "b": 1,
+        "a": 1
+      },
+      "backgroundColor": {
+        "r": 0.008,
+        "g": 0.012,
+        "b": 0.02,
+        "a": 1
+      }
+    }
+  },
+  {
+    "label": "KT2_GuideButton_faster",
+    "kind": "device",
+    "asset": "/CreativeCoreDevices/SetupAssets/PID_Device_Button.PID_Device_Button",
+    "xf": {
+      "location": {
+        "x": 2048.0,
+        "y": -33638.4,
+        "z": 90
+      },
+      "rotation": {
+        "pitch": 0,
+        "yaw": 180,
+        "roll": 0
+      },
+      "scale": {
+        "x": 1.0,
+        "y": 1.0,
+        "z": 1.0
+      }
+    },
+    "props": {},
+    "tag": "kt_ghost_faster_tag"
+  },
+  {
+    "label": "KT2_ButtonLabel_faster",
+    "kind": "device",
+    "asset": "/CreativeCoreDevices/SetupAssets/PID_Device_Billboard.PID_Device_Billboard",
+    "xf": {
+      "location": {
+        "x": 2201.6,
+        "y": -33638.4,
+        "z": 155
+      },
+      "rotation": {
+        "pitch": 0,
+        "yaw": -90,
+        "roll": 0
+      },
+      "scale": {
+        "x": 0.55,
+        "y": 0.55,
+        "z": 0.55
+      }
+    },
+    "props": {
+      "text": "FASTER",
+      "textSize": 18,
+      "showBorder": false,
+      "textJustification": "Center",
+      "textColor": {
+        "r": 1,
+        "g": 1,
+        "b": 1,
+        "a": 1
+      },
+      "backgroundColor": {
+        "r": 0.008,
+        "g": 0.012,
+        "b": 0.02,
+        "a": 1
+      }
+    }
+  },
+  {
+    "label": "KT2_GuideButton_stop",
+    "kind": "device",
+    "asset": "/CreativeCoreDevices/SetupAssets/PID_Device_Button.PID_Device_Button",
+    "xf": {
+      "location": {
+        "x": 2048.0,
+        "y": -33280.0,
+        "z": 90
+      },
+      "rotation": {
+        "pitch": 0,
+        "yaw": 180,
+        "roll": 0
+      },
+      "scale": {
+        "x": 1.0,
+        "y": 1.0,
+        "z": 1.0
+      }
+    },
+    "props": {},
+    "tag": "kt_ghost_stop_tag"
+  },
+  {
+    "label": "KT2_ButtonLabel_stop",
+    "kind": "device",
+    "asset": "/CreativeCoreDevices/SetupAssets/PID_Device_Billboard.PID_Device_Billboard",
+    "xf": {
+      "location": {
+        "x": 2201.6,
+        "y": -33280.0,
+        "z": 155
+      },
+      "rotation": {
+        "pitch": 0,
+        "yaw": -90,
+        "roll": 0
+      },
+      "scale": {
+        "x": 0.55,
+        "y": 0.55,
+        "z": 0.55
+      }
+    },
+    "props": {
+      "text": "STOP",
+      "textSize": 18,
+      "showBorder": false,
+      "textJustification": "Center",
+      "textColor": {
+        "r": 1,
+        "g": 1,
+        "b": 1,
+        "a": 1
+      },
+      "backgroundColor": {
+        "r": 0.008,
+        "g": 0.012,
+        "b": 0.02,
+        "a": 1
+      }
+    }
+  },
+  {
+    "label": "KT2_Guide",
+    "kind": "device",
+    "asset": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/_Verse.KeystrokeTrainer-keystroke_ghost_guide_device",
+    "xf": {
+      "location": {
+        "x": 3072.0,
+        "y": -34816.0,
+        "z": -30
+      },
+      "rotation": {
+        "pitch": 0,
+        "yaw": 0.0,
+        "roll": 0
+      },
+      "scale": {
+        "x": 1.0,
+        "y": 1.0,
+        "z": 1.0
+      }
+    },
+    "props": {},
+    "tag": "kt_ghost_guide_tag"
+  },
+  {
+    "label": "KT2_QuickStart",
+    "kind": "device",
+    "asset": "/CreativeCoreDevices/SetupAssets/PID_Device_Teleporter.PID_Device_Teleporter",
+    "xf": {
+      "location": {
+        "x": 768,
+        "y": -59648,
+        "z": 15
+      },
+      "rotation": {
+        "pitch": 0,
+        "yaw": 0,
+        "roll": 0
+      },
+      "scale": {
+        "x": 1.0,
+        "y": 1.0,
+        "z": 1.0
+      }
+    },
+    "props": {
+      "knob_TeleporterGroup": "Group_M",
+      "knob_TargetTeleporterGroup": "Group_N",
+      "conserve Momentum": false,
+      "play Visual Effects": false,
+      "play Sound Effects": false,
+      "teleporter Rift Visible": true
+    }
+  },
+  {
+    "label": "KT2_CourtArrival",
+    "kind": "device",
+    "asset": "/CreativeCoreDevices/SetupAssets/PID_Device_Teleporter.PID_Device_Teleporter",
+    "xf": {
+      "location": {
+        "x": 512.0,
+        "y": -30720.0,
+        "z": 15
+      },
+      "rotation": {
+        "pitch": 0,
+        "yaw": 0,
+        "roll": 0
+      },
+      "scale": {
+        "x": 1.0,
+        "y": 1.0,
+        "z": 1.0
+      }
+    },
+    "props": {
+      "knob_TeleporterGroup": "Group_N",
+      "knob_TargetTeleporterGroup": "Group_None",
+      "conserve Momentum": false,
+      "play Visual Effects": false,
+      "play Sound Effects": false,
+      "teleporter Rift Visible": false
+    }
+  },
+  {
+    "label": "KT2_CourtReturn",
+    "kind": "device",
+    "asset": "/CreativeCoreDevices/SetupAssets/PID_Device_Teleporter.PID_Device_Teleporter",
+    "xf": {
+      "location": {
+        "x": 512.0,
+        "y": -35328.0,
+        "z": 15
+      },
+      "rotation": {
+        "pitch": 0,
+        "yaw": 180,
+        "roll": 0
+      },
+      "scale": {
+        "x": 1.0,
+        "y": 1.0,
+        "z": 1.0
+      }
+    },
+    "props": {
+      "knob_TeleporterGroup": "Group_O",
+      "knob_TargetTeleporterGroup": "Group_P",
+      "conserve Momentum": false,
+      "play Visual Effects": false,
+      "play Sound Effects": false,
+      "teleporter Rift Visible": true
+    }
+  },
+  {
+    "label": "KT2_HubArrival",
+    "kind": "device",
+    "asset": "/CreativeCoreDevices/SetupAssets/PID_Device_Teleporter.PID_Device_Teleporter",
+    "xf": {
+      "location": {
+        "x": -256,
+        "y": -59648,
+        "z": 15
+      },
+      "rotation": {
+        "pitch": 0,
+        "yaw": 0,
+        "roll": 0
+      },
+      "scale": {
+        "x": 1.0,
+        "y": 1.0,
+        "z": 1.0
+      }
+    },
+    "props": {
+      "knob_TeleporterGroup": "Group_P",
+      "knob_TargetTeleporterGroup": "Group_None",
+      "conserve Momentum": false,
+      "play Visual Effects": false,
+      "play Sound Effects": false,
+      "teleporter Rift Visible": false
+    }
+  },
+  {
+    "label": "KT2_FreeStart",
+    "kind": "device",
+    "asset": "/CreativeCoreDevices/SetupAssets/PID_Device_Teleporter.PID_Device_Teleporter",
+    "xf": {
+      "location": {
+        "x": 256,
+        "y": -58624,
+        "z": 15
+      },
+      "rotation": {
+        "pitch": 0,
+        "yaw": 0,
+        "roll": 0
+      },
+      "scale": {
+        "x": 1.0,
+        "y": 1.0,
+        "z": 1.0
+      }
+    },
+    "props": {
+      "knob_TeleporterGroup": "Group_Q",
+      "knob_TargetTeleporterGroup": "Group_R",
+      "conserve Momentum": false,
+      "play Visual Effects": false,
+      "play Sound Effects": false,
+      "teleporter Rift Visible": true
+    }
+  },
+  {
+    "label": "KT2_FreeArrival",
+    "kind": "device",
+    "asset": "/CreativeCoreDevices/SetupAssets/PID_Device_Teleporter.PID_Device_Teleporter",
+    "xf": {
+      "location": {
+        "x": 7680.0,
+        "y": -33280.0,
+        "z": 15
+      },
+      "rotation": {
+        "pitch": 0,
+        "yaw": 0,
+        "roll": 0
+      },
+      "scale": {
+        "x": 1.0,
+        "y": 1.0,
+        "z": 1.0
+      }
+    },
+    "props": {
+      "knob_TeleporterGroup": "Group_R",
+      "knob_TargetTeleporterGroup": "Group_None",
+      "conserve Momentum": false,
+      "play Visual Effects": false,
+      "play Sound Effects": false,
+      "teleporter Rift Visible": false
+    }
+  },
+  {
+    "label": "KT2_QuickLabel",
+    "kind": "device",
+    "asset": "/CreativeCoreDevices/SetupAssets/PID_Device_Billboard.PID_Device_Billboard",
+    "xf": {
+      "location": {
+        "x": 1280,
+        "y": -59648,
+        "z": 280
+      },
+      "rotation": {
+        "pitch": 0,
+        "yaw": -90,
+        "roll": 0
+      },
+      "scale": {
+        "x": 1.6,
+        "y": 1.6,
+        "z": 1.6
+      }
+    },
+    "props": {
+      "text": "START HERE\nGuided practice",
+      "textSize": 20,
+      "showBorder": false,
+      "textColor": {
+        "r": 1,
+        "g": 1,
+        "b": 1,
+        "a": 1
+      },
+      "backgroundColor": {
+        "r": 0.008,
+        "g": 0.012,
+        "b": 0.02,
+        "a": 1
+      }
+    }
+  },
+  {
+    "label": "KT2_FreeLabel",
+    "kind": "device",
+    "asset": "/CreativeCoreDevices/SetupAssets/PID_Device_Billboard.PID_Device_Billboard",
+    "xf": {
+      "location": {
+        "x": 768,
+        "y": -58624,
+        "z": 280
+      },
+      "rotation": {
+        "pitch": 0,
+        "yaw": -90,
+        "roll": 0
+      },
+      "scale": {
+        "x": 1.6,
+        "y": 1.6,
+        "z": 1.6
+      }
+    },
+    "props": {
+      "text": "FREE BUILD\nYour pace",
+      "textSize": 20,
+      "showBorder": false,
+      "textColor": {
+        "r": 1,
+        "g": 1,
+        "b": 1,
+        "a": 1
+      },
+      "backgroundColor": {
+        "r": 0.008,
+        "g": 0.012,
+        "b": 0.02,
+        "a": 1
+      }
+    }
+  },
+  {
+    "label": "KT2_ResetRig_build_0",
+    "kind": "device",
+    "asset": "/CreativeCoreDevices/SetupAssets/PID_Device_ExplosiveBarrel.PID_Device_ExplosiveBarrel",
+    "xf": {
+      "location": {
+        "x": 2304.0,
+        "y": -34048.0,
+        "z": 576.0
+      },
+      "rotation": {
+        "pitch": 0,
+        "yaw": 0.0,
+        "roll": 0
+      },
+      "scale": {
+        "x": 1.0,
+        "y": 1.0,
+        "z": 1.0
+      }
+    },
+    "tag": "kt_court_clear_build_tag",
+    "props": {
+      "blast Radius": 2.9,
+      "player Damage": 0,
+      "structure Damage": 10000,
+      "knockback": "None",
+      "can be Damaged": false,
+      "damage Indestructible Buildings": false,
+      "visible During Game": false,
+      "play Audio / VFX": false,
+      "time Until Reset Allowed": 0.1,
+      "has Timed Detonation From Game Start": false
+    }
+  },
+  {
+    "label": "KT2_ResetRig_build_1",
+    "kind": "device",
+    "asset": "/CreativeCoreDevices/SetupAssets/PID_Device_ExplosiveBarrel.PID_Device_ExplosiveBarrel",
+    "xf": {
+      "location": {
+        "x": 3840.0,
+        "y": -34048.0,
+        "z": 576.0
+      },
+      "rotation": {
+        "pitch": 0,
+        "yaw": 0.0,
+        "roll": 0
+      },
+      "scale": {
+        "x": 1.0,
+        "y": 1.0,
+        "z": 1.0
+      }
+    },
+    "tag": "kt_court_clear_build_tag",
+    "props": {
+      "blast Radius": 2.9,
+      "player Damage": 0,
+      "structure Damage": 10000,
+      "knockback": "None",
+      "can be Damaged": false,
+      "damage Indestructible Buildings": false,
+      "visible During Game": false,
+      "play Audio / VFX": false,
+      "time Until Reset Allowed": 0.1,
+      "has Timed Detonation From Game Start": false
+    }
+  },
+  {
+    "label": "KT2_ResetRig_build_2",
+    "kind": "device",
+    "asset": "/CreativeCoreDevices/SetupAssets/PID_Device_ExplosiveBarrel.PID_Device_ExplosiveBarrel",
+    "xf": {
+      "location": {
+        "x": 5376.0,
+        "y": -34048.0,
+        "z": 576.0
+      },
+      "rotation": {
+        "pitch": 0,
+        "yaw": 0.0,
+        "roll": 0
+      },
+      "scale": {
+        "x": 1.0,
+        "y": 1.0,
+        "z": 1.0
+      }
+    },
+    "tag": "kt_court_clear_build_tag",
+    "props": {
+      "blast Radius": 2.9,
+      "player Damage": 0,
+      "structure Damage": 10000,
+      "knockback": "None",
+      "can be Damaged": false,
+      "damage Indestructible Buildings": false,
+      "visible During Game": false,
+      "play Audio / VFX": false,
+      "time Until Reset Allowed": 0.1,
+      "has Timed Detonation From Game Start": false
+    }
+  },
+  {
+    "label": "KT2_ResetButton_build",
+    "kind": "device",
+    "asset": "/CreativeCoreDevices/SetupAssets/PID_Device_Button.PID_Device_Button",
+    "xf": {
+      "location": {
+        "x": 1536.0,
+        "y": -34048.0,
+        "z": 90
+      },
+      "rotation": {
+        "pitch": 0,
+        "yaw": 180,
+        "roll": 0
+      },
+      "scale": {
+        "x": 1.0,
+        "y": 1.0,
+        "z": 1.0
+      }
+    },
+    "tag": "kt_court_reset_build_tag",
+    "props": {
+      "interaction Text": "Reset this bay (shared)",
+      "delay": 0.0,
+      "resetDelay": 0.5
+    }
+  },
+  {
+    "label": "KT2_ResetLabel_build",
+    "kind": "device",
+    "asset": "/CreativeCoreDevices/SetupAssets/PID_Device_Billboard.PID_Device_Billboard",
+    "xf": {
+      "location": {
+        "x": 1689.6,
+        "y": -34048.0,
+        "z": 205
+      },
+      "rotation": {
+        "pitch": 0,
+        "yaw": -90,
+        "roll": 0
+      },
+      "scale": {
+        "x": 0.8,
+        "y": 0.8,
+        "z": 0.8
+      }
+    },
+    "props": {
+      "text": "RESET BAY\nShared area",
+      "textSize": 18,
+      "showBorder": false,
+      "textJustification": "Center",
+      "textColor": {
+        "r": 1,
+        "g": 1,
+        "b": 1,
+        "a": 1
+      },
+      "backgroundColor": {
+        "r": 0.008,
+        "g": 0.012,
+        "b": 0.02,
+        "a": 1
+      }
+    }
+  },
+  {
+    "label": "KT2_ResetRig_rebox_0",
+    "kind": "device",
+    "asset": "/CreativeCoreDevices/SetupAssets/PID_Device_ExplosiveBarrel.PID_Device_ExplosiveBarrel",
+    "xf": {
+      "location": {
+        "x": 2304.0,
+        "y": -30976.0,
+        "z": 576.0
+      },
+      "rotation": {
+        "pitch": 0,
+        "yaw": 0.0,
+        "roll": 0
+      },
+      "scale": {
+        "x": 1.0,
+        "y": 1.0,
+        "z": 1.0
+      }
+    },
+    "tag": "kt_court_clear_rebox_tag",
+    "props": {
+      "blast Radius": 2.9,
+      "player Damage": 0,
+      "structure Damage": 10000,
+      "knockback": "None",
+      "can be Damaged": false,
+      "damage Indestructible Buildings": false,
+      "visible During Game": false,
+      "play Audio / VFX": false,
+      "time Until Reset Allowed": 0.1,
+      "has Timed Detonation From Game Start": false
+    }
+  },
+  {
+    "label": "KT2_ResetRig_rebox_1",
+    "kind": "device",
+    "asset": "/CreativeCoreDevices/SetupAssets/PID_Device_ExplosiveBarrel.PID_Device_ExplosiveBarrel",
+    "xf": {
+      "location": {
+        "x": 3840.0,
+        "y": -30976.0,
+        "z": 576.0
+      },
+      "rotation": {
+        "pitch": 0,
+        "yaw": 0.0,
+        "roll": 0
+      },
+      "scale": {
+        "x": 1.0,
+        "y": 1.0,
+        "z": 1.0
+      }
+    },
+    "tag": "kt_court_clear_rebox_tag",
+    "props": {
+      "blast Radius": 2.9,
+      "player Damage": 0,
+      "structure Damage": 10000,
+      "knockback": "None",
+      "can be Damaged": false,
+      "damage Indestructible Buildings": false,
+      "visible During Game": false,
+      "play Audio / VFX": false,
+      "time Until Reset Allowed": 0.1,
+      "has Timed Detonation From Game Start": false
+    }
+  },
+  {
+    "label": "KT2_ResetRig_rebox_2",
+    "kind": "device",
+    "asset": "/CreativeCoreDevices/SetupAssets/PID_Device_ExplosiveBarrel.PID_Device_ExplosiveBarrel",
+    "xf": {
+      "location": {
+        "x": 5376.0,
+        "y": -30976.0,
+        "z": 576.0
+      },
+      "rotation": {
+        "pitch": 0,
+        "yaw": 0.0,
+        "roll": 0
+      },
+      "scale": {
+        "x": 1.0,
+        "y": 1.0,
+        "z": 1.0
+      }
+    },
+    "tag": "kt_court_clear_rebox_tag",
+    "props": {
+      "blast Radius": 2.9,
+      "player Damage": 0,
+      "structure Damage": 10000,
+      "knockback": "None",
+      "can be Damaged": false,
+      "damage Indestructible Buildings": false,
+      "visible During Game": false,
+      "play Audio / VFX": false,
+      "time Until Reset Allowed": 0.1,
+      "has Timed Detonation From Game Start": false
+    }
+  },
+  {
+    "label": "KT2_ResetButton_rebox",
+    "kind": "device",
+    "asset": "/CreativeCoreDevices/SetupAssets/PID_Device_Button.PID_Device_Button",
+    "xf": {
+      "location": {
+        "x": 1536.0,
+        "y": -30976.0,
+        "z": 90
+      },
+      "rotation": {
+        "pitch": 0,
+        "yaw": 180,
+        "roll": 0
+      },
+      "scale": {
+        "x": 1.0,
+        "y": 1.0,
+        "z": 1.0
+      }
+    },
+    "tag": "kt_court_reset_rebox_tag",
+    "props": {
+      "interaction Text": "Reset this bay (shared)",
+      "delay": 0.0,
+      "resetDelay": 0.5
+    }
+  },
+  {
+    "label": "KT2_ResetLabel_rebox",
+    "kind": "device",
+    "asset": "/CreativeCoreDevices/SetupAssets/PID_Device_Billboard.PID_Device_Billboard",
+    "xf": {
+      "location": {
+        "x": 1689.6,
+        "y": -30976.0,
+        "z": 205
+      },
+      "rotation": {
+        "pitch": 0,
+        "yaw": -90,
+        "roll": 0
+      },
+      "scale": {
+        "x": 0.8,
+        "y": 0.8,
+        "z": 0.8
+      }
+    },
+    "props": {
+      "text": "RESET BAY\nShared area",
+      "textSize": 18,
+      "showBorder": false,
+      "textJustification": "Center",
+      "textColor": {
+        "r": 1,
+        "g": 1,
+        "b": 1,
+        "a": 1
+      },
+      "backgroundColor": {
+        "r": 0.008,
+        "g": 0.012,
+        "b": 0.02,
+        "a": 1
+      }
+    }
+  },
+  {
+    "label": "KT2_ResetRig_peek_0",
+    "kind": "device",
+    "asset": "/CreativeCoreDevices/SetupAssets/PID_Device_ExplosiveBarrel.PID_Device_ExplosiveBarrel",
+    "xf": {
+      "location": {
+        "x": 2304.0,
+        "y": -27904.0,
+        "z": 576.0
+      },
+      "rotation": {
+        "pitch": 0,
+        "yaw": 0.0,
+        "roll": 0
+      },
+      "scale": {
+        "x": 1.0,
+        "y": 1.0,
+        "z": 1.0
+      }
+    },
+    "tag": "kt_court_clear_peek_tag",
+    "props": {
+      "blast Radius": 2.9,
+      "player Damage": 0,
+      "structure Damage": 10000,
+      "knockback": "None",
+      "can be Damaged": false,
+      "damage Indestructible Buildings": false,
+      "visible During Game": false,
+      "play Audio / VFX": false,
+      "time Until Reset Allowed": 0.1,
+      "has Timed Detonation From Game Start": false
+    }
+  },
+  {
+    "label": "KT2_ResetRig_peek_1",
+    "kind": "device",
+    "asset": "/CreativeCoreDevices/SetupAssets/PID_Device_ExplosiveBarrel.PID_Device_ExplosiveBarrel",
+    "xf": {
+      "location": {
+        "x": 3840.0,
+        "y": -27904.0,
+        "z": 576.0
+      },
+      "rotation": {
+        "pitch": 0,
+        "yaw": 0.0,
+        "roll": 0
+      },
+      "scale": {
+        "x": 1.0,
+        "y": 1.0,
+        "z": 1.0
+      }
+    },
+    "tag": "kt_court_clear_peek_tag",
+    "props": {
+      "blast Radius": 2.9,
+      "player Damage": 0,
+      "structure Damage": 10000,
+      "knockback": "None",
+      "can be Damaged": false,
+      "damage Indestructible Buildings": false,
+      "visible During Game": false,
+      "play Audio / VFX": false,
+      "time Until Reset Allowed": 0.1,
+      "has Timed Detonation From Game Start": false
+    }
+  },
+  {
+    "label": "KT2_ResetRig_peek_2",
+    "kind": "device",
+    "asset": "/CreativeCoreDevices/SetupAssets/PID_Device_ExplosiveBarrel.PID_Device_ExplosiveBarrel",
+    "xf": {
+      "location": {
+        "x": 5376.0,
+        "y": -27904.0,
+        "z": 576.0
+      },
+      "rotation": {
+        "pitch": 0,
+        "yaw": 0.0,
+        "roll": 0
+      },
+      "scale": {
+        "x": 1.0,
+        "y": 1.0,
+        "z": 1.0
+      }
+    },
+    "tag": "kt_court_clear_peek_tag",
+    "props": {
+      "blast Radius": 2.9,
+      "player Damage": 0,
+      "structure Damage": 10000,
+      "knockback": "None",
+      "can be Damaged": false,
+      "damage Indestructible Buildings": false,
+      "visible During Game": false,
+      "play Audio / VFX": false,
+      "time Until Reset Allowed": 0.1,
+      "has Timed Detonation From Game Start": false
+    }
+  },
+  {
+    "label": "KT2_ResetButton_peek",
+    "kind": "device",
+    "asset": "/CreativeCoreDevices/SetupAssets/PID_Device_Button.PID_Device_Button",
+    "xf": {
+      "location": {
+        "x": 1536.0,
+        "y": -27904.0,
+        "z": 90
+      },
+      "rotation": {
+        "pitch": 0,
+        "yaw": 180,
+        "roll": 0
+      },
+      "scale": {
+        "x": 1.0,
+        "y": 1.0,
+        "z": 1.0
+      }
+    },
+    "tag": "kt_court_reset_peek_tag",
+    "props": {
+      "interaction Text": "Reset this bay (shared)",
+      "delay": 0.0,
+      "resetDelay": 0.5
+    }
+  },
+  {
+    "label": "KT2_ResetLabel_peek",
+    "kind": "device",
+    "asset": "/CreativeCoreDevices/SetupAssets/PID_Device_Billboard.PID_Device_Billboard",
+    "xf": {
+      "location": {
+        "x": 1689.6,
+        "y": -27904.0,
+        "z": 205
+      },
+      "rotation": {
+        "pitch": 0,
+        "yaw": -90,
+        "roll": 0
+      },
+      "scale": {
+        "x": 0.8,
+        "y": 0.8,
+        "z": 0.8
+      }
+    },
+    "props": {
+      "text": "RESET BAY\nShared area",
+      "textSize": 18,
+      "showBorder": false,
+      "textJustification": "Center",
+      "textColor": {
+        "r": 1,
+        "g": 1,
+        "b": 1,
+        "a": 1
+      },
+      "backgroundColor": {
+        "r": 0.008,
+        "g": 0.012,
+        "b": 0.02,
+        "a": 1
+      }
+    }
+  },
+  {
+    "label": "KT2_ResetRig_free_0",
+    "kind": "device",
+    "asset": "/CreativeCoreDevices/SetupAssets/PID_Device_ExplosiveBarrel.PID_Device_ExplosiveBarrel",
+    "xf": {
+      "location": {
+        "x": 8448.0,
+        "y": -34560.0,
+        "z": 1536.0
+      },
+      "rotation": {
+        "pitch": 0,
+        "yaw": 0.0,
+        "roll": 0
+      },
+      "scale": {
+        "x": 1.0,
+        "y": 1.0,
+        "z": 1.0
+      }
+    },
+    "tag": "kt_court_clear_free_tag",
+    "props": {
+      "blast Radius": 4.75,
+      "player Damage": 0,
+      "structure Damage": 10000,
+      "knockback": "None",
+      "can be Damaged": false,
+      "damage Indestructible Buildings": false,
+      "visible During Game": false,
+      "play Audio / VFX": false,
+      "time Until Reset Allowed": 0.1,
+      "has Timed Detonation From Game Start": false
+    }
+  },
+  {
+    "label": "KT2_ResetRig_free_1",
+    "kind": "device",
+    "asset": "/CreativeCoreDevices/SetupAssets/PID_Device_ExplosiveBarrel.PID_Device_ExplosiveBarrel",
+    "xf": {
+      "location": {
+        "x": 8448.0,
+        "y": -32000.0,
+        "z": 1536.0
+      },
+      "rotation": {
+        "pitch": 0,
+        "yaw": 0.0,
+        "roll": 0
+      },
+      "scale": {
+        "x": 1.0,
+        "y": 1.0,
+        "z": 1.0
+      }
+    },
+    "tag": "kt_court_clear_free_tag",
+    "props": {
+      "blast Radius": 4.75,
+      "player Damage": 0,
+      "structure Damage": 10000,
+      "knockback": "None",
+      "can be Damaged": false,
+      "damage Indestructible Buildings": false,
+      "visible During Game": false,
+      "play Audio / VFX": false,
+      "time Until Reset Allowed": 0.1,
+      "has Timed Detonation From Game Start": false
+    }
+  },
+  {
+    "label": "KT2_ResetRig_free_2",
+    "kind": "device",
+    "asset": "/CreativeCoreDevices/SetupAssets/PID_Device_ExplosiveBarrel.PID_Device_ExplosiveBarrel",
+    "xf": {
+      "location": {
+        "x": 11008.0,
+        "y": -34560.0,
+        "z": 1536.0
+      },
+      "rotation": {
+        "pitch": 0,
+        "yaw": 0.0,
+        "roll": 0
+      },
+      "scale": {
+        "x": 1.0,
+        "y": 1.0,
+        "z": 1.0
+      }
+    },
+    "tag": "kt_court_clear_free_tag",
+    "props": {
+      "blast Radius": 4.75,
+      "player Damage": 0,
+      "structure Damage": 10000,
+      "knockback": "None",
+      "can be Damaged": false,
+      "damage Indestructible Buildings": false,
+      "visible During Game": false,
+      "play Audio / VFX": false,
+      "time Until Reset Allowed": 0.1,
+      "has Timed Detonation From Game Start": false
+    }
+  },
+  {
+    "label": "KT2_ResetRig_free_3",
+    "kind": "device",
+    "asset": "/CreativeCoreDevices/SetupAssets/PID_Device_ExplosiveBarrel.PID_Device_ExplosiveBarrel",
+    "xf": {
+      "location": {
+        "x": 11008.0,
+        "y": -32000.0,
+        "z": 1536.0
+      },
+      "rotation": {
+        "pitch": 0,
+        "yaw": 0.0,
+        "roll": 0
+      },
+      "scale": {
+        "x": 1.0,
+        "y": 1.0,
+        "z": 1.0
+      }
+    },
+    "tag": "kt_court_clear_free_tag",
+    "props": {
+      "blast Radius": 4.75,
+      "player Damage": 0,
+      "structure Damage": 10000,
+      "knockback": "None",
+      "can be Damaged": false,
+      "damage Indestructible Buildings": false,
+      "visible During Game": false,
+      "play Audio / VFX": false,
+      "time Until Reset Allowed": 0.1,
+      "has Timed Detonation From Game Start": false
+    }
+  },
+  {
+    "label": "KT2_ResetButton_free",
+    "kind": "device",
+    "asset": "/CreativeCoreDevices/SetupAssets/PID_Device_Button.PID_Device_Button",
+    "xf": {
+      "location": {
+        "x": 7424.0,
+        "y": -33280.0,
+        "z": 90
+      },
+      "rotation": {
+        "pitch": 0,
+        "yaw": 180,
+        "roll": 0
+      },
+      "scale": {
+        "x": 1.0,
+        "y": 1.0,
+        "z": 1.0
+      }
+    },
+    "tag": "kt_court_reset_free_tag",
+    "props": {
+      "interaction Text": "Clear free-build space (shared)",
+      "delay": 0.0,
+      "resetDelay": 0.5
+    }
+  },
+  {
+    "label": "KT2_ResetLabel_free",
+    "kind": "device",
+    "asset": "/CreativeCoreDevices/SetupAssets/PID_Device_Billboard.PID_Device_Billboard",
+    "xf": {
+      "location": {
+        "x": 7577.6,
+        "y": -33280.0,
+        "z": 220
+      },
+      "rotation": {
+        "pitch": 0,
+        "yaw": -90,
+        "roll": 0
+      },
+      "scale": {
+        "x": 1.0,
+        "y": 1.0,
+        "z": 1.0
+      }
+    },
+    "props": {
+      "text": "RESET BUILDS\nShared free-build area",
+      "textSize": 18,
+      "showBorder": false,
+      "textJustification": "Center",
+      "textColor": {
+        "r": 1,
+        "g": 1,
+        "b": 1,
+        "a": 1
+      },
+      "backgroundColor": {
+        "r": 0.008,
+        "g": 0.012,
+        "b": 0.02,
+        "a": 1
+      }
+    }
+  },
+  {
+    "label": "KT2_CourtControls",
+    "kind": "device",
+    "asset": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/_Verse.KeystrokeTrainer-keystroke_court_controls_device",
+    "xf": {
+      "location": {
+        "x": 6144.0,
+        "y": -30720.0,
+        "z": -30
+      },
+      "rotation": {
+        "pitch": 0,
+        "yaw": 0.0,
+        "roll": 0
+      },
+      "scale": {
+        "x": 1.0,
+        "y": 1.0,
+        "z": 1.0
+      }
+    },
+    "props": {},
+    "tag": "kt_court_controls_tag"
+  },
+  {
+    "label": "KT2_PracticeGranter",
+    "kind": "device",
+    "asset": "/CreativeCoreDevices/SetupAssets/PID_Device_ItemGranter.PID_Device_ItemGranter",
+    "xf": {
+      "location": {
+        "x": 512.0,
+        "y": -30720.0,
+        "z": -200
+      },
+      "rotation": {
+        "pitch": 0,
+        "yaw": 0.0,
+        "roll": 0
+      },
+      "scale": {
+        "x": 1.0,
+        "y": 1.0,
+        "z": 1.0
+      }
+    },
+    "props": {
+      "bEquipGrantedItem": true
+    }
+  },
+  {
+    "label": "KT2_CurrentBRMovement",
+    "kind": "device",
+    "asset": "/CRD_PlayerMovement/SetupAssets/PID_CP_Devices_PlayerMovement.PID_CP_Devices_PlayerMovement",
+    "xf": {
+      "location": {
+        "x": 0,
+        "y": -30720.0,
+        "z": -50
+      },
+      "rotation": {
+        "pitch": 0,
+        "yaw": 0.0,
+        "roll": 0
+      },
+      "scale": {
+        "x": 1.0,
+        "y": 1.0,
+        "z": 1.0
+      }
+    },
+    "props": {
+      "movementSettingPreset": "Current BR",
+      "bAddToPlayersOnStart": true,
+      "enabledDuringPhase": "Gameplay Only",
+      "priority": 1.0
+    }
+  }
+]

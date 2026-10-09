@@ -1,0 +1,68 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1020" viewBox="0 0 1600 1020">
+<defs>
+  <pattern id="grid" width="45" height="45" patternUnits="userSpaceOnUse"><path d="M45 0H0V45" fill="none" stroke="#2b3444" stroke-width="1"/></pattern>
+  <style>
+    .bg{fill:#0b1018}.panel{fill:#131c29;stroke:#2c394b;stroke-width:2}.title{font:700 34px Arial;fill:#f1f5fc}.sub{font:16px Arial;fill:#a9b7c8}.room{stroke-width:3;rx:8}.roomTitle{font:700 21px Arial;fill:#f5f7fb}.body{font:15px Arial;fill:#c5cfdb}.small{font:13px Arial;fill:#a9b7c8}.mono{font:700 14px Consolas;fill:#eaf0f8}.route{stroke:#d7e1ec;stroke-width:5;stroke-dasharray:9 8;fill:none}.build{fill:#19283a;stroke:#60d6eb;stroke-width:3}.threat{fill:#ef785f;stroke:#28130f;stroke-width:2}.mark{fill:#f6b45b}.wall{stroke:#e8eff7;stroke-width:7}.cover{fill:#ffb34e;stroke:#261b0a;stroke-width:2}.ghost{fill:#50d4ee;fill-opacity:.18;stroke:#50d4ee;stroke-width:2;stroke-dasharray:5 4}
+  </style>
+</defs>
+<rect class="bg" width="1600" height="1020"/>
+<text x="48" y="58" class="title">RXLA EDIT LAB · LAYOUT V1</text>
+<text x="48" y="90" class="sub">Scenario district repurpose study · 20 × 12 tiles · 1 tile = 5.12 m · buildable bays remain clear</text>
+<rect class="panel" x="40" y="125" width="980" height="710" rx="12"/>
+<text x="70" y="163" class="mono">TOP-DOWN · 20T × 12T ENVELOPE</text>
+<!-- 20 × 12 cells @ 45px, origin (80,190) -->
+<rect x="80" y="190" width="900" height="540" fill="#0f1722" stroke="#657187" stroke-width="2"/>
+<rect x="80" y="190" width="900" height="540" fill="url(#grid)"/>
+<!-- four 8x4 bays: 1T exterior, 2T center route, 1T center crossing, 1T outer safety margins -->
+<rect class="room" x="125" y="235" width="360" height="180" fill="#123345" stroke="#48cbe7"/>
+<rect class="room" x="575" y="235" width="360" height="180" fill="#292039" stroke="#b389f5"/>
+<rect class="room" x="125" y="505" width="360" height="180" fill="#332817" stroke="#f0ac4a"/>
+<rect class="room" x="575" y="505" width="360" height="180" fill="#183126" stroke="#73d5a1"/>
+<text x="145" y="270" class="roomTitle">A · READ & COPY</text><text x="145" y="295" class="small">8 × 4 T · 40.96 × 20.48 m</text>
+<text x="595" y="270" class="roomTitle">B · RESET & RECOVER</text><text x="595" y="295" class="small">8 × 4 T · 40.96 × 20.48 m</text>
+<text x="145" y="540" class="roomTitle">C · EDIT-THROUGH TOWER</text><text x="145" y="565" class="small">8 × 4 T · 40.96 × 20.48 m</text>
+<text x="595" y="540" class="roomTitle">D · PIECE-CONTROL TRANSFER</text><text x="595" y="565" class="small">8 × 4 T · 40.96 × 20.48 m</text>
+<!-- A wall and ghost guide -->
+<line class="wall" x1="220" y1="350" x2="385" y2="350"/>
+<rect class="ghost" x="265" y="317" width="40" height="32"/><text x="230" y="390" class="small">3×3 edit wall + selection ghost</text>
+<circle class="mark" cx="180" cy="350" r="8"/><text x="150" y="330" class="small">START</text>
+<path class="route" d="M180 350H220"/>
+<!-- B two offset walls and side recovery route -->
+<line class="wall" x1="660" y1="332" x2="660" y2="385"/><line class="wall" x1="790" y1="322" x2="790" y2="375"/>
+<path class="route" d="M620 362H845V310"/><circle class="mark" cx="620" cy="362" r="8"/><text x="822" y="305" class="small">SAFE RETURN</text>
+<!-- Central spine -->
+<path class="route" d="M520 705V451H540V190"/>
+<text x="500" y="465" class="small" transform="rotate(-90 500 465)">2T CLEAR ROUTE / ENTRY FROM SOUTH</text>
+<text x="492" y="450" class="small">1T crossing</text>
+<!-- C tower: three player walls one tile apart, exit turn -->
+<rect class="build" x="200" y="595" width="30" height="55"/><rect class="build" x="260" y="595" width="30" height="55"/><rect class="build" x="320" y="595" width="30" height="55"/>
+<path class="route" d="M170 625H200M230 625H260M290 625H320M350 625H405V600"/><rect class="cover" x="385" y="580" width="20" height="44"/>
+<text x="180" y="670" class="small">PLAYER-BUILT WALLS · 1T PITCH</text><text x="390" y="575" class="small">TURN / EXIT</text>
+<!-- D own box -> covered tunnel -> opponent box; front and side threats -->
+<rect class="build" x="635" y="595" width="55" height="55"/><text x="638" y="627" class="small">OWN</text>
+<path class="route" d="M690 622H760"/><line class="wall" x1="710" y1="594" x2="710" y2="650"/><line class="wall" x1="740" y1="594" x2="740" y2="650"/>
+<rect class="build" x="760" y="595" width="55" height="55"/><text x="761" y="627" class="small">CLAIM</text>
+<circle class="threat" cx="880" cy="622" r="10"/><circle class="threat" cx="790" cy="595" r="9"/><text x="842" y="657" class="small">FRONT / OFFSET ANGLE</text>
+<!-- Legend -->
+<rect class="panel" x="1045" y="125" width="515" height="710" rx="12"/>
+<text x="1080" y="170" class="roomTitle">TEACHING FLOW</text>
+<text x="1080" y="210" class="body">A  See the exact wall selection, then copy it.</text>
+<text x="1080" y="242" class="body">B  Recenter, peek, reset, return to cover.</text>
+<text x="1080" y="274" class="body">C  Build/edit through three live wall planes.</text>
+<text x="1080" y="306" class="body">D  Own box → tunnel → opponent control.</text>
+<line x1="1080" y1="335" x2="1520" y2="335" stroke="#344256" stroke-width="2"/>
+<text x="1080" y="375" class="roomTitle">SAFE DETAIL ZONES</text>
+<text x="1080" y="412" class="body">Foreground: matte floor, start pad, route stripe.</text>
+<text x="1080" y="445" class="body">Midground: repeat frames outside build cells.</text>
+<text x="1080" y="478" class="body">Background: generated murals, target-gallery glass.</text>
+<text x="1080" y="511" class="body">No collision props in the build/shot envelope.</text>
+<line x1="1080" y1="540" x2="1520" y2="540" stroke="#344256" stroke-width="2"/>
+<text x="1080" y="580" class="roomTitle">LEGEND</text>
+<line class="wall" x1="1085" y1="612" x2="1135" y2="612"/><text x="1155" y="618" class="body">edit / cover wall</text>
+<rect class="ghost" x="1085" y="638" width="50" height="26"/><text x="1155" y="658" class="body">non-blocking ghost hint</text>
+<circle class="threat" cx="1110" cy="691" r="10"/><text x="1155" y="697" class="body">visible threat / target angle</text>
+<path class="route" d="M1085 730H1135"/><text x="1155" y="736" class="body">two-way clear route</text>
+<text x="1080" y="792" class="small">Four bays fit 20 × 12 T with 1T perimeter</text><text x="1080" y="812" class="small">and a 2T central spine. Heights: ≥4H clear.</text>
+<text x="48" y="892" class="roomTitle">DO NOT REMOVE THE EXISTING E2 / E4 / E5 / E7 SHORT DRILL ROOMS UNTIL A/B/C/D PASS HUMAN RESET + CAMERA TESTS.</text>
+<text x="48" y="930" class="sub">Dimensioned concept for greyboxing and review · target angles must be visible from the start · reset each bay independently</text>
+</svg>

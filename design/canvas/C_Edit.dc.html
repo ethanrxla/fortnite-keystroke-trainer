@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Level C Edit Course</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600&family=Barlow+Condensed:wght@600;700&family=JetBrains+Mono:wght@500&display=swap">
+<style>
+body{margin:0}
+.k{font:500 10px 'JetBrains Mono',monospace;letter-spacing:.08em;text-transform:uppercase}
+.lg{font:400 13px/1.45 'Barlow',sans-serif;color:#a9b4ca}
+.lg b{color:#e8ecf4;font-weight:600}
+.h{font:700 22px/1.1 'Barlow Condensed',sans-serif;color:#e8ecf4}
+.card{position:absolute;box-sizing:border-box;background:#182033;border:1px solid #2c3750;border-radius:6px;padding:14px 16px}
+.st{position:absolute;box-sizing:border-box;border:1.5px solid var(--c);background:color-mix(in srgb,var(--c) 13%,#10151f);color:var(--c);border-radius:3px;padding:6px 8px}
+.st b{display:block;font:600 15px/1.1 'Barlow',sans-serif}
+.st i{display:block;font:500 10px 'JetBrains Mono',monospace;font-style:normal;margin-top:2px}
+.env{position:absolute;border:1px dashed var(--c);box-sizing:border-box}
+.pl{position:absolute;width:12px;height:12px;border-radius:50%;background:#e8ecf4}
+.bot{position:absolute;width:14px;height:14px;border-radius:3px;background:#ff8a6b;border:2px solid #10151f;box-sizing:border-box}
+.bx{position:absolute;width:64px;height:64px;box-sizing:border-box;border:2px solid var(--c);background:color-mix(in srgb,var(--c) 28%,transparent)}
+.r{display:grid;grid-template-columns:28px 1fr 100px;gap:10px;padding:9px 14px;border-top:1px solid #2c3750;font:400 13px/1.35 'Barlow',sans-serif;color:#a9b4ca;align-items:center}
+.r b{color:#e8ecf4;font-weight:600}
+.r .m{font:500 11px 'JetBrains Mono',monospace;color:#e8ecf4}
+.hd{border-top:0;font:500 10px 'JetBrains Mono',monospace;letter-spacing:.08em;text-transform:uppercase;color:#ffb04d}
+</style>
+</helmet>
+<div style="width:1280px;height:800px;position:relative;background:#10151f;color:#e8ecf4;font-family:'Barlow',sans-serif;overflow:hidden">
+  <div style="position:absolute;left:40px;top:28px">
+    <div class="k" style="color:#ffb04d">Level C · Step 3 · 24 × 13 tiles</div>
+    <div style="font:700 52px/1 'Barlow Condensed',sans-serif;margin-top:6px">Edit Course</div>
+    <div class="lg" style="margin-top:6px;font-size:14px">Pieces are pre-built, so the drill is only editing. The player never has to build first.</div>
+  </div>
+
+  <div style="position:absolute;left:40px;top:130px;width:768px;height:416px;box-sizing:border-box;border:1px solid #2c3750;--c:#ffb04d;background-color:#0c1019;background-image:linear-gradient(rgba(255,255,255,.06) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.06) 1px,transparent 1px);background-size:32px 32px">
+    <div class="st" style="left:32px;top:32px;width:224px;height:160px"><b>1 · Wall edits</b><i>7 × 5</i><div class="bx" style="left:20px;top:70px"></div><div class="bx" style="left:100px;top:70px"></div><div class="pl" style="left:190px;top:120px"></div></div>
+    <div class="st" style="left:288px;top:32px;width:224px;height:160px"><b>2 · Floor and cone edits</b><i>7 × 5</i><div class="bx" style="left:20px;top:70px"></div><div class="bx" style="left:100px;top:70px"></div><div class="pl" style="left:190px;top:120px"></div></div>
+    <div class="st" style="left:544px;top:32px;width:192px;height:160px"><b>3 · Ramp and stair edits</b><i>6 × 5</i><div class="bx" style="left:20px;top:70px"></div><div class="bx" style="left:100px;top:70px"></div><div class="pl" style="left:164px;top:120px"></div></div>
+    <div class="st" style="left:32px;top:224px;width:448px;height:160px"><b>4 · Edit gauntlet</b><i>14 × 5, five boxes in a row</i><div class="bx" style="left:20px;top:70px"></div><div class="bx" style="left:106px;top:70px"></div><div class="bx" style="left:192px;top:70px"></div><div class="bx" style="left:278px;top:70px"></div><div class="bx" style="left:364px;top:70px"></div><div class="pl" style="left:8px;top:140px"></div></div>
+    <div class="st" style="left:512px;top:224px;width:224px;height:160px"><b>5 · Edit-peek vs bot</b><i>7 × 5</i><div class="bx" style="left:20px;top:70px"></div><div class="bot" style="left:180px;top:94px"></div><div class="pl" style="left:50px;top:140px"></div></div>
+    <div style="position:absolute;left:464px;top:408px;width:48px;height:8px;background:#ffb04d"></div>
+  </div>
+  <div class="k" style="position:absolute;left:436px;top:552px;color:#ffb04d;width:104px;text-align:center">Door · to hub</div>
+  <div class="lg" style="position:absolute;left:40px;top:552px;width:380px;font-size:12px">Filled squares = pre-built pieces to edit. Orange square = bot.</div>
+
+  <div class="card" style="left:40px;top:592px;width:376px;height:172px">
+    <div class="h">Props and devices</div>
+    <div class="lg" style="margin-top:6px">Pre-built walls, floors, cones and ramps re-place themselves after each run. Edit stalls use floor arrows showing the order of edits. Kill ceiling at 4 tiles and no-build outside each stall.</div>
+  </div>
+  <div class="card" style="left:432px;top:592px;width:376px;height:172px">
+    <div class="h">Bots</div>
+    <div class="lg" style="margin-top:6px">Stalls 1 to 4 have none. In stall 5, a tier 2 bot shoots through any open window, so the player learns to edit, peek and close fast. It does not build or edit.</div>
+  </div>
+
+  <div class="card" style="left:840px;top:130px;width:400px;height:300px;padding:6px 0 0;overflow:hidden">
+    <div class="r hd"><span>#</span><span>Task</span><span>Target</span></div>
+    <div class="r"><span class="m">1</span><span><b>Wall edits.</b> Door, window and arch on 3 walls</span><span class="m">8 → 4 s</span></div>
+    <div class="r"><span class="m">2</span><span><b>Floor and cone edits.</b> Six edits</span><span class="m">6 → 3 s</span></div>
+    <div class="r"><span class="m">3</span><span><b>Ramp and stair edits.</b> Six edits</span><span class="m">6 → 3 s</span></div>
+    <div class="r"><span class="m">4</span><span><b>Gauntlet.</b> Edit entry and exit of five boxes</span><span class="m">14 → 8 s</span></div>
+    <div class="r"><span class="m">5</span><span><b>Edit-peek.</b> Hit the bot three times without being hit</span><span class="m">10 → 5 s</span></div>
+  </div>
+  <div class="card" style="left:840px;top:450px;width:400px;height:98px">
+    <div class="h">Reset between edits</div>
+    <div class="lg" style="margin-top:6px">Each stall has a reset button inside the envelope so a bad edit never forces a full restart.</div>
+  </div>
+  <div class="card" style="left:840px;top:592px;width:400px;height:172px">
+    <div class="h">Run flow</div>
+    <div class="lg" style="margin-top:6px"><b>1</b> Step on the start pad. <b>2</b> Timer starts on your first edit. <b>3</b> Finish when the last piece matches the sign's pattern. <b>4</b> Result shows and the pieces re-place.</div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1280,"height":800}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

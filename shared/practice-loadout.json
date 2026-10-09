@@ -1,0 +1,11 @@
+{
+  "description": "Native practice loadouts accepted by local UEFN validation and successful session cooking on 2026-10-07; these are training presets, not a claim about the current competitive loot pool.",
+  "items": {
+    "AR": "/Game/Athena/Items/Weapons/WID_Assault_Auto_Athena_R_Ore_T03.WID_Assault_Auto_Athena_R_Ore_T03",
+    "SHOTGUN": "/Game/Athena/Items/Weapons/WID_Shotgun_Standard_Athena_UC_Ore_T03.WID_Shotgun_Standard_Athena_UC_Ore_T03",
+    "PISTOL": "/Game/Athena/Items/Weapons/WID_Pistol_SemiAuto_Athena_R_Ore_T03.WID_Pistol_SemiAuto_Athena_R_Ore_T03",
+    "EXPLOSIVES": "/Game/Athena/Items/Consumables/Grenade/Athena_Grenade.Athena_Grenade",
+    "HEALS": "/Game/Athena/Items/Consumables/Shields/Athena_Shields.Athena_Shields",
+    "SMG": "/Figment_Pistol_AutoHeavy_Athena/Gameplay/WID_Figment_Pistol_AutoHeavy_Athena_R.WID_Figment_Pistol_AutoHeavy_Athena_R"
+  }
+}

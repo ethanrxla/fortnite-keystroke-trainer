@@ -1,0 +1,129 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1320" height="1000" viewBox="0 0 1320 1000">
+<rect width="1320" height="1000" fill="#10151f"/>
+<style>text{font-family:Segoe UI,Arial,sans-serif;fill:#e9edf5;font-size:17px}.small{font-size:13px;fill:#a8b5c9}.title{font-size:28px;font-weight:700}.head{font-size:19px;font-weight:600}.dim{fill:#81d5ec;font-size:15px}</style>
+<defs><marker id="arrow" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto"><path d="M0 0L7 3.5L0 7" fill="#81d5ec"/></marker></defs>
+<text class="title" x="72" y="43">RXLA / TRAINING COURT</text>
+<text class="small" x="72" y="70">Dimension plan v2 · authored grid · October 7, 2026 · exact geometry, proposed learning layout</text>
+<rect x="100" y="782" width="640" height="96" fill="#252d3a" stroke="#40536e"/>
+<rect x="100" y="494" width="640" height="288" fill="#1b2432" stroke="#40536e"/>
+<rect x="100" y="430" width="640" height="64" fill="#2c3542" stroke="#40536e"/>
+<rect x="100" y="110" width="320" height="320" fill="#17363c" stroke="#40536e"/>
+<rect x="420" y="110" width="320" height="320" fill="#26302a" stroke="#40536e"/>
+<rect x="420" y="110" width="96" height="320" fill="#34382d" stroke="#b09e64" stroke-dasharray="5 4"/>
+<rect x="132" y="494" width="160" height="288" fill="#24456a" stroke="#40536e"/>
+<rect x="324" y="494" width="160" height="288" fill="#413357" stroke="#40536e"/>
+<rect x="516" y="494" width="160" height="288" fill="#274d49" stroke="#40536e"/>
+<line x1="100" y1="878" x2="100" y2="110" stroke="#354151" stroke-width="2"/>
+<line x1="132" y1="878" x2="132" y2="110" stroke="#354151" stroke-width="2"/>
+<line x1="164" y1="878" x2="164" y2="110" stroke="#354151" stroke-width="2"/>
+<line x1="196" y1="878" x2="196" y2="110" stroke="#354151" stroke-width="2"/>
+<line x1="228" y1="878" x2="228" y2="110" stroke="#354151" stroke-width="2"/>
+<line x1="260" y1="878" x2="260" y2="110" stroke="#354151" stroke-width="2"/>
+<line x1="292" y1="878" x2="292" y2="110" stroke="#354151" stroke-width="2"/>
+<line x1="324" y1="878" x2="324" y2="110" stroke="#354151" stroke-width="2"/>
+<line x1="356" y1="878" x2="356" y2="110" stroke="#354151" stroke-width="2"/>
+<line x1="388" y1="878" x2="388" y2="110" stroke="#354151" stroke-width="2"/>
+<line x1="420" y1="878" x2="420" y2="110" stroke="#354151" stroke-width="2"/>
+<line x1="452" y1="878" x2="452" y2="110" stroke="#354151" stroke-width="2"/>
+<line x1="484" y1="878" x2="484" y2="110" stroke="#354151" stroke-width="2"/>
+<line x1="516" y1="878" x2="516" y2="110" stroke="#354151" stroke-width="2"/>
+<line x1="548" y1="878" x2="548" y2="110" stroke="#354151" stroke-width="2"/>
+<line x1="580" y1="878" x2="580" y2="110" stroke="#354151" stroke-width="2"/>
+<line x1="612" y1="878" x2="612" y2="110" stroke="#354151" stroke-width="2"/>
+<line x1="644" y1="878" x2="644" y2="110" stroke="#354151" stroke-width="2"/>
+<line x1="676" y1="878" x2="676" y2="110" stroke="#354151" stroke-width="2"/>
+<line x1="708" y1="878" x2="708" y2="110" stroke="#354151" stroke-width="2"/>
+<line x1="740" y1="878" x2="740" y2="110" stroke="#354151" stroke-width="2"/>
+<line x1="100" y1="878" x2="740" y2="878" stroke="#354151" stroke-width="2"/>
+<line x1="100" y1="846" x2="740" y2="846" stroke="#354151" stroke-width="2"/>
+<line x1="100" y1="814" x2="740" y2="814" stroke="#354151" stroke-width="2"/>
+<line x1="100" y1="782" x2="740" y2="782" stroke="#354151" stroke-width="2"/>
+<line x1="100" y1="750" x2="740" y2="750" stroke="#354151" stroke-width="2"/>
+<line x1="100" y1="718" x2="740" y2="718" stroke="#354151" stroke-width="2"/>
+<line x1="100" y1="686" x2="740" y2="686" stroke="#354151" stroke-width="2"/>
+<line x1="100" y1="654" x2="740" y2="654" stroke="#354151" stroke-width="2"/>
+<line x1="100" y1="622" x2="740" y2="622" stroke="#354151" stroke-width="2"/>
+<line x1="100" y1="590" x2="740" y2="590" stroke="#354151" stroke-width="2"/>
+<line x1="100" y1="558" x2="740" y2="558" stroke="#354151" stroke-width="2"/>
+<line x1="100" y1="526" x2="740" y2="526" stroke="#354151" stroke-width="2"/>
+<line x1="100" y1="494" x2="740" y2="494" stroke="#354151" stroke-width="2"/>
+<line x1="100" y1="462" x2="740" y2="462" stroke="#354151" stroke-width="2"/>
+<line x1="100" y1="430" x2="740" y2="430" stroke="#354151" stroke-width="2"/>
+<line x1="100" y1="398" x2="740" y2="398" stroke="#354151" stroke-width="2"/>
+<line x1="100" y1="366" x2="740" y2="366" stroke="#354151" stroke-width="2"/>
+<line x1="100" y1="334" x2="740" y2="334" stroke="#354151" stroke-width="2"/>
+<line x1="100" y1="302" x2="740" y2="302" stroke="#354151" stroke-width="2"/>
+<line x1="100" y1="270" x2="740" y2="270" stroke="#354151" stroke-width="2"/>
+<line x1="100" y1="238" x2="740" y2="238" stroke="#354151" stroke-width="2"/>
+<line x1="100" y1="206" x2="740" y2="206" stroke="#354151" stroke-width="2"/>
+<line x1="100" y1="174" x2="740" y2="174" stroke="#354151" stroke-width="2"/>
+<line x1="100" y1="142" x2="740" y2="142" stroke="#354151" stroke-width="2"/>
+<line x1="100" y1="110" x2="740" y2="110" stroke="#354151" stroke-width="2"/>
+<text x="260" y="174" class="head" text-anchor="middle">04 FREE BUILD</text>
+<text x="260" y="196" class="small" text-anchor="middle">10 × 10 tiles</text>
+<text x="260" y="218" class="small" text-anchor="middle">51.20 × 51.20 m</text>
+<text x="260" y="240" class="small" text-anchor="middle">Open sky; 8 levels clear</text>
+<text x="580" y="174" class="head" text-anchor="middle">05 TRANSFER</text>
+<text x="580" y="196" class="small" text-anchor="middle">10 × 10 tiles</text>
+<text x="580" y="218" class="small" text-anchor="middle">Cover-to-cover practice</text>
+<text x="580" y="240" class="small" text-anchor="middle">3-tile reset buffer at left</text>
+<text x="212.0" y="529.2" class="head" text-anchor="middle">01 BUILD</text>
+<text x="212.0" y="551.2" class="small" text-anchor="middle">5 × 9 tiles</text>
+<text x="212.0" y="573.2" class="small" text-anchor="middle">Watch / Copy / Recall</text>
+<text x="404.0" y="529.2" class="head" text-anchor="middle">02 RE-BOX</text>
+<text x="404.0" y="551.2" class="small" text-anchor="middle">5 × 9 tiles</text>
+<text x="404.0" y="573.2" class="small" text-anchor="middle">Cover the next cell</text>
+<text x="596.0" y="529.2" class="head" text-anchor="middle">03 PEEK</text>
+<text x="596.0" y="551.2" class="small" text-anchor="middle">5 × 9 tiles</text>
+<text x="596.0" y="573.2" class="small" text-anchor="middle">Pre-aim and recover</text>
+<text x="420" y="460.4" class="head" text-anchor="middle">2 TILE CROSS CORRIDOR</text>
+<text x="420" y="817.2" class="head" text-anchor="middle">ARRIVAL / CHOICE SPINE</text>
+<text x="420" y="839.2" class="small" text-anchor="middle">3 tiles clear depth</text>
+<rect x="132" y="622" width="32" height="64" fill="none" stroke="#43d6f2" stroke-dasharray="4 3"/>
+<rect x="196" y="654" width="96" height="32" fill="none" stroke="#43d6f2" stroke-dasharray="4 3"/>
+<text x="212.0" y="706.8" class="head" text-anchor="middle">Reference → Copy</text>
+<rect x="356" y="654" width="32" height="32" fill="none" stroke="#b597ec" stroke-dasharray="4 3"/>
+<rect x="388" y="654" width="32" height="32" fill="none" stroke="#b597ec" stroke-dasharray="4 3"/>
+<line x1="372.0" y1="670.0" x2="404.0" y2="670.0" stroke="#81d5ec" stroke-width="2" marker-end="url(#arrow)"/>
+<line x1="532.0" y1="686" x2="564.0" y2="686" stroke="#dae6f4" stroke-width="2"/>
+<circle cx="584.8" cy="654" r="5" fill="#6be1b9"/>
+<circle cx="584.8" cy="622" r="5" fill="#6be1b9"/>
+<line x1="500.0" y1="366" x2="532.0" y2="366" stroke="#d2d7dc" stroke-width="2"/>
+<line x1="564.0" y1="270" x2="596.0" y2="270" stroke="#d2d7dc" stroke-width="2"/>
+<line x1="500.0" y1="174" x2="532.0" y2="174" stroke="#d2d7dc" stroke-width="2"/>
+<line x1="628.0" y1="366" x2="660.0" y2="366" stroke="#d2d7dc" stroke-width="2"/>
+<circle cx="420" cy="846" r="8" fill="#ffad66" stroke="#fff"/>
+<text x="431" y="851" class="small" text-anchor="start">ARRIVE</text>
+<circle cx="132" cy="846" r="8" fill="#ffad66" stroke="#fff"/>
+<text x="143" y="851" class="small" text-anchor="start">HUB</text>
+<circle cx="260" cy="398" r="8" fill="#ffad66" stroke="#fff"/>
+<text x="271" y="403" class="small" text-anchor="start">FREE ENTRY</text>
+<text x="420.0" y="90" class="dim" text-anchor="middle">20 T = 102.40 m  (+Y right)</text>
+<text class="dim" transform="translate(45 494.0) rotate(-90)" text-anchor="middle">24 T = 122.88 m  (+X forward)</text>
+<text x="100" y="906" class="dim" text-anchor="start">Anchor boundary: world X=0, Y=−35840, Z=0 cm</text>
+<text x="100" y="929" class="small" text-anchor="start">One tile T=512 cm. One build level H=384 cm. Floor top Z=0.</text>
+<text x="800" y="145" class="head" text-anchor="start">THE LEARNING LOOP</text>
+<text x="800" y="175" class="small" text-anchor="start">1. Watch the scenario reference.</text>
+<text x="800" y="198" class="small" text-anchor="start">2. Copy in the blank neighboring cells.</text>
+<text x="800" y="221" class="small" text-anchor="start">3. Recall with the model hidden.</text>
+<text x="800" y="244" class="small" text-anchor="start">4. Apply the principle while moving.</text>
+<text x="800" y="267" class="small" text-anchor="start">5. Repeat at your own speed.</text>
+<text x="800" y="322" class="head" text-anchor="start">READABLE BY DESIGN</text>
+<text x="800" y="352" class="small" text-anchor="start">Two choices beside hub spawn:</text>
+<text x="800" y="375" class="small" text-anchor="start">START HERE or FREE BUILD.</text>
+<text x="800" y="398" class="small" text-anchor="start">No rank gate for self-directed practice.</text>
+<text x="800" y="421" class="small" text-anchor="start">Short hub return at the court entrance.</text>
+<text x="800" y="444" class="small" text-anchor="start">Reference cells remain separate from copy cells.</text>
+<text x="800" y="499" class="head" text-anchor="start">DIMENSION CONTRACT</text>
+<text x="800" y="529" class="small" text-anchor="start">6 cm open-frame ghost edges.</text>
+<text x="800" y="552" class="small" text-anchor="start">Wall: 512 × 384 cm.</text>
+<text x="800" y="575" class="small" text-anchor="start">Floor: 512 × 512 cm.</text>
+<text x="800" y="598" class="small" text-anchor="start">Ramp: 512 run / 384 rise / 640 slope.</text>
+<text x="800" y="621" class="small" text-anchor="start">Bay gaps: 1 tile. Main cross-route: 2 tiles.</text>
+<text x="800" y="676" class="head" text-anchor="start">VERIFICATION BOUNDARY</text>
+<text x="800" y="706" class="small" text-anchor="start">Court is initially unscored visual practice.</text>
+<text x="800" y="729" class="small" text-anchor="start">Position alone does not prove a build piece.</text>
+<text x="800" y="752" class="small" text-anchor="start">Ghosts do not certify edits or accuracy.</text>
+<text x="800" y="775" class="small" text-anchor="start">Movement, camera and resets need live tests.</text>
+<text x="800" y="798" class="small" text-anchor="start">Measured learning gains need human playtests.</text>
+</svg>

@@ -1,0 +1,71 @@
+{
+	"fileVersion": 15,
+	"title": "MyProject",
+	"description": "",
+	"keyArt": "Resources/CEGreyboxing.png",
+	"docsUrl": "",
+	"apiAccess": "Private",
+	"bindings":
+	{
+		"projectId": "901bfb86-7a88-4ae8-82da-fa6bfac00fa4",
+		"modules":
+		{
+			"1f1b8d9c-3e3a-4bb9-b226-03d38d86582e": "1f1b8d9c-3e3a-4bb9-b226-03d38d86582e"
+		},
+		"bSuppressAutomaticVersePathAssignment": false,
+		"projectVersePath": ""
+	},
+	"compatibilityVersion": "42.30",
+	"requiredRedirectorStartingVersion": "42.30.58813929",
+	"editorPermissions": [],
+	"epicApp": "",
+	"sortPriority": 0,
+	"featureSet": "",
+	"plugins": [
+		{
+			"name": "1f1b8d9c-3e3a-4bb9-b226-03d38d86582e",
+			"bIsRoot": true,
+			"bIsPublic": false
+		}
+	],
+	"dataSets":
+	{
+		"matchmaking":
+		{
+			"maxPlayers": 16,
+			"maxTeamCount": 16,
+			"maxTeamSize": 16,
+			"maxSocialPartySize": 16,
+			"allowJoinInProgress": true,
+			"allowSquadFillOption": false,
+			"islandQueuePrivacy": "Unrestricted",
+			"minPlayers": 1,
+			"overtimePlayerTarget": 1,
+			"queueMainDuration": 5,
+			"queueOvertimeDuration": 5,
+			"useSkillBasedMatchmaking": false,
+			"version": 1
+		},
+		"experimental":
+		{
+			"DefaultPawn":
+			{
+				"bUseDefaultCharacter": true
+			},
+			"sceneGraph":
+			{
+				"bIsSceneGraphSystemAllowed": true,
+				"bEnableOneFilePerEntity": false
+			},
+			"version": 1,
+			"pythonExperimental":
+			{
+				"bEnablePythonForProject": true
+			},
+			"toolsets":
+			{
+				"bEnableToolsetsForProject": true
+			}
+		}
+	}
+}

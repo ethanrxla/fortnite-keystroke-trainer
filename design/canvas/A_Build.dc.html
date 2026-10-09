@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Level A Build Basics</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600&family=Barlow+Condensed:wght@600;700&family=JetBrains+Mono:wght@500&display=swap">
+<style>
+body{margin:0}
+.k{font:500 10px 'JetBrains Mono',monospace;letter-spacing:.08em;text-transform:uppercase}
+.lg{font:400 13px/1.45 'Barlow',sans-serif;color:#a9b4ca}
+.lg b{color:#e8ecf4;font-weight:600}
+.h{font:700 22px/1.1 'Barlow Condensed',sans-serif;color:#e8ecf4}
+.card{position:absolute;box-sizing:border-box;background:#182033;border:1px solid #2c3750;border-radius:6px;padding:14px 16px}
+.st{position:absolute;box-sizing:border-box;border:1.5px solid var(--c);background:color-mix(in srgb,var(--c) 13%,#10151f);color:var(--c);border-radius:3px;padding:6px 8px}
+.st b{display:block;font:600 15px/1.1 'Barlow',sans-serif}
+.st i{display:block;font:500 10px 'JetBrains Mono',monospace;font-style:normal;margin-top:2px}
+.env{position:absolute;border:1px dashed var(--c);box-sizing:border-box}
+.pl{position:absolute;width:12px;height:12px;border-radius:50%;background:#e8ecf4}
+.r{display:grid;grid-template-columns:28px 1fr 110px;gap:10px;padding:8px 14px;border-top:1px solid #2c3750;font:400 13px/1.35 'Barlow',sans-serif;color:#a9b4ca;align-items:center}
+.r b{color:#e8ecf4;font-weight:600}
+.r .m{font:500 11px 'JetBrains Mono',monospace;color:#e8ecf4}
+.hd{border-top:0;font:500 10px 'JetBrains Mono',monospace;letter-spacing:.08em;text-transform:uppercase;color:#5aa9ff}
+</style>
+</helmet>
+<div style="width:1280px;height:800px;position:relative;background:#10151f;color:#e8ecf4;font-family:'Barlow',sans-serif;overflow:hidden">
+  <div style="position:absolute;left:40px;top:28px">
+    <div class="k" style="color:#5aa9ff">Level A · Step 1 · 24 × 13 tiles</div>
+    <div style="font:700 52px/1 'Barlow Condensed',sans-serif;margin-top:6px">Build Basics</div>
+    <div class="lg" style="margin-top:6px;font-size:14px">Eight identical 5×5 stalls. One piece type each, no pressure, no bots.</div>
+  </div>
+
+  <div style="position:absolute;left:40px;top:130px;width:768px;height:416px;box-sizing:border-box;border:1px solid #2c3750;--c:#5aa9ff;background-color:#0c1019;background-image:linear-gradient(rgba(255,255,255,.06) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.06) 1px,transparent 1px);background-size:32px 32px">
+    <div class="st" style="left:16px;top:16px;width:160px;height:160px"><b>1 · Walls</b><i>5 × 5</i><div class="env" style="left:32px;top:52px;width:96px;height:96px"></div><div class="pl" style="left:74px;top:94px"></div></div>
+    <div class="st" style="left:208px;top:16px;width:160px;height:160px"><b>2 · Floors</b><i>5 × 5</i><div class="env" style="left:32px;top:52px;width:96px;height:96px"></div><div class="pl" style="left:74px;top:94px"></div></div>
+    <div class="st" style="left:400px;top:16px;width:160px;height:160px"><b>3 · Ramps</b><i>5 × 5</i><div class="env" style="left:32px;top:52px;width:96px;height:96px"></div><div class="pl" style="left:74px;top:94px"></div></div>
+    <div class="st" style="left:592px;top:16px;width:160px;height:160px"><b>4 · Cones</b><i>5 × 5</i><div class="env" style="left:32px;top:52px;width:96px;height:96px"></div><div class="pl" style="left:74px;top:94px"></div></div>
+    <div class="st" style="left:16px;top:208px;width:160px;height:160px"><b>5 · Ramp-wall</b><i>5 × 5</i><div class="env" style="left:32px;top:52px;width:96px;height:96px"></div><div class="pl" style="left:74px;top:94px"></div></div>
+    <div class="st" style="left:208px;top:208px;width:160px;height:160px"><b>6 · 1×1 box</b><i>5 × 5</i><div class="env" style="left:32px;top:52px;width:96px;height:96px"></div><div class="pl" style="left:74px;top:94px"></div></div>
+    <div class="st" style="left:400px;top:208px;width:160px;height:160px"><b>7 · 2×2 fort</b><i>5 × 5, tight</i><div class="env" style="left:16px;top:44px;width:128px;height:108px"></div><div class="pl" style="left:74px;top:94px"></div></div>
+    <div class="st" style="left:592px;top:208px;width:160px;height:160px;background:#182033"><b>8 · Results</b><i>5 × 5</i><div class="lg" style="margin-top:14px">Terminal shows bests for stalls 1 to 7 and resets the level.</div></div>
+    <div style="position:absolute;left:352px;top:408px;width:64px;height:8px;background:#5aa9ff"></div>
+  </div>
+  <div class="k" style="position:absolute;left:360px;top:552px;color:#5aa9ff;width:96px;text-align:center">Door · to hub</div>
+  <div class="lg" style="position:absolute;left:40px;top:552px;width:300px;font-size:12px">Dashed box = 3×3 envelope. White dot = start position.</div>
+
+  <div class="card" style="left:40px;top:592px;width:376px;height:172px">
+    <div class="h">Props and devices</div>
+    <div class="lg" style="margin-top:6px">Each stall: floor decal for the envelope, no-build barrier on the stall edge, kill ceiling 5 tiles up, start pad, sign with task and pass mark. Stall 6 and 7 add a button that rebuilds the starting pad after each run.</div>
+  </div>
+  <div class="card" style="left:432px;top:592px;width:376px;height:172px">
+    <div class="h">Bots</div>
+    <div class="lg" style="margin-top:6px">None in stalls 1 to 5, so the player focuses on muscle memory. Optional tier 1 dummy at the back of stalls 6 and 7 that pings the box, to practise boxing up under light fire.</div>
+  </div>
+
+  <div class="card" style="left:840px;top:130px;width:400px;height:412px;padding:6px 0 0;overflow:hidden">
+    <div class="r hd"><span>#</span><span>Task</span><span>Target</span></div>
+    <div class="r"><span class="m">1</span><span><b>Walls.</b> Four walls, N E S W</span><span class="m">4.0 → 1.5 s</span></div>
+    <div class="r"><span class="m">2</span><span><b>Floors.</b> Six-floor ring</span><span class="m">6.0 → 3.0 s</span></div>
+    <div class="r"><span class="m">3</span><span><b>Ramps.</b> Five up, five down</span><span class="m">6.0 → 3.0 s</span></div>
+    <div class="r"><span class="m">4</span><span><b>Cones.</b> Cone on a box</span><span class="m">5.0 → 2.0 s</span></div>
+    <div class="r"><span class="m">5</span><span><b>Ramp-wall.</b> Six to the ceiling</span><span class="m">8.0 → 4.0 s</span></div>
+    <div class="r"><span class="m">6</span><span><b>1×1 box.</b> Five boxes, average</span><span class="m">5.0 → 2.5 s</span></div>
+    <div class="r"><span class="m">7</span><span><b>2×2 fort.</b> Full build</span><span class="m">10 → 5 s</span></div>
+    <div class="r"><span class="m">8</span><span><b>Results.</b> Review and reset</span><span class="m">—</span></div>
+  </div>
+  <div class="card" style="left:840px;top:592px;width:400px;height:172px">
+    <div class="h">Run flow</div>
+    <div class="lg" style="margin-top:6px"><b>1</b> Step on the start pad. <b>2</b> Timer starts on your first piece. <b>3</b> Finish when the sign's piece count is met. <b>4</b> Result shows on the sign, then everything resets. Targets are starting values: tune them with real players.</div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1280,"height":800}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

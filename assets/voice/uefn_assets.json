@@ -1,0 +1,12 @@
+{
+  "arena_go": "/Game/KT_Audio/arena_go.arena_go",
+  "arena_melee": "/Game/KT_Audio/arena_melee.arena_melee",
+  "arena_one": "/Game/KT_Audio/arena_one.arena_one",
+  "arena_ready": "/Game/KT_Audio/arena_ready.arena_ready",
+  "arena_reset": "/Game/KT_Audio/arena_reset.arena_reset",
+  "arena_standard": "/Game/KT_Audio/arena_standard.arena_standard",
+  "arena_three": "/Game/KT_Audio/arena_three.arena_three",
+  "arena_two": "/Game/KT_Audio/arena_two.arena_two",
+  "bot_ready": "/Game/KT_Audio/bot_ready.bot_ready",
+  "piece_control_brief": "/Game/KT_Audio/piece_control_brief.piece_control_brief"
+}

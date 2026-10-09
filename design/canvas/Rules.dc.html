@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Space and Sizing Rules</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600&family=Barlow+Condensed:wght@600;700&family=JetBrains+Mono:wght@500&display=swap">
+<style>
+body{margin:0}
+.k{font:500 10px 'JetBrains Mono',monospace;letter-spacing:.08em;text-transform:uppercase}
+.lg{font:400 14px/1.45 'Barlow',sans-serif;color:#a9b4ca}
+.card{background:#182033;border:1px solid #2c3750;border-radius:6px;padding:14px 16px}
+.h{font:700 22px/1.1 'Barlow Condensed',sans-serif;color:#e8ecf4}
+.r{display:grid;grid-template-columns:104px 100px 118px 1fr;gap:12px;padding:8px 14px;border-top:1px solid #2c3750;font:400 13px/1.35 'Barlow',sans-serif;color:#a9b4ca;align-items:center}
+.r b{color:#e8ecf4;font-weight:600}
+.r span.m{font:500 12px 'JetBrains Mono',monospace;color:#e8ecf4}
+.hd{border-top:0;font:500 10px 'JetBrains Mono',monospace;letter-spacing:.08em;text-transform:uppercase;color:#4fe3d6}
+.c{width:28px;height:28px;box-sizing:border-box;border:1px solid rgba(255,255,255,.12)}
+</style>
+</helmet>
+<div style="width:1280px;height:800px;position:relative;background:#10151f;color:#e8ecf4;font-family:'Barlow',sans-serif;overflow:hidden">
+  <div style="position:absolute;left:40px;top:30px;width:720px">
+    <div class="k" style="color:#4fe3d6">Rule set · Space and sizing</div>
+    <div style="font:700 56px/1 'Barlow Condensed',sans-serif;margin-top:8px">Just enough room</div>
+  </div>
+
+  <div class="card" style="position:absolute;left:40px;top:128px;width:720px;box-sizing:border-box;display:flex;gap:22px;align-items:center">
+    <div style="display:grid;grid-template-columns:repeat(5,28px);flex:none">
+      <div class="c"></div><div class="c"></div><div class="c"></div><div class="c"></div><div class="c"></div>
+      <div class="c"></div><div class="c" style="background:#4fe3d633;border-color:#4fe3d6"></div><div class="c" style="background:#4fe3d633;border-color:#4fe3d6"></div><div class="c" style="background:#4fe3d633;border-color:#4fe3d6"></div><div class="c"></div>
+      <div class="c"></div><div class="c" style="background:#4fe3d633;border-color:#4fe3d6"></div><div class="c" style="background:#e8ecf4;border-color:#e8ecf4;border-radius:50%"></div><div class="c" style="background:#4fe3d633;border-color:#4fe3d6"></div><div class="c"></div>
+      <div class="c"></div><div class="c" style="background:#4fe3d633;border-color:#4fe3d6"></div><div class="c" style="background:#4fe3d633;border-color:#4fe3d6"></div><div class="c" style="background:#4fe3d633;border-color:#4fe3d6"></div><div class="c"></div>
+      <div class="c"></div><div class="c"></div><div class="c"></div><div class="c"></div><div class="c"></div>
+    </div>
+    <div>
+      <div class="h">Footprint = envelope + run-off</div>
+      <div class="lg" style="margin-top:6px"><b style="color:#e8ecf4">Envelope</b> (teal) is the space the drill actually uses: where the player stands, builds and moves. <b style="color:#e8ecf4">Run-off</b> is one extra tile around it so the player can back off or re-aim without hitting a wall. Anything bigger invites wandering. Anything smaller causes accidental fails.</div>
+      <div class="k" style="color:#a9b4ca;margin-top:8px">Example: 1×1 box → 3×3 envelope → 5×5 stall</div>
+    </div>
+  </div>
+
+  <div class="card" style="position:absolute;left:40px;top:300px;width:720px;box-sizing:border-box;padding:6px 0 0;overflow:hidden">
+    <div class="r hd"><span>Drill</span><span>Envelope</span><span>Footprint</span><span>Why</span></div>
+    <div class="r"><b>Single pieces</b><span class="m">3×3</span><span class="m">5×5</span><span>Place in all four directions, then back off</span></div>
+    <div class="r"><b>1×1 box</b><span class="m">3×3</span><span class="m">5×5</span><span>Walls, floor, cone and edits with room to move</span></div>
+    <div class="r"><b>2×2 fort</b><span class="m">4×4</span><span class="m">5×5</span><span>Tight on purpose: forces compact builds</span></div>
+    <div class="r"><b>Ramp rush</b><span class="m">3 × 10</span><span class="m">4 × 11</span><span>One ramp per tile, ten ramps to the height cap</span></div>
+    <div class="r"><b>Tunnel run</b><span class="m">3 × 8</span><span class="m">4 × 11</span><span>Straight tunnel with a flank bot to punish gaps</span></div>
+    <div class="r"><b>90s tower</b><span class="m">3×3, 10 high</span><span class="m">5×5, 10 high</span><span>Kill ceiling stops over-building</span></div>
+    <div class="r"><b>Edit pad</b><span class="m">3 × 2</span><span class="m">7 × 5</span><span>Two pre-built piece sets side by side</span></div>
+    <div class="r"><b>Aim lane</b><span class="m">22 × 3</span><span class="m">22 × 3</span><span>Shoot line at 0, targets at 25 / 50 / 100 m</span></div>
+    <div class="r"><b>Bot arena</b><span class="m">12 × 12</span><span class="m">12×12, 8 high</span><span>Room to drop and retake height in a box fight</span></div>
+    <div class="r"><b>Scenario bay</b><span class="m">9 × 5</span><span class="m">9 × 5</span><span>Self-contained, one bot setup per bay</span></div>
+  </div>
+
+  <div style="position:absolute;left:800px;top:34px;width:440px;display:flex;flex-direction:column;gap:12px">
+    <div class="card">
+      <div class="k" style="color:#a9b4ca">Unit reference</div>
+      <div class="h" style="margin-top:4px">1 tile = 512 UU ≈ 5.12 m wide</div>
+      <div class="lg" style="margin-top:4px">Wall height 384 UU ≈ 3.84 m. Distances in this plan are tiles; metres are rounded. Confirm the grid values in your editor before placing anything.</div>
+    </div>
+    <div class="h" style="margin:8px 0 0">No-ambiguity checklist</div>
+    <div class="card" style="display:flex;flex-direction:column;gap:11px">
+      <div class="lg"><b style="color:#e8ecf4">1 · One drill per box.</b> Solid walls on every side except the single door.</div>
+      <div class="lg"><b style="color:#e8ecf4">2 · Printed start and goal.</b> Floor decals mark the start line, the target line and the build limit.</div>
+      <div class="lg"><b style="color:#e8ecf4">3 · Build volume.</b> Building is only allowed inside the stall footprint. Everywhere else is no-build.</div>
+      <div class="lg"><b style="color:#e8ecf4">4 · Height ceiling.</b> An invisible kill plane at the drill's maximum height.</div>
+      <div class="lg"><b style="color:#e8ecf4">5 · Auto reset.</b> Finishing or leaving a stall clears every player piece and respawns targets.</div>
+      <div class="lg"><b style="color:#e8ecf4">6 · Closed sightlines.</b> Bots and targets only see and hit the stall's own player.</div>
+      <div class="lg"><b style="color:#e8ecf4">7 · One sign per stall.</b> Task, metric and pass mark, readable from the start line.</div>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1280,"height":800}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

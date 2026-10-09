@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Level F Scenarios</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600&family=Barlow+Condensed:wght@600;700&family=JetBrains+Mono:wght@500&display=swap">
+<style>
+body{margin:0}
+.k{font:500 10px 'JetBrains Mono',monospace;letter-spacing:.08em;text-transform:uppercase}
+.lg{font:400 13px/1.45 'Barlow',sans-serif;color:#a9b4ca}
+.lg b{color:#e8ecf4;font-weight:600}
+.h{font:700 22px/1.1 'Barlow Condensed',sans-serif;color:#e8ecf4}
+.card{position:absolute;box-sizing:border-box;background:#182033;border:1px solid #2c3750;border-radius:6px;padding:14px 16px}
+.st{position:absolute;box-sizing:border-box;border:1.5px solid var(--c);background:color-mix(in srgb,var(--c) 13%,#10151f);color:var(--c);border-radius:3px;padding:6px 8px}
+.st b{display:block;font:600 15px/1.1 'Barlow',sans-serif}
+.st i{display:block;font:500 10px 'JetBrains Mono',monospace;font-style:normal;margin-top:2px}
+.pl{position:absolute;width:12px;height:12px;border-radius:50%;background:#e8ecf4}
+.bot{position:absolute;width:14px;height:14px;border-radius:3px;background:#ff8a6b;border:2px solid #10151f;box-sizing:border-box}
+.cv{position:absolute;box-sizing:border-box;border:2px solid var(--c);background:color-mix(in srgb,var(--c) 28%,transparent)}
+.zn{position:absolute;box-sizing:border-box;border:1px dashed var(--c)}
+.r{display:grid;grid-template-columns:28px 1fr 100px;gap:10px;padding:9px 14px;border-top:1px solid #2c3750;font:400 13px/1.35 'Barlow',sans-serif;color:#a9b4ca;align-items:center}
+.r b{color:#e8ecf4;font-weight:600}
+.r .m{font:500 11px 'JetBrains Mono',monospace;color:#e8ecf4}
+.hd{border-top:0;font:500 10px 'JetBrains Mono',monospace;letter-spacing:.08em;text-transform:uppercase;color:#f2d95c}
+</style>
+</helmet>
+<div style="width:1280px;height:800px;position:relative;background:#10151f;color:#e8ecf4;font-family:'Barlow',sans-serif;overflow:hidden">
+  <div style="position:absolute;left:40px;top:28px">
+    <div class="k" style="color:#f2d95c">Level F · Step 6 · 20 × 12 tiles</div>
+    <div style="font:700 52px/1 'Barlow Condensed',sans-serif;margin-top:6px">Scenarios</div>
+    <div class="lg" style="margin-top:6px;font-size:14px">Four bays that replay real in-game situations. Everything from levels A to E, under pressure.</div>
+  </div>
+
+  <div style="position:absolute;left:40px;top:130px;width:768px;height:416px;box-sizing:border-box;border:1px solid #2c3750;--c:#f2d95c;background-color:#0c1019;background-image:linear-gradient(rgba(255,255,255,.06) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.06) 1px,transparent 1px);background-size:32px 32px">
+    <div class="st" style="left:64px;top:32px;width:288px;height:160px"><b>1 · High-ground retake</b><i>9 × 5</i>
+      <div class="cv" style="left:100px;top:60px;width:64px;height:64px"></div><div class="bot" style="left:125px;top:85px"></div><div class="pl" style="left:30px;top:128px"></div></div>
+    <div class="st" style="left:416px;top:32px;width:288px;height:160px"><b>2 · Endgame zone edge</b><i>9 × 5</i>
+      <div class="zn" style="left:10px;top:50px;width:264px;height:100px"></div><div class="zn" style="left:70px;top:70px;width:144px;height:60px"></div>
+      <div class="bot" style="left:132px;top:90px"></div><div class="pl" style="left:20px;top:128px"></div></div>
+    <div class="st" style="left:64px;top:224px;width:288px;height:160px"><b>3 · Two vs one</b><i>9 × 5</i>
+      <div class="bot" style="left:230px;top:76px"></div><div class="bot" style="left:230px;top:110px"></div><div class="cv" style="left:100px;top:84px;width:32px;height:32px"></div><div class="pl" style="left:20px;top:100px"></div></div>
+    <div class="st" style="left:416px;top:224px;width:288px;height:160px"><b>4 · Breach</b><i>9 × 5</i>
+      <div class="cv" style="left:150px;top:52px;width:96px;height:96px"></div><div class="bot" style="left:190px;top:92px"></div><div class="pl" style="left:30px;top:100px"></div></div>
+    <div style="position:absolute;left:352px;top:408px;width:64px;height:8px;background:#f2d95c"></div>
+  </div>
+  <div class="k" style="position:absolute;left:344px;top:552px;color:#f2d95c;width:80px;text-align:center">Door · to hub</div>
+  <div class="lg" style="position:absolute;left:40px;top:552px;width:300px;font-size:12px">Dashed lines = shrinking zone. Filled blocks = pre-built structures. Orange = bot.</div>
+
+  <div class="card" style="left:40px;top:592px;width:376px;height:172px">
+    <div class="h">Props and devices</div>
+    <div class="lg" style="margin-top:6px">Each bay is sealed and resets on its own. Bay 2 uses a closing barrier to simulate the storm. Bots spawn from one of three points at random so players cannot memorise the setup.</div>
+  </div>
+  <div class="card" style="left:432px;top:592px;width:376px;height:172px">
+    <div class="h">Bots</div>
+    <div class="lg" style="margin-top:6px">Bays 1 and 4 use tier 2 bots (build, no edit). Bays 2 and 3 use tier 3 (build and edit). Bots reuse the tiers defined in Level E, so one bot setup serves both levels.</div>
+  </div>
+
+  <div class="card" style="left:840px;top:130px;width:400px;height:300px;padding:6px 0 0;overflow:hidden">
+    <div class="r hd"><span>#</span><span>Situation</span><span>Target</span></div>
+    <div class="r"><span class="m">1</span><span><b>Retake.</b> Climb and eliminate the bot holding the tower</span><span class="m">20 → 10 s</span></div>
+    <div class="r"><span class="m">2</span><span><b>Zone edge.</b> Win before the barrier closes</span><span class="m">60 → 40 s</span></div>
+    <div class="r"><span class="m">3</span><span><b>Two vs one.</b> Eliminate both bots</span><span class="m">25 → 12 s</span></div>
+    <div class="r"><span class="m">4</span><span><b>Breach.</b> Tunnel or edit into the box and eliminate</span><span class="m">15 → 8 s</span></div>
+  </div>
+  <div class="card" style="left:840px;top:450px;width:400px;height:98px">
+    <div class="h">Pre-requisite</div>
+    <div class="lg" style="margin-top:6px">Bays unlock after Level E tier 2, so players have the building and aim base first.</div>
+  </div>
+  <div class="card" style="left:840px;top:592px;width:400px;height:172px">
+    <div class="h">Run flow</div>
+    <div class="lg" style="margin-top:6px"><b>1</b> Step on the start pad. <b>2</b> A briefing sign names the situation. <b>3</b> Bots spawn and the clock starts. <b>4</b> Win, lose or time out, then the bay resets.</div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1280,"height":800}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

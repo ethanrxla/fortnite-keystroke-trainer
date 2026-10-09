@@ -1,0 +1,20 @@
+{
+  "voice_id": "pFZP5JQG7iQjIQuC4Bku",
+  "name": "Lily - Velvety Actress",
+  "labels": {
+    "descriptive": "confident",
+    "use_case": "informative_educational",
+    "accent": "british",
+    "age": "middle_aged",
+    "language": "en",
+    "gender": "female"
+  },
+  "description": "Velvety British female voice delivers news and narrations with warmth and clarity.",
+  "model": "eleven_multilingual_v2",
+  "settings": {
+    "stability": 0.5,
+    "similarity_boost": 0.75,
+    "style": 0.15,
+    "use_speaker_boost": true
+  }
+}
