@@ -125,7 +125,7 @@ def main():
             (a["label"].startswith(OLD) and a["label"] not in KEEP_OLD)]
     backup = bm.ROOT / "backups" / f"gun-range-{datetime.date.today()}"
     backup.mkdir(parents=True, exist_ok=True)
-    (backup / "removed.json").write_text(json.dumps(gun_list(gone), indent=1))
+    (backup / f"removed-{datetime.datetime.now():%H%M%S}.json").write_text(json.dumps(gun_list(gone), indent=1))
     for a in gone:
         b.m.tool(bm.SCENE, "remove_from_scene", actor={"refPath": a["actorPath"]})
     print(f"removed {len(gone)} actors (list in {backup / 'removed.json'})")
@@ -146,6 +146,18 @@ def main():
         ref = b.m.tool(bm.SCENE, "add_to_scene_from_asset", asset_path=TARGET, name=tg["label"], xform=bm.xform(x, y, 0.0, yaw=180))
         path = b.labelled(ref["refPath"] if isinstance(ref, dict) else ref, tg["label"])
         b.tag(path, "kt_range_target_tag")
+        # Verse cannot find these legacy targets, so GunRange.verse drives them through hidden triggers
+        # under the floor at the target's position: up -> Pop-Up, down -> Pop-Down, target On Hit -> hit.
+        for kind, tag in (("Up", "kt_range_up_tag"), ("Down", "kt_range_down_tag"), ("Hit", "kt_range_hit_tag")):
+            trig = b.device(bm.TRIGGER, f"{tg['label']}_{kind}", x, y, -400.0)
+            b.props(trig, {"visible in Game": False})
+            b.tag(trig, tag)
+            if kind == "Up":
+                b.bind(trig, "OnTriggered", path, "Pop-Up")
+            elif kind == "Down":
+                b.bind(trig, "OnTriggered", path, "Pop-Down")
+            else:
+                b.bind(path, "On Hit", trig, "Trigger")
     for r in rails:
         x, y = r["pos"]
         rail = b.device(bm.DUMMY_TRACK, r["label"], x, y, 0.0)
