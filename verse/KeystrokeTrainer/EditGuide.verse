@@ -155,6 +155,14 @@ KTRankEdits<public>(Aim:vector2, Sit:int, Kind:string, Factors:[string]float)<tr
             if (not Placed?):
                 set Out += array{Pick}
             set Picks = Out
+    # The player's aim map (EditIntent.verse, generated from shared/edit-intent.json, the same rules as the companion
+    # overlay) names the edit for this crosshair position: it goes first, a full tile of cost ahead, so the lock logic
+    # (keep the current edit within 0.25 of the top) switches to it. Jev's ranking orders the rest.
+    Intent := KTIntentEdit(Kind, Aim)
+    if (Intent <> "", Mapped := (for (P : Picks, P.Shape.Id = Intent) { P })[0]):
+        Low := if (First := Picks[0]) then First.Cost else 0.0
+        set Picks = array{kt_edit_pick{Shape := Mapped.Shape, Cost := Low - 1.0, Travel := Mapped.Travel}} +
+            (for (P : Picks, P.Shape.Id <> Intent) { P })
     Picks
 
 kt_edit_face := struct<computes>:
