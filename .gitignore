@@ -47,3 +47,4 @@ companion/overlay-settings.json
 companion/.runtime/
 companion/.cloud-session.json
 supabase/.temp-secrets.env
+supabase/.deploy.log

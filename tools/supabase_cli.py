@@ -27,10 +27,20 @@ def env():
     return out
 
 
+LOG = ROOT / "supabase" / ".deploy.log"     # gitignored: the last runs' scrubbed output, for troubleshooting
+
+
 def run(args, e, stdin=None):
     cmd = "npx --yes supabase@2.120.0 " + " ".join(args)
     p = subprocess.run(cmd, cwd=ROOT, env=e, shell=True, input=stdin, capture_output=True, text=True)
-    print(SECRET.sub(lambda m: m.group(1) + "<redacted>", (p.stdout or "") + (p.stderr or "")))
+    text = SECRET.sub(lambda m: m.group(1) + "<redacted>", (p.stdout or "") + (p.stderr or ""))
+    print(text)
+    with LOG.open("a", encoding="utf-8") as f:
+        f.write(f"
+$ supabase {' '.join(args)}
+{text}
+[exit {p.returncode}]
+")
     return p.returncode
 
 
