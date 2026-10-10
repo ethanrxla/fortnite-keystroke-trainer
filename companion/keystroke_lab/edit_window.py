@@ -15,22 +15,10 @@ from .drills import BINDS_FILE
 from .edit_observation import observe_mode,EditGridObserver,cue_scores
 from .edit_advisor import EditAdvisor,EditContext,safe_path
 from .edit_telemetry import TelemetryReader
+from .edit_choice import Examples,choose_edit
+from .edit_ranker import Ranker
 from .jev_client import JevClient
 BASE=Path(__file__).resolve().parents[1]
-
-LEFT_CORNER = 'corner_upper_left'
-RIGHT_CORNER = 'corner_upper_right'
-
-
-def choose_corner(aim_u, current=None):
-    """The corner edit on the side of the wall the crosshair is on. A dead band around the middle (1.35..1.65 of 3 tiles)
-    keeps the current side, so the reference does not flicker while you cross the centre line. With no side yet, the
-    nearer half wins. Never returns both sides."""
-    if aim_u < 1.35:
-        return LEFT_CORNER
-    if aim_u > 1.65:
-        return RIGHT_CORNER
-    return current or (LEFT_CORNER if aim_u < 1.5 else RIGHT_CORNER)
 
 
 class Presence:
@@ -71,17 +59,28 @@ class ContextPipeline:
         self.store=store;self.advisor=advisor or EditAdvisor(jev=JevClient(),clock=clock)
         self.clock=clock;self.observer=EditGridObserver();self.telemetry=TelemetryReader(clock=clock)
         self.locked=None;self.active=False;self.profile_identity=None
+        # Edits the player finishes become examples; the reference follows the selection, the examples and the ranker
+        # (edit_choice.py) instead of always showing a corner.
+        self.ranker=Ranker();self.examples=Examples();self.choice_source=None
+        self.edit_start_aim=None;self.edit_last_tiles=();self.edit_seen_at=None
+    def _finish_edit(self,now):
+        """Edit mode ended: the selection on the last projected frame is what was confirmed (a reset clears it first)."""
+        if self.edit_start_aim is not None and self.edit_last_tiles:
+            self.examples.add(self.edit_start_aim,self.edit_last_tiles)
+        self.edit_start_aim=None;self.edit_last_tiles=();self.edit_seen_at=None
     def process(self,frame):
         captured=self.clock();mode,score=observe_mode(frame);profile=self.store.refresh();telemetry=self.telemetry.poll()
         identity=(profile.profile_id,profile.revision)
         if identity!=self.profile_identity:self.locked=None;self.profile_identity=identity
+        if mode!='editing' and self.edit_seen_at is not None and captured-self.edit_seen_at>.5:self._finish_edit(captured)
         if mode=='unknown':self.active=False;self.locked=None;return {'mode':'unknown','captured_at':captured,'revision':profile.revision,'edit_cue_scores':cue_scores(frame,['confirm','reset']),'build_cue_scores':cue_scores(frame,['change-material','rotate'],(0.,.35,.23,.76))}
         observation=self.observer.observe(frame,captured) if mode=='editing' else None
         # Mode confidence and geometric support are separate. A clipped grid stays a reference.
         projected=observation is not None and observation.reason=='native_edit_grid_observed' and observation.supported_cells>=8 and observation.confidence>=.90
         if projected:
-            # Follow the crosshair: the side updates as you aim across the wall (it used to lock to the first side seen).
-            self.locked=choose_corner(observation.aim_uv[0],self.locked)
+            if self.edit_start_aim is None:self.edit_start_aim=tuple(observation.aim_uv)
+            self.edit_last_tiles=tuple(observation.selected_tiles);self.edit_seen_at=captured
+            self.locked,self.choice_source=choose_edit(observation.aim_uv,observation.selected_tiles,self.ranker,self.examples,self.locked)
         telemetry=self.telemetry.poll()
         context=EditContext(profile.profile_id,profile.revision,captured,mode,
              target_id='visible_native_edit_grid' if projected else None,target_verified=projected,geometry_verified=projected,
@@ -92,7 +91,7 @@ class ContextPipeline:
         advice=self.advisor.request(context)
         return {'mode':mode,'mode_score':score,'captured_at':captured,'revision':profile.revision,'projected':projected,
                 'observation':observation.to_dict() if observation else None,'telemetry':telemetry,'advice':advice.to_dict(),
-                'reference_ids':[self.locked] if self.locked else []}
+                'reference_ids':[self.locked] if self.locked else [],'choice_source':self.choice_source}
 
 def run(profile_path=None):
     if not single_instance('Local\\KeystrokeLabEditReference'):return

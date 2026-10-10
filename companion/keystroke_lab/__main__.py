@@ -163,6 +163,11 @@ def cmd_binds(args):
     return binds_cmd.run(args.out, args.only, args.category)
 
 
+def cmd_edit_examples(args):
+    from . import edit_choice
+    return edit_choice.run(args.file)
+
+
 def cmd_import_binds(args):
     from . import fortnite_binds
     from .bind_profiles import ProfileStore
@@ -278,6 +283,9 @@ def main(argv=None):
     ib.add_argument("--write", action="store_true", help="save the imported keys into the profile")
     ib.add_argument("--trust", action="store_true", help="mark imported keys verified so drills can be graded")
     ib.set_defaults(fn=cmd_import_binds)
+    ee = sub.add_parser("edit-examples", help="the wall edits you finished, and selections the edit library lacks")
+    ee.add_argument("--file", default=None)
+    ee.set_defaults(fn=cmd_edit_examples)
     au = sub.add_parser("autostart")
     au.add_argument("--install", action="store_true", help="run the watcher at every Windows login")
     au.add_argument("--uninstall", action="store_true")

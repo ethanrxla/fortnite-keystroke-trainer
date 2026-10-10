@@ -17,6 +17,7 @@ KTWallEdits<public>:[]kt_edit_shape = array:
     kt_edit_shape{Id := "half_arch_right", Name := "Half arch (right)", Tiles := array{4, 5, 2, 1}}
     kt_edit_shape{Id := "side_peek_right", Name := "Side peek (right-middle)", Tiles := array{5}}
     kt_edit_shape{Id := "side_peek_left", Name := "Side peek (left-middle)", Tiles := array{3}}
+    kt_edit_shape{Id := "arch_wide", Name := "Arch (bottom row + centre)", Tiles := array{4, 1, 0, 2}}
 
 # floor: grid 2 x 2, build hotbar slot 1
 KTFloorEdits<public>:[]kt_edit_shape = array:

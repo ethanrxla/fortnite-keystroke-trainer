@@ -91,7 +91,9 @@ def _routes(tiles):
         if len(route)==len(wanted):yield route;return
         last=route[-1]
         for tile in sorted(wanted-set(route)):
-            if abs(last%3-tile%3)+abs(last//3-tile//3)==1:yield from walk(route+(tile,))
+            dc,dr=tile%3-last%3,tile//3-last//3
+            # A neighbour, or straight across a tile already selected (the bottom sweep of the arch, 0 -> 2 over 1).
+            if abs(dc)+abs(dr)==1 or (abs(dc)+abs(dr)==2 and dc*dr==0 and last+(tile-last)//2 in route):yield from walk(route+(tile,))
     for tile in sorted(wanted):yield from walk((tile,))
 
 

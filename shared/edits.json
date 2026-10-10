@@ -293,6 +293,30 @@
       "source": "project E7 (mirrored)"
     },
     {
+      "id": "arch_wide",
+      "name": "Arch (bottom row + centre)",
+      "tiles": [
+        4,
+        1,
+        0,
+        2
+      ],
+      "kind": "wall",
+      "mirror_of": null,
+      "suggest": true,
+      "confirmed": true,
+      "purpose": [
+        "enter",
+        "escape",
+        "peek"
+      ],
+      "exposure": "high",
+      "cover_left": 5,
+      "difficulty": 2,
+      "when_to_use": "Open the whole bottom row and the centre: a wide opening that keeps the top row and the two middle side tiles. From a low centre aim, drag down into the bottom-centre tile, then sweep the bottom row (crossing the bottom-centre tile again is fine).",
+      "source": "player, confirmed in Creative 2026-10-10 (screenshot)"
+    },
+    {
       "id": "corner_single_ll",
       "name": "Corner tile (lower left)",
       "tiles": [
