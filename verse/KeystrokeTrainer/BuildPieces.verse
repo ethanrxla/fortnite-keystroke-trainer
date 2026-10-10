@@ -4,7 +4,10 @@
 #
 # Tiles: walls 0..8 row-major from the bottom-left as the player sees the wall; floors, cones and ramps 0..3
 # (0 near-left, 1 near-right, 2 far-left, 3 far-right; for a ramp far = the high end).
-# Walls, floors and cones cut out the selected tiles. A ramp keeps the path dragged through, bottom tile first.
+# Walls, floors and cones cut out the selected tiles. A ramp keeps the stairs dragged through: one or more strokes,
+# each bottom tile first; every tile points at the next tile of its stroke and ramps are matched on those arrows
+# (half ramp, turn, L, wrap-around, or the whole ramp turned with two strokes).
+# Tier: common edits are coached; a rare edit is recognised but KTDisplayPattern shows its common Prefer edit.
 #
 # Verse cannot see or edit player-built pieces, so this drives authored pieces: kt_edit_piece_device below is a piece
 # made of one prop per tile (the "9 small squares" wall) that players edit with buttons at a slow tempo.
@@ -24,6 +27,12 @@ kt_edit_pattern<public> := struct<computes>:
     # Fortnite build class the piece becomes (PBWA_W1_<class>); "" when not identified yet.
     ResultClass<public>:string = ""
     Suggest<public>:logic = false
+    # Ramps: per tile 0 none, 1 away, 2 right, 3 toward you, 4 left. Ramps are matched on this, not on Mask.
+    Arrows<public>:[]int = array{}
+    # common, situational or rare.
+    Tier<public>:string = "situational"
+    # Rare edits: the common edit the guide shows instead.
+    Prefer<public>:string = ""
 
 kt_edit_outcome<public> := struct<computes>:
     Valid<public>:logic = false
@@ -77,6 +86,10 @@ kt_build_piece<public> := class:
     BaseClass<public>()<computes>:string = "Solid"
     KeepsPath<public>()<computes>:logic = false
     TileCount<public>()<computes>:int = Cols() * Rows()
+    # Ramps only: per-tile climb direction of the current strokes. Other pieces have none.
+    Arrows<public>()<transacts>:[]int = array{}
+    # Ramps only: release the drag; the next tile starts a new stroke.
+    EndStroke<public>()<transacts>:void = Selection.Length
 
     # Full-build health per material (Battle Royale walls; VERIFY per piece).
     SetMaterial<public>(M:string)<transacts>:void =
@@ -192,39 +205,87 @@ kt_cone_piece<public> := class(kt_build_piece):
     Rows<override>()<computes>:int = 2
     BaseClass<override>()<computes>:string = "RoofC"
 
-# A ramp keeps the drawn path; its state is the ordered path, bottom tile first.
+# A ramp keeps the drawn stairs; its state is a list of strokes (one per drag), each bottom tile first.
 kt_stair_piece<public> := class(kt_build_piece):
+    var Strokes<public>:[][]int = array{}
+
     Kind<override>()<computes>:string = "ramp"
     Cols<override>()<computes>:int = 2
     Rows<override>()<computes>:int = 2
     BaseClass<override>()<computes>:string = "StairW"
     KeepsPath<override>()<computes>:logic = true
 
-    # Drawing is a drag: stepping back onto the previous tile undoes the last step; a new tile extends the path.
+    # Drag onto a tile: extends the current stroke; stepping back onto the previous tile undoes the last step.
     Select<override>(T:int)<transacts>:void =
         if (T >= 0 and T < TileCount()):
-            if (Selection.Length >= 2, Prev := Selection[Selection.Length - 2], Prev = T):
-                set Selection = for (I -> S : Selection, I < Selection.Length - 1) { S }
-            else if (not KTContains(Selection, T)?):
-                set Selection += array{T}
+            if (Strokes.Length = 0):
+                set Strokes = array{array{}}
+            Last := Strokes.Length - 1
+            if (Cur := Strokes[Last]):
+                var Next:[]int = Cur
+                if (Cur.Length >= 2, Prev := Cur[Cur.Length - 2], Prev = T):
+                    set Next = for (I -> S : Cur, I < Cur.Length - 1) { S }
+                else if (not KTContains(Selection, T)?):
+                    set Next = Cur + array{T}
+                set Strokes = for (I -> S : Strokes) { if (I = Last) then Next else S }
+            set Selection = for (S : Strokes, T2 : S) { T2 }
+
+    EndStroke<override>()<transacts>:void =
+        if (Cur := Strokes[Strokes.Length - 1], Cur.Length > 0):
+            set Strokes += array{array{}}
+
+    Reset<override>()<transacts>:void =
+        (super:)Reset()
+        set Strokes = array{}
+
+    Confirm<override>()<transacts>:kt_edit_outcome =
+        Outcome := (super:)Confirm()
+        set Strokes = array{}
+        Outcome
+
+    Arrows<override>()<transacts>:[]int = KTRampArrows(Strokes, TileCount())
 
     KeptTiles<override>(Sel:[]int)<transacts>:[]logic =
         for (T := 0..TileCount() - 1) { if (Sel.Length = 0) then true else KTContains(Sel, T) }
 
     Check<override>(Sel:[]int)<transacts>:string =
         var Broken:logic = false
-        # A repeated tile makes the distinct mask differ from the plain sum.
+        # A tile used twice makes the distinct mask differ from the plain sum.
         if (KTMaskOf(Sel) <> KTMaskOfDistinctCheck(Sel)):
             set Broken = true
-        for (I := 1..Sel.Length - 1, A := Sel[I - 1], B := Sel[I]):
-            if (not KTContains(Neighbours(A), B)?):
+        for (S : Strokes, S.Length > 0):
+            if (S.Length < 2):
                 set Broken = true
+            for (I := 1..S.Length - 1, A := S[I - 1], B := S[I]):
+                if (not KTContains(Neighbours(A), B)?):
+                    set Broken = true
         if (Sel.Length = 0):
             "no_edit"
-        else if (Sel.Length < 2 or Broken?):
+        else if (Broken?):
             "broken_path"
         else:
             ""
+
+# Per tile, which way its stairs climb: towards the next tile of its stroke (the last tile keeps the last step).
+# 0 none, 1 away (+2), 2 right (+1), 3 toward you (-2), 4 left (-1). Same rule as tools/gen_edits.py ramp_arrows.
+KTRampArrows<public>(Strokes:[][]int, Tiles:int)<transacts>:[]int =
+    var Arrows:[]int = for (T := 0..Tiles - 1) { 0 }
+    for (S : Strokes, S.Length >= 2):
+        for (I -> T : S):
+            From := if (I + 1 < S.Length) then I else I - 1
+            if (X := S[From], Y := S[From + 1]):
+                D := Y - X
+                Dir := if (D = 2) then 1 else if (D = 1) then 2 else if (D = -2) then 3 else if (D = -1) then 4 else 0
+                set Arrows = for (J -> V : Arrows) { if (J = T) then Dir else V }
+    Arrows
+
+# The edit to coach for a recognised one: a rare edit shows its common Prefer edit.
+KTDisplayPattern<public>(P:kt_edit_pattern)<transacts>:kt_edit_pattern =
+    var Out:kt_edit_pattern = P
+    if (P.Tier = "rare", P.Prefer <> ""):
+        for (Q : KTEditPatterns, Q.Id = P.Prefer):
+            set Out = Q
+    Out
 
 # Sum of 2^tile counting repeats, so a path that revisits a tile differs from its distinct mask.
 KTMaskOfDistinctCheck<public>(Tiles:[]int)<transacts>:int =
@@ -259,7 +320,7 @@ KTMatchEdit<public>(Piece:kt_build_piece, Sel:[]int)<transacts>:kt_edit_outcome 
     var Found:?kt_edit_pattern = false
     for (P : KTEditPatterns, P.Kind = Kind):
         if (Piece.KeepsPath()?):
-            if (KTSamePath(P.Path, Sel)?, not Found?):
+            if (KTSamePath(P.Arrows, Piece.Arrows())?, not Found?):
                 set Found = option{P}
         else if (P.Mask = Mask):
             # Several ids can share a mask (drag-order variants): prefer one with a known result class.
@@ -301,6 +362,8 @@ kt_edit_piece_device<public> := class(creative_device):
     @editable TileButtons:[]button_device = array{}
     @editable ConfirmButton:button_device = button_device{}
     @editable ResetButton:button_device = button_device{}
+    # Ramps: ends the current drag so the next tile starts a new stroke (needed to turn the whole ramp).
+    @editable StrokeButton:button_device = button_device{}
     # Optional finished-shape models: ResultProps[i] replaces the tiles while edit ResultIds[i] is applied.
     @editable ResultIds:[]string = array{}
     @editable ResultProps:[]creative_prop = array{}
@@ -315,6 +378,7 @@ kt_edit_piece_device<public> := class(creative_device):
             B.InteractedWithEvent.Subscribe(kt_edit_tile_handler{Device := Self, Tile := I}.Handle)
         ConfirmButton.InteractedWithEvent.Subscribe(OnConfirm)
         ResetButton.InteractedWithEvent.Subscribe(OnReset)
+        StrokeButton.InteractedWithEvent.Subscribe(OnStroke)
         Refresh()
 
     SelectTile<public>(Tile:int):void =
@@ -326,7 +390,7 @@ kt_edit_piece_device<public> := class(creative_device):
         set Attempts += 1
         Valid := if (Outcome.Valid?) then "true" else "false"
         KTLog("piece_edit", Piece.Kind(), 0, Attempts, 0, if (Outcome.Valid?) then rep_result.Ok else rep_result.WrongOutcome,
-              "edit={Outcome.Pattern.Id}|valid={Valid}|reason={Outcome.Reason}|class={Outcome.Pattern.ResultClass}")
+              "edit={Outcome.Pattern.Id}|valid={Valid}|reason={Outcome.Reason}|class={Outcome.Pattern.ResultClass}|tier={Outcome.Pattern.Tier}|coach={KTDisplayPattern(Outcome.Pattern).Id}")
         Refresh()
         Outcome
 
@@ -339,6 +403,9 @@ kt_edit_piece_device<public> := class(creative_device):
 
     OnReset(Agent:agent):void =
         ResetEdit()
+
+    OnStroke(Agent:agent):void =
+        Piece.EndStroke()
 
     Refresh():void =
         Visual := Piece.Visual()
@@ -390,3 +457,11 @@ KTBuildPieceTests<public>(R:autotest_report):void =
     S.Select(3)
     Diagonal := S.Confirm()
     R.Check("BP08-ramp-broken", logic{not Diagonal.Valid? and Diagonal.Reason = "broken_path"}, "ramp paths step to a neighbour tile")
+    S.Select(0)
+    S.Select(1)
+    S.EndStroke()
+    S.Select(2)
+    S.Select(3)
+    Turned := S.Confirm()
+    R.Check("BP09-ramp-turned", logic{Turned.Valid? and Turned.Pattern.Id = "ramp_full_right"}, "two parallel strokes turn the ramp")
+    R.Check("BP10-rare-coached-as-common", logic{Gate.Pattern.Tier = "rare" and KTDisplayPattern(Gate.Pattern).Id = "half_wall"}, "half wall + door is coached as the half wall")

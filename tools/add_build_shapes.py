@@ -7,7 +7,10 @@ What it adds (never suggested, never marked verified; the review pipeline confir
     (`edit_semantics`: walls, floors and cones remove the selected tiles; a ramp keeps the drawn path as stairs),
   * per edit: `result_class`, the Fortnite build actor the edit turns the piece into (PBWA_W1_<class>),
   * the wall edits the library was missing (pillar, door + window, half-wall doors, half-wall slim),
-  * every ramp path: half ramps (2 tiles), L ramps (3 tiles) and spiral ramps (4 tiles), each in drag order.
+  * every ramp edit as strokes (one drag each, bottom tile first): half ramps (2 tiles), L ramps that turn a corner
+    (3), wrap-around spiral ramps (4), and the full ramp turned to face another way (two parallel strokes),
+  * `tier` per edit (common / situational / rare) and `prefer`: the common edit the guide shows instead of a rare one
+    (a half wall with a door is shown as the half wall). The player's priority (2026-10-10): coach the common edits.
 
 Where the classes come from: on 2026-10-10 every PBWA_W1_* class in /Game/Building/ActorBlueprints/Player/Wood/L1
 (34 of them) was placed in UEFN and photographed face-on and top-down. The class -> tiles mapping below is read from
@@ -99,6 +102,36 @@ RAMP_KIND = {2: ("half", "Half ramp", "StairF", ["climb", "pass_through"], "high
                  "Stairs that wind round all four tiles: climb a full storey inside one cell.")}
 
 
+# Full ramp turned to face another way: two parallel strokes, every tile pointing the same way.
+ROTATIONS = [("ramp_full_up", "Full ramp (facing away, as placed)", [[0, 2], [1, 3]], None, "StairW"),
+             ("ramp_full_right", "Full ramp turned right", [[0, 1], [2, 3]], "ramp_full_left", "StairW"),
+             ("ramp_full_left", "Full ramp turned left", [[1, 0], [3, 2]], "ramp_full_right", "StairW"),
+             ("ramp_full_down", "Full ramp turned round (facing you)", [[2, 0], [3, 1]], None, "StairW")]
+
+# How often strong players make each edit. common = coach it; situational = recognise and coach on request;
+# rare = recognise only, and show `prefer` instead. Ids not listed are situational.
+COMMON = {"window_center", "door", "half_wall", "quarter_wall", "corner_lower_left", "corner_lower_right",
+          "corner_upper_left", "corner_upper_right", "half_arch_left", "half_arch_right", "side_peek_left",
+          "side_peek_right", "side_door_left", "side_door_right", "arch",
+          "floor_hole_near_left", "floor_hole_near_right", "floor_hole_far_left", "floor_hole_far_right",
+          "floor_half_near", "floor_half_far", "floor_half_left", "floor_half_right",
+          "roof_one_near_left", "roof_one_near_right", "roof_one_far_left", "roof_one_far_right",
+          "roof_two_near", "roof_two_far", "roof_two_left", "roof_two_right"}
+COMMON_RAMP = ("ramp_half_", "ramp_l_", "ramp_full_")
+PREFER = {"window_double": "side_peek_right", "window_wide": "window_center", "pillar": "arch",
+          "door_window_left": "side_door_left", "door_window_right": "side_door_right",
+          "half_wall_door": "half_wall", "half_wall_side_door_left": "half_wall", "half_wall_side_door_right": "half_wall",
+          "half_wall_slim_left": "half_wall", "half_wall_slim_right": "half_wall"}
+
+
+def tier(eid):
+    if eid in PREFER:
+        return "rare"
+    if eid in COMMON or eid.startswith(COMMON_RAMP):
+        return "common"
+    return "situational"
+
+
 def mirror_tile(t):
     return t ^ 1          # 2 x 2 column flip: 0 <-> 1, 2 <-> 3
 
@@ -121,12 +154,25 @@ def ramp_id(path):
     return f"ramp_{kind}_" + "_".join(LABEL[t] for t in path)
 
 
+def rotation_entry(eid, name, strokes, mirror, cls):
+    return {
+        "id": eid, "name": name, "tiles": [t for st in strokes for t in st], "strokes": strokes, "kind": "grid",
+        "mirror_of": mirror, "suggest": False, "confirmed": False, "purpose": ["climb", "protect"], "exposure": "low",
+        "cover_left": 4, "difficulty": 2,
+        "when_to_use": "Turn a placed ramp to climb another way without replacing it: drag both columns (or rows) "
+                       "the new way.",
+        "source": SOURCE, "result_class": cls, "result_class_status": "probe_inferred",
+        "validation": {"status": "unverified", "game_version": None, "evidence": [], "result_confirmed": False,
+                       "reason": "Ramp rotation; confirm through recorded and reviewed attempts."},
+    }
+
+
 def ramp_entry(path):
     kind, title, cls, purpose, exposure, when = RAMP_KIND[len(path)]
     mirror = [mirror_tile(t) for t in path]
     return {
         "id": ramp_id(path), "name": f"{title} ({WORDS[path[0]]} up to {WORDS[path[-1]]})", "tiles": list(path),
-        "path": list(path), "kind": "grid", "mirror_of": ramp_id(mirror) if mirror != path else None,
+        "path": list(path), "strokes": [list(path)], "kind": "grid", "mirror_of": ramp_id(mirror) if mirror != path else None,
         "suggest": False, "confirmed": False, "purpose": purpose, "exposure": exposure,
         "cover_left": len(path), "difficulty": len(path) - 1, "when_to_use": when, "source": SOURCE,
         "result_class": cls, "result_class_status": "probe_inferred",
@@ -167,7 +213,10 @@ def main():
     data["_pieces_classes_note"] = (
         "class / base_class / edit_semantics / result_class: tools/add_build_shapes.py, from the 2026-10-10 UEFN probe "
         "of every PBWA_W1_* build class. remove_selected = the tiles you select are cut out; keep_path = the tiles you "
-        "drag through, in order from the bottom, become the stairs. Classes are PBWA_W1_<class>; VERIFY in game.")
+        "drag through, in order from the bottom, become the stairs. Classes are PBWA_W1_<class>; VERIFY in game. "
+        "Ramp edits are `strokes` (one list per drag, bottom tile first); each tile points to the next tile of its "
+        "stroke (the last tile keeps the stroke's last direction), and ramp shapes are matched on those arrows. "
+        "tier: common / situational / rare; a rare edit is recognised but the guide shows `prefer` instead.")
     added = []
     walls = data["wall_edits"]
     have = {e["id"] for lst in (data[m["list"]] for m in data["pieces"].values()) for e in lst}
@@ -181,6 +230,19 @@ def main():
         if ramp_id(p) not in have:
             stairs.append(ramp_entry(p))
             added.append(ramp_id(p))
+    have = {e["id"] for e in stairs}
+    for row in ROTATIONS:
+        if row[0] not in have:
+            stairs.append(rotation_entry(*row))
+            added.append(row[0])
+    for e in stairs:
+        if e.get("path") and "strokes" not in e:
+            e["strokes"] = [list(e["path"])]
+    for meta in data["pieces"].values():
+        for e in data[meta["list"]]:
+            e["tier"] = tier(e["id"])
+            if e["id"] in PREFER:
+                e["prefer"] = PREFER[e["id"]]
     for piece, meta in data["pieces"].items():
         for e in data[meta["list"]]:
             if "result_class" in e:
@@ -202,8 +264,9 @@ def main():
             slot = ledger["pieces"][piece][sum(1 << t for t in e["tiles"])]
             if e["id"] not in slot["edit_ids"]:
                 slot["edit_ids"].append(e["id"])
-    ledger["ramp"] = ("Ramps are ordered paths, not masks: every 2-4 tile path round the ring is a stairs_edits entry "
-                      "with `path` (tools/add_build_shapes.py). Gesture graphs still require separate validation.")
+    ledger["ramp"] = ("Ramps are strokes, not masks: every 2-4 tile path round the ring and the four full-ramp "
+                      "directions are stairs_edits entries with `strokes` (tools/add_build_shapes.py). Gesture graphs "
+                      "still require separate validation.")
     ledger_path.write_text(json.dumps(ledger, indent=2) + "\n", encoding="utf-8")
     print("added:", ", ".join(added) if added else "nothing (already present)")
 

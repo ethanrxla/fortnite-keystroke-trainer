@@ -15,8 +15,13 @@ Tile order (as everywhere else in this repo): walls 0..8 row-major from the bott
 Edit semantics:
   remove_selected (wall, floor, cone)  the selected tiles are cut out; what is left must be one connected part unless
                                        the library knows the shape as a real Fortnite piece (a door joins two halves).
-  keep_path (ramp)                     the tiles dragged through, bottom first, become the stairs; order matters, so a
-                                       ramp's state is a path and its patterns are matched by path, not by mask.
+  keep_path (ramp)                     the tiles dragged through, bottom first, become the stairs. A ramp edit is
+                                       one or more strokes (drags); every tile points at the next tile of its
+                                       stroke, and ramp shapes are matched on those arrows, not on a mask. That
+                                       covers half ramps, turns, L and wrap-around ramps, and turning the whole ramp.
+
+Priority: every edit has a tier (common / situational / rare). Rare edits are recognised when a player makes them, but
+the guide shows their `prefer` edit (PatternTable.display): a half wall with a door is coached as the half wall.
 """
 from dataclasses import dataclass, field
 import json
@@ -31,6 +36,20 @@ MATERIALS = {"wood": "W1", "stone": "S1", "metal": "M1"}            # PBWA_<code
 MAX_HEALTH = {"wood": 150, "stone": 300, "metal": 500}             # fully built wall, BR values (VERIFY per piece)
 CLASS_ROOT = "/Game/Building/ActorBlueprints/Player/{folder}/L1/PBWA_{code}_{name}.PBWA_{code}_{name}_C"
 FOLDER = {"W1": "Wood", "S1": "Stone", "M1": "Metal"}
+# Ramp arrow per tile: 0 none, 1 away (far), 2 right, 3 toward the player (near), 4 left. tools/gen_edits.py STEP_DIR.
+STEP_DIR = {2: 1, 1: 2, -2: 3, -1: 4}
+
+
+def ramp_arrows(strokes, tiles=4):
+    """Per tile, which way its stairs climb: towards the next tile of its stroke (the last tile keeps the last step)."""
+    arrows = [0] * tiles
+    for stroke in strokes:
+        for i, t in enumerate(stroke):
+            if len(stroke) < 2:
+                continue
+            a, b = (stroke[i], stroke[i + 1]) if i + 1 < len(stroke) else (stroke[i - 1], stroke[i])
+            arrows[t] = STEP_DIR.get(b - a, 0)
+    return tuple(arrows)
 
 
 def class_path(name, material="wood"):
@@ -52,6 +71,9 @@ class EditPattern:
     result_class: str = None  # PBWA_W1_<result_class>, None when not identified
     suggest: bool = False     # the guide may recommend it
     status: str = "unverified"
+    arrows: tuple = ()        # ramps: per-tile climb direction (ramp_arrows), what a ramp is matched on
+    tier: str = "situational" # common / situational / rare
+    prefer: str = None        # rare edits: the common edit to show instead
 
     def rows(self, cols, rows):
         """The mask as bool rows, bottom (or near) row first: the "2D bool array" view of the shape."""
@@ -208,27 +230,65 @@ class ConePiece(TwoByTwoPiece):
 
 
 class StairPiece(TwoByTwoPiece):
-    """A ramp keeps the drawn path. Its state is the ordered path, bottom tile first."""
+    """A ramp keeps the drawn stairs. Its state is a list of strokes (one per drag), each bottom tile first."""
     kind, base_class, semantics = "ramp", "StairW", "keep_path"
+
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.strokes = []
+
+    def _sync(self):
+        self.selection = tuple(t for s in self.strokes for t in s)
+        return self.selection
 
     def kept(self, selection):
         return self.mask_of(selection) if selection else self.full
 
     def select(self, tile):
-        # Drawing a ramp is a drag: going back onto the previous tile undoes the last step, any other tile extends.
-        if len(self.selection) >= 2 and tile == self.selection[-2]:
-            self.selection = self.selection[:-1]
-            return self.selection
-        if tile in self.selection:
-            return self.selection
-        return super().select(tile)
+        """Drag onto a tile: extends the current stroke; stepping back onto the previous tile undoes the last step."""
+        if not 0 <= tile < self.tiles:
+            raise ValueError(f"tile {tile} outside a 2 x 2 ramp")
+        if not self.strokes:
+            self.strokes = [[]]
+        cur = self.strokes[-1]
+        if len(cur) >= 2 and tile == cur[-2]:
+            cur.pop()
+        elif tile not in self.selection:
+            cur.append(tile)
+        return self._sync()
+
+    def end_stroke(self):
+        """Release: the next tile starts a new stroke (a second drag, e.g. the other column of a turned ramp)."""
+        if self.strokes and self.strokes[-1]:
+            self.strokes.append([])
+
+    def set_strokes(self, strokes):
+        self.strokes = [list(s) for s in strokes if s]
+        return self._sync()
+
+    def set_selection(self, tiles):
+        return self.set_strokes([list(tiles)] if tiles else [])
+
+    def reset(self):
+        super().reset()
+        self.strokes = []
+
+    def confirm(self, table):
+        outcome = super().confirm(table)
+        self.strokes = []
+        return outcome
+
+    def arrows(self):
+        return ramp_arrows([s for s in self.strokes if s], self.tiles)
 
     def check(self, selection):
-        if not selection:
+        strokes = [s for s in self.strokes if s]
+        flat = [t for s in strokes for t in s]
+        if not flat:
             return "no_edit"
-        if len(selection) < 2 or len(set(selection)) != len(selection):
+        if len(set(flat)) != len(flat) or any(len(s) < 2 for s in strokes):
             return "broken_path"
-        if any(b not in self.neighbours(a) for a, b in zip(selection, selection[1:])):
+        if any(b not in self.neighbours(a) for s in strokes for a, b in zip(s, s[1:])):
             return "broken_path"
         return ""
 
@@ -249,20 +309,23 @@ class PatternTable:
 
     def __init__(self, path=None):
         data = json.loads(pathlib.Path(path or SHARED / "edits.json").read_text(encoding="utf-8"))
-        self.by_mask, self.by_path, self.all = {}, {}, {}
+        self.by_mask, self.by_arrows, self.all = {}, {}, {}
         for key, meta in data["pieces"].items():
             kind = canonical(key)
+            ramp = meta.get("edit_semantics") == "keep_path" or kind == "ramp"
             for e in data.get(meta["list"], []):
-                tiles = tuple(e.get("path") or e.get("tiles") or ())
-                if not tiles:
+                strokes = e.get("strokes") or ([e["path"]] if e.get("path") else None)
+                tiles = tuple(t for st in strokes for t in st) if strokes else tuple(e.get("tiles") or ())
+                if not tiles or (ramp and not strokes):
                     continue
                 p = EditPattern(e["id"], kind, BuildPiece.mask_of(tiles), tiles, e.get("name", ""),
                                 e.get("result_class"), bool(e.get("suggest")),
-                                (e.get("validation") or {}).get("status", "unverified"))
+                                (e.get("validation") or {}).get("status", "unverified"),
+                                ramp_arrows(strokes, meta["cols"] * meta["rows"]) if ramp else (),
+                                e.get("tier", "situational"), e.get("prefer"))
                 self.all[p.id] = p
-                if meta.get("edit_semantics") == "keep_path" or kind == "ramp":
-                    if e.get("path"):
-                        self.by_path.setdefault((kind, tiles), p)
+                if ramp:
+                    self.by_arrows.setdefault((kind, p.arrows), p)
                 else:
                     self.by_mask.setdefault((kind, p.mask), []).append(p)
 
@@ -283,7 +346,7 @@ class PatternTable:
         if reason in ("no_edit", "nothing_left", "broken_path"):
             return EditOutcome(False, None, reason, kept)
         if piece.semantics == "keep_path":
-            p = self.by_path.get((piece.kind, selection))
+            p = self.by_arrows.get((piece.kind, piece.arrows()))
             return EditOutcome(True, p, "", kept) if p else EditOutcome(False, None, "unsupported_shape", kept)
         found = self.by_mask.get((piece.kind, piece.mask_of(selection)), [])
         if not found:
@@ -293,6 +356,12 @@ class PatternTable:
         if reason == "floating" and p.result_class is None:
             return EditOutcome(False, p, "floating", kept)
         return EditOutcome(True, p, "", kept)
+
+    def display(self, pattern):
+        """The edit to coach for a recognised one: a rare edit shows its common `prefer` edit, others show themselves."""
+        if pattern is None:
+            return None
+        return self.all.get(pattern.prefer, pattern) if pattern.tier == "rare" and pattern.prefer else pattern
 
     def coverage(self, piece):
         """{mask: [pattern ids]} for every mask of a remove-selected piece: which of the 2^n selections are edits."""

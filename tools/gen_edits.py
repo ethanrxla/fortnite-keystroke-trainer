@@ -40,6 +40,21 @@ def suggested(data, piece="wall"):
     return [e for e in edits_for(data, piece) if e["suggest"]]
 
 
+# Ramp arrows: for each of the 4 tiles, the way its stairs climb. 0 = no stairs, 1 = away (far), 2 = right,
+# 3 = toward the player (near), 4 = left. Each tile points at the next tile of its stroke; a stroke's last tile keeps
+# the stroke's last direction. Same rule in companion/keystroke_lab/build_pieces.py and BuildPieces.verse.
+STEP_DIR = {2: 1, 1: 2, -2: 3, -1: 4}
+
+
+def ramp_arrows(strokes, tiles=4):
+    arrows = [0] * tiles
+    for stroke in strokes:
+        for i, t in enumerate(stroke):
+            a, b = (stroke[i], stroke[i + 1]) if i + 1 < len(stroke) else (stroke[i - 1], stroke[i])
+            arrows[t] = STEP_DIR[b - a]
+    return arrows
+
+
 def verse_str(s):
     return chr(34) + s.replace(chr(92), chr(92) * 2).replace(chr(34), chr(92) + chr(34)) + chr(34)
 
@@ -62,6 +77,15 @@ def validate(data):
                 raise ValueError(f"{e['id']}: tiles must be distinct ints 0..{cols * rows - 1} for a {piece}")
             if e["name"] in data.get("not_edits", []):
                 raise ValueError(f"{e['id']}: {e['name']} is listed under not_edits")
+            if e.get("tier") == "rare" and e.get("suggest"):
+                raise ValueError(f"{e['id']}: a rare edit is never suggested (the guide shows its `prefer` edit)")
+            for stroke in e.get("strokes") or []:
+                if len(stroke) < 2 or any(abs(b - a) not in (1, cols) or (abs(b - a) == 1 and min(a, b) % cols == cols - 1)
+                                          for a, b in zip(stroke, stroke[1:])):
+                    raise ValueError(f"{e['id']}: each ramp stroke steps to a neighbouring tile")
+        for e in edits:
+            if e.get("prefer") and e["prefer"] not in by_id:
+                raise ValueError(f"{e['id']}: prefer {e['prefer']} is not a {piece} edit")
         for e in edits:
             mirrored = set(mirror_tiles(e["tiles"], cols))
             if mirrored == set(e["tiles"]):
@@ -104,20 +128,26 @@ def render_patterns(data):
         "# Every edit shape in the library: the pattern table kt_build_piece.Confirm matches against (BuildPieces.verse).",
         "# Mask = sum of 2^tile over the selected tiles. Path = the tiles in drag order (for a ramp, the climb order,",
         "# bottom first). ResultClass = the Fortnite build class the piece becomes (PBWA_W1_<class>), \"\" if unknown.",
+        "# Arrows (ramps only, matched instead of the mask): per tile 0 none, 1 away, 2 right, 3 toward you, 4 left.",
+        "# Tier: common, situational or rare; Prefer: the common edit the guide shows instead of a rare one.",
         "",
         "KTEditPatterns<public>:[]kt_edit_pattern = array:",
     ]
     for piece, meta in pieces(data).items():
         keep_path = meta.get("edit_semantics") == "keep_path"
         for e in edits_for(data, piece):
-            tiles = e.get("path") or e["tiles"]
-            if not tiles or (keep_path and not e.get("path")):
+            strokes = e.get("strokes") or ([e["path"]] if e.get("path") else None)
+            tiles = [t for st in strokes for t in st] if strokes else e["tiles"]
+            if not tiles or (keep_path and not strokes):
                 continue
             mask = sum(1 << t for t in set(tiles))
             path = ", ".join(str(t) for t in tiles)
+            arrows = ", ".join(str(a) for a in ramp_arrows(strokes, meta["cols"] * meta["rows"])) if keep_path else ""
             suggest = "true" if e.get("suggest") else "false"
             lines.append(f"    kt_edit_pattern{{Id := {verse_str(e['id'])}, Kind := {verse_str(CANONICAL[piece])}, Mask := {mask}, "
-                         f"Path := array{{{path}}}, ResultClass := {verse_str(e.get('result_class') or '')}, Suggest := {suggest}}}")
+                         f"Path := array{{{path}}}, Arrows := array{{{arrows}}}, "
+                         f"ResultClass := {verse_str(e.get('result_class') or '')}, Suggest := {suggest}, "
+                         f"Tier := {verse_str(e.get('tier') or 'situational')}, Prefer := {verse_str(e.get('prefer') or '')}}}")
     lines.append("")
     return chr(10).join(lines)
 

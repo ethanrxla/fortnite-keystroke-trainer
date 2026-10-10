@@ -2858,5 +2858,5 @@
       }
     ]
   },
-  "ramp": "Ramps are ordered paths, not masks: every 2-4 tile path round the ring is a stairs_edits entry with `path` (tools/add_build_shapes.py). Gesture graphs still require separate validation."
+  "ramp": "Ramps are strokes, not masks: every 2-4 tile path round the ring and the four full-ramp directions are stairs_edits entries with `strokes` (tools/add_build_shapes.py). Gesture graphs still require separate validation."
 }

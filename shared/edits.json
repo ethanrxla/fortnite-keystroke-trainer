@@ -63,7 +63,8 @@
         "rotations": []
       },
       "result_class": "WindowC",
-      "result_class_status": "probe_matched"
+      "result_class_status": "probe_matched",
+      "tier": "common"
     },
     {
       "id": "window_high",
@@ -120,7 +121,8 @@
         "rotations": []
       },
       "result_class": null,
-      "result_class_status": "unidentified"
+      "result_class_status": "unidentified",
+      "tier": "situational"
     },
     {
       "id": "door",
@@ -178,7 +180,8 @@
         "rotations": []
       },
       "result_class": "DoorC",
-      "result_class_status": "probe_matched"
+      "result_class_status": "probe_matched",
+      "tier": "common"
     },
     {
       "id": "half_wall",
@@ -237,7 +240,8 @@
         "rotations": []
       },
       "result_class": "HalfWallS",
-      "result_class_status": "probe_matched"
+      "result_class_status": "probe_matched",
+      "tier": "common"
     },
     {
       "id": "quarter_wall",
@@ -299,7 +303,8 @@
         "rotations": []
       },
       "result_class": "QuarterWallS",
-      "result_class_status": "probe_matched"
+      "result_class_status": "probe_matched",
+      "tier": "common"
     },
     {
       "id": "corner_lower_left",
@@ -359,7 +364,8 @@
         "rotations": []
       },
       "result_class": "Brace",
-      "result_class_status": "probe_inferred"
+      "result_class_status": "probe_inferred",
+      "tier": "common"
     },
     {
       "id": "corner_lower_right",
@@ -419,7 +425,8 @@
         "rotations": []
       },
       "result_class": "Brace",
-      "result_class_status": "probe_matched"
+      "result_class_status": "probe_matched",
+      "tier": "common"
     },
     {
       "id": "corner_upper_left",
@@ -478,7 +485,8 @@
         "rotations": []
       },
       "result_class": "RoofWall",
-      "result_class_status": "probe_matched"
+      "result_class_status": "probe_matched",
+      "tier": "common"
     },
     {
       "id": "corner_upper_right",
@@ -537,7 +545,8 @@
         "rotations": []
       },
       "result_class": "RoofWall",
-      "result_class_status": "probe_inferred"
+      "result_class_status": "probe_inferred",
+      "tier": "common"
     },
     {
       "id": "half_arch_left",
@@ -598,7 +607,8 @@
         "rotations": []
       },
       "result_class": "ArchwayLarge",
-      "result_class_status": "probe_inferred"
+      "result_class_status": "probe_inferred",
+      "tier": "common"
     },
     {
       "id": "half_arch_right",
@@ -659,7 +669,8 @@
         "rotations": []
       },
       "result_class": "ArchwayLarge",
-      "result_class_status": "probe_matched"
+      "result_class_status": "probe_matched",
+      "tier": "common"
     },
     {
       "id": "side_peek_right",
@@ -715,7 +726,8 @@
         "rotations": []
       },
       "result_class": "WindowSide",
-      "result_class_status": "probe_matched"
+      "result_class_status": "probe_matched",
+      "tier": "common"
     },
     {
       "id": "side_peek_left",
@@ -771,7 +783,8 @@
         "rotations": []
       },
       "result_class": "WindowSide",
-      "result_class_status": "probe_inferred"
+      "result_class_status": "probe_inferred",
+      "tier": "common"
     },
     {
       "id": "arch_wide",
@@ -887,7 +900,8 @@
         "rotations": []
       },
       "result_class": null,
-      "result_class_status": "unidentified"
+      "result_class_status": "unidentified",
+      "tier": "situational"
     },
     {
       "id": "corner_single_lr",
@@ -944,7 +958,8 @@
         "rotations": []
       },
       "result_class": null,
-      "result_class_status": "unidentified"
+      "result_class_status": "unidentified",
+      "tier": "situational"
     },
     {
       "id": "corner_single_ul",
@@ -1001,7 +1016,8 @@
         "rotations": []
       },
       "result_class": null,
-      "result_class_status": "unidentified"
+      "result_class_status": "unidentified",
+      "tier": "situational"
     },
     {
       "id": "corner_single_ur",
@@ -1058,7 +1074,8 @@
         "rotations": []
       },
       "result_class": null,
-      "result_class_status": "unidentified"
+      "result_class_status": "unidentified",
+      "tier": "situational"
     },
     {
       "id": "slim_wall_right",
@@ -1120,7 +1137,8 @@
         "rotations": []
       },
       "result_class": "ArchwayLargeSupport",
-      "result_class_status": "probe_inferred"
+      "result_class_status": "probe_inferred",
+      "tier": "situational"
     },
     {
       "id": "slim_wall_left",
@@ -1182,7 +1200,8 @@
         "rotations": []
       },
       "result_class": "ArchwayLargeSupport",
-      "result_class_status": "probe_inferred"
+      "result_class_status": "probe_inferred",
+      "tier": "situational"
     },
     {
       "id": "tiny_wall_left",
@@ -1245,7 +1264,8 @@
         "rotations": []
       },
       "result_class": "QuarterWallHalf",
-      "result_class_status": "probe_inferred"
+      "result_class_status": "probe_inferred",
+      "tier": "situational"
     },
     {
       "id": "tiny_wall_right",
@@ -1308,7 +1328,8 @@
         "rotations": []
       },
       "result_class": "QuarterWallHalf",
-      "result_class_status": "probe_inferred"
+      "result_class_status": "probe_inferred",
+      "tier": "situational"
     },
     {
       "id": "arch",
@@ -1369,7 +1390,8 @@
         "rotations": []
       },
       "result_class": "Archway",
-      "result_class_status": "probe_matched"
+      "result_class_status": "probe_matched",
+      "tier": "common"
     },
     {
       "id": "window_tall",
@@ -1426,7 +1448,8 @@
         "rotations": []
       },
       "result_class": null,
-      "result_class_status": "unidentified"
+      "result_class_status": "unidentified",
+      "tier": "situational"
     },
     {
       "id": "window_wide",
@@ -1484,7 +1507,9 @@
         "rotations": []
       },
       "result_class": null,
-      "result_class_status": "unidentified"
+      "result_class_status": "unidentified",
+      "tier": "rare",
+      "prefer": "window_center"
     },
     {
       "id": "side_door_left",
@@ -1541,7 +1566,8 @@
         "rotations": []
       },
       "result_class": "DoorSide",
-      "result_class_status": "probe_inferred"
+      "result_class_status": "probe_inferred",
+      "tier": "common"
     },
     {
       "id": "side_door_right",
@@ -1598,7 +1624,8 @@
         "rotations": []
       },
       "result_class": "DoorSide",
-      "result_class_status": "probe_matched"
+      "result_class_status": "probe_matched",
+      "tier": "common"
     },
     {
       "id": "crouch_hole",
@@ -1654,7 +1681,8 @@
         "rotations": []
       },
       "result_class": null,
-      "result_class_status": "unidentified"
+      "result_class_status": "unidentified",
+      "tier": "situational"
     },
     {
       "id": "window_double",
@@ -1712,7 +1740,9 @@
       "transforms": {
         "mirror": null,
         "rotations": []
-      }
+      },
+      "tier": "rare",
+      "prefer": "side_peek_right"
     },
     {
       "id": "pillar",
@@ -1774,7 +1804,9 @@
       "transforms": {
         "mirror": null,
         "rotations": []
-      }
+      },
+      "tier": "rare",
+      "prefer": "arch"
     },
     {
       "id": "door_window_left",
@@ -1833,7 +1865,9 @@
       "transforms": {
         "mirror": "door_window_right",
         "rotations": []
-      }
+      },
+      "tier": "rare",
+      "prefer": "side_door_left"
     },
     {
       "id": "door_window_right",
@@ -1892,7 +1926,9 @@
       "transforms": {
         "mirror": "door_window_left",
         "rotations": []
-      }
+      },
+      "tier": "rare",
+      "prefer": "side_door_right"
     },
     {
       "id": "half_wall_door",
@@ -1953,7 +1989,9 @@
       "transforms": {
         "mirror": null,
         "rotations": []
-      }
+      },
+      "tier": "rare",
+      "prefer": "half_wall"
     },
     {
       "id": "half_wall_side_door_left",
@@ -2014,7 +2052,9 @@
       "transforms": {
         "mirror": "half_wall_side_door_right",
         "rotations": []
-      }
+      },
+      "tier": "rare",
+      "prefer": "half_wall"
     },
     {
       "id": "half_wall_side_door_right",
@@ -2075,7 +2115,9 @@
       "transforms": {
         "mirror": "half_wall_side_door_left",
         "rotations": []
-      }
+      },
+      "tier": "rare",
+      "prefer": "half_wall"
     },
     {
       "id": "half_wall_slim_left",
@@ -2137,7 +2179,9 @@
       "transforms": {
         "mirror": "half_wall_slim_right",
         "rotations": []
-      }
+      },
+      "tier": "rare",
+      "prefer": "half_wall"
     },
     {
       "id": "half_wall_slim_right",
@@ -2199,7 +2243,9 @@
       "transforms": {
         "mirror": "half_wall_slim_left",
         "rotations": []
-      }
+      },
+      "tier": "rare",
+      "prefer": "half_wall"
     }
   ],
   "other_edits": [],
@@ -2305,7 +2351,8 @@
         "rotations": []
       },
       "result_class": "BalconyI",
-      "result_class_status": "probe_inferred"
+      "result_class_status": "probe_inferred",
+      "tier": "common"
     },
     {
       "id": "floor_hole_near_right",
@@ -2355,7 +2402,8 @@
         "rotations": []
       },
       "result_class": "BalconyI",
-      "result_class_status": "probe_inferred"
+      "result_class_status": "probe_inferred",
+      "tier": "common"
     },
     {
       "id": "floor_hole_far_left",
@@ -2405,7 +2453,8 @@
         "rotations": []
       },
       "result_class": "BalconyI",
-      "result_class_status": "probe_inferred"
+      "result_class_status": "probe_inferred",
+      "tier": "common"
     },
     {
       "id": "floor_hole_far_right",
@@ -2455,7 +2504,8 @@
         "rotations": []
       },
       "result_class": "BalconyI",
-      "result_class_status": "probe_inferred"
+      "result_class_status": "probe_inferred",
+      "tier": "common"
     },
     {
       "id": "floor_half_near",
@@ -2506,7 +2556,8 @@
         "rotations": []
       },
       "result_class": "BalconyS",
-      "result_class_status": "probe_inferred"
+      "result_class_status": "probe_inferred",
+      "tier": "common"
     },
     {
       "id": "floor_half_far",
@@ -2557,7 +2608,8 @@
         "rotations": []
       },
       "result_class": "BalconyS",
-      "result_class_status": "probe_inferred"
+      "result_class_status": "probe_inferred",
+      "tier": "common"
     },
     {
       "id": "floor_half_left",
@@ -2608,7 +2660,8 @@
         "rotations": []
       },
       "result_class": "BalconyS",
-      "result_class_status": "probe_inferred"
+      "result_class_status": "probe_inferred",
+      "tier": "common"
     },
     {
       "id": "floor_half_right",
@@ -2659,7 +2712,8 @@
         "rotations": []
       },
       "result_class": "BalconyS",
-      "result_class_status": "probe_inferred"
+      "result_class_status": "probe_inferred",
+      "tier": "common"
     },
     {
       "id": "floor_three_keep_far_right",
@@ -2710,7 +2764,8 @@
         "rotations": []
       },
       "result_class": "BalconyO",
-      "result_class_status": "probe_inferred"
+      "result_class_status": "probe_inferred",
+      "tier": "situational"
     },
     {
       "id": "floor_three_keep_far_left",
@@ -2761,7 +2816,8 @@
         "rotations": []
       },
       "result_class": "BalconyO",
-      "result_class_status": "probe_inferred"
+      "result_class_status": "probe_inferred",
+      "tier": "situational"
     },
     {
       "id": "floor_three_keep_near_right",
@@ -2812,7 +2868,8 @@
         "rotations": []
       },
       "result_class": "BalconyO",
-      "result_class_status": "probe_inferred"
+      "result_class_status": "probe_inferred",
+      "tier": "situational"
     },
     {
       "id": "floor_three_keep_near_left",
@@ -2863,7 +2920,8 @@
         "rotations": []
       },
       "result_class": "BalconyO",
-      "result_class_status": "probe_inferred"
+      "result_class_status": "probe_inferred",
+      "tier": "situational"
     },
     {
       "id": "floor_diagonal_a",
@@ -2912,7 +2970,8 @@
         "rotations": []
       },
       "result_class": "BalconyD",
-      "result_class_status": "probe_inferred"
+      "result_class_status": "probe_inferred",
+      "tier": "situational"
     },
     {
       "id": "floor_diagonal_b",
@@ -2961,7 +3020,8 @@
         "rotations": []
       },
       "result_class": "BalconyD",
-      "result_class_status": "probe_inferred"
+      "result_class_status": "probe_inferred",
+      "tier": "situational"
     }
   ],
   "stairs_edits": [
@@ -3044,7 +3104,8 @@
         "status": "requires_recorded_gesture"
       },
       "result_class": "StairF",
-      "result_class_status": "probe_inferred"
+      "result_class_status": "probe_inferred",
+      "tier": "situational"
     },
     {
       "id": "stairs_open_right",
@@ -3125,7 +3186,8 @@
         "status": "requires_recorded_gesture"
       },
       "result_class": "StairF",
-      "result_class_status": "probe_inferred"
+      "result_class_status": "probe_inferred",
+      "tier": "situational"
     },
     {
       "id": "stairs_l_left",
@@ -3207,7 +3269,8 @@
         "status": "requires_recorded_gesture"
       },
       "result_class": "StairR",
-      "result_class_status": "probe_inferred"
+      "result_class_status": "probe_inferred",
+      "tier": "situational"
     },
     {
       "id": "stairs_l_right",
@@ -3289,7 +3352,8 @@
         "status": "requires_recorded_gesture"
       },
       "result_class": "StairR",
-      "result_class_status": "probe_inferred"
+      "result_class_status": "probe_inferred",
+      "tier": "situational"
     },
     {
       "id": "ramp_half_nl_nr",
@@ -3374,7 +3438,14 @@
         "edges": [],
         "routes": [],
         "status": "requires_recorded_gesture"
-      }
+      },
+      "strokes": [
+        [
+          0,
+          1
+        ]
+      ],
+      "tier": "common"
     },
     {
       "id": "ramp_half_nl_fl",
@@ -3459,7 +3530,14 @@
         "edges": [],
         "routes": [],
         "status": "requires_recorded_gesture"
-      }
+      },
+      "strokes": [
+        [
+          0,
+          2
+        ]
+      ],
+      "tier": "common"
     },
     {
       "id": "ramp_half_nr_fr",
@@ -3544,7 +3622,14 @@
         "edges": [],
         "routes": [],
         "status": "requires_recorded_gesture"
-      }
+      },
+      "strokes": [
+        [
+          1,
+          3
+        ]
+      ],
+      "tier": "common"
     },
     {
       "id": "ramp_half_nr_nl",
@@ -3629,7 +3714,14 @@
         "edges": [],
         "routes": [],
         "status": "requires_recorded_gesture"
-      }
+      },
+      "strokes": [
+        [
+          1,
+          0
+        ]
+      ],
+      "tier": "common"
     },
     {
       "id": "ramp_half_fr_fl",
@@ -3714,7 +3806,14 @@
         "edges": [],
         "routes": [],
         "status": "requires_recorded_gesture"
-      }
+      },
+      "strokes": [
+        [
+          3,
+          2
+        ]
+      ],
+      "tier": "common"
     },
     {
       "id": "ramp_half_fr_nr",
@@ -3799,7 +3898,14 @@
         "edges": [],
         "routes": [],
         "status": "requires_recorded_gesture"
-      }
+      },
+      "strokes": [
+        [
+          3,
+          1
+        ]
+      ],
+      "tier": "common"
     },
     {
       "id": "ramp_half_fl_nl",
@@ -3884,7 +3990,14 @@
         "edges": [],
         "routes": [],
         "status": "requires_recorded_gesture"
-      }
+      },
+      "strokes": [
+        [
+          2,
+          0
+        ]
+      ],
+      "tier": "common"
     },
     {
       "id": "ramp_half_fl_fr",
@@ -3969,7 +4082,14 @@
         "edges": [],
         "routes": [],
         "status": "requires_recorded_gesture"
-      }
+      },
+      "strokes": [
+        [
+          2,
+          3
+        ]
+      ],
+      "tier": "common"
     },
     {
       "id": "ramp_l_nl_nr_fr",
@@ -4056,7 +4176,15 @@
         "edges": [],
         "routes": [],
         "status": "requires_recorded_gesture"
-      }
+      },
+      "strokes": [
+        [
+          0,
+          1,
+          3
+        ]
+      ],
+      "tier": "common"
     },
     {
       "id": "ramp_l_nl_fl_fr",
@@ -4143,7 +4271,15 @@
         "edges": [],
         "routes": [],
         "status": "requires_recorded_gesture"
-      }
+      },
+      "strokes": [
+        [
+          0,
+          2,
+          3
+        ]
+      ],
+      "tier": "common"
     },
     {
       "id": "ramp_l_nr_fr_fl",
@@ -4230,7 +4366,15 @@
         "edges": [],
         "routes": [],
         "status": "requires_recorded_gesture"
-      }
+      },
+      "strokes": [
+        [
+          1,
+          3,
+          2
+        ]
+      ],
+      "tier": "common"
     },
     {
       "id": "ramp_l_nr_nl_fl",
@@ -4317,7 +4461,15 @@
         "edges": [],
         "routes": [],
         "status": "requires_recorded_gesture"
-      }
+      },
+      "strokes": [
+        [
+          1,
+          0,
+          2
+        ]
+      ],
+      "tier": "common"
     },
     {
       "id": "ramp_l_fr_fl_nl",
@@ -4404,7 +4556,15 @@
         "edges": [],
         "routes": [],
         "status": "requires_recorded_gesture"
-      }
+      },
+      "strokes": [
+        [
+          3,
+          2,
+          0
+        ]
+      ],
+      "tier": "common"
     },
     {
       "id": "ramp_l_fr_nr_nl",
@@ -4491,7 +4651,15 @@
         "edges": [],
         "routes": [],
         "status": "requires_recorded_gesture"
-      }
+      },
+      "strokes": [
+        [
+          3,
+          1,
+          0
+        ]
+      ],
+      "tier": "common"
     },
     {
       "id": "ramp_l_fl_nl_nr",
@@ -4578,7 +4746,15 @@
         "edges": [],
         "routes": [],
         "status": "requires_recorded_gesture"
-      }
+      },
+      "strokes": [
+        [
+          2,
+          0,
+          1
+        ]
+      ],
+      "tier": "common"
     },
     {
       "id": "ramp_l_fl_fr_nr",
@@ -4665,7 +4841,15 @@
         "edges": [],
         "routes": [],
         "status": "requires_recorded_gesture"
-      }
+      },
+      "strokes": [
+        [
+          2,
+          3,
+          1
+        ]
+      ],
+      "tier": "common"
     },
     {
       "id": "ramp_spiral_nl_nr_fr_fl",
@@ -4754,7 +4938,16 @@
         "edges": [],
         "routes": [],
         "status": "requires_recorded_gesture"
-      }
+      },
+      "strokes": [
+        [
+          0,
+          1,
+          3,
+          2
+        ]
+      ],
+      "tier": "situational"
     },
     {
       "id": "ramp_spiral_nl_fl_fr_nr",
@@ -4843,7 +5036,16 @@
         "edges": [],
         "routes": [],
         "status": "requires_recorded_gesture"
-      }
+      },
+      "strokes": [
+        [
+          0,
+          2,
+          3,
+          1
+        ]
+      ],
+      "tier": "situational"
     },
     {
       "id": "ramp_spiral_nr_fr_fl_nl",
@@ -4932,7 +5134,16 @@
         "edges": [],
         "routes": [],
         "status": "requires_recorded_gesture"
-      }
+      },
+      "strokes": [
+        [
+          1,
+          3,
+          2,
+          0
+        ]
+      ],
+      "tier": "situational"
     },
     {
       "id": "ramp_spiral_nr_nl_fl_fr",
@@ -5021,7 +5232,16 @@
         "edges": [],
         "routes": [],
         "status": "requires_recorded_gesture"
-      }
+      },
+      "strokes": [
+        [
+          1,
+          0,
+          2,
+          3
+        ]
+      ],
+      "tier": "situational"
     },
     {
       "id": "ramp_spiral_fr_fl_nl_nr",
@@ -5110,7 +5330,16 @@
         "edges": [],
         "routes": [],
         "status": "requires_recorded_gesture"
-      }
+      },
+      "strokes": [
+        [
+          3,
+          2,
+          0,
+          1
+        ]
+      ],
+      "tier": "situational"
     },
     {
       "id": "ramp_spiral_fr_nr_nl_fl",
@@ -5199,7 +5428,16 @@
         "edges": [],
         "routes": [],
         "status": "requires_recorded_gesture"
-      }
+      },
+      "strokes": [
+        [
+          3,
+          1,
+          0,
+          2
+        ]
+      ],
+      "tier": "situational"
     },
     {
       "id": "ramp_spiral_fl_nl_nr_fr",
@@ -5288,7 +5526,16 @@
         "edges": [],
         "routes": [],
         "status": "requires_recorded_gesture"
-      }
+      },
+      "strokes": [
+        [
+          2,
+          0,
+          1,
+          3
+        ]
+      ],
+      "tier": "situational"
     },
     {
       "id": "ramp_spiral_fl_fr_nr_nl",
@@ -5337,6 +5584,391 @@
       "reset": "native_reset",
       "transforms": {
         "mirror": "ramp_spiral_fr_fl_nl_nr",
+        "rotations": []
+      },
+      "gesture": {
+        "nodes": {
+          "near_left": [
+            0.0,
+            0.0
+          ],
+          "near_middle": [
+            0.5,
+            0.0
+          ],
+          "near_right": [
+            1.0,
+            0.0
+          ],
+          "left_middle": [
+            0.0,
+            0.5
+          ],
+          "right_middle": [
+            1.0,
+            0.5
+          ],
+          "far_left": [
+            0.0,
+            1.0
+          ],
+          "far_middle": [
+            0.5,
+            1.0
+          ],
+          "far_right": [
+            1.0,
+            1.0
+          ]
+        },
+        "edges": [],
+        "routes": [],
+        "status": "requires_recorded_gesture"
+      },
+      "strokes": [
+        [
+          2,
+          3,
+          1,
+          0
+        ]
+      ],
+      "tier": "situational"
+    },
+    {
+      "id": "ramp_full_up",
+      "name": "Full ramp (facing away, as placed)",
+      "tiles": [
+        0,
+        2,
+        1,
+        3
+      ],
+      "strokes": [
+        [
+          0,
+          2
+        ],
+        [
+          1,
+          3
+        ]
+      ],
+      "kind": "grid",
+      "mirror_of": null,
+      "suggest": false,
+      "confirmed": false,
+      "purpose": [
+        "climb",
+        "protect"
+      ],
+      "exposure": "low",
+      "cover_left": 4,
+      "difficulty": 2,
+      "when_to_use": "Turn a placed ramp to climb another way without replacing it: drag both columns (or rows) the new way.",
+      "source": "UEFN build-class probe 2026-10-10 (PBWA_W1_* placed and photographed); unconfirmed tile set",
+      "result_class": "StairW",
+      "result_class_status": "probe_inferred",
+      "validation": {
+        "status": "unverified",
+        "game_version": null,
+        "evidence": [],
+        "result_confirmed": false,
+        "reason": "Ramp rotation; confirm through recorded and reviewed attempts."
+      },
+      "tier": "common",
+      "topology": "gesture_graph",
+      "mask": null,
+      "result_shape": "Full ramp (facing away, as placed)",
+      "preconditions": [
+        "editable_target",
+        "standard_editing"
+      ],
+      "reset": "native_reset",
+      "transforms": {
+        "mirror": null,
+        "rotations": []
+      },
+      "gesture": {
+        "nodes": {
+          "near_left": [
+            0.0,
+            0.0
+          ],
+          "near_middle": [
+            0.5,
+            0.0
+          ],
+          "near_right": [
+            1.0,
+            0.0
+          ],
+          "left_middle": [
+            0.0,
+            0.5
+          ],
+          "right_middle": [
+            1.0,
+            0.5
+          ],
+          "far_left": [
+            0.0,
+            1.0
+          ],
+          "far_middle": [
+            0.5,
+            1.0
+          ],
+          "far_right": [
+            1.0,
+            1.0
+          ]
+        },
+        "edges": [],
+        "routes": [],
+        "status": "requires_recorded_gesture"
+      }
+    },
+    {
+      "id": "ramp_full_right",
+      "name": "Full ramp turned right",
+      "tiles": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "strokes": [
+        [
+          0,
+          1
+        ],
+        [
+          2,
+          3
+        ]
+      ],
+      "kind": "grid",
+      "mirror_of": "ramp_full_left",
+      "suggest": false,
+      "confirmed": false,
+      "purpose": [
+        "climb",
+        "protect"
+      ],
+      "exposure": "low",
+      "cover_left": 4,
+      "difficulty": 2,
+      "when_to_use": "Turn a placed ramp to climb another way without replacing it: drag both columns (or rows) the new way.",
+      "source": "UEFN build-class probe 2026-10-10 (PBWA_W1_* placed and photographed); unconfirmed tile set",
+      "result_class": "StairW",
+      "result_class_status": "probe_inferred",
+      "validation": {
+        "status": "unverified",
+        "game_version": null,
+        "evidence": [],
+        "result_confirmed": false,
+        "reason": "Ramp rotation; confirm through recorded and reviewed attempts."
+      },
+      "tier": "common",
+      "topology": "gesture_graph",
+      "mask": null,
+      "result_shape": "Full ramp turned right",
+      "preconditions": [
+        "editable_target",
+        "standard_editing"
+      ],
+      "reset": "native_reset",
+      "transforms": {
+        "mirror": "ramp_full_left",
+        "rotations": []
+      },
+      "gesture": {
+        "nodes": {
+          "near_left": [
+            0.0,
+            0.0
+          ],
+          "near_middle": [
+            0.5,
+            0.0
+          ],
+          "near_right": [
+            1.0,
+            0.0
+          ],
+          "left_middle": [
+            0.0,
+            0.5
+          ],
+          "right_middle": [
+            1.0,
+            0.5
+          ],
+          "far_left": [
+            0.0,
+            1.0
+          ],
+          "far_middle": [
+            0.5,
+            1.0
+          ],
+          "far_right": [
+            1.0,
+            1.0
+          ]
+        },
+        "edges": [],
+        "routes": [],
+        "status": "requires_recorded_gesture"
+      }
+    },
+    {
+      "id": "ramp_full_left",
+      "name": "Full ramp turned left",
+      "tiles": [
+        1,
+        0,
+        3,
+        2
+      ],
+      "strokes": [
+        [
+          1,
+          0
+        ],
+        [
+          3,
+          2
+        ]
+      ],
+      "kind": "grid",
+      "mirror_of": "ramp_full_right",
+      "suggest": false,
+      "confirmed": false,
+      "purpose": [
+        "climb",
+        "protect"
+      ],
+      "exposure": "low",
+      "cover_left": 4,
+      "difficulty": 2,
+      "when_to_use": "Turn a placed ramp to climb another way without replacing it: drag both columns (or rows) the new way.",
+      "source": "UEFN build-class probe 2026-10-10 (PBWA_W1_* placed and photographed); unconfirmed tile set",
+      "result_class": "StairW",
+      "result_class_status": "probe_inferred",
+      "validation": {
+        "status": "unverified",
+        "game_version": null,
+        "evidence": [],
+        "result_confirmed": false,
+        "reason": "Ramp rotation; confirm through recorded and reviewed attempts."
+      },
+      "tier": "common",
+      "topology": "gesture_graph",
+      "mask": null,
+      "result_shape": "Full ramp turned left",
+      "preconditions": [
+        "editable_target",
+        "standard_editing"
+      ],
+      "reset": "native_reset",
+      "transforms": {
+        "mirror": "ramp_full_right",
+        "rotations": []
+      },
+      "gesture": {
+        "nodes": {
+          "near_left": [
+            0.0,
+            0.0
+          ],
+          "near_middle": [
+            0.5,
+            0.0
+          ],
+          "near_right": [
+            1.0,
+            0.0
+          ],
+          "left_middle": [
+            0.0,
+            0.5
+          ],
+          "right_middle": [
+            1.0,
+            0.5
+          ],
+          "far_left": [
+            0.0,
+            1.0
+          ],
+          "far_middle": [
+            0.5,
+            1.0
+          ],
+          "far_right": [
+            1.0,
+            1.0
+          ]
+        },
+        "edges": [],
+        "routes": [],
+        "status": "requires_recorded_gesture"
+      }
+    },
+    {
+      "id": "ramp_full_down",
+      "name": "Full ramp turned round (facing you)",
+      "tiles": [
+        2,
+        0,
+        3,
+        1
+      ],
+      "strokes": [
+        [
+          2,
+          0
+        ],
+        [
+          3,
+          1
+        ]
+      ],
+      "kind": "grid",
+      "mirror_of": null,
+      "suggest": false,
+      "confirmed": false,
+      "purpose": [
+        "climb",
+        "protect"
+      ],
+      "exposure": "low",
+      "cover_left": 4,
+      "difficulty": 2,
+      "when_to_use": "Turn a placed ramp to climb another way without replacing it: drag both columns (or rows) the new way.",
+      "source": "UEFN build-class probe 2026-10-10 (PBWA_W1_* placed and photographed); unconfirmed tile set",
+      "result_class": "StairW",
+      "result_class_status": "probe_inferred",
+      "validation": {
+        "status": "unverified",
+        "game_version": null,
+        "evidence": [],
+        "result_confirmed": false,
+        "reason": "Ramp rotation; confirm through recorded and reviewed attempts."
+      },
+      "tier": "common",
+      "topology": "gesture_graph",
+      "mask": null,
+      "result_shape": "Full ramp turned round (facing you)",
+      "preconditions": [
+        "editable_target",
+        "standard_editing"
+      ],
+      "reset": "native_reset",
+      "transforms": {
+        "mirror": null,
         "rotations": []
       },
       "gesture": {
@@ -5429,7 +6061,8 @@
         "rotations": []
       },
       "result_class": "RoofI",
-      "result_class_status": "probe_inferred"
+      "result_class_status": "probe_inferred",
+      "tier": "common"
     },
     {
       "id": "roof_one_near_right",
@@ -5479,7 +6112,8 @@
         "rotations": []
       },
       "result_class": "RoofI",
-      "result_class_status": "probe_inferred"
+      "result_class_status": "probe_inferred",
+      "tier": "common"
     },
     {
       "id": "roof_one_far_left",
@@ -5529,7 +6163,8 @@
         "rotations": []
       },
       "result_class": "RoofI",
-      "result_class_status": "probe_inferred"
+      "result_class_status": "probe_inferred",
+      "tier": "common"
     },
     {
       "id": "roof_one_far_right",
@@ -5579,7 +6214,8 @@
         "rotations": []
       },
       "result_class": "RoofI",
-      "result_class_status": "probe_inferred"
+      "result_class_status": "probe_inferred",
+      "tier": "common"
     },
     {
       "id": "roof_two_near",
@@ -5630,7 +6266,8 @@
         "rotations": []
       },
       "result_class": "RoofS",
-      "result_class_status": "probe_inferred"
+      "result_class_status": "probe_inferred",
+      "tier": "common"
     },
     {
       "id": "roof_two_far",
@@ -5681,7 +6318,8 @@
         "rotations": []
       },
       "result_class": "RoofS",
-      "result_class_status": "probe_inferred"
+      "result_class_status": "probe_inferred",
+      "tier": "common"
     },
     {
       "id": "roof_two_left",
@@ -5732,7 +6370,8 @@
         "rotations": []
       },
       "result_class": "RoofS",
-      "result_class_status": "probe_inferred"
+      "result_class_status": "probe_inferred",
+      "tier": "common"
     },
     {
       "id": "roof_two_right",
@@ -5783,7 +6422,8 @@
         "rotations": []
       },
       "result_class": "RoofS",
-      "result_class_status": "probe_inferred"
+      "result_class_status": "probe_inferred",
+      "tier": "common"
     },
     {
       "id": "roof_diagonal_a",
@@ -5834,7 +6474,8 @@
         "rotations": []
       },
       "result_class": "RoofD",
-      "result_class_status": "probe_inferred"
+      "result_class_status": "probe_inferred",
+      "tier": "situational"
     },
     {
       "id": "roof_diagonal_b",
@@ -5885,7 +6526,8 @@
         "rotations": []
       },
       "result_class": "RoofD",
-      "result_class_status": "probe_inferred"
+      "result_class_status": "probe_inferred",
+      "tier": "situational"
     },
     {
       "id": "roof_three_keep_far_right",
@@ -5936,7 +6578,8 @@
         "rotations": []
       },
       "result_class": "RoofO",
-      "result_class_status": "probe_inferred"
+      "result_class_status": "probe_inferred",
+      "tier": "situational"
     },
     {
       "id": "roof_three_keep_far_left",
@@ -5987,7 +6630,8 @@
         "rotations": []
       },
       "result_class": "RoofO",
-      "result_class_status": "probe_inferred"
+      "result_class_status": "probe_inferred",
+      "tier": "situational"
     },
     {
       "id": "roof_three_keep_near_right",
@@ -6038,7 +6682,8 @@
         "rotations": []
       },
       "result_class": "RoofO",
-      "result_class_status": "probe_inferred"
+      "result_class_status": "probe_inferred",
+      "tier": "situational"
     },
     {
       "id": "roof_three_keep_near_left",
@@ -6089,10 +6734,11 @@
         "rotations": []
       },
       "result_class": "RoofO",
-      "result_class_status": "probe_inferred"
+      "result_class_status": "probe_inferred",
+      "tier": "situational"
     }
   ],
   "version": 2,
   "coverage_ledger": "edit-coverage.json",
-  "_pieces_classes_note": "class / base_class / edit_semantics / result_class: tools/add_build_shapes.py, from the 2026-10-10 UEFN probe of every PBWA_W1_* build class. remove_selected = the tiles you select are cut out; keep_path = the tiles you drag through, in order from the bottom, become the stairs. Classes are PBWA_W1_<class>; VERIFY in game."
+  "_pieces_classes_note": "class / base_class / edit_semantics / result_class: tools/add_build_shapes.py, from the 2026-10-10 UEFN probe of every PBWA_W1_* build class. remove_selected = the tiles you select are cut out; keep_path = the tiles you drag through, in order from the bottom, become the stairs. Classes are PBWA_W1_<class>; VERIFY in game. Ramp edits are `strokes` (one list per drag, bottom tile first); each tile points to the next tile of its stroke (the last tile keeps the stroke's last direction), and ramp shapes are matched on those arrows. tier: common / situational / rare; a rare edit is recognised but the guide shows `prefer` instead."
 }
