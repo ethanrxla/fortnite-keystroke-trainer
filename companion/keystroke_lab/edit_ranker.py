@@ -169,7 +169,9 @@ class IntentMap:
             n = 3 if piece == "wall" else 2
             names = list(spec["tiles"])
             junctions = {tuple(float(x) for x in k.split(",")): e for k, e in (spec.get("junctions") or {}).items()}
-            for e in junctions.values():
+            # zones: [u0, v0, u1, v1, edit] rectangles in tile units, applied over the tile rule (junctions win).
+            zones = [(*map(float, z[:4]), z[4]) for z in spec.get("zones") or []]
+            for e in [*junctions.values(), *(z[4] for z in zones)]:
                 if e not in names:
                     names.append(e)
             radius = float(spec.get("junction_radius", 0))
@@ -179,6 +181,9 @@ class IntentMap:
                 for col in range(size):
                     u, v = (col + 0.5) / self.RES, (row + 0.5) / self.RES
                     edit = spec["tiles"][int(v) * n + int(u)]
+                    for u0, v0, u1, v1, zone in zones:
+                        if u0 <= u < u1 and v0 <= v < v1:
+                            edit = zone
                     for point, corner in junctions.items():
                         if math.dist(point, (u, v)) <= radius:
                             edit = corner

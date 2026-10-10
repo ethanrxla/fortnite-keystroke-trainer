@@ -68,7 +68,7 @@ class IntentMapTests(unittest.TestCase):
 
     def test_every_wall_tile(self):
         expect = {(0.5, 2.5): "corner_upper_left", (1.5, 2.5): "half_wall", (2.5, 2.5): "corner_upper_right",
-                  (0.5, 1.5): "side_peek_left", (1.5, 1.5): "window_center", (2.5, 1.5): "side_peek_right",
+                  (0.5, 1.5): "corner_lower_left", (1.5, 1.7): "window_center", (2.5, 1.5): "corner_lower_right",
                   (0.5, 0.5): "corner_lower_left", (1.5, 0.5): "door", (2.5, 0.5): "corner_lower_right"}
         for aim, edit in expect.items():
             self.assertEqual(self.m.lookup("wall", aim), edit, aim)
@@ -78,6 +78,16 @@ class IntentMapTests(unittest.TestCase):
         self.assertEqual(self.m.lookup("wall", (1.12, 1.15)), "corner_lower_left")
         self.assertEqual(self.m.lookup("wall", (1.1, 1.5)), "window_center")      # left edge, mid height
         self.assertEqual(self.m.lookup("wall", (1.5, 1.9)), "window_center")      # top edge, centred
+
+    def test_half_arch_on_the_lower_centre_by_side(self):
+        # Player 2026-10-10: the lower half of the centre tile gives the half arch (lower four tiles) on the side the
+        # crosshair is on; the upper half stays the window; the side tiles give the triangle (lower corner).
+        self.assertEqual(self.m.lookup("wall", (1.4, 1.2)), "half_arch_left")
+        self.assertEqual(self.m.lookup("wall", (1.6, 1.2)), "half_arch_right")
+        self.assertEqual(self.m.lookup("wall", (1.5, 1.7)), "window_center")
+        self.assertEqual(self.m.lookup("wall", (1.5, 0.3)), "door")
+        self.assertEqual(self.m.lookup("wall", (0.3, 1.5)), "corner_lower_left")
+        self.assertEqual(self.m.lookup("wall", (2.7, 1.5)), "corner_lower_right")
 
     def test_never_quarter_wall_on_the_top_row(self):
         for u in (1.2, 1.5, 1.8):
