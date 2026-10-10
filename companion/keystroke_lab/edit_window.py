@@ -25,6 +25,7 @@ from .evidence import Evidence, ContextAssembler
 from .guide_layers import TraceGuideLayer, RegionGuideLayer, GuideDisplayLatch
 from .attempt_recorder import AttemptRecorder, AttemptLog, default_matcher
 from .frame_dataset import FrameDataset
+from .screen_capture import Grabber
 from .pieces import catalog_key
 import os
 BASE=Path(__file__).resolve().parents[1]
@@ -79,7 +80,7 @@ def route_lines(observation,tiles,aim=None,cols=3):
 
 class ContextPipeline:
     FULL_EVERY=3      # tracked frames between full detections (see process: fast path)
-    def __init__(self,store,advisor=None,clock=time.monotonic,observer=None,telemetry=None):
+    def __init__(self,store,advisor=None,clock=time.monotonic,observer=None,telemetry=None,async_detect=False):
         self.store=store;self.clock=clock
         self.advisor=advisor or EditAdvisor(jev=JevClient(domain='edit'),clock=clock)
         self.observer=observer or VisualObserver();self.targets=PieceTargetTracker();self.selection=TargetTracker(stability=.06)   # 60 ms before a new pick shows (was 150); hysteresis already damps flicker
@@ -87,6 +88,12 @@ class ContextPipeline:
         self.ranker=Ranker();self.patterns=PatternTable();self.motion=GridMotionTracker();self.previous_display=None;self.last_attempt=None
         self.locked=None;self.profile_identity=None;self.last_target=None
         self.last_mode_seen=-float('inf');self.frames_since_full=0
+        # async_detect: full detection (~80-130 ms) runs on its own thread with its own observer; every frame takes the
+        # fast path (track + re-read, ~10 ms) and a finished detection re-seeds the tracker. Tests use the synchronous path.
+        self.async_detect=async_detect;self.pending=None
+        if async_detect:
+            from concurrent.futures import ThreadPoolExecutor
+            self.detector=ThreadPoolExecutor(max_workers=1,thread_name_prefix='edit-detect');self.bg_observer=VisualObserver()
         self.routes=RouteTracker()
     def reset_tracking(self):
         self.routes.reset()
@@ -124,11 +131,28 @@ class ContextPipeline:
         # and re-read aim + selection from it (~10 ms); a full detection (~80-130 ms) runs every FULL_EVERY frames,
         # after 0.5 s, or whenever following fails, so drift and new pieces are still caught.
         fast=None
-        if (mode=='editing' and mode_track is None and self.motion.observation is not None
+        if self.async_detect and mode=='editing' and mode_track is None:
+            if self.pending is not None and self.pending[0].done():
+                future,det_frame,_=self.pending;self.pending=None
+                try:det=future.result()
+                except Exception:det=None
+                if det is not None and det.piece!='unknown':
+                    self.motion.seed(det_frame,det);self.frames_since_full=0
+            if self.motion.observation is not None and captured-self.motion.detected_at<=1.:
+                moved=self.motion.follow(frame,captured,verify=False)
+                fast=self.observer.from_quad(frame,moved,captured) if moved else None
+            if self.pending is None and (fast is None or self.frames_since_full>=self.FULL_EVERY*4):
+                snapshot=frame.copy()
+                self.pending=(self.detector.submit(self.bg_observer.observe,snapshot,captured),snapshot,captured)
+            observation=fast
+            if fast is not None:self.frames_since_full+=1
+        elif (mode=='editing' and mode_track is None and self.motion.observation is not None
                 and self.frames_since_full<self.FULL_EVERY and captured-self.motion.detected_at<=.5):
             moved=self.motion.follow(frame,captured)
             fast=self.observer.from_quad(frame,moved,captured) if moved else None
-        if fast is not None:
+        if self.async_detect and mode=='editing' and mode_track is None:
+            pass
+        elif fast is not None:
             observation=fast;self.frames_since_full+=1
         else:
             observation=mode_track or (self.observer.observe(frame,captured) if mode=='editing' else None)
@@ -136,7 +160,7 @@ class ContextPipeline:
         if observation:base['detection_reason']=observation.reason if fast is None else 'tracked_refined'
         tracked=mode_track is not None
         if observation and observation.piece!='unknown' and not tracked and fast is None:self.motion.seed(frame,observation)
-        elif mode=='editing' and not tracked:
+        elif mode=='editing' and not tracked and not self.async_detect:
             observation=self.motion.follow(frame,captured);tracked=observation is not None
         target=self.targets.update(observation) if observation else None
         if not target:
@@ -250,7 +274,7 @@ def run(profile_path=None):
     if not single_instance('Local\\KeystrokeLabEditReference'):return
     import mss
     cv2.setNumThreads(1)
-    store=ProfileStore(profile_path or BINDS_FILE);pipeline=ContextPipeline(store)
+    store=ProfileStore(profile_path or BINDS_FILE);pipeline=ContextPipeline(store,async_detect=True)
     shared={'result':None,'rect':None};mutex=threading.Lock();stop=threading.Event()
     # Every edit attempt (open edit mode -> confirm / reset / leave) goes to sessions/edit-<session>.attempts.jsonl
     # for the collector, the review page and the cloud sync. Recording never blocks or fails the guide.
@@ -262,16 +286,25 @@ def run(profile_path=None):
         try:recorder.feed(result,utc)
         except Exception:recorder.current=None
     def worker():
-        with mss.MSS() as capture:
+        # dxcam (DXGI duplication, ~2 ms) with mss fallback; an unchanged screen is not re-processed. Frames are taken
+        # as fast as the display produces them, capped at ~125 per second; the slow full detection runs on a
+        # background thread inside the pipeline (async_detect), so each frame here is the fast path only.
+        grabber=Grabber()
+        last_start=0.
+        try:
             while not stop.is_set():
+                wait=.008-(time.monotonic()-last_start)
+                if wait>0:stop.wait(wait)
+                last_start=time.monotonic()
                 rect=game_rect();result=None
                 if rect:
-                    l,t,r,b=rect
                     try:
                         captured_at=time.monotonic();captured_utc=time.time()
-                        frame=np.asarray(capture.grab({'left':l,'top':t,'width':r-l,'height':b-t}))[:,:,:3]
+                        frame,fresh=grabber.grab(rect)
+                        if frame is None or not fresh:continue
                         result=pipeline.process(frame,captured_at=captured_at)
                         result['processing_ms']=round(1000*(time.monotonic()-captured_at),1)
+                        result['capture']=grabber.backend
                         record(result,captured_utc)
                         # Training data: a few edit-mode frames a second with their auto labels, after the guide
                         # has its result (never delays it). companion/data/frames/<session>/, local only.
@@ -281,9 +314,9 @@ def run(profile_path=None):
                 else:
                     pipeline.reset_tracking();pipeline.metrics.reset()
                     record({'mode':'unknown'},time.time())
+                    stop.wait(.1)
                 with mutex:shared.update(result=result,rect=rect)
-                # Latest snapshot only; no frame queue or network on this worker.
-                stop.wait(.025)
+        finally:grabber.close()
     thread=threading.Thread(target=worker,daemon=True,name='local-edit-observer');thread.start()
     root=tk.Tk();root.title('Training Lab - Edit reference');root.overrideredirect(True)
     root.attributes('-topmost',True);root.attributes('-transparentcolor','#010203');root.configure(bg='#010203')
@@ -440,8 +473,8 @@ def run(profile_path=None):
         except Exception:
             import traceback
             with (BASE/'edit-display-error.log').open('a') as errors:errors.write(traceback.format_exc())
-        finally:root.after(33,poll)
-    root.after(33,poll)
+        finally:root.after(8,poll)      # redraw check every 8 ms (was 33): new results reach the screen sooner
+    root.after(8,poll)
     try:root.mainloop()
     finally:
         stop.set();pipeline.advisor.close()

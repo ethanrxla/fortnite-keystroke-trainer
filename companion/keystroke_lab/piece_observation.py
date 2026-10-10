@@ -6,7 +6,7 @@ the same immutable observation without changing the planner or renderer.
 """
 from dataclasses import dataclass, asdict, replace
 import math
-from .edit_observation import EditGridObserver, _line_projection, _crosshair, _general_grid, _partial_grid, _tile_support, _segments
+from .edit_observation import EditGridObserver, _line_projection, _crosshair, _general_grid, _partial_grid, _tile_support, _segments, downscale
 from .edit_geometry import piece_context
 import cv2
 
@@ -38,7 +38,7 @@ class VisualObserver:
         # line intersections. Keep that offline; this live provider is bounded.
         # DETECT_WIDTH 640: same accuracy as 960 on 224 live frames (131 vs 126 walls), ~25% faster.
         scale=min(1.,DETECT_WIDTH/frame.shape[1])
-        image=cv2.resize(frame[:,:,:3],(round(frame.shape[1]*scale),round(frame.shape[0]*scale)))
+        image=downscale(frame,scale)
         self.wall._aim_screen=_crosshair(frame)
         projection=_line_projection(image)
         if projection is not None:
@@ -85,7 +85,7 @@ class VisualObserver:
         optical flow carried forward (GridMotionTracker.follow). ~5 ms instead of a full detection, so consecutive
         frames of one edit stay fast; selection changes are still read from the pixels of this frame."""
         scale=min(1.,DETECT_WIDTH/frame.shape[1])
-        image=cv2.resize(frame[:,:,:3],(round(frame.shape[1]*scale),round(frame.shape[0]*scale)))
+        image=downscale(frame,scale)
         n=3 if tracked.piece=='wall' else 2
         quad=np.float32(tracked.quad)*scale
         H=cv2.getPerspectiveTransform(np.float32([[0,0],[n,0],[n,n],[0,n]]),quad)
@@ -135,16 +135,16 @@ class GridMotionTracker:
         self.grace=grace;self.reset()
     def reset(self):self.grey=None;self.points=None;self.observation=None;self.detected_at=-math.inf;self.scale=1.
     def seed(self,frame,observation):
-        self.scale=min(1.,960./frame.shape[1])
-        small=cv2.resize(frame[:,:,:3],(round(frame.shape[1]*self.scale),round(frame.shape[0]*self.scale)))
+        self.scale=min(1.,DETECT_WIDTH/frame.shape[1])   # same size as the detectors: one shared resize
+        small=downscale(frame,self.scale)
         grey=cv2.cvtColor(small,cv2.COLOR_BGR2GRAY)
         mask=np.zeros(grey.shape,np.uint8)
         cv2.fillConvexPoly(mask,(np.asarray(observation.quad)*self.scale).astype(np.int32),255)
-        points=cv2.goodFeaturesToTrack(grey,100,.02,10,mask=mask)
+        points=cv2.goodFeaturesToTrack(grey,60,.02,10,mask=mask)   # 60 points: enough for a robust homography, faster LK
         self.grey=grey;self.points=points;self.observation=observation;self.detected_at=observation.captured_at
-    def follow(self,frame,now):
+    def follow(self,frame,now,verify=True):
         if self.observation is None or self.points is None or now-self.detected_at>self.grace:return None
-        small=cv2.resize(frame[:,:,:3],(round(frame.shape[1]*self.scale),round(frame.shape[0]*self.scale)))
+        small=downscale(frame,self.scale)
         grey=cv2.cvtColor(small,cv2.COLOR_BGR2GRAY)
         if grey.shape!=self.grey.shape:self.reset();return None
         nxt,status,error=cv2.calcOpticalFlowPyrLK(self.grey,grey,self.points,None)
@@ -162,7 +162,8 @@ class GridMotionTracker:
         if cv2.pointPolygonTest(quad,cross,True)<-min(frame.shape[:2])*.025:return None
         n=3 if self.observation.piece=='wall' else 2
         native=cv2.getPerspectiveTransform(np.array([[0,0],[n,0],[n,n],[0,n]],np.float32),quad)
-        if _tile_support(frame[:,:,:3],native,n)<(6 if n==3 else 4):return None
+        # verify=False when the caller re-reads the grid anyway (VisualObserver.from_quad checks tile support itself).
+        if verify and _tile_support(frame[:,:,:3],native,n)<(6 if n==3 else 4):return None
         grid=np.array([[0,n],[n,n],[n,0],[0,0]],np.float32)
         projection=cv2.getPerspectiveTransform(quad,grid)
         aim=cv2.perspectiveTransform(np.array([[cross]],np.float32),projection)[0,0]

@@ -357,25 +357,53 @@ def _partial_grid(image,aim,budget=.06,segs=None):
     return best[1] if best else None
 
 
+_DOWNSCALE = {}
+
+
+def downscale(frame, scale):
+    """frame resized by scale, computed once per frame and size: the tracker, the re-reader and the HUD check all
+    work on the same shrunken image instead of resizing the 1920x1080 capture again each (~1-2 ms per resize)."""
+    if scale >= 1:
+        return frame[:, :, :3]
+    key = round(scale, 4)
+    hit = _DOWNSCALE.get(key)
+    if hit is not None and hit[0] is frame:
+        return hit[1]
+    small = cv2.resize(frame[:, :, :3], (round(frame.shape[1] * scale), round(frame.shape[0] * scale)))
+    _DOWNSCALE[key] = (frame, small)          # keeps a reference, so the identity check cannot alias a new frame
+    return small
+
+
 _TEMPLATE_CACHE = {}
 _CUE_HINT = {}      # (name, roi) -> (template index, x, y) of the last confident match: searched first next frame
+
+
+def _cue_mask(image):
+    mask=cv2.inRange(image,np.array([180,180,180],np.uint8),np.array([255,255,255],np.uint8))
+    mask[(image.max(2).astype(int)-image.min(2))>45]=0
+    return mask
 
 
 def cue_scores(frame, names, roi=None):
     """Best template-match score per HUD cue (CONFIRM, RESET, build labels...) in a region of the frame.
 
-    Fast path: the HUD does not move between frames, so the scale and position of the last confident match are tried
-    first in a small window (about 1 ms instead of ~17 ms per cue). The full six-scale search runs only when that
-    fails, so a cue that moved or disappeared is still found or correctly scored low."""
+    Fast path: the HUD does not move between frames, so each cue is first re-checked where it was last found, at the
+    same template scale, on a small patch cut from the full frame and resized on its own (~0.3 ms per cue). Only if a
+    cue is not as good as last time (< 90% of its score) is the region resized, masked and searched at all six scales,
+    so a cue that moved or disappeared is still found or correctly scored low."""
     height,width=frame.shape[:2]
     scale=min(1.,960./width)
-    image=cv2.resize(frame[:,:,:3],(round(width*scale),round(height*scale)))   # default interpolation: templates were tuned on it
-    h,w=image.shape[:2]
+    w,h=round(width*scale),round(height*scale)
     if roi is None:roi=(.20,.30,1.,.76)
     x1,y1,x2,y2=roi
-    image=image[int(h*y1):int(h*y2),int(w*x1):int(w*x2)]
-    mask=cv2.inRange(image,np.array([180,180,180],np.uint8),np.array([255,255,255],np.uint8))
-    mask[(image.max(2).astype(int)-image.min(2))>45]=0
+    ox,oy=int(w*x1),int(h*y1)
+    rw,rh=int(w*x2)-ox,int(h*y2)-oy
+    region=None
+    def full_mask():
+        nonlocal region
+        if region is None:
+            region=_cue_mask(downscale(frame,scale)[oy:oy+rh,ox:ox+rw])   # default interpolation: templates tuned on it
+        return region
     scores=[]
     for name in names:
         key=(name,round(scale,3))
@@ -386,22 +414,27 @@ def cue_scores(frame, names, roi=None):
         hint_key=(name,roi,round(scale,3))
         hint=_CUE_HINT.get(hint_key)
         if hint is not None:
-            i,x,y=hint
+            i,x,y,last_score=hint
             t=templates[i];pad=24
-            ya,yb=max(0,y-pad),min(mask.shape[0],y+t.shape[0]+pad)
-            xa,xb=max(0,x-pad),min(mask.shape[1],x+t.shape[1]+pad)
-            window=mask[ya:yb,xa:xb]
-            if window.shape[0]>=t.shape[0] and window.shape[1]>=t.shape[1]:
+            ya,yb=max(0,y-pad),min(rh,y+t.shape[0]+pad)
+            xa,xb=max(0,x-pad),min(rw,x+t.shape[1]+pad)
+            if yb-ya>=t.shape[0] and xb-xa>=t.shape[1]:
+                # Patch in full-resolution pixels, resized alone to the region's scale.
+                patch=frame[int((oy+ya)/scale):int((oy+yb)/scale),int((ox+xa)/scale):int((ox+xb)/scale),:3]
+                window=_cue_mask(cv2.resize(patch,(xb-xa,yb-ya)))
                 _,best,_,loc=cv2.minMaxLoc(cv2.matchTemplate(window,t,cv2.TM_CCOEFF_NORMED))
-                if best>=.70:      # strong match where it was last time: trust it; else search the whole region
-                    _CUE_HINT[hint_key]=(i,xa+loc[0],ya+loc[1])
+                # As good as last time (>= 90% of that score) at the same place: the cue has not moved. Cues whose
+                # absolute score is modest (RESET ~0.55) stay on the fast path; a vanished cue drops far below.
+                if best>=max(.45,.9*last_score):
+                    _CUE_HINT[hint_key]=(i,xa+loc[0],ya+loc[1],max(last_score*.98,best))
                     scores.append(float(best));continue
+        mask=full_mask()
         score=0.;found=None
         for i,current in enumerate(templates):
             if current.shape[0]>mask.shape[0] or current.shape[1]>mask.shape[1]:continue
             _,best,_,loc=cv2.minMaxLoc(cv2.matchTemplate(mask,current,cv2.TM_CCOEFF_NORMED))
             if best>score:score=float(best);found=(i,loc[0],loc[1])
-        if found and score>=.55:_CUE_HINT[hint_key]=found
+        if found and score>=.50:_CUE_HINT[hint_key]=found+(score,)
         else:_CUE_HINT.pop(hint_key,None)
         scores.append(score)
     return tuple(scores)
@@ -424,12 +457,15 @@ def observe_mode(frame):
 
 
 def _crosshair(frame):
+    """The red aim ring if visible near the centre, else the screen centre (Fortnite's crosshair is always there).
+    Only the central 24% box is searched: the ring can only be there, and the full-frame search cost ~2.6 ms."""
     h,w=frame.shape[:2]
-    red=cv2.inRange(frame,np.array([0,0,170],np.uint8),np.array([110,110,255],np.uint8))
+    x0,y0=int(w*.38),int(h*.38)
+    red=cv2.inRange(frame[y0:h-y0,x0:w-x0],np.array([0,0,170],np.uint8),np.array([110,110,255],np.uint8))
     contours,_=cv2.findContours(red,cv2.RETR_EXTERNAL,cv2.CHAIN_APPROX_SIMPLE)
     candidates=[]
     for c in contours:
-        x,y,cw,ch=cv2.boundingRect(c);area=cv2.contourArea(c)
+        x,y,cw,ch=cv2.boundingRect(c);area=cv2.contourArea(c);x+=x0;y+=y0
         if 25<cw<110 and .8<cw/max(ch,1)<1.25 and area>400:
             cx=x+cw*.5;cy=y+ch*.5
             if abs(cx-w*.5)<w*.12 and abs(cy-h*.5)<h*.12:candidates.append((np.hypot(cx-w*.5,cy-h*.5),(cx,cy)))
@@ -444,7 +480,7 @@ class EditGridObserver:
         if not _native_edit_cues(frame):return empty('native_edit_mode_unverified')
         self._aim_screen=_crosshair(frame)
         height,width=frame.shape[:2]
-        scale=min(1.,960./width);image=cv2.resize(frame[:,:,:3],(round(width*scale),round(height*scale)))
+        scale=min(1.,960./width);image=downscale(frame,scale)
         h,w=image.shape[:2];grey=cv2.cvtColor(image,cv2.COLOR_BGR2GRAY)
         projection=_line_projection(image)
         if projection is not None:
@@ -512,23 +548,25 @@ class EditGridObserver:
         if not (0<=aim[0]<n and 0<=aim[1]<n):return WallObservation(now,reason='crosshair_off_wall',cells=n)
         # Sample all reconstructed cells; selected tiles in native edit mode are neutral grey.
         projected=cv2.warpPerspective(image,np.diag([100.,100.,1.])@inverse,(100*n,100*n))
+        # Vectorised: colour fractions of every tile's centre at once (n x n x 60 x 60 view), then the X-mark line
+        # check only on tiles that already look selected (neutral grey, not blue): usually 0-3 instead of 9 Hough runs.
+        cells=projected.reshape(n,100,n,100,3)[:,20:80,:,20:80].astype(np.int16)
+        spread=cells.max(4)-cells.min(4);mean=cells.mean(4)
+        neutral=((spread<25)&(mean>60)&(mean<180)).mean(axis=(1,3))
+        blue=((cells[...,0]>cells[...,2]*1.2)&(cells[...,0]>80)).mean(axis=(1,3))
         selected=[]
-        for row in range(n):
-            for col in range(n):
-                tile=projected[row*100+20:row*100+80,col*100+20:col*100+80].astype(float)
-                neutral=((tile.max(2)-tile.min(2)<25)&(tile.mean(2)>60)&(tile.mean(2)<180)).mean()
-                blue=((tile[:,:,0]>tile[:,:,2]*1.2)&(tile[:,:,0]>80)).mean()
-                tile_u8=tile.astype(np.uint8)
-                edges=cv2.Canny(cv2.cvtColor(tile_u8,cv2.COLOR_BGR2GRAY),40,120)
-                lines=cv2.HoughLinesP(edges,1,np.pi/180,12,minLineLength=20,maxLineGap=5)
-                positive=negative=False
-                if lines is not None:
-                    for x1,y1,x2,y2 in lines.reshape(-1,4):
-                        if abs(x2-x1)<1:continue
-                        slope=(y2-y1)/(x2-x1)
-                        positive |= .55<slope<1.6
-                        negative |= -1.6<slope<-.55
-                if neutral>.25 and blue<.2 and positive and negative:selected.append((n-1-row)*n+col)
+        for row,col in zip(*np.nonzero((neutral>.25)&(blue<.2))):
+            tile_u8=projected[row*100+20:row*100+80,col*100+20:col*100+80]
+            edges=cv2.Canny(cv2.cvtColor(tile_u8,cv2.COLOR_BGR2GRAY),40,120)
+            lines=cv2.HoughLinesP(edges,1,np.pi/180,12,minLineLength=20,maxLineGap=5)
+            positive=negative=False
+            if lines is not None:
+                for x1,y1,x2,y2 in lines.reshape(-1,4):
+                    if abs(x2-x1)<1:continue
+                    slope=(y2-y1)/(x2-x1)
+                    positive |= .55<slope<1.6
+                    negative |= -1.6<slope<-.55
+            if positive and negative:selected.append(int((n-1-row)*n+col))
         # Image-grid coordinates: u left->right, v bottom->top of the quad as drawn on screen. For a wall that is
         # the wall's own frame; floors / roofs are re-oriented to near / far by edit_geometry.piece_context.
         return WallObservation(now,'editing',round(confidence,3),tuple(tuple(float(v/scale) for v in p) for p in outer),
