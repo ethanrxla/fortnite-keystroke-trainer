@@ -44,11 +44,24 @@ def _clusters(values):
     return np.abs(values[:,None]-centres).argmin(1),centres
 
 
+def _mask_hud(mask):
+    """Blank the screen regions taken by HUD and by our own overlays, whose straight edges would pose as grid lines:
+    the keyboard overlay and its text (bottom-left), the game status box (top-left), the minimap (top-right) and the
+    hotbar / build bar (bottom-right). Fractions of the frame, measured on 1920x1080 captures."""
+    h,w=mask.shape[:2]
+    mask[int(h*.58):,:int(w*.24)]=0
+    mask[:int(h*.12),:int(w*.24)]=0
+    mask[:int(h*.33),int(w*.82):]=0
+    mask[int(h*.64):,int(w*.70):]=0
+    mask[int(h*.88):]=0
+    return mask
+
+
 def _line_projection(image):
     h,w=image.shape[:2]
     bright=cv2.inRange(image,np.array([120,120,120],np.uint8),np.array([255,255,255],np.uint8))
     bright[(image.max(2).astype(int)-image.min(2))>100]=0
-    bright[int(h*.88):]=0
+    _mask_hud(bright)
     lines=cv2.HoughLinesP(cv2.Canny(bright,40,120),1,np.pi/360,35,minLineLength=max(40,w*.05),maxLineGap=10)
     if lines is None:return None
     groups={'h':[],'v':[]}
@@ -113,7 +126,12 @@ def _segments(image):
     h,w=image.shape[:2]
     bright=cv2.inRange(image,np.array([120,120,120],np.uint8),np.array([255,255,255],np.uint8))
     bright[(image.max(2).astype(int)-image.min(2))>100]=0
-    bright[int(h*.88):]=0
+    # Dim walls (shade, night lighting): the gaps between tiles are only bright relative to the tiles around them.
+    # A white top-hat on the brightest channel keeps thin bright strokes whatever the absolute exposure.
+    value=image.max(2)
+    tophat=cv2.morphologyEx(value,cv2.MORPH_TOPHAT,cv2.getStructuringElement(cv2.MORPH_RECT,(9,9)))
+    bright[tophat>40]=255
+    _mask_hud(bright)
     lines=cv2.HoughLinesP(cv2.Canny(bright,40,120),1,np.pi/360,35,minLineLength=max(30,w*.04),maxLineGap=12)
     if lines is None:return []
     return [(float(a),float(b),float(c),float(d),float(np.hypot(c-a,d-b))) for a,b,c,d in lines.reshape(-1,4)]
@@ -246,9 +264,12 @@ def _cell_colour(image,H,c,r):
 def _tile_like(colour):
     """An edit tile's colour: blue (unselected) or neutral grey (selected), as _tile_support classifies pixels."""
     b,g,r=colour
+    # Unselected blue, selected grey, and red (the game marks the remaining tiles red while the current selection is
+    # not a valid edit). Darker blues are NOT accepted: the navy sky / background would then pass as tiles.
     blue=b>r*1.22 and b>80 and g>45
     neutral=max(colour)-min(colour)<25 and 60<np.mean(colour)<180
-    return blue or neutral
+    red=r>b*1.22 and r>80 and g<100
+    return blue or neutral or red
 
 
 def _partial_grid(image,aim,budget=.06):
