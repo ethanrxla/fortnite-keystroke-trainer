@@ -1,9 +1,10 @@
 import unittest
 from dataclasses import replace
 from keystroke_lab.edit_advisor import EditAdvisor, EditContext, safe_path, intersect_wall
+from tests.dictionary_fixture import verified_dictionary
 class EditAdviceTests(unittest.TestCase):
     def setUp(self):
-        self.advisor=EditAdvisor(clock=lambda:10.)
+        self.advisor=EditAdvisor(dictionary=verified_dictionary(),clock=lambda:10.)
         self.context=EditContext('local',35,10.,'editing','wall',True,True,(1.5,1.5),drill_edit_id='window_center',ownership='self')
     def tearDown(self):self.advisor.close()
     def test_evidence_gates(self):

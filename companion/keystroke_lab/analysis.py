@@ -13,6 +13,7 @@ import math
 
 from . import envfile  # noqa: F401  (loads ../.env)
 from .jev_client import JevClient, choice_question
+from .evidence import validate_choice
 
 MIN_CONFIDENCE = 0.8        # actual model confidence; independent of answer probability
 BATCH = 8                 # events per Jev call
@@ -48,7 +49,10 @@ class Analyzer:
         self.min_confidence = min_confidence
         self.lock = threading.RLock()
         self.in_flight = False
+        self.epoch = 0
         self.profile_revision = getattr(tracker, "profile_revision", 0)
+        self.profile_id = getattr(tracker,"profile_id","unknown")
+        self.shadow = getattr(self.jev,"shadow",True)
         self.queue = []
         self.recent = []                 # last few presses as (key, t)
         self.cache = {}                  # (key, neighbours) -> (intent, confidence)
@@ -58,9 +62,11 @@ class Analyzer:
         self.llm_calls = 0
         self.stats = {"jev_calls": 0, "cache_hits": 0, "llm_calls": 0}
 
-    def invalidate(self, revision):
+    def invalidate(self, revision, profile_id=None):
         with self.lock:
+            self.epoch += 1
             self.profile_revision = revision
+            if profile_id is not None:self.profile_id = profile_id
             self.queue.clear()
             self.recent.clear()
             self.cache.clear()
@@ -81,21 +87,22 @@ class Analyzer:
         with self.lock:
             self.recent = (self.recent + [(key, now)])[-6:]
 
-    def add_stray(self, key, now, neighbours):
+    def add_stray(self, key, now, neighbours, evidence=None):
         with self.lock:
             prev = [(k, round((now-t)*1000)) for k,t in self.recent if k != key][-3:]
             self.queue.append({'key': key, 'next_to': [{'key':k,'action':a} for k,a in neighbours[:3]],
                                'just_before': [{'key':k,'ms_ago':ms} for k,ms in prev],
-                               'profile_revision': self.profile_revision})
+                               'profile_revision': self.profile_revision, 'profile_id':self.profile_id,
+                               'observation':evidence or {}, 'evidence_id':f'{self.profile_id}:{self.profile_revision}:{now}'})
             self.queue = self.queue[-BATCH*2:]
 
     def ready(self, now):
         return len(self.queue) >= MIN_QUEUE and now-self.last_jev >= JEV_COOLDOWN
 
     def cache_key(self, event):
-        return (self.profile_revision, event['key'],
-                tuple((n['key'],n['action']) for n in event['next_to']),
-                tuple((n['key'], n['ms_ago']//100) for n in event['just_before']))
+        return ("keystroke", self.profile_id, self.profile_revision,
+                getattr(self.jev, "model", "unknown"),
+                json.dumps({k:v for k,v in event.items() if k != "evidence_id"},sort_keys=True))
 
     def resolve(self, now):
         with self.lock:
@@ -103,20 +110,22 @@ class Analyzer:
                 return []
             batch, self.queue = self.queue[:BATCH], self.queue[BATCH:]
             revision = self.profile_revision
+            epoch = self.epoch
+            profile_id = self.profile_id
             self.last_jev = now
             pending, results = [], []
             for event in batch:
                 cached = self.cache.get(self.cache_key(event))
                 if cached:
                     self.stats['cache_hits'] += 1
-                    results.append(dict(cached, evidence=event))
+                    results.append(dict(cached, evidence=event, evidence_ids=[event['evidence_id']]))
                 else:
                     pending.append(event)
         answers = None
         if pending and self.jev and self.jev.available:
             questions = {f'e{i}': choice_question(describe(i,e), INTENT_OPTIONS) for i,e in enumerate(pending)}
             try:
-                answers = self.jev.decide({'events': pending}, questions, retries=0)
+                answers = self.jev.decide({'domain':'keystroke','profile_id':profile_id,'profile_revision':revision,'events': pending}, questions, retries=0)
             except Exception:
                 answers = None
             self.stats['jev_calls'] += 1
@@ -127,23 +136,26 @@ class Analyzer:
                 proposed = answer.get('choice')
                 raw = answer.get('confidence')
                 probs = answer.get('probabilities')
-                valid = (isinstance(raw,(float,int)) and not isinstance(raw,bool) and math.isfinite(raw)
+                valid = validate_choice(answer,INTENT_OPTIONS) and (isinstance(raw,(float,int)) and not isinstance(raw,bool) and math.isfinite(raw)
                          and 0 <= raw <= 1 and isinstance(probs,dict)
                          and all(isinstance(v,(float,int)) and math.isfinite(v) and 0 <= v <= 1 for v in probs.values()))
                 if valid:
                     confidence, probabilities = float(raw), dict(probs)
-                    if proposed in INTENT_OPTIONS and confidence >= self.min_confidence and probs.get(proposed,0) >= .8:
-                        choice = proposed
-            finding = dict(key=event['key'], intent=choice, proposed_interpretation=answer.get('choice') if isinstance(answer,dict) else None,
+                    if proposed in INTENT_OPTIONS and confidence >= self.min_confidence and probs.get(proposed,0) >= .90:
+                        # Adjacency and an unbound press alone never establish an accident.
+                        evidence=event.get("observation",{})
+                        if proposed not in ("slip","noise") or evidence.get("reviewed_correction") is True:
+                            choice = proposed
+            finding = dict(domain='keystroke',evidence_ids=[event['evidence_id']],model_version=getattr(self.jev,'model_version','unknown'),profile_id=profile_id,shadow=self.shadow,key=event['key'], intent=choice, proposed_interpretation=answer.get('choice') if isinstance(answer,dict) else None,
                            confidence=confidence, probabilities=probabilities, uncertainty=choice == 'insufficient_evidence',
                            profile_revision=revision, next_to=event['next_to'], evidence=event)
             with self.lock:
-                if revision != self.profile_revision:
+                if epoch != self.epoch or revision != self.profile_revision:
                     return []
                 self.cache[self.cache_key(event)] = finding
             results.append(finding)
         with self.lock:
-            if revision != self.profile_revision:
+            if epoch != self.epoch or revision != self.profile_revision:
                 return []
             self.findings = (self.findings + results)[-40:]
         return results
@@ -153,6 +165,7 @@ class Analyzer:
 
     def tip(self, now, binds=None):
         """The player-facing sentence for the recent findings. Template text, rephrased by the LLM when allowed."""
+        if self.shadow:return ""
         text = template_tip(self.findings)
         if not text:
             return ""
@@ -194,7 +207,7 @@ def ask_llm_tip(summary, binds, timeout=12.0):
     import urllib.request
     key = os.environ.get("ANTHROPIC_API_KEY")
     model = os.environ.get("CLAUDE_MODEL_FAST") or "claude-haiku-5-5"
-    if not key or not summary:
+    if os.environ.get("KT_NO_AI") == "1" or not key or not summary:
         return ""
     near = {a for s in summary for n in s["next_to"] for a in [n.split(":")[1]]}
     relevant = {a: k for a, k in binds.items() if a in near}

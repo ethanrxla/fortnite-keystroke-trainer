@@ -1,0 +1,2810 @@
+{
+  "version": 1,
+  "pieces": {
+    "wall": [
+      {
+        "mask": 0,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 1,
+        "status": "unverified",
+        "edit_ids": [
+          "corner_single_ll"
+        ]
+      },
+      {
+        "mask": 2,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 3,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 4,
+        "status": "unverified",
+        "edit_ids": [
+          "corner_single_lr"
+        ]
+      },
+      {
+        "mask": 5,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 6,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 7,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 8,
+        "status": "unverified",
+        "edit_ids": [
+          "side_peek_left"
+        ]
+      },
+      {
+        "mask": 9,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 10,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 11,
+        "status": "unverified",
+        "edit_ids": [
+          "corner_lower_left"
+        ]
+      },
+      {
+        "mask": 12,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 13,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 14,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 15,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 16,
+        "status": "unverified",
+        "edit_ids": [
+          "window_center"
+        ]
+      },
+      {
+        "mask": 17,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 18,
+        "status": "unverified",
+        "edit_ids": [
+          "door"
+        ]
+      },
+      {
+        "mask": 19,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 20,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 21,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 22,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 23,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 24,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 25,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 26,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 27,
+        "status": "unverified",
+        "edit_ids": [
+          "half_arch_left"
+        ]
+      },
+      {
+        "mask": 28,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 29,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 30,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 31,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 32,
+        "status": "unverified",
+        "edit_ids": [
+          "side_peek_right"
+        ]
+      },
+      {
+        "mask": 33,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 34,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 35,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 36,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 37,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 38,
+        "status": "unverified",
+        "edit_ids": [
+          "corner_lower_right"
+        ]
+      },
+      {
+        "mask": 39,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 40,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 41,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 42,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 43,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 44,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 45,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 46,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 47,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 48,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 49,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 50,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 51,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 52,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 53,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 54,
+        "status": "unverified",
+        "edit_ids": [
+          "half_arch_right"
+        ]
+      },
+      {
+        "mask": 55,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 56,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 57,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 58,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 59,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 60,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 61,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 62,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 63,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 64,
+        "status": "unverified",
+        "edit_ids": [
+          "corner_single_ul"
+        ]
+      },
+      {
+        "mask": 65,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 66,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 67,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 68,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 69,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 70,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 71,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 72,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 73,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 74,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 75,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 76,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 77,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 78,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 79,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 80,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 81,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 82,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 83,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 84,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 85,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 86,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 87,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 88,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 89,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 90,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 91,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 92,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 93,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 94,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 95,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 96,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 97,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 98,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 99,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 100,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 101,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 102,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 103,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 104,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 105,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 106,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 107,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 108,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 109,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 110,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 111,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 112,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 113,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 114,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 115,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 116,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 117,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 118,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 119,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 120,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 121,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 122,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 123,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 124,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 125,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 126,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 127,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 128,
+        "status": "unverified",
+        "edit_ids": [
+          "window_high"
+        ]
+      },
+      {
+        "mask": 129,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 130,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 131,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 132,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 133,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 134,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 135,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 136,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 137,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 138,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 139,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 140,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 141,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 142,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 143,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 144,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 145,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 146,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 147,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 148,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 149,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 150,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 151,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 152,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 153,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 154,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 155,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 156,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 157,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 158,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 159,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 160,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 161,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 162,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 163,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 164,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 165,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 166,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 167,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 168,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 169,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 170,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 171,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 172,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 173,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 174,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 175,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 176,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 177,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 178,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 179,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 180,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 181,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 182,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 183,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 184,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 185,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 186,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 187,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 188,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 189,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 190,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 191,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 192,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 193,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 194,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 195,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 196,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 197,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 198,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 199,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 200,
+        "status": "unverified",
+        "edit_ids": [
+          "corner_upper_left"
+        ]
+      },
+      {
+        "mask": 201,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 202,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 203,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 204,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 205,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 206,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 207,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 208,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 209,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 210,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 211,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 212,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 213,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 214,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 215,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 216,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 217,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 218,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 219,
+        "status": "unverified",
+        "edit_ids": [
+          "slim_wall_right"
+        ]
+      },
+      {
+        "mask": 220,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 221,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 222,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 223,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 224,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 225,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 226,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 227,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 228,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 229,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 230,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 231,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 232,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 233,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 234,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 235,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 236,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 237,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 238,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 239,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 240,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 241,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 242,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 243,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 244,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 245,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 246,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 247,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 248,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 249,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 250,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 251,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 252,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 253,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 254,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 255,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 256,
+        "status": "unverified",
+        "edit_ids": [
+          "corner_single_ur"
+        ]
+      },
+      {
+        "mask": 257,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 258,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 259,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 260,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 261,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 262,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 263,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 264,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 265,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 266,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 267,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 268,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 269,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 270,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 271,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 272,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 273,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 274,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 275,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 276,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 277,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 278,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 279,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 280,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 281,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 282,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 283,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 284,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 285,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 286,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 287,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 288,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 289,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 290,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 291,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 292,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 293,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 294,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 295,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 296,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 297,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 298,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 299,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 300,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 301,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 302,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 303,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 304,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 305,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 306,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 307,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 308,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 309,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 310,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 311,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 312,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 313,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 314,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 315,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 316,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 317,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 318,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 319,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 320,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 321,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 322,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 323,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 324,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 325,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 326,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 327,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 328,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 329,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 330,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 331,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 332,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 333,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 334,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 335,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 336,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 337,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 338,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 339,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 340,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 341,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 342,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 343,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 344,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 345,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 346,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 347,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 348,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 349,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 350,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 351,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 352,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 353,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 354,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 355,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 356,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 357,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 358,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 359,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 360,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 361,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 362,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 363,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 364,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 365,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 366,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 367,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 368,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 369,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 370,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 371,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 372,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 373,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 374,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 375,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 376,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 377,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 378,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 379,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 380,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 381,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 382,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 383,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 384,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 385,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 386,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 387,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 388,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 389,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 390,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 391,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 392,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 393,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 394,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 395,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 396,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 397,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 398,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 399,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 400,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 401,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 402,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 403,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 404,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 405,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 406,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 407,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 408,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 409,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 410,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 411,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 412,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 413,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 414,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 415,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 416,
+        "status": "unverified",
+        "edit_ids": [
+          "corner_upper_right"
+        ]
+      },
+      {
+        "mask": 417,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 418,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 419,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 420,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 421,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 422,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 423,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 424,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 425,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 426,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 427,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 428,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 429,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 430,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 431,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 432,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 433,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 434,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 435,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 436,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 437,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 438,
+        "status": "unverified",
+        "edit_ids": [
+          "slim_wall_left"
+        ]
+      },
+      {
+        "mask": 439,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 440,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 441,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 442,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 443,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 444,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 445,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 446,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 447,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 448,
+        "status": "unverified",
+        "edit_ids": [
+          "half_wall"
+        ]
+      },
+      {
+        "mask": 449,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 450,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 451,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 452,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 453,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 454,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 455,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 456,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 457,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 458,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 459,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 460,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 461,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 462,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 463,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 464,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 465,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 466,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 467,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 468,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 469,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 470,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 471,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 472,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 473,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 474,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 475,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 476,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 477,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 478,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 479,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 480,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 481,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 482,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 483,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 484,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 485,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 486,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 487,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 488,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 489,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 490,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 491,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 492,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 493,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 494,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 495,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 496,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 497,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 498,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 499,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 500,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 501,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 502,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 503,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 504,
+        "status": "unverified",
+        "edit_ids": [
+          "quarter_wall"
+        ]
+      },
+      {
+        "mask": 505,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 506,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 507,
+        "status": "unverified",
+        "edit_ids": [
+          "tiny_wall_right"
+        ]
+      },
+      {
+        "mask": 508,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 509,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 510,
+        "status": "unverified",
+        "edit_ids": [
+          "tiny_wall_left"
+        ]
+      },
+      {
+        "mask": 511,
+        "status": "unverified",
+        "edit_ids": []
+      }
+    ],
+    "floor": [
+      {
+        "mask": 0,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 1,
+        "status": "unverified",
+        "edit_ids": [
+          "floor_hole_near_left"
+        ]
+      },
+      {
+        "mask": 2,
+        "status": "unverified",
+        "edit_ids": [
+          "floor_hole_near_right"
+        ]
+      },
+      {
+        "mask": 3,
+        "status": "unverified",
+        "edit_ids": [
+          "floor_half_near"
+        ]
+      },
+      {
+        "mask": 4,
+        "status": "unverified",
+        "edit_ids": [
+          "floor_hole_far_left"
+        ]
+      },
+      {
+        "mask": 5,
+        "status": "unverified",
+        "edit_ids": [
+          "floor_half_left"
+        ]
+      },
+      {
+        "mask": 6,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 7,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 8,
+        "status": "unverified",
+        "edit_ids": [
+          "floor_hole_far_right"
+        ]
+      },
+      {
+        "mask": 9,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 10,
+        "status": "unverified",
+        "edit_ids": [
+          "floor_half_right"
+        ]
+      },
+      {
+        "mask": 11,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 12,
+        "status": "unverified",
+        "edit_ids": [
+          "floor_half_far"
+        ]
+      },
+      {
+        "mask": 13,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 14,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 15,
+        "status": "unverified",
+        "edit_ids": []
+      }
+    ],
+    "roof": [
+      {
+        "mask": 0,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 1,
+        "status": "unverified",
+        "edit_ids": [
+          "roof_one_near_left"
+        ]
+      },
+      {
+        "mask": 2,
+        "status": "unverified",
+        "edit_ids": [
+          "roof_one_near_right"
+        ]
+      },
+      {
+        "mask": 3,
+        "status": "unverified",
+        "edit_ids": [
+          "roof_two_near"
+        ]
+      },
+      {
+        "mask": 4,
+        "status": "unverified",
+        "edit_ids": [
+          "roof_one_far_left"
+        ]
+      },
+      {
+        "mask": 5,
+        "status": "unverified",
+        "edit_ids": [
+          "roof_two_left"
+        ]
+      },
+      {
+        "mask": 6,
+        "status": "unverified",
+        "edit_ids": [
+          "roof_diagonal_b"
+        ]
+      },
+      {
+        "mask": 7,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 8,
+        "status": "unverified",
+        "edit_ids": [
+          "roof_one_far_right"
+        ]
+      },
+      {
+        "mask": 9,
+        "status": "unverified",
+        "edit_ids": [
+          "roof_diagonal_a"
+        ]
+      },
+      {
+        "mask": 10,
+        "status": "unverified",
+        "edit_ids": [
+          "roof_two_right"
+        ]
+      },
+      {
+        "mask": 11,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 12,
+        "status": "unverified",
+        "edit_ids": [
+          "roof_two_far"
+        ]
+      },
+      {
+        "mask": 13,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 14,
+        "status": "unverified",
+        "edit_ids": []
+      },
+      {
+        "mask": 15,
+        "status": "unverified",
+        "edit_ids": []
+      }
+    ]
+  },
+  "ramp": "Gesture graphs require separate validation."
+}

@@ -6,7 +6,7 @@ from pathlib import Path
 from keystroke_lab.bind_profiles import ProfileStore, parse
 from keystroke_lab.keyboard_overlay import KeyTracker, explain
 from keystroke_lab.analysis import Analyzer, template_tip, JEV_COOLDOWN, LLM_COOLDOWN
-from keystroke_lab.jev_client import JevClient
+from keystroke_lab.jev_client import JevClient, choice_question
 
 
 class VerifiedControls(unittest.TestCase):
@@ -79,7 +79,7 @@ class SafeAnalysis(unittest.TestCase):
         return Analyzer(KeyTracker({'edit':'c'}), jev=JevClient(key='mock', post=lambda b: {'answers': {'e0':answer}}), llm=lambda *a:'')
 
     def test_probability_does_not_replace_confidence(self):
-        a=self.analyzer({'choice':'slip','confidence':.1,'probabilities':{'slip':.99}})
+        a=self.analyzer({'choice':'slip','confidence':.1,'probabilities':{'slip':.99,'deliberate':.005,'noise':.003,'insufficient_evidence':.002}})
         a.add_stray('x',0,[('c','edit')])
         f=a.resolve(0)[0]
         self.assertEqual(f['confidence'],.1)
@@ -111,7 +111,7 @@ class SafeAnalysis(unittest.TestCase):
 
     def test_attempt_cap_and_cooldowns(self):
         c=JevClient(key='mock',post=lambda b:{'answers':{}},max_calls=30)
-        for _ in range(40):c.decide({}, {})
+        for _ in range(40):c.decide({}, {'case': choice_question('Classify evidence', {'insufficient_evidence':'unknown'})})
         self.assertEqual(c.calls,30)
         self.assertEqual(JEV_COOLDOWN,30)
         self.assertEqual(LLM_COOLDOWN,300)

@@ -16,6 +16,10 @@ from .edit_observation import observe_mode,EditGridObserver,cue_scores
 from .edit_advisor import EditAdvisor,EditContext,safe_path
 from .edit_telemetry import TelemetryReader
 from .jev_client import JevClient
+from .piece_observation import VisualObserver, PieceTargetTracker
+from .edit_dictionary import TargetTracker, RoutePlanner, EditAnalyzer
+from .evidence import Evidence, ContextAssembler
+import os
 BASE=Path(__file__).resolve().parents[1]
 
 LEFT_CORNER = 'corner_upper_left'
@@ -43,56 +47,79 @@ class Presence:
     def reset(self):self.last=None
 
 
-def grid_to_screen(quad,u,v):
+def grid_to_screen(quad,u,v,cols=3,rows=3):
     """Screen point for a wall-grid coordinate (u right, v up, both 0..3) given the observed outer quad
     (screen corners of image-top-left, top-right, bottom-right, bottom-left, as WallObservation.wall_quad)."""
-    unit=np.array([[0,0],[3,0],[3,3],[0,3]],np.float32)
+    unit=np.array([[0,0],[cols,0],[cols,rows],[0,rows]],np.float32)
     H=cv2.getPerspectiveTransform(unit,np.asarray(quad,np.float32).reshape(4,2))
-    x,y=cv2.perspectiveTransform(np.array([[[u,3-v]]],np.float32),H)[0,0]
+    x,y=cv2.perspectiveTransform(np.array([[[u,rows-v]]],np.float32),H)[0,0]
     return float(x),float(y)
 
 
-def route_lines(observation,tiles,aim=None):
+def route_lines(observation,tiles,aim=None,cols=3):
     """Edit lines on the observed piece, in screen pixels: the short safe route from the crosshair through the tiles,
     plus each target tile's outline. Empty unless the grid was projected."""
     quad=observation.get('wall_quad') if observation else None
     aim=aim or (observation or {}).get('aim_uv')
     if not quad or len(quad)!=4 or not aim:return [],[]
-    route=safe_path(tuple(aim),tiles)
+    route=safe_path(tuple(aim),tiles,cols=cols)
     if route is None:return [],[]
     _,points,_=route
-    path=[grid_to_screen(quad,*aim)]+[grid_to_screen(quad,*p) for p in points]
-    outlines=[[grid_to_screen(quad,c+dc,r+dr) for dc,dr in ((0,0),(1,0),(1,1),(0,1))] for c,r in ((t%3,t//3) for t in tiles)]
+    path=[grid_to_screen(quad,*aim,cols,cols)]+[grid_to_screen(quad,*p,cols,cols) for p in points]
+    outlines=[[grid_to_screen(quad,c+dc,r+dr,cols,cols) for dc,dr in ((0,0),(1,0),(1,1),(0,1))] for c,r in ((t%cols,t//cols) for t in tiles)]
     return path,outlines
 
 
 class ContextPipeline:
-    def __init__(self,store,advisor=None,clock=time.monotonic):
-        self.store=store;self.advisor=advisor or EditAdvisor(jev=JevClient(),clock=clock)
-        self.clock=clock;self.observer=EditGridObserver();self.telemetry=TelemetryReader(clock=clock)
-        self.locked=None;self.active=False;self.profile_identity=None
-    def process(self,frame):
-        captured=self.clock();mode,score=observe_mode(frame);profile=self.store.refresh();telemetry=self.telemetry.poll()
+    def __init__(self,store,advisor=None,clock=time.monotonic,observer=None,telemetry=None):
+        self.store=store;self.clock=clock
+        self.advisor=advisor or EditAdvisor(jev=JevClient(domain='edit'),clock=clock)
+        self.observer=observer or VisualObserver();self.targets=PieceTargetTracker();self.selection=TargetTracker()
+        self.telemetry=telemetry or TelemetryReader(clock=clock);self.metrics=EditAnalyzer()
+        self.locked=None;self.profile_identity=None;self.last_target=None
+    def process(self,frame,captured_at=None):
+        captured=self.clock() if captured_at is None else captured_at;mode,score=observe_mode(frame);profile=self.store.refresh()
         identity=(profile.profile_id,profile.revision)
-        if identity!=self.profile_identity:self.locked=None;self.profile_identity=identity
-        if mode=='unknown':self.active=False;self.locked=None;return {'mode':'unknown','captured_at':captured,'revision':profile.revision,'edit_cue_scores':cue_scores(frame,['confirm','reset']),'build_cue_scores':cue_scores(frame,['change-material','rotate'],(0.,.35,.23,.76))}
-        observation=self.observer.observe(frame,captured) if mode=='editing' else None
-        # Mode confidence and geometric support are separate. A clipped grid stays a reference.
-        projected=observation is not None and observation.reason=='native_edit_grid_observed' and observation.supported_cells>=8 and observation.confidence>=.90
-        if projected:
-            # Follow the crosshair: the side updates as you aim across the wall (it used to lock to the first side seen).
-            self.locked=choose_corner(observation.aim_uv[0],self.locked)
+        if identity!=self.profile_identity:
+            self.selection.reset();self.profile_identity=identity;self.metrics.reset()
+        base={'mode':mode,'captured_at':captured,'revision':profile.revision,'projected':False,
+              'reference_ids':[],'status':'Align with an editable piece','mode_score':score,
+              'session_id':os.environ.get('KT_COACH_SESSION','standalone')}
         telemetry=self.telemetry.poll()
-        context=EditContext(profile.profile_id,profile.revision,captured,mode,
-             target_id='visible_native_edit_grid' if projected else None,target_verified=projected,geometry_verified=projected,
-             aim_uv=observation.aim_uv if projected else (),selected_tiles=observation.selected_tiles if projected else (),
-             drill_edit_id=self.locked if projected else None,source='native_hud_and_screen_projection',
+        if self.clock()-captured>.25 or captured>self.clock():return dict(base,mode='unknown',status='Stale observation')
+        if mode=='unknown':
+            self.locked=None;self.selection.reset();self.targets.last=None;self.last_target=None
+            return base
+        observation=self.observer.observe(frame,captured) if mode=='editing' else None
+        target=self.targets.update(observation) if observation else None
+        if not target:
+            self.locked=None;self.selection.reset();return base
+        if target!=self.last_target:self.metrics.reset();self.last_target=target
+        base['snapshot']=ContextAssembler().assemble(profile,base['session_id'],self.clock(),[
+            Evidence(f'{target}:{captured}:screen',observation.to_dict(),captured,'screen','observed',1-observation.confidence),
+            Evidence(f'{target}:{captured}:orientation',observation.orientation,captured,'screen_projection','derived',1-observation.confidence),
+            Evidence(f'{target}:{captured}:ownership',None,captured,'unavailable','unknown',1.)]).to_dict()
+        candidates=self.advisor.dictionary.candidates(observation.piece,observation.selected_tiles)
+        ranked=[]
+        for edit in candidates:
+            route=RoutePlanner().plan(observation.aim_uv,edit)
+            if route:ranked.append((route[0],edit['id']))
+        best=min(ranked)[1] if ranked else None
+        self.locked=self.selection.update((target,observation.orientation),best,observation.selected_tiles,captured)
+        context=EditContext(profile.profile_id,profile.revision,captured,mode,target,True,True,
+             observation.aim_uv,observation.selected_tiles,drill_edit_id=self.locked,
+             source='native_hud_and_screen_projection',piece=observation.piece,orientation=observation.orientation,
+             session_id=base['session_id'],dictionary_version=self.advisor.dictionary.version,
              player_position=(telemetry or {}).get('player_position'),view_origin=(telemetry or {}).get('view_origin'),
              view_direction=(telemetry or {}).get('view_direction'))
+        self.metrics.sample(captured,observation.aim_uv,observation.selected_tiles)
         advice=self.advisor.request(context)
-        return {'mode':mode,'mode_score':score,'captured_at':captured,'revision':profile.revision,'projected':projected,
-                'observation':observation.to_dict() if observation else None,'telemetry':telemetry,'advice':advice.to_dict(),
-                'reference_ids':[self.locked] if self.locked else []}
+        if candidates:self.advisor.request(replace(context,drill_edit_id=None,objective="practice"))
+        base.update(projected=True,observation=observation.to_dict(),telemetry=telemetry,advice=advice.to_dict(),
+                    reference_ids=[self.locked] if self.locked else [],
+                    status='Edit pattern awaiting game validation' if not candidates else 'Short safe route | green = select')
+        return base
+
 
 def run(profile_path=None):
     if not single_instance('Local\\KeystrokeLabEditReference'):return
@@ -106,22 +133,24 @@ def run(profile_path=None):
                 rect=game_rect();result=None
                 if rect:
                     l,t,r,b=rect
-                    try:result=pipeline.process(np.asarray(capture.grab({'left':l,'top':t,'width':r-l,'height':b-t}))[:,:,:3])
+                    try:
+                        captured_at=time.monotonic()
+                        result=pipeline.process(np.asarray(capture.grab({'left':l,'top':t,'width':r-l,'height':b-t}))[:,:,:3],captured_at=captured_at)
                     except Exception as exc:
                         result={'mode':'unknown','captured_at':time.monotonic(),'error':type(exc).__name__}
                 else:pipeline.locked=None
                 with mutex:shared.update(result=result,rect=rect)
                 # Latest snapshot only; no frame queue or network on this worker.
-                stop.wait(.12)
+                stop.wait(.025)
     thread=threading.Thread(target=worker,daemon=True,name='local-edit-observer');thread.start()
     root=tk.Tk();root.title('Training Lab - Edit reference');root.overrideredirect(True)
     root.attributes('-topmost',True);root.attributes('-transparentcolor','#010203');root.configure(bg='#010203')
-    canvas=tk.Canvas(root,width=420,height=240,bg='#010203',highlightthickness=0);canvas.pack();root.update();make_click_through(root);root.withdraw()
+    canvas=tk.Canvas(root,width=420,height=240,bg='#010203',highlightthickness=0);canvas.pack();root.update();make_click_through(root);exclude_from_capture(root);root.withdraw()
     ring=tk.Toplevel(root);ring.overrideredirect(True);ring.attributes('-topmost',True)
     ring.attributes('-transparentcolor','#010203');ring.configure(bg='#010203')
     ring_canvas=tk.Canvas(ring,width=74,height=74,bg='#010203',highlightthickness=0);ring_canvas.pack()
     ring_canvas.create_oval(5,5,69,69,outline='#ed2539',width=4)
-    ring.update();make_click_through(ring);ring.withdraw()
+    ring.update();make_click_through(ring);exclude_from_capture(ring);ring.withdraw()
     # Full-game overlay for the edit lines drawn on the piece itself. Excluded from screen capture so the lines never
     # feed back into the grid detection (the ring stays capturable: the observer finds the aim point from it).
     lines=tk.Toplevel(root);lines.overrideredirect(True);lines.attributes('-topmost',True)
@@ -135,64 +164,80 @@ def run(profile_path=None):
     heading=canvas.create_text(12,12,anchor='nw',fill='#e9ffff',font=('Segoe UI',11,'bold'))
     for j in range(2):
         cells.append([canvas.create_rectangle(0,0,1,1,outline='#38515c') for _ in range(9)])
-        numbers.append([canvas.create_text(0,0,fill='white',font=('Segoe UI',11,'bold')) for _ in range(3)])
+        numbers.append([canvas.create_text(0,0,fill='white',font=('Segoe UI',11,'bold')) for _ in range(9)])
         routes.append(canvas.create_line(0,0,1,1,fill='#f6f7a0',width=3,arrow=tk.LAST))
         markers.append(canvas.create_oval(0,0,1,1,fill='#ffdc46',outline=''))
         side_labels.append(canvas.create_text(12+j*200,162,anchor='nw',fill='#b8dadd',font=('Segoe UI',9)))
+    panel_approach=canvas.create_line(0,0,1,1,fill='#82a8b8',width=2,dash=(4,4),state='hidden')
     caption_id=canvas.create_text(12,185,anchor='nw',fill='#e3eeed',font=('Segoe UI',10))
     status_id=canvas.create_text(12,208,anchor='nw',fill='#9bb7c1',font=('Segoe UI',9))
     def draw(data):
-        ids=data['reference_ids'];verified=data['projected'];observation=data.get('observation') or {}
-        canvas.itemconfig(heading,text='UPPER CORNER | '+('EDIT' if data['mode']=='editing' else 'EDITABLE TARGET' if data['mode']=='editable' else 'BUILD'))
-        for j in range(2):
-            present=j<len(ids)
-            for item in cells[j]+numbers[j]+[routes[j],markers[j],side_labels[j]]:canvas.itemconfig(item,state='normal' if present else 'hidden')
-            if not present:continue
-            edit_id=ids[j];edit=pipeline.advisor.dictionary.edits[edit_id];x=12+j*200;y=40;unit=38
-            aim=observation.get('aim_uv') if verified else None
-            route=safe_path(tuple(aim) if aim else (1.5,1.5),edit['tiles'])
-            for tile,item in enumerate(cells[j]):
-                col,row=tile%3,tile//3;xx=x+col*unit;yy=y+(2-row)*unit
-                canvas.coords(item,xx+2,yy+2,xx+unit-2,yy+unit-2)
-                canvas.itemconfig(item,fill='#27d77b' if tile in edit['tiles'] else '#142c34')
-            if route:
-                _,points,order=route
-                if not verified:points=tuple((tile%3+.5,tile//3+.5) for tile in order)
-                coords=[v for p in points for v in (x+p[0]*unit,y+(3-p[1])*unit)]
-                canvas.coords(routes[j],*coords)
-                for i,p in enumerate(points):
-                    tile=order[i]
-                    canvas.coords(numbers[j][i],x+(tile%3+.5)*unit,y+(2.5-tile//3)*unit)
-                    canvas.itemconfig(numbers[j][i],text=str(i+1))
-            if aim:canvas.coords(markers[j],x+aim[0]*unit-4,y+(3-aim[1])*unit-4,x+aim[0]*unit+4,y+(3-aim[1])*unit+4)
-            else:canvas.itemconfig(markers[j],state='hidden')
-            canvas.itemconfig(side_labels[j],text='Left' if 'left' in edit_id else 'Right')
-        canvas.itemconfig(caption_id,text='Short safe route | green = select' if verified else 'Reference only | aim tile is not verified')
-        canvas.itemconfig(status_id,text='Native edit controls observed' if data['mode']=='editing' else 'Native Edit prompt observed | reference only' if data['mode']=='editable' else 'Blueprint HUD observed | preview geometry unknown')
+        from .guide_visuals import layout
+        ids=data.get('reference_ids',[]);observation=data.get('observation') or {}
+        for group in cells+numbers+[[*routes,*markers,*side_labels]]:
+            for item in group:canvas.itemconfig(item,state='hidden')
+        canvas.coords(caption_id,12,185 if ids else 40)
+        canvas.itemconfig(status_id,state='normal' if ids else 'hidden')
+        canvas.itemconfig(heading,text='EDIT GUIDE | '+data['mode'].upper())
+        canvas.itemconfig(caption_id,text=data.get('status','Align with an editable piece'))
+        canvas.itemconfig(panel_approach,state='hidden')
+        if not ids:return
+        edit=pipeline.advisor.dictionary.edits[ids[0]]
+        visual=layout(edit,observation['aim_uv']);unit=114;x=12;y=40
+        canvas.itemconfig(heading,text=visual.title.upper())
+        for i,region in enumerate(visual.regions):
+            l,b,r,t=region;item=cells[0][i]
+            canvas.coords(item,x+l*unit+2,y+(1-t)*unit+2,x+r*unit-2,y+(1-b)*unit-2)
+            canvas.itemconfig(item,state='normal',fill='#27d77b' if i in visual.selected else '#142c34')
+        if visual.approach:
+            canvas.coords(panel_approach,*[v for u,vv in visual.approach for v in (x+u*unit,y+vv*unit)])
+            canvas.itemconfig(panel_approach,state='normal')
+        if visual.path:
+            coords=[v for u,vv in visual.path for v in (x+u*unit,y+vv*unit)]
+            canvas.coords(routes[0],*(coords if len(coords)>2 else coords+coords));canvas.itemconfig(routes[0],state='normal')
+            u,v=visual.path[0];canvas.coords(markers[0],x+u*unit-4,y+v*unit-4,x+u*unit+4,y+v*unit+4)
+            canvas.itemconfig(markers[0],state='normal')
+            for item,(label,(u,v)) in zip(numbers[0],visual.labels):
+                canvas.coords(item,x+u*unit,y+v*unit);canvas.itemconfig(item,state='normal',text=label)
+        canvas.itemconfig(status_id,text=visual.result_shape)
+
+    # Pool world markers and lines; no create/delete loop while tracing.
+    world_regions=[lines_canvas.create_polygon(0,0,1,0,1,1,outline='#27d77b',fill='',width=3,state='hidden') for _ in range(9)]
+    world_path=lines_canvas.create_line(0,0,1,1,fill='#f6f7a0',width=3,arrow=tk.LAST,state='hidden')
+    world_approach=lines_canvas.create_line(0,0,1,1,fill='#82a8b8',width=2,dash=(4,4),state='hidden')
+    world_numbers=[lines_canvas.create_text(0,0,text='',fill='white',font=('Segoe UI',10,'bold'),state='hidden') for _ in range(9)]
     def draw_lines(data,rect):
-        l,t,r,b=rect;lines_canvas.delete('all')
-        observation=data.get('observation') or {}
-        ids=data.get('reference_ids') or []
+        for item in world_regions+world_numbers+[world_path,world_approach]:lines_canvas.itemconfig(item,state='hidden')
+        observation=data.get('observation') or {};ids=data.get('reference_ids') or []
         if not data.get('projected') or not ids:return False
-        path,outlines=route_lines(observation,pipeline.advisor.dictionary.edits[ids[0]]['tiles'])
-        if not path:return False
-        for outline in outlines:
-            lines_canvas.create_polygon([v for p in outline for v in p],outline='#27d77b',fill='',width=3)
-        lines_canvas.create_line([v for p in path for v in p],fill='#f6f7a0',width=5,arrow=tk.LAST,arrowshape=(16,20,8))
-        for i,p in enumerate(path[1:],1):
-            lines_canvas.create_oval(p[0]-11,p[1]-11,p[0]+11,p[1]+11,fill='#0b1720',outline='#f6f7a0',width=2)
-            lines_canvas.create_text(p[0],p[1],text=str(i),fill='white',font=('Segoe UI',10,'bold'))
+        edit=pipeline.advisor.dictionary.edits[ids[0]]
+        route=RoutePlanner().plan(observation['aim_uv'],edit)
+        if not route:return False
+        n=1 if edit['piece']=='ramp' else edit['cols'];quad=observation['wall_quad']
+        points=[grid_to_screen(quad,*p,n,n) for p in route[1]]
+        aim=grid_to_screen(quad,*observation['aim_uv'],n,n)
+        lines_canvas.coords(world_approach,*aim,*points[0]);lines_canvas.itemconfig(world_approach,state='normal')
+        coords=[v for p in points for v in p]
+        lines_canvas.coords(world_path,*(coords if len(coords)>2 else coords+coords));lines_canvas.itemconfig(world_path,state='normal')
+        if edit['piece']!='ramp':
+            for item,tile in zip(world_regions,edit['tiles']):
+                c,r=tile%n,tile//n
+                outline=[grid_to_screen(quad,c+dc,r+dr,n,n) for dc,dr in ((0,0),(1,0),(1,1),(0,1))]
+                lines_canvas.coords(item,*[v for p in outline for v in p]);lines_canvas.itemconfig(item,state='normal')
+        for i,(item,p) in enumerate(zip(world_numbers,points),1):
+            lines_canvas.coords(item,*p);lines_canvas.itemconfig(item,state='normal',text=str(i))
         return True
+
     def poll():
         nonlocal last,shown,last_write,panel_shown,lines_shown,lines_key
         with mutex:data=shared['result'];rect=shared['rect']
         now=time.monotonic()
-        fresh=bool(rect and data and data['mode'] in ('editing','building','editable') and now-data['captured_at']<.6)
+        fresh=bool(rect and data and data['mode'] in ('editing','building','editable') and 0<=now-data['captured_at']<.25)
         # The ring is the player's aim reference: hold it through dropped frames for the whole edit / build / blueprint.
-        ring_on=bool(rect) and presence.update(fresh,now)
+        ring_on=fresh
         if not rect:presence.reset()
         # The corner panel is a wall reference: only while the crosshair is on a detected wall grid.
-        panel_on=fresh and bool(data['projected']) and bool(data['reference_ids'])
+        panel_on=fresh
         if ring_on:
             if rect:
                 l,t,r,b=rect
@@ -203,12 +248,14 @@ def run(profile_path=None):
             observation=data.get('observation') or {}
             key=(data['mode'],data['projected'],tuple(data['reference_ids']),tuple(round(v,2) for v in observation.get('aim_uv',())),tuple(observation.get('selected_tiles',())),data['revision'])
             if key!=last:draw(data);last=key
-            l,t,r,b=rect;root.geometry(f'420x240+{l+int((r-l)*.23)}+{t+int((b-t)*.12)}')
+            l,t,r,b=rect;root.geometry(f"420x{240 if data['reference_ids'] else 70}+{l+max(8,min(int((r-l)*.23),r-l-428))}+{t+max(8,min(int((b-t)*.12),b-t-248))}")
             if not panel_shown:root.deiconify();panel_shown=True
             if data['captured_at']!=lines_key:
                 lines.geometry(f'{r-l}x{b-t}+{l}+{t}');lines_canvas.configure(width=r-l,height=b-t)
                 lines_key=data['captured_at']
-                if draw_lines(data,rect) and not lines_shown:lines.deiconify();lines_shown=True
+                if draw_lines(data,rect):
+                    if not lines_shown:lines.deiconify();lines_shown=True
+                elif lines_shown:lines.withdraw();lines_shown=False
         else:
             if panel_shown:root.withdraw();panel_shown=False;last=None
             if lines_shown:lines.withdraw();lines_shown=False;lines_key=None

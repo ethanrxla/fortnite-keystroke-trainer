@@ -5,7 +5,7 @@ from pathlib import Path
 
 from keystroke_lab import actions, analysis, binds as binds_cmd, drills
 from keystroke_lab.habits import Habits
-from keystroke_lab.jev_client import JevClient
+from keystroke_lab.jev_client import JevClient, choice_question
 from keystroke_lab.keyboard_overlay import KeyTracker
 
 PROFILE = dict(drills.DEFAULT_BINDS)
@@ -14,6 +14,7 @@ PROFILE.update({"sprint": "1", "tab_edit": "tab"})
 
 class FakeJev:
     available = True
+    shadow = False
 
     def __init__(self, choice="slip", confidence=0.95):
         self.calls = 0
@@ -21,7 +22,7 @@ class FakeJev:
 
     def decide(self, state, questions, **kwargs):
         self.calls += 1
-        return {q: {"choice": self.choice, "confidence": self.confidence, "probabilities": {self.choice: .95}} for q in questions}
+        return {q: {"choice": self.choice, "confidence": self.confidence, "probabilities": {k: (.95 if k==self.choice else .05/3) for k in analysis.INTENT_OPTIONS}} for q in questions}
 
 
 class FullProfileTests(unittest.TestCase):
@@ -62,7 +63,7 @@ class AnalyzerTests(unittest.TestCase):
     def feed(self, a, n=3, key="caps_lock"):
         for i in range(n):
             a.note(key, float(i))
-            a.add_stray(key, float(i), [("tab", "inventory")])
+            a.add_stray(key, float(i), [("tab", "inventory")], {"reviewed_correction": True})
 
     def test_waits_for_enough_strays(self):
         a = self.make(FakeJev())
@@ -109,7 +110,7 @@ class AnalyzerTests(unittest.TestCase):
     def test_no_key_means_no_call(self):
         jev = JevClient(key="")
         self.assertFalse(jev.available)
-        self.assertIsNone(jev.decide({}, {}))
+        self.assertIsNone(jev.decide({}, {'case': choice_question('Classify evidence', {'insufficient_evidence':'unknown'})}))
 
 
 class JevClientTests(unittest.TestCase):
@@ -125,7 +126,7 @@ class JevClientTests(unittest.TestCase):
         out = c.decide({"x": 1}, {"q": {"type": "choice", "instructions": "i", "criteria": {"a": "", "b": ""}}})
         self.assertEqual(out["q"]["choice"], "a")
         self.assertEqual(c.tokens, {"input": 10, "output": 2})
-        self.assertEqual(posted["model"], "jev-latest")
+        self.assertEqual(posted["model"], "jev-1.13.0")
 
     def test_retries_once_on_429_then_gives_up_cleanly(self):
         class Boom(Exception):
@@ -135,12 +136,12 @@ class JevClientTests(unittest.TestCase):
             raise Boom()
 
         c = JevClient(key="k", post=post, sleep=lambda s: None)
-        self.assertIsNone(c.decide({}, {}))
+        self.assertIsNone(c.decide({}, {'case': choice_question('Classify evidence', {'insufficient_evidence':'unknown'})}))
         self.assertEqual(c.calls, 2)
 
     def test_call_cap(self):
         c = JevClient(key="k", post=lambda b: {"answers": {}}, max_calls=1)
-        c.decide({}, {})
+        c.decide({}, {'case': choice_question('Classify evidence', {'insufficient_evidence':'unknown'})})
         self.assertFalse(c.available)
 
 

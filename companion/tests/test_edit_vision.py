@@ -34,14 +34,14 @@ class EditVisionTests(unittest.TestCase):
     state=pipe.process(self.fixture('front-edit'));self.assertTrue(state['projected'])
     q=state['observation']['wall_quad'];self.assertLess(abs(q[0][0]-454),20)
     self.assertLess(abs(q[0][1]-149),20)
-    self.assertEqual(state['reference_ids'],['corner_upper_right'])
+    self.assertEqual(state['reference_ids'],[]) # unvalidated definitions stay disabled
     self.assertEqual(pipe.advisor.calls,0)
    finally:pipe.advisor.close()
  def test_telemetry_old_stale_multiple_players_rejected(self):
   with tempfile.TemporaryDirectory() as d:
    p=Path(d)/'log';p.write_text('KT|context|players=1|t=0|px=0|py=0|pz=0|vx=0|vy=0|vz=0|ax=1|ay=0|az=0\n')
-   now=[0.];reader=TelemetryReader(p,lambda:now[0]);self.assertIsNone(reader.poll())
-   with p.open('a') as f:f.write('KT|context|players=1|t=1|px=1|py=2|pz=3|vx=0|vy=0|vz=0|ax=1|ay=0|az=0\n')
+   now=[0.];reader=TelemetryReader(p,lambda:now[0],wall_clock=lambda:0.,association='test-single-player');self.assertIsNone(reader.poll())
+   with p.open('a') as f:f.write('[1970.01.01-00.00.00:000] KT|context|players=1|t=1|px=1|py=2|pz=3|vx=0|vy=0|vz=0|ax=1|ay=0|az=0\n')
    self.assertEqual(reader.poll()['player_position'],(1.,2.,3.))
    now[0]=.5;self.assertIsNone(reader.poll())
    with p.open('a') as f:f.write('KT|context|players=2\n')
@@ -65,7 +65,7 @@ class EditWindowRuntimeTests(unittest.TestCase):
    def geometry(self,value):self.geometry_calls.append(value)
    def after(self,ms,fn):self.callbacks.append(fn)
    def mainloop(self):
-    for _ in range(40):
+    for _ in range(100):
      time.sleep(.025)
      if self.callbacks:self.callbacks.pop(0)()
   class Capture:
@@ -85,7 +85,7 @@ class EditWindowRuntimeTests(unittest.TestCase):
  def test_panel_and_lines_follow_a_projected_wall(self):
   geometries=self.run_window('front-edit')
   self.assertTrue(any(g.startswith('74x74') for g in geometries),geometries)
-  self.assertTrue(any(g.startswith('420x240') for g in geometries),geometries)
+  self.assertTrue(any(g.startswith('420x70') for g in geometries),geometries)
   self.assertTrue(any(g.startswith('1920x1080') for g in geometries),geometries)
 
 class PresenceTests(unittest.TestCase):

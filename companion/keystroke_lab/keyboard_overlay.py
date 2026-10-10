@@ -16,6 +16,7 @@ from . import bind_server, drills
 from .bind_profiles import BindProfile, ProfileStore
 from .habits import Habits
 from .jev_client import JevClient
+from .input_analysis import KeystrokeAnalyzer, InputEvent
 
 NEWLINE = chr(10)
 DOUBLE_SECONDS = 0.07   # two presses of one key this close are a bounce or an accident
@@ -328,7 +329,9 @@ def run(binds, drill=None, log_base=None, use_ai=True, serve_port=True, binds_pa
         except Exception:
             ctypes.windll.user32.SetProcessDPIAware()
     # Separate local observer process: no capture or AI work on the keyboard/display path.
-    import subprocess
+    import subprocess, os, uuid
+    os.environ["KT_COACH_SESSION"]=uuid.uuid4().hex
+    os.environ["KT_NO_AI"]="0" if use_ai else "1"
     try:
         edit_reference = subprocess.Popen([sys.executable, '-m', 'keystroke_lab.edit_window', str(binds_path or drills.BINDS_FILE)],
             cwd=str(pathlib.Path(__file__).resolve().parents[1]),
@@ -336,7 +339,9 @@ def run(binds, drill=None, log_base=None, use_ai=True, serve_port=True, binds_pa
     except OSError:
         edit_reference = None
     store = ProfileStore(binds_path or drills.BINDS_FILE, confirm_sprint=binds_path is None)
-    tracker = KeyTracker(store.snapshot, drill.steps if drill else None, habits=Habits(path=store.path.with_suffix(".habits.json")))
+    tracker = KeyTracker(store.snapshot, None, habits=Habits(path=store.path.with_suffix(".habits.json")))
+    sequences=([drill.steps]+drill.accepts) if drill else []
+    local_analysis=[KeystrokeAnalyzer(store.snapshot,sequences)]
     log = SessionLog(log_base, drill) if log_base else None
     recent_events = []
     habits = tracker.habits
@@ -393,6 +398,7 @@ def run(binds, drill=None, log_base=None, use_ai=True, serve_port=True, binds_pa
         if not in_game(title) or "unreal editor" in title.lower():
             tracker.focus_lost()
             return
+        evidence=local_analysis[0].accept(InputEvent(normal(name),"down",now))
         verdict, key = tracker.press(name, now)
         if verdict == "ignore":
             return
@@ -407,7 +413,7 @@ def run(binds, drill=None, log_base=None, use_ai=True, serve_port=True, binds_pa
         del recent_events[:-50]
         if verdict == "unmapped":
             near = [(k, tracker.names[k]) for k in neighbours(key) if k in tracker.names]
-            analyzer.add_stray(key, now, near)
+            analyzer.add_stray(key, now, near, evidence)
         if text:
             canvas.itemconfig(ids["status"], text=text)
             root.after(2200, lambda expected=text: canvas.itemconfig(ids["status"], text="") if canvas.itemcget(ids["status"], "text") == expected else None)
@@ -433,7 +439,9 @@ def run(binds, drill=None, log_base=None, use_ai=True, serve_port=True, binds_pa
                 if kind == "key":
                     handle(*payload)
                 elif kind == "release":
-                    tracker.release(payload)
+                    name,at=payload
+                    tracker.release(name)
+                    local_analysis[0].accept(InputEvent(normal(name),"up",at))
                 elif kind == "tip" and payload:
                     revision, text = payload
                     if revision == analyzer.profile_revision and text:
@@ -462,12 +470,14 @@ def run(binds, drill=None, log_base=None, use_ai=True, serve_port=True, binds_pa
         snapshot = store.refresh()
         if (snapshot.profile_id, snapshot.revision) != (tracker.profile_id, tracker.profile_revision):
             tracker.set_profile(snapshot)
-            analyzer.invalidate(snapshot.revision)
+            analyzer.invalidate(snapshot.revision, snapshot.profile_id)
+            local_analysis[0]=KeystrokeAnalyzer(snapshot,sequences)
             state["last_stray"] = None
             build(state["unit"] or 20)
         if rect is None:
             tracker.focus_lost()
             if state["shown"]:
+                local_analysis[0].accept(InputEvent("","focus_lost",time.perf_counter()))
                 root.withdraw()
                 calibration_button.withdraw()
                 state["shown"] = False
@@ -497,7 +507,7 @@ def run(binds, drill=None, log_base=None, use_ai=True, serve_port=True, binds_pa
         incoming.put(("key", (getattr(k, "char", None) or getattr(k, "name", str(k)), time.perf_counter())))
 
     def on_release(k):
-        incoming.put(('release', getattr(k, 'char', None) or getattr(k, 'name', str(k))))
+        incoming.put(('release', (getattr(k, 'char', None) or getattr(k, 'name', str(k)),time.perf_counter())))
 
     def on_click(_x, _y, button, pressed):
         if pressed and not game_rect():
@@ -505,7 +515,7 @@ def run(binds, drill=None, log_base=None, use_ai=True, serve_port=True, binds_pa
         if pressed:
             incoming.put(('key', (f'mouse_{button.name}', time.perf_counter())))
         else:
-            incoming.put(('release', f'mouse_{button.name}'))
+            incoming.put(('release', (f'mouse_{button.name}',time.perf_counter())))
 
     def on_scroll(_x, _y, dx, dy):
         if not game_rect():

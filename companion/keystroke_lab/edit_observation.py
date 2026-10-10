@@ -18,6 +18,8 @@ class WallObservation:
     selected_tiles: tuple = ()
     supported_cells: int = 0
     reason: str = 'no_verified_edit_grid'
+    # Grid size seen: 3 = a wall (3x3 edit grid), 2 = a floor, stairs or roof/cone (2x2).
+    cells: int = 3
     # Image evidence cannot establish world pose, ownership, opponent or line of sight.
     world_pose: object = None
     editable_owner: object = None
@@ -98,6 +100,123 @@ def _line_projection(image):
     return best
 
 
+def _tile_support(image,H,n):
+    """How many of the n x n reconstructed cells look like edit tiles (blue unselected or grey selected)."""
+    size=25
+    small=cv2.warpPerspective(image,np.diag([float(size),float(size),1.])@np.linalg.inv(H),(size*n,size*n)).astype(float)
+    count=0
+    for row in range(n):
+        for col in range(n):
+            tile=small[row*size+5:row*size+20,col*size+5:col*size+20]
+            blue=((tile[:,:,0]>tile[:,:,2]*1.22)&(tile[:,:,0]>80)&(tile[:,:,1]>45)).mean()
+            neutral=((tile.max(2)-tile.min(2)<25)&(tile.mean(2)>60)&(tile.mean(2)<180)).mean()
+            if blue+neutral>.65:count+=1
+    return count
+
+
+def _segments(image):
+    """Long straight light edges (the gaps between edit tiles) as (x1,y1,x2,y2,length)."""
+    h,w=image.shape[:2]
+    bright=cv2.inRange(image,np.array([120,120,120],np.uint8),np.array([255,255,255],np.uint8))
+    bright[(image.max(2).astype(int)-image.min(2))>100]=0
+    bright[int(h*.88):]=0
+    lines=cv2.HoughLinesP(cv2.Canny(bright,40,120),1,np.pi/360,35,minLineLength=max(30,w*.04),maxLineGap=12)
+    if lines is None:return []
+    return [(float(a),float(b),float(c),float(d),float(np.hypot(c-a,d-b))) for a,b,c,d in lines.reshape(-1,4)]
+
+
+def _merge_lines(segs):
+    """Collinear segments -> lines in normal form (nx, ny, c) with nx*x+ny*y=c, weighted by total length."""
+    out=[]
+    for x1,y1,x2,y2,length in sorted(segs,key=lambda s:-s[4]):
+        dx,dy=(x2-x1)/length,(y2-y1)/length
+        nx,ny=-dy,dx
+        if ny<0 or (ny==0 and nx<0):nx,ny=-nx,-ny
+        c=nx*(x1+x2)/2+ny*(y1+y2)/2
+        for line in out:
+            if abs(line['n'][0]*nx+line['n'][1]*ny)>.995 and abs(line['n'][0]*(x1+x2)/2+line['n'][1]*(y1+y2)/2-line['c'])<12:
+                line['length']+=length;break
+        else:out.append({'n':(nx,ny),'c':c,'length':length,'angle':float(np.degrees(np.arctan2(dy,dx))%180)})
+    return out
+
+
+def _cross(a,b):
+    m=np.array([a['n'],b['n']],float)
+    if abs(np.linalg.det(m))<1e-6:return None
+    return np.linalg.solve(m,np.array([a['c'],b['c']],float))
+
+
+def _general_grid(image,aim):
+    """Any-angle n x n edit grid (n = 3 for walls, 2 for floors / stairs / roofs).
+
+    The near-horizontal / near-vertical detector (_line_projection) misses floors seen at an angle and walls with
+    selected tiles. Here lines are split into the two dominant directions, n+1 lines are chosen from each, and the
+    result must be a projective grid (every interior crossing where a homography of the outer quad puts it) whose
+    cells look like edit tiles and which contains the crosshair. Returns (count, H, quad, n) or None."""
+    h,w=image.shape[:2]
+    lines=sorted(_merge_lines(_segments(image)),key=lambda l:-l['length'])[:24]
+    if len(lines)<6:return None
+    # Direction families: up to three angle peaks (selected tiles add diagonal X marks, so the strongest two are not
+    # always the grid); every pair at least 25 degrees apart is tried.
+    hist=np.zeros(180)
+    for l in lines:hist[int(l['angle'])%180]+=l['length']
+    smooth=np.convolve(np.concatenate([hist[-6:],hist,hist[:6]]),np.ones(13),'valid')
+    diff=lambda a,b:min(abs(a-b),180-abs(a-b))
+    peaks=[]
+    work=smooth.copy()
+    for _ in range(3):
+        k=int(np.argmax(work))
+        if work[k]<=0:break
+        peaks.append(k)
+        work=np.array([0 if diff(i,k)<25 else v for i,v in enumerate(work)])
+    # In perspective the lines of one family meet at a vanishing point, so their angles spread widely (a floor's
+    # receding edges can run 50..130 degrees). Family A = lines near one angle peak, family B = every line at least 20
+    # degrees away; the projective-grid check then rejects wrong mixtures.
+    overall=None
+    for k in peaks:
+        fam=[[l for l in lines if diff(l['angle'],k)<14],[l for l in lines if diff(l['angle'],k)>=20]]
+        found=_grid_from_families(image,aim,fam)
+        if found is not None and (overall is None or found[0]>overall[0]):overall=found
+    return overall[1] if overall else None
+
+
+def _grid_from_families(image,aim,fam):
+    h,w=image.shape[:2]
+    best=None
+    for n in (3,2):
+        if len(fam[0])<n+1 or len(fam[1])<n+1:continue
+        def order(group,ref):
+            # Sort a family across the image: where each line crosses the other family's strongest line.
+            d=np.array(ref['n'])
+            return sorted(group,key=lambda l:_cross(l,ref)@np.array([-d[1],d[0]]) if _cross(l,ref) is not None else 0)
+        a_sorted,b_sorted=order(fam[0][:9],fam[1][0]),order(fam[1][:9],fam[0][0])
+        for A in itertools.combinations(a_sorted,n+1):
+            for B in itertools.combinations(b_sorted,n+1):
+                pts=[[_cross(A[i],B[j]) for i in range(n+1)] for j in range(n+1)]
+                if any(p is None for row in pts for p in row):continue
+                quad=np.array([pts[0][0],pts[0][n],pts[n][n],pts[n][0]],np.float32)
+                if not cv2.isContourConvex(quad):continue
+                area=cv2.contourArea(quad)
+                if area<.08*w*h or quad[:,0].min()<-w*.05 or quad[:,0].max()>w*1.05 or quad[:,1].min()<-h*.05 or quad[:,1].max()>h*1.05:continue
+                if cv2.pointPolygonTest(quad,(float(aim[0]),float(aim[1])),False)<0:continue
+                H=cv2.getPerspectiveTransform(np.array([[0,0],[n,0],[n,n],[0,n]],np.float32),quad)
+                actual=np.array([[pts[j][i] for j in range(n+1) for i in range(n+1)]],np.float32)
+                expected=np.array([[[i,j] for j in range(n+1) for i in range(n+1)]],np.float32)
+                residual=np.linalg.norm(cv2.perspectiveTransform(actual,np.linalg.inv(H))-expected,axis=2)
+                if residual.mean()>.06 or residual.max()>.13:continue
+                # Equal cells: no cell may be much smaller than the others (rejects a clipped or partial grid).
+                count=_tile_support(image,H,n)
+                if count<n*n-(1 if n==3 else 0):continue
+                score=(n==3,count,-round(float(residual.mean()),2),area)
+                if best is None or score>best[0]:
+                    # Corners as image top-left, top-right, bottom-right, bottom-left (as _line_projection gives them).
+                    quad=_ordered(quad)
+                    H=cv2.getPerspectiveTransform(np.array([[0,0],[n,0],[n,n],[0,n]],np.float32),quad)
+                    best=(score,(count,H,quad,n))
+        if best is not None and best[0][0]:break
+    return best
+
+
 _TEMPLATE_CACHE = {}
 def cue_scores(frame, names, roi=None):
     height,width=frame.shape[:2]
@@ -165,6 +284,10 @@ class EditGridObserver:
         if projection is not None:
             count,H,quad=projection
             return self._from_projection(image,H,quad,now,scale,count,.93 if count==9 else .88)
+        general=_general_grid(image,(self._aim_screen[0]*scale,self._aim_screen[1]*scale))
+        if general is not None:
+            count,H,quad,n=general
+            return self._from_projection(image,H,quad,now,scale,count,.92 if count==n*n else .88,n)
 
         bright=cv2.inRange(image,np.array([95,95,95],np.uint8),np.array([255,255,255],np.uint8))
         bright[(image.max(2).astype(int)-image.min(2))>110]=0
@@ -216,16 +339,16 @@ class EditGridObserver:
         if cv2.contourArea(outer)<.16*w*h:return empty('grid_too_small')
         return self._from_projection(image,H,outer,now,scale,len(cells),min(.97,.70+len(cells)*.025)*float(inliers.mean()))
 
-    def _from_projection(self,image,H,outer,now,scale,count,confidence):
+    def _from_projection(self,image,H,outer,now,scale,count,confidence,n=3):
         h,w=image.shape[:2]
         inverse=np.linalg.inv(H)
         aim=cv2.perspectiveTransform(np.array([[[self._aim_screen[0]*scale,self._aim_screen[1]*scale]]],np.float32),inverse)[0,0]
-        if not (0<=aim[0]<3 and 0<=aim[1]<3):return WallObservation(now,reason='crosshair_off_wall')
+        if not (0<=aim[0]<n and 0<=aim[1]<n):return WallObservation(now,reason='crosshair_off_wall',cells=n)
         # Sample all reconstructed cells; selected tiles in native edit mode are neutral grey.
-        projected=cv2.warpPerspective(image,np.diag([100.,100.,1.])@inverse,(300,300))
+        projected=cv2.warpPerspective(image,np.diag([100.,100.,1.])@inverse,(100*n,100*n))
         selected=[]
-        for row in range(3):
-            for col in range(3):
+        for row in range(n):
+            for col in range(n):
                 tile=projected[row*100+20:row*100+80,col*100+20:col*100+80].astype(float)
                 neutral=((tile.max(2)-tile.min(2)<25)&(tile.mean(2)>60)&(tile.mean(2)<180)).mean()
                 blue=((tile[:,:,0]>tile[:,:,2]*1.2)&(tile[:,:,0]>80)).mean()
@@ -239,6 +362,8 @@ class EditGridObserver:
                         slope=(y2-y1)/(x2-x1)
                         positive |= .55<slope<1.6
                         negative |= -1.6<slope<-.55
-                if neutral>.25 and blue<.2 and positive and negative:selected.append((2-row)*3+col)
+                if neutral>.25 and blue<.2 and positive and negative:selected.append((n-1-row)*n+col)
+        # Image-grid coordinates: u left->right, v bottom->top of the quad as drawn on screen. For a wall that is
+        # the wall's own frame; floors / roofs are re-oriented to near / far by edit_geometry.piece_context.
         return WallObservation(now,'editing',round(confidence,3),tuple(tuple(float(v/scale) for v in p) for p in outer),
-                               (float(aim[0]),float(3-aim[1])),tuple(sorted(selected)),count,'native_edit_grid_observed')
+                               (float(aim[0]),float(n-aim[1])),tuple(sorted(selected)),count,'native_edit_grid_observed',cells=n)

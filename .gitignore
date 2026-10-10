@@ -42,3 +42,6 @@ companion/*.log
 companion/edit-state.json
 companion/edit-state.tmp
 companion/overlay-settings.json
+
+# Cross-process scheduling metadata
+companion/.runtime/
