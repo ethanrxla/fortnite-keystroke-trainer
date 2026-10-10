@@ -32,7 +32,7 @@ def main():
         b.tag(acts[label], "kt_probe_tag")
         tagged += 1
     x, y = bm.hub_cc(0, 0)
-    b.device(PROBE, "KT3_Probe", x - 3 * bm.CELL, y - 3 * bm.CELL, 0.0)
+    b.device(PROBE, "KT3_Probe", x - 3 * bm.CELL, y - 3 * bm.CELL, -700.0)   # below the floor: it sat on the Scenario return portal
     print(f"tagged {tagged} devices; probe placed")
 
 

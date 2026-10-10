@@ -740,7 +740,7 @@ def main():
     auto = {a["label"]: a["actorPath"] for a in b.m.tool(SCENE, "find_actors", name="KT_AutoTest", collision_channels=[]) or []}
     if "KT_AutoTest" in auto:
         x, y = hub_cc(4, -4)
-        b.m.tool(ACTOR, "set_actor_transform", actor={"refPath": auto["KT_AutoTest"]}, xform=xform(x, y, 0.0))
+        b.m.tool(ACTOR, "set_actor_transform", actor={"refPath": auto["KT_AutoTest"]}, xform=xform(x, y, -700.0))   # below the floor, out of the way
     print("done")
 
 

@@ -25,7 +25,7 @@ def main():
         if a["label"].startswith(PREFIX):
             b.m.tool(bm.SCENE, "remove_from_scene", actor={"refPath": a["actorPath"]})
     x, y = SPAWN
-    b.device(DEVICE, PREFIX, x, y, -60.0)
+    b.device(DEVICE, PREFIX, x, y, -700.0)   # below the floor: Verse device consoles render and collide in play; one by the hub arrival trapped players
     bx, by = x + 300.0, y + 900.0
     btn = b.device(bm.BUTTON, f"{PREFIX}_Toggle", bx, by, 0.0)
     b.m.tool(bm.ACTOR, "set_actor_transform", actor={"refPath": btn}, xform=bm.xform(bx, by, 0.0, yaw=270.0))

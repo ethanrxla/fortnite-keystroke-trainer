@@ -328,6 +328,14 @@ kt_edit_guide_device := class(creative_device):
                 if (Intent?):
                     set Allowed = true
                     set Face = FindFace(Character)
+                else if (not Tools.Readable?):
+                    # Every playtest so far logged readable=0 (the hotbar components are not found), which kept the
+                    # guide hidden for good. When equipment is unreadable, fall back to the authored practice piece
+                    # under the crosshair: its pose and shape are known, so the guide stays truthful there.
+                    Candidate := FindFace(Character)
+                    if (Candidate.Valid?):
+                        set Allowed = true
+                        set Face = Candidate
             if (UI := GetPlayerUI[Player]):
                 if (Allowed? and not RingShown?):
                     UI.AddWidget(RingLayer, player_ui_slot{InputMode := ui_input_mode.None})

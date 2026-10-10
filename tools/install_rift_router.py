@@ -64,7 +64,7 @@ RiftRoutes:[]rift_route_def = array{
     name='KT5_RiftRouter'
     if name in by:r={'refPath':by[name]}
     else:
-        r=m.tool(b.DEVICE,'PlaceDevice',assetPath={'refPath':b.MODULE+'/_Verse.KeystrokeTrainer-kt_rift_router_device'},transform=b.xform(0,-59648,-100))
+        r=m.tool(b.DEVICE,'PlaceDevice',assetPath={'refPath':b.MODULE+'/_Verse.KeystrokeTrainer-kt_rift_router_device'},transform=b.xform(0,-59648,-700))  # below the floor, clear of the hub arrival
         m.tool(b.ACTOR,'set_label',actor=r,label=name);note(dict(created=name,path=r['refPath']))
     tag(r,'KT_RiftRouter','kt_rift_router_tag');m.tool(b.SCENE,'save_actor',actor=r)
     print('Explicit rifts installed; journal:',backup,flush=True)
