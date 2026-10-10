@@ -141,7 +141,9 @@ class ContextPipeline:
             if self.motion.observation is not None and captured-self.motion.detected_at<=1.:
                 moved=self.motion.follow(frame,captured,verify=False)
                 fast=self.observer.from_quad(frame,moved,captured) if moved else None
-            if self.pending is None and (fast is None or self.frames_since_full>=self.FULL_EVERY*4):
+            # Detection runs back to back on its own thread (one in flight at a time): a grid the tracker carried from
+            # a wrong start is corrected within one detection (~100 ms) instead of waiting for 12 tracked frames.
+            if self.pending is None:
                 snapshot=frame.copy()
                 self.pending=(self.detector.submit(self.bg_observer.observe,snapshot,captured),snapshot,captured)
             observation=fast
