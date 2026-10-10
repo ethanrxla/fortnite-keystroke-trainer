@@ -18,8 +18,15 @@ def parse_line(line):
     parts = line[i:].strip().split("|")[1:]
     if len(parts) < 2:
         return None
-    rec = dict(zip(FIELDS, parts[:2]))
-    for p in parts[2:]:
+    # Events without a drill (KT|context|players=1|..., KT|practice_bots|state=on) carry key=value right after the
+    # event name; that pair is data, not a drill id.
+    if "=" in parts[1]:
+        rec = {"event": parts[0], "drill_id": ""}
+        rest = parts[1:]
+    else:
+        rec = dict(zip(FIELDS, parts[:2]))
+        rest = parts[2:]
+    for p in rest:
         if "=" in p:
             k, v = p.split("=", 1)
             rec[k] = v

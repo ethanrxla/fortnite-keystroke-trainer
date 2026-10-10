@@ -124,6 +124,55 @@ def correlate(store, binds):
     return done
 
 
+def ingest_attempts(store, folder=SESSIONS):
+    """Edit attempts from sessions/*.attempts.jsonl (written by the edit overlay's AttemptRecorder)."""
+    from .attempt_schema import errors
+    n = 0
+    for path in sorted(pathlib.Path(folder).glob("*.attempts.jsonl")) if pathlib.Path(folder).exists() else []:
+        for line in _read_new(store, path):
+            try:
+                rec = json.loads(line)
+            except ValueError:
+                continue
+            if errors(rec):
+                continue            # never store a record the database would reject
+            store.add_attempt(rec)
+            n += 1
+    return n
+
+
+ENRICH_DELAY = 5.0      # seconds after an attempt closes before its key presses are joined (the key log lags)
+
+
+def enrich_attempts(store, binds, now=None):
+    """Join each closed attempt with the keyboard overlay's presses: the confirm and reset keys inside the attempt.
+
+    The edit key often doubles as confirm (edit-on-release setups bind both to one key), so the press that opened the
+    edit (within 0.15 s of the open) is skipped. A confirm press on a completed shape raises the auto-label confidence;
+    a reset press after the last selection turns a 'completed' into 'reset' only if nothing was selected afterwards."""
+    now = time.time() if now is None else now
+    norm = {a: normal(k) for a, k in binds.items()}
+    confirm, reset = {norm.get("edit_confirm")} - {None}, {norm.get("reset")} - {None}
+    done = 0
+    for (attempt_id,) in store.rows("SELECT attempt_id FROM edit_attempts WHERE enriched=0 AND t_close<?", (now - ENRICH_DELAY,)):
+        rec = store.attempt(attempt_id)
+        keys = store.rows("SELECT ts, key FROM keys WHERE ts>? AND ts<=? ORDER BY ts",
+                          (rec["t_edit_open"] + 0.15, rec["t_close"] + 0.5))
+        if not keys and not store.rows("SELECT 1 FROM keys WHERE ts>? LIMIT 1", (rec["t_close"],)):
+            continue            # no key data covering this attempt yet (overlay off, or not ingested): try later
+        confirms = [t for t, k in keys if k in confirm]
+        resets = [t for t, k in keys if k in reset]
+        if confirms and rec.get("t_confirm") is None:
+            rec["t_confirm"] = confirms[-1]
+            if rec["outcome"] == "completed":
+                rec["auto_label_confidence"] = round(min(0.97, rec["auto_label_confidence"] * 1.15), 3)
+        if resets and rec.get("t_reset") is None:
+            rec["t_reset"] = resets[-1]
+        store.update_attempt(rec, enriched=True)
+        done += 1
+    return done
+
+
 def summary(store):
     q = lambda sql: store.rows(sql)[0][0]
     return {
@@ -133,12 +182,17 @@ def summary(store):
         "edit_locks": q("SELECT COUNT(*) FROM attempts"),
         "edits_pressed": q("SELECT COUNT(*) FROM attempts WHERE edit_ts IS NOT NULL"),
         "edits_confirmed": q("SELECT COUNT(*) FROM attempts WHERE confirm_ts IS NOT NULL"),
+        "edit_attempts": q("SELECT COUNT(*) FROM edit_attempts"),
+        "edit_attempts_completed": q("SELECT COUNT(*) FROM edit_attempts WHERE outcome='completed'"),
+        "edit_attempts_reviewed": q("SELECT COUNT(DISTINCT attempt_id) FROM labels"),
     }
 
 
 def cycle(store, binds, log_path=ktlog.DEFAULT_LOG, folder=SESSIONS):
     a, b = ingest_overlay(store, folder), ingest_uefn_log(store, log_path)
     c = correlate(store, binds) if (a or b) else 0
+    ingest_attempts(store, folder)
+    enrich_attempts(store, binds)
     store.commit()
     return a, b, c
 

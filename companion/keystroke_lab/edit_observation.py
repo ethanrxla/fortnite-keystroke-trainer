@@ -223,14 +223,14 @@ def _grid_from_families(image,aim,fam,deadline=None):
                 quad=np.array([pts[0][0],pts[0][n],pts[n][n],pts[n][0]],np.float32)
                 if not cv2.isContourConvex(quad):continue
                 area=cv2.contourArea(quad)
-                if area<.08*w*h or quad[:,0].min()<-w*.05 or quad[:,0].max()>w*1.05 or quad[:,1].min()<-h*.05 or quad[:,1].max()>h*1.05:continue
+                if area<.08*w*h or quad[:,0].min()<-w*(.35 if n==3 else .05) or quad[:,0].max()>w*(1.35 if n==3 else 1.05) or quad[:,1].min()<-h*(.35 if n==3 else .05) or quad[:,1].max()>h*(1.35 if n==3 else 1.05):continue
                 H=cv2.getPerspectiveTransform(unit,quad)
                 actual=np.array([[pts[j][i] for j in range(n+1) for i in range(n+1)]],np.float32)
                 residual=np.linalg.norm(cv2.perspectiveTransform(actual,np.linalg.inv(H))-expected,axis=2)
                 if residual.mean()>.06 or residual.max()>.13:continue
                 count=_tile_support(image,H,n)
                 # A 2x2 piece must show all four tiles (a blueprint or a wall corner can fake three).
-                if count<n*n-(1 if n==3 else 0):continue
+                if count<(6 if n==3 else 4):continue
                 score=(n==3,count,-round(float(residual.mean()),2),area)
                 if best is None or score>best[0]:
                     # Corners as image top-left, top-right, bottom-right, bottom-left (as _line_projection gives them).

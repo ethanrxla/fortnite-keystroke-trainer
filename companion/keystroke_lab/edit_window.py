@@ -9,7 +9,7 @@ import json,time,threading
 from dataclasses import replace
 import tkinter as tk
 import cv2,numpy as np
-from .keyboard_overlay import game_rect,make_click_through,exclude_from_capture,single_instance
+from .keyboard_overlay import game_rect,make_click_through,exclude_from_capture,single_instance,ROWS,BOTTOM_MARGIN,LEFT_MARGIN
 from .bind_profiles import ProfileStore
 from .drills import BINDS_FILE
 from .edit_observation import observe_mode,EditGridObserver,cue_scores
@@ -22,6 +22,8 @@ from .edit_geometry import PieceContext, tiles_to_grid, piece_to_grid
 from .edit_dictionary import TargetTracker, RoutePlanner, EditAnalyzer
 from .evidence import Evidence, ContextAssembler
 from .guide_layers import TraceGuideLayer, RegionGuideLayer
+from .attempt_recorder import AttemptRecorder, AttemptLog, default_matcher
+from .pieces import catalog_key
 import os
 BASE=Path(__file__).resolve().parents[1]
 
@@ -123,7 +125,7 @@ class ContextPipeline:
         # Ranking: crosshair travel from where you aim, Jev's prior for where you stand (side, near/far) and your
         # personal factors (edit_ranker). Game-verified edits win when any fit; until the review catalog has verified
         # them, suggested library edits are offered and labelled unverified.
-        kind={'cone':'roof','ramp':'stairs'}.get(observation.piece,observation.piece)
+        kind=catalog_key(observation.piece) or observation.piece
         picks=self.ranker.rank(kind,ctx.aim,ctx.side,ctx.far) if ctx else []
         verified={e['id'] for e in candidates}
         fitting=[p for p in picks if set(observation.selected_tiles)<=set(tiles_to_grid(ctx,p.tiles))] if ctx else []
@@ -193,6 +195,14 @@ def run(profile_path=None):
     cv2.setNumThreads(1)
     store=ProfileStore(profile_path or BINDS_FILE);pipeline=ContextPipeline(store)
     shared={'result':None,'rect':None};mutex=threading.Lock();stop=threading.Event()
+    # Every edit attempt (open edit mode -> confirm / reset / leave) goes to sessions/edit-<session>.attempts.jsonl
+    # for the collector, the review page and the cloud sync. Recording never blocks or fails the guide.
+    session=os.environ.get('KT_COACH_SESSION') or time.strftime('%Y%m%d-%H%M%S')
+    recorder=AttemptRecorder(session,sink=AttemptLog(BASE/'sessions'/f'edit-{session}.attempts.jsonl').write,
+                             matcher=default_matcher(pipeline.advisor.dictionary),catalog_version=pipeline.advisor.dictionary.version)
+    def record(result,utc):
+        try:recorder.feed(result,utc)
+        except Exception:recorder.current=None
     def worker():
         with mss.MSS() as capture:
             while not stop.is_set():
@@ -200,12 +210,15 @@ def run(profile_path=None):
                 if rect:
                     l,t,r,b=rect
                     try:
-                        captured_at=time.monotonic()
+                        captured_at=time.monotonic();captured_utc=time.time()
                         result=pipeline.process(np.asarray(capture.grab({'left':l,'top':t,'width':r-l,'height':b-t}))[:,:,:3],captured_at=captured_at)
                         result['processing_ms']=round(1000*(time.monotonic()-captured_at),1)
+                        record(result,captured_utc)
                     except Exception as exc:
                         result={'mode':'unknown','captured_at':time.monotonic(),'error':type(exc).__name__}
-                else:pipeline.locked=None
+                else:
+                    pipeline.locked=None
+                    record({'mode':'unknown'},time.time())
                 with mutex:shared.update(result=result,rect=rect)
                 # Latest snapshot only; no frame queue or network on this worker.
                 stop.wait(.025)
@@ -323,7 +336,12 @@ def run(profile_path=None):
             observation=data.get('observation') or {}
             key=(data['mode'],data['projected'],tuple(data['reference_ids']),tuple(round(v,2) for v in observation.get('aim_uv',())),tuple(observation.get('selected_tiles',())),data['revision'])
             if key!=last:draw(data);last=key
-            l,t,r,b=rect;root.geometry(f"420x{240 if data['reference_ids'] else 70}+{l+max(8,min(int((r-l)*.23),r-l-428))}+{t+max(8,min(int((b-t)*.12),b-t-248))}")
+            l,t,r,b=rect
+            u=max(22,min(42,int((b-t)/54*1.5)))
+            panel_height=240 if data['reference_ids'] else 70
+            panel_x=l+int((r-l)*LEFT_MARGIN)
+            panel_y=max(t+8,b-int((b-t)*BOTTOM_MARGIN)-(len(ROWS)+4)*u-panel_height-8)
+            root.geometry(f"420x{panel_height}+{panel_x}+{panel_y}")
             if not panel_shown:root.deiconify();panel_shown=True
             if data['captured_at']!=lines_key:
                 lines.geometry(f'{r-l}x{b-t}+{l}+{t}');lines_canvas.configure(width=r-l,height=b-t)
@@ -347,6 +365,9 @@ def run(profile_path=None):
         finally:root.after(33,poll)
     root.after(33,poll)
     try:root.mainloop()
-    finally:stop.set();pipeline.advisor.close()
+    finally:
+        stop.set();pipeline.advisor.close()
+        try:recorder.close(time.time())
+        except Exception:pass
 
 if __name__=='__main__':run(sys.argv[1] if len(sys.argv)>1 else None)

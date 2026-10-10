@@ -61,7 +61,7 @@ class VisualObserver:
             piece='floor' if ctx.kind=='floor' else 'cone'
             return PieceObservation(now,piece,q,wall.aim_uv,wall.selected_tiles,'screen_pose_estimate',wall.confidence,
                                     wall.supported_cells,'native_edit_grid_observed',context=context)
-        if wall.supported_cells<8 or wall.confidence<.88:
+        if wall.supported_cells<6 or wall.confidence<.88:
             return PieceObservation(now,reason=wall.reason)
         # Require a substantial vertical axis. Ramp grids have gesture regions rather than nine equivalent wall tiles.
         width=(math.dist(q[0],q[1])+math.dist(q[2],q[3]))/2
