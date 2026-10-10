@@ -20,6 +20,8 @@ import json
 import math
 import pathlib
 
+from .pieces import catalog_key
+
 SHARED = pathlib.Path(__file__).resolve().parents[2] / "shared"
 PRIOR_WEIGHT = 0.3
 DRAG_WEIGHT = 0.15
@@ -72,8 +74,25 @@ def situation_key(aim, side, far, c):
     return f"{clamp(aim[0])},{clamp(aim[1])},{max(0, min(2, side))},{int(bool(far))}"
 
 
+# Corner snap (the player's preference, 2026-10-10): pointing the crosshair at one of the wall's four inner tile corners
+# means "that corner edit". The guide then shows the three-tile corner (green tiles + numbered yellow route) instead of
+# whichever single-tile edit has slightly less travel. Within SNAP_RADIUS tiles of the junction.
+WALL_JUNCTIONS = {(1.0, 1.0): "corner_lower_left", (2.0, 1.0): "corner_lower_right",
+                  (1.0, 2.0): "corner_upper_left", (2.0, 2.0): "corner_upper_right"}
+SNAP_RADIUS = 0.5
+
+
+def junction_corner(aim, radius=SNAP_RADIUS):
+    """The corner edit for the inner wall junction nearest the crosshair, or None when no junction is that close."""
+    if len(aim) != 2:
+        return None
+    point, edit = min(WALL_JUNCTIONS.items(), key=lambda kv: math.dist(kv[0], aim))
+    return edit if math.dist(point, aim) <= radius else None
+
+
 class Ranker:
-    def __init__(self, shared=SHARED, personal=None):
+    def __init__(self, shared=SHARED, personal=None, policies=None):
+        """policies: optional {piece: policy dict or path} replacing the shared tables (to compare policy versions)."""
         shared = pathlib.Path(shared)
         data = json.loads((shared / "edits.json").read_text(encoding="utf-8"))
         self.library, self.policy = {}, {}
@@ -83,6 +102,10 @@ class Ranker:
             if path.is_file():
                 p = json.loads(path.read_text(encoding="utf-8"))
                 self.policy[kind] = (p["edits"], p["priors"])
+        for kind, p in (policies or {}).items():
+            if not isinstance(p, dict):
+                p = json.loads(pathlib.Path(p).read_text(encoding="utf-8"))
+            self.policy[catalog_key(kind) or kind] = (p["edits"], p["priors"])
         if personal is None:
             path = shared / "edit-policy-personal.json"
             personal = json.loads(path.read_text(encoding="utf-8")).get("factors", {}) if path.is_file() else {}
@@ -99,6 +122,7 @@ class Ranker:
         return row[ids.index(edit_id)]
 
     def rank(self, kind, aim, side=1, far=False):
+        kind = catalog_key(kind) or kind          # accepts canonical names (cone, ramp) and catalogue keys
         c = cols(kind)
         if kind not in self.library or len(aim) != 2 or not all(0 <= v < c for v in aim):
             return []

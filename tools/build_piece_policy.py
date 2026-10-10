@@ -168,7 +168,7 @@ def main():
     data = json.loads(EDITS.read_text(encoding="utf-8"))
     if not args.regen_verse:
         pieces = args.piece or list(NAMES)
-        jev = JevClient(max_calls=120)
+        jev = JevClient(max_calls=120, broker=False, domain="offline_policy")   # offline batch: not the live 30 s broker
         for piece in pieces:
             edits = suggested(data, piece)
             if not edits:

@@ -16,6 +16,7 @@ from . import bind_server, drills
 from .bind_profiles import BindProfile, ProfileStore
 from .habits import Habits
 from .jev_client import JevClient
+from .input_analysis import KeystrokeAnalyzer, InputEvent
 
 NEWLINE = chr(10)
 DOUBLE_SECONDS = 0.07   # two presses of one key this close are a bounce or an accident
@@ -352,7 +353,9 @@ def run(binds, drill=None, log_base=None, use_ai=True, serve_port=True, binds_pa
         except Exception:
             ctypes.windll.user32.SetProcessDPIAware()
     # Separate local observer process: no capture or AI work on the keyboard/display path.
-    import subprocess
+    import subprocess, os, uuid
+    os.environ["KT_COACH_SESSION"]=uuid.uuid4().hex
+    os.environ["KT_NO_AI"]="0" if use_ai else "1"
     try:
         edit_reference = subprocess.Popen([sys.executable, '-m', 'keystroke_lab.edit_window', str(binds_path or drills.BINDS_FILE)],
             cwd=str(pathlib.Path(__file__).resolve().parents[1]),
@@ -360,7 +363,9 @@ def run(binds, drill=None, log_base=None, use_ai=True, serve_port=True, binds_pa
     except OSError:
         edit_reference = None
     store = ProfileStore(binds_path or drills.BINDS_FILE, confirm_sprint=binds_path is None)
-    tracker = KeyTracker(store.snapshot, drill.steps if drill else None, habits=Habits(path=store.path.with_suffix(".habits.json")))
+    tracker = KeyTracker(store.snapshot, None, habits=Habits(path=store.path.with_suffix(".habits.json")))
+    sequences=([drill.steps]+drill.accepts) if drill else []
+    local_analysis=[KeystrokeAnalyzer(store.snapshot,sequences)]
     log = SessionLog(log_base, drill) if log_base else None
     recent_events = []
     habits = tracker.habits
@@ -383,6 +388,7 @@ def run(binds, drill=None, log_base=None, use_ai=True, serve_port=True, binds_pa
         canvas.delete("all")
         rects.clear()
         width = int(KEYS_WIDE * u) + 8
+        top=3*u
         height = len(ROWS) * u + 4 * u
         canvas.config(width=width, height=height)
         for r, row in enumerate(ROWS):
@@ -390,19 +396,19 @@ def run(binds, drill=None, log_base=None, use_ai=True, serve_port=True, binds_pa
             for label, key, w in row:
                 action = tracker.names.get(key)
                 fill = COLORS["bound"] if action else COLORS["idle"]
-                rect = canvas.create_rectangle(x, 4 + r * u, x + w * u - 3, 4 + r * u + u - 3, fill=fill, outline="#3a4256")
-                canvas.create_text(x + (w * u - 3) / 2, 4 + r * u + u * (0.31 if action else 0.48), text=label,
+                rect = canvas.create_rectangle(x, 4 + top + r * u, x + w * u - 3, 4 + top + r * u + u - 3, fill=fill, outline="#3a4256")
+                canvas.create_text(x + (w * u - 3) / 2, 4 + top + r * u + u * (0.31 if action else 0.48), text=label,
                                    fill=COLORS["text"], font=("Segoe UI", max(9, int(u * 0.38)), "bold"))
                 if action:
                     compact = action.split("/")[0].replace("move_", "").replace("edit_confirm", "OK").replace("pickaxe", "axe").replace("sprint", "run")
                     if "/" in action: compact = compact[:4] + "+"
-                    canvas.create_text(x + (w * u - 3) / 2, 4 + r * u + u * 0.77, text=compact[:6],
+                    canvas.create_text(x + (w * u - 3) / 2, 4 + top + r * u + u * 0.77, text=compact[:6],
                                        fill="#9fd5df", font=("Segoe UI", max(7, int(u * 0.24))))
                 rects[key] = (rect, fill)
                 x += w * u
-        ids["status"] = canvas.create_text(4, len(ROWS) * u + 10, anchor="nw", width=width - 8, fill=COLORS["text"],
+        ids["status"] = canvas.create_text(4, 4, anchor="nw", width=width - 8, fill=COLORS["text"],
                                            font=("Segoe UI", max(8, int(u * 0.5)), "bold"), text="")
-        ids["tip"] = canvas.create_text(4, len(ROWS) * u + 10 + u * 1.7, anchor="nw", width=width - 8, fill="#9fd6ff",
+        ids["tip"] = canvas.create_text(4, 4 + u * 1.5, anchor="nw", width=width - 8, fill="#9fd6ff",
                                         font=("Segoe UI", max(8, int(u * 0.46))), text="")
         state["unit"] = u
         state["size"] = (width, height)
@@ -417,6 +423,7 @@ def run(binds, drill=None, log_base=None, use_ai=True, serve_port=True, binds_pa
         if not in_game(title) or "unreal editor" in title.lower():
             tracker.focus_lost()
             return
+        evidence=local_analysis[0].accept(InputEvent(normal(name),"down",now))
         verdict, key = tracker.press(name, now)
         if verdict == "ignore":
             return
@@ -431,7 +438,7 @@ def run(binds, drill=None, log_base=None, use_ai=True, serve_port=True, binds_pa
         del recent_events[:-50]
         if verdict == "unmapped":
             near = [(k, tracker.names[k]) for k in neighbours(key) if k in tracker.names]
-            analyzer.add_stray(key, now, near)
+            analyzer.add_stray(key, now, near, evidence)
         if text:
             canvas.itemconfig(ids["status"], text=text)
             root.after(2200, lambda expected=text: canvas.itemconfig(ids["status"], text="") if canvas.itemcget(ids["status"], "text") == expected else None)
@@ -450,14 +457,31 @@ def run(binds, drill=None, log_base=None, use_ai=True, serve_port=True, binds_pa
 
             threading.Thread(target=work, daemon=True).start()
 
-    def poll():
+    feedback_at=[-float('inf')]
+    def refresh_edit_feedback():
+        now=time.monotonic()
+        if now-feedback_at[0]<.5:return
+        feedback_at[0]=now
+        try:
+            data=json.loads((pathlib.Path(__file__).resolve().parents[1]/'edit-state.json').read_text())
+            attempt=data.get('last_attempt') or {}
+            if attempt.get('profile_id')!=tracker.profile_id or attempt.get('profile_revision')!=tracker.profile_revision:return
+            if time.monotonic()-attempt.get('ended_at',0)>30:return
+            text=("Edit observation incomplete" if not attempt.get('complete_observation') else
+                  f"Observed target tiles: {round(100*attempt.get('observed_coverage',0))}% | extra: {len(attempt.get('extra_selections',[]))}")
+            canvas.itemconfig(ids['tip'],text=text+' | game result unverified')
+        except (OSError,ValueError,TypeError):pass
+
+    def poll_once():
         try:
             while True:
                 kind, payload = incoming.get_nowait()
                 if kind == "key":
                     handle(*payload)
                 elif kind == "release":
-                    tracker.release(payload)
+                    name,at=payload
+                    tracker.release(name)
+                    local_analysis[0].accept(InputEvent(normal(name),"up",at))
                 elif kind == "tip" and payload:
                     revision, text = payload
                     if revision == analyzer.profile_revision and text:
@@ -466,11 +490,18 @@ def run(binds, drill=None, log_base=None, use_ai=True, serve_port=True, binds_pa
                             log.tip(text)
         except queue.Empty:
             pass
-        root.after(POLL_MS, poll)
+        refresh_edit_feedback()
 
     calibration_button = tk.Toplevel(root)
     calibration_button.overrideredirect(True)
     calibration_button.attributes('-topmost', True)
+    def poll():
+        try:poll_once()
+        except Exception:
+            import traceback
+            with (pathlib.Path(__file__).resolve().parents[1]/'keyboard-display-error.log').open('a') as errors:errors.write(traceback.format_exc())
+        finally:root.after(POLL_MS,poll)
+
     calibration_process = [None]
     def calibrate_player():
         if calibration_process[0] is not None and calibration_process[0].poll() is None:
@@ -486,12 +517,14 @@ def run(binds, drill=None, log_base=None, use_ai=True, serve_port=True, binds_pa
         snapshot = store.refresh()
         if (snapshot.profile_id, snapshot.revision) != (tracker.profile_id, tracker.profile_revision):
             tracker.set_profile(snapshot)
-            analyzer.invalidate(snapshot.revision)
+            analyzer.invalidate(snapshot.revision, snapshot.profile_id)
+            local_analysis[0]=KeystrokeAnalyzer(snapshot,sequences)
             state["last_stray"] = None
             build(state["unit"] or 20)
         if rect is None:
             tracker.focus_lost()
             if state["shown"]:
+                local_analysis[0].accept(InputEvent("","focus_lost",time.perf_counter()))
                 root.withdraw()
                 calibration_button.withdraw()
                 state["shown"] = False
@@ -521,7 +554,7 @@ def run(binds, drill=None, log_base=None, use_ai=True, serve_port=True, binds_pa
         incoming.put(("key", (key_name(k), time.perf_counter())))
 
     def on_release(k):
-        incoming.put(('release', key_name(k)))
+        incoming.put(('release', (key_name(k), time.perf_counter())))
 
     def on_click(_x, _y, button, pressed):
         if pressed and not game_rect():
@@ -529,7 +562,7 @@ def run(binds, drill=None, log_base=None, use_ai=True, serve_port=True, binds_pa
         if pressed:
             incoming.put(('key', (f'mouse_{button.name}', time.perf_counter())))
         else:
-            incoming.put(('release', f'mouse_{button.name}'))
+            incoming.put(('release', (f'mouse_{button.name}',time.perf_counter())))
 
     def on_scroll(_x, _y, dx, dy):
         if not game_rect():

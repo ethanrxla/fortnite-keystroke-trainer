@@ -144,7 +144,7 @@ def main():
     print(f"{len(edits)} suggested edits, {len(todo)} situations, batch {BATCH}: about {-(-len(todo) // BATCH)} Jev calls")
     if args.dry_run:
         return 0
-    jev = JevClient(max_calls=200)
+    jev = JevClient(max_calls=200, broker=False, domain="offline_policy")   # offline batch: not the live 30 s broker
     if not jev.available:
         print("JEV_API_KEY is not set (../.env)")
         return 2

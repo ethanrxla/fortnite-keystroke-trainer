@@ -26,7 +26,42 @@
       "cover_left": 8,
       "difficulty": 1,
       "when_to_use": "A chest-height sightline with cover on every side; the default safe peek.",
-      "source": "gadgethacks; project E2/E5"
+      "source": "gadgethacks; project E2/E5",
+      "validation": {
+        "status": "unverified",
+        "game_version": null,
+        "evidence": [],
+        "result_confirmed": false,
+        "reason": "Legacy confirmed flag is not recorded in-game verification."
+      },
+      "topology": "selection_grid",
+      "mask": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          1,
+          0
+        ],
+        [
+          0,
+          0,
+          0
+        ]
+      ],
+      "result_shape": "Window",
+      "preconditions": [
+        "editable_target",
+        "standard_editing"
+      ],
+      "reset": "native_reset",
+      "transforms": {
+        "mirror": null,
+        "rotations": []
+      }
     },
     {
       "id": "window_high",
@@ -46,7 +81,42 @@
       "cover_left": 8,
       "difficulty": 1,
       "when_to_use": "Top-middle tile: a high sightline or a gap to shoot down through.",
-      "source": "alternate window layout in gadgethacks/other guides"
+      "source": "alternate window layout in gadgethacks/other guides",
+      "validation": {
+        "status": "unverified",
+        "game_version": null,
+        "evidence": [],
+        "result_confirmed": false,
+        "reason": "Legacy confirmed flag is not recorded in-game verification."
+      },
+      "topology": "selection_grid",
+      "mask": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          1,
+          0
+        ]
+      ],
+      "result_shape": "High window",
+      "preconditions": [
+        "editable_target",
+        "standard_editing"
+      ],
+      "reset": "native_reset",
+      "transforms": {
+        "mirror": null,
+        "rotations": []
+      }
     },
     {
       "id": "door",
@@ -67,7 +137,42 @@
       "cover_left": 7,
       "difficulty": 1,
       "when_to_use": "Walk through the wall. Disabled in the guide: the player does not want door suggestions.",
-      "source": "gadgethacks; player preference"
+      "source": "gadgethacks; player preference",
+      "validation": {
+        "status": "unverified",
+        "game_version": null,
+        "evidence": [],
+        "result_confirmed": false,
+        "reason": "Legacy confirmed flag is not recorded in-game verification."
+      },
+      "topology": "selection_grid",
+      "mask": [
+        [
+          0,
+          1,
+          0
+        ],
+        [
+          0,
+          1,
+          0
+        ],
+        [
+          0,
+          0,
+          0
+        ]
+      ],
+      "result_shape": "Door",
+      "preconditions": [
+        "editable_target",
+        "standard_editing"
+      ],
+      "reset": "native_reset",
+      "transforms": {
+        "mirror": null,
+        "rotations": []
+      }
     },
     {
       "id": "half_wall",
@@ -89,7 +194,42 @@
       "cover_left": 6,
       "difficulty": 1,
       "when_to_use": "Waist-high cover you can shoot over; crouch behind it to reset exposure.",
-      "source": "hp.com; project E4"
+      "source": "hp.com; project E4",
+      "validation": {
+        "status": "unverified",
+        "game_version": null,
+        "evidence": [],
+        "result_confirmed": false,
+        "reason": "Legacy confirmed flag is not recorded in-game verification."
+      },
+      "topology": "selection_grid",
+      "mask": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          1,
+          1,
+          1
+        ]
+      ],
+      "result_shape": "Half wall (top row)",
+      "preconditions": [
+        "editable_target",
+        "standard_editing"
+      ],
+      "reset": "native_reset",
+      "transforms": {
+        "mirror": null,
+        "rotations": []
+      }
     },
     {
       "id": "quarter_wall",
@@ -114,7 +254,42 @@
       "cover_left": 3,
       "difficulty": 2,
       "when_to_use": "Knee-high cover: only the bottom row stays. Drag the top row, then back along the middle row.",
-      "source": "player; gadgethacks"
+      "source": "player; gadgethacks",
+      "validation": {
+        "status": "unverified",
+        "game_version": null,
+        "evidence": [],
+        "result_confirmed": false,
+        "reason": "Legacy confirmed flag is not recorded in-game verification."
+      },
+      "topology": "selection_grid",
+      "mask": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          1,
+          1,
+          1
+        ],
+        [
+          1,
+          1,
+          1
+        ]
+      ],
+      "result_shape": "Quarter wall (top two rows)",
+      "preconditions": [
+        "editable_target",
+        "standard_editing"
+      ],
+      "reset": "native_reset",
+      "transforms": {
+        "mirror": null,
+        "rotations": []
+      }
     },
     {
       "id": "corner_lower_left",
@@ -137,7 +312,42 @@
       "cover_left": 6,
       "difficulty": 2,
       "when_to_use": "Open the lower-left corner (the triangle, middle tile kept) to peek or push through low on the left.",
-      "source": "project reference routes; gadgethacks triangle"
+      "source": "project reference routes; gadgethacks triangle",
+      "validation": {
+        "status": "unverified",
+        "game_version": null,
+        "evidence": [],
+        "result_confirmed": false,
+        "reason": "Legacy confirmed flag is not recorded in-game verification."
+      },
+      "topology": "selection_grid",
+      "mask": [
+        [
+          1,
+          1,
+          0
+        ],
+        [
+          1,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0
+        ]
+      ],
+      "result_shape": "Lower left corner",
+      "preconditions": [
+        "editable_target",
+        "standard_editing"
+      ],
+      "reset": "native_reset",
+      "transforms": {
+        "mirror": "corner_lower_right",
+        "rotations": []
+      }
     },
     {
       "id": "corner_lower_right",
@@ -160,7 +370,42 @@
       "cover_left": 6,
       "difficulty": 2,
       "when_to_use": "Mirror of the lower-left corner.",
-      "source": "project reference routes"
+      "source": "project reference routes",
+      "validation": {
+        "status": "unverified",
+        "game_version": null,
+        "evidence": [],
+        "result_confirmed": false,
+        "reason": "Legacy confirmed flag is not recorded in-game verification."
+      },
+      "topology": "selection_grid",
+      "mask": [
+        [
+          0,
+          1,
+          1
+        ],
+        [
+          0,
+          0,
+          1
+        ],
+        [
+          0,
+          0,
+          0
+        ]
+      ],
+      "result_shape": "Lower right corner",
+      "preconditions": [
+        "editable_target",
+        "standard_editing"
+      ],
+      "reset": "native_reset",
+      "transforms": {
+        "mirror": "corner_lower_left",
+        "rotations": []
+      }
     },
     {
       "id": "corner_upper_left",
@@ -182,7 +427,42 @@
       "cover_left": 6,
       "difficulty": 2,
       "when_to_use": "Open the upper-left corner for a high peek on the left.",
-      "source": "project reference routes"
+      "source": "project reference routes",
+      "validation": {
+        "status": "unverified",
+        "game_version": null,
+        "evidence": [],
+        "result_confirmed": false,
+        "reason": "Legacy confirmed flag is not recorded in-game verification."
+      },
+      "topology": "selection_grid",
+      "mask": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          1,
+          0,
+          0
+        ],
+        [
+          1,
+          1,
+          0
+        ]
+      ],
+      "result_shape": "Upper left corner",
+      "preconditions": [
+        "editable_target",
+        "standard_editing"
+      ],
+      "reset": "native_reset",
+      "transforms": {
+        "mirror": "corner_upper_right",
+        "rotations": []
+      }
     },
     {
       "id": "corner_upper_right",
@@ -204,7 +484,42 @@
       "cover_left": 6,
       "difficulty": 2,
       "when_to_use": "Mirror of the upper-left corner.",
-      "source": "project reference routes"
+      "source": "project reference routes",
+      "validation": {
+        "status": "unverified",
+        "game_version": null,
+        "evidence": [],
+        "result_confirmed": false,
+        "reason": "Legacy confirmed flag is not recorded in-game verification."
+      },
+      "topology": "selection_grid",
+      "mask": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          1
+        ],
+        [
+          0,
+          1,
+          1
+        ]
+      ],
+      "result_shape": "Upper right corner",
+      "preconditions": [
+        "editable_target",
+        "standard_editing"
+      ],
+      "reset": "native_reset",
+      "transforms": {
+        "mirror": "corner_upper_left",
+        "rotations": []
+      }
     },
     {
       "id": "half_arch_left",
@@ -228,7 +543,42 @@
       "cover_left": 5,
       "difficulty": 3,
       "when_to_use": "The whole bottom-left block, starting from the middle tile: a wide opening you can pass through and reset quickly.",
-      "source": "gadgethacks"
+      "source": "gadgethacks",
+      "validation": {
+        "status": "unverified",
+        "game_version": null,
+        "evidence": [],
+        "result_confirmed": false,
+        "reason": "Legacy confirmed flag is not recorded in-game verification."
+      },
+      "topology": "selection_grid",
+      "mask": [
+        [
+          1,
+          1,
+          0
+        ],
+        [
+          1,
+          1,
+          0
+        ],
+        [
+          0,
+          0,
+          0
+        ]
+      ],
+      "result_shape": "Half arch (left)",
+      "preconditions": [
+        "editable_target",
+        "standard_editing"
+      ],
+      "reset": "native_reset",
+      "transforms": {
+        "mirror": "half_arch_right",
+        "rotations": []
+      }
     },
     {
       "id": "half_arch_right",
@@ -252,7 +602,42 @@
       "cover_left": 5,
       "difficulty": 3,
       "when_to_use": "Mirror of the left half arch.",
-      "source": "gadgethacks"
+      "source": "gadgethacks",
+      "validation": {
+        "status": "unverified",
+        "game_version": null,
+        "evidence": [],
+        "result_confirmed": false,
+        "reason": "Legacy confirmed flag is not recorded in-game verification."
+      },
+      "topology": "selection_grid",
+      "mask": [
+        [
+          0,
+          1,
+          1
+        ],
+        [
+          0,
+          1,
+          1
+        ],
+        [
+          0,
+          0,
+          0
+        ]
+      ],
+      "result_shape": "Half arch (right)",
+      "preconditions": [
+        "editable_target",
+        "standard_editing"
+      ],
+      "reset": "native_reset",
+      "transforms": {
+        "mirror": "half_arch_left",
+        "rotations": []
+      }
     },
     {
       "id": "side_peek_right",
@@ -271,7 +656,42 @@
       "cover_left": 8,
       "difficulty": 1,
       "when_to_use": "Peek from the side instead of the middle; project drill E7.",
-      "source": "project E7"
+      "source": "project E7",
+      "validation": {
+        "status": "unverified",
+        "game_version": null,
+        "evidence": [],
+        "result_confirmed": false,
+        "reason": "Legacy confirmed flag is not recorded in-game verification."
+      },
+      "topology": "selection_grid",
+      "mask": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          1
+        ],
+        [
+          0,
+          0,
+          0
+        ]
+      ],
+      "result_shape": "Side peek (right-middle)",
+      "preconditions": [
+        "editable_target",
+        "standard_editing"
+      ],
+      "reset": "native_reset",
+      "transforms": {
+        "mirror": "side_peek_left",
+        "rotations": []
+      }
     },
     {
       "id": "side_peek_left",
@@ -290,7 +710,42 @@
       "cover_left": 8,
       "difficulty": 1,
       "when_to_use": "Mirror of the right side peek.",
-      "source": "project E7 (mirrored)"
+      "source": "project E7 (mirrored)",
+      "validation": {
+        "status": "unverified",
+        "game_version": null,
+        "evidence": [],
+        "result_confirmed": false,
+        "reason": "Legacy confirmed flag is not recorded in-game verification."
+      },
+      "topology": "selection_grid",
+      "mask": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          1,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0
+        ]
+      ],
+      "result_shape": "Side peek (left-middle)",
+      "preconditions": [
+        "editable_target",
+        "standard_editing"
+      ],
+      "reset": "native_reset",
+      "transforms": {
+        "mirror": "side_peek_right",
+        "rotations": []
+      }
     },
     {
       "id": "arch_wide",
@@ -314,7 +769,42 @@
       "cover_left": 5,
       "difficulty": 2,
       "when_to_use": "Open the whole bottom row and the centre: a wide opening that keeps the top row and the two middle side tiles. From a low centre aim, drag down into the bottom-centre tile, then sweep the bottom row (crossing the bottom-centre tile again is fine).",
-      "source": "player, confirmed in Creative 2026-10-10 (screenshot)"
+      "source": "player, confirmed in Creative 2026-10-10 (screenshot)",
+      "validation": {
+        "status": "unverified",
+        "game_version": null,
+        "evidence": [],
+        "result_confirmed": false,
+        "reason": "Player screenshot in Creative, 2026-10-10 (selected tiles 0,1,2,4); not yet recorded with tools/validate_edit.py."
+      },
+      "topology": "selection_grid",
+      "mask": [
+        [
+          1,
+          1,
+          1
+        ],
+        [
+          0,
+          1,
+          0
+        ],
+        [
+          0,
+          0,
+          0
+        ]
+      ],
+      "result_shape": "Arch (bottom row + centre)",
+      "preconditions": [
+        "editable_target",
+        "standard_editing"
+      ],
+      "reset": "native_reset",
+      "transforms": {
+        "mirror": null,
+        "rotations": []
+      }
     },
     {
       "id": "corner_single_ll",
@@ -334,7 +824,42 @@
       "cover_left": 8,
       "difficulty": 1,
       "when_to_use": "One corner tile: a small opening to shoot through or to run a ramp or cone through.",
-      "source": "gadgethacks (single corner)"
+      "source": "gadgethacks (single corner)",
+      "validation": {
+        "status": "unverified",
+        "game_version": null,
+        "evidence": [],
+        "result_confirmed": false,
+        "reason": "Legacy confirmed flag is not recorded in-game verification."
+      },
+      "topology": "selection_grid",
+      "mask": [
+        [
+          1,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0
+        ]
+      ],
+      "result_shape": "Corner tile (lower left)",
+      "preconditions": [
+        "editable_target",
+        "standard_editing"
+      ],
+      "reset": "native_reset",
+      "transforms": {
+        "mirror": "corner_single_lr",
+        "rotations": []
+      }
     },
     {
       "id": "corner_single_lr",
@@ -354,7 +879,42 @@
       "cover_left": 8,
       "difficulty": 1,
       "when_to_use": "Mirror of the lower-left corner tile.",
-      "source": "gadgethacks (single corner)"
+      "source": "gadgethacks (single corner)",
+      "validation": {
+        "status": "unverified",
+        "game_version": null,
+        "evidence": [],
+        "result_confirmed": false,
+        "reason": "Legacy confirmed flag is not recorded in-game verification."
+      },
+      "topology": "selection_grid",
+      "mask": [
+        [
+          0,
+          0,
+          1
+        ],
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0
+        ]
+      ],
+      "result_shape": "Corner tile (lower right)",
+      "preconditions": [
+        "editable_target",
+        "standard_editing"
+      ],
+      "reset": "native_reset",
+      "transforms": {
+        "mirror": "corner_single_ll",
+        "rotations": []
+      }
     },
     {
       "id": "corner_single_ul",
@@ -374,7 +934,42 @@
       "cover_left": 8,
       "difficulty": 1,
       "when_to_use": "One upper corner tile.",
-      "source": "gadgethacks (single corner)"
+      "source": "gadgethacks (single corner)",
+      "validation": {
+        "status": "unverified",
+        "game_version": null,
+        "evidence": [],
+        "result_confirmed": false,
+        "reason": "Legacy confirmed flag is not recorded in-game verification."
+      },
+      "topology": "selection_grid",
+      "mask": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          1,
+          0,
+          0
+        ]
+      ],
+      "result_shape": "Corner tile (upper left)",
+      "preconditions": [
+        "editable_target",
+        "standard_editing"
+      ],
+      "reset": "native_reset",
+      "transforms": {
+        "mirror": "corner_single_ur",
+        "rotations": []
+      }
     },
     {
       "id": "corner_single_ur",
@@ -394,7 +989,42 @@
       "cover_left": 8,
       "difficulty": 1,
       "when_to_use": "Mirror of the upper-left corner tile.",
-      "source": "gadgethacks (single corner)"
+      "source": "gadgethacks (single corner)",
+      "validation": {
+        "status": "unverified",
+        "game_version": null,
+        "evidence": [],
+        "result_confirmed": false,
+        "reason": "Legacy confirmed flag is not recorded in-game verification."
+      },
+      "topology": "selection_grid",
+      "mask": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          1
+        ]
+      ],
+      "result_shape": "Corner tile (upper right)",
+      "preconditions": [
+        "editable_target",
+        "standard_editing"
+      ],
+      "reset": "native_reset",
+      "transforms": {
+        "mirror": "corner_single_ul",
+        "rotations": []
+      }
     },
     {
       "id": "slim_wall_right",
@@ -419,7 +1049,42 @@
       "cover_left": 3,
       "difficulty": 3,
       "when_to_use": "Six tiles removed on the left: a full-height sliver. Tile set unconfirmed; the player described it.",
-      "source": "player description"
+      "source": "player description",
+      "validation": {
+        "status": "unverified",
+        "game_version": null,
+        "evidence": [],
+        "result_confirmed": false,
+        "reason": "Legacy confirmed flag is not recorded in-game verification."
+      },
+      "topology": "selection_grid",
+      "mask": [
+        [
+          1,
+          1,
+          0
+        ],
+        [
+          1,
+          1,
+          0
+        ],
+        [
+          1,
+          1,
+          0
+        ]
+      ],
+      "result_shape": "Slim wall (right column stays)",
+      "preconditions": [
+        "editable_target",
+        "standard_editing"
+      ],
+      "reset": "native_reset",
+      "transforms": {
+        "mirror": "slim_wall_left",
+        "rotations": []
+      }
     },
     {
       "id": "slim_wall_left",
@@ -444,7 +1109,42 @@
       "cover_left": 3,
       "difficulty": 3,
       "when_to_use": "Mirror of the right slim wall.",
-      "source": "player description"
+      "source": "player description",
+      "validation": {
+        "status": "unverified",
+        "game_version": null,
+        "evidence": [],
+        "result_confirmed": false,
+        "reason": "Legacy confirmed flag is not recorded in-game verification."
+      },
+      "topology": "selection_grid",
+      "mask": [
+        [
+          0,
+          1,
+          1
+        ],
+        [
+          0,
+          1,
+          1
+        ],
+        [
+          0,
+          1,
+          1
+        ]
+      ],
+      "result_shape": "Slim wall (left column stays)",
+      "preconditions": [
+        "editable_target",
+        "standard_editing"
+      ],
+      "reset": "native_reset",
+      "transforms": {
+        "mirror": "slim_wall_right",
+        "rotations": []
+      }
     },
     {
       "id": "tiny_wall_left",
@@ -470,7 +1170,42 @@
       "cover_left": 1,
       "difficulty": 3,
       "when_to_use": "Everything but one corner tile removed. Which tile stays and how many are removed still need the player's confirmation.",
-      "source": "player description"
+      "source": "player description",
+      "validation": {
+        "status": "unverified",
+        "game_version": null,
+        "evidence": [],
+        "result_confirmed": false,
+        "reason": "Legacy confirmed flag is not recorded in-game verification."
+      },
+      "topology": "selection_grid",
+      "mask": [
+        [
+          0,
+          1,
+          1
+        ],
+        [
+          1,
+          1,
+          1
+        ],
+        [
+          1,
+          1,
+          1
+        ]
+      ],
+      "result_shape": "Tiny wall (lower-left tile stays)",
+      "preconditions": [
+        "editable_target",
+        "standard_editing"
+      ],
+      "reset": "native_reset",
+      "transforms": {
+        "mirror": "tiny_wall_right",
+        "rotations": []
+      }
     },
     {
       "id": "tiny_wall_right",
@@ -496,7 +1231,376 @@
       "cover_left": 1,
       "difficulty": 3,
       "when_to_use": "Mirror of the lower-left tiny wall.",
-      "source": "player description"
+      "source": "player description",
+      "validation": {
+        "status": "unverified",
+        "game_version": null,
+        "evidence": [],
+        "result_confirmed": false,
+        "reason": "Legacy confirmed flag is not recorded in-game verification."
+      },
+      "topology": "selection_grid",
+      "mask": [
+        [
+          1,
+          1,
+          0
+        ],
+        [
+          1,
+          1,
+          1
+        ],
+        [
+          1,
+          1,
+          1
+        ]
+      ],
+      "result_shape": "Tiny wall (lower-right tile stays)",
+      "preconditions": [
+        "editable_target",
+        "standard_editing"
+      ],
+      "reset": "native_reset",
+      "transforms": {
+        "mirror": "tiny_wall_left",
+        "rotations": []
+      }
+    },
+    {
+      "id": "arch",
+      "name": "Arch (bottom two rows)",
+      "tiles": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "kind": "wall",
+      "mirror_of": null,
+      "suggest": false,
+      "confirmed": false,
+      "purpose": [
+        "enter",
+        "pass_through"
+      ],
+      "exposure": "very_high",
+      "difficulty": 2,
+      "when_to_use": "Open the bottom two rows: a full-width archway to walk or box through.",
+      "source": "common competitive edit list (unconfirmed tile set; verify through edit review)",
+      "validation": {
+        "status": "unverified",
+        "game_version": null,
+        "evidence": [],
+        "result_confirmed": false,
+        "reason": "Candidate from edit lists; confirm through recorded and reviewed attempts."
+      },
+      "topology": "selection_grid",
+      "mask": [
+        [
+          1,
+          1,
+          1
+        ],
+        [
+          1,
+          1,
+          1
+        ],
+        [
+          0,
+          0,
+          0
+        ]
+      ],
+      "result_shape": "Arch (bottom two rows)",
+      "preconditions": [
+        "editable_target",
+        "standard_editing"
+      ],
+      "reset": "native_reset",
+      "transforms": {
+        "mirror": null,
+        "rotations": []
+      }
+    },
+    {
+      "id": "window_tall",
+      "name": "Tall window (centre column, top two)",
+      "tiles": [
+        4,
+        7
+      ],
+      "kind": "wall",
+      "mirror_of": null,
+      "suggest": false,
+      "confirmed": false,
+      "purpose": [
+        "peek",
+        "shoot"
+      ],
+      "exposure": "medium",
+      "difficulty": 2,
+      "when_to_use": "A taller centre window: shoot from standing height with the low row still covering you.",
+      "source": "common competitive edit list (unconfirmed tile set; verify through edit review)",
+      "validation": {
+        "status": "unverified",
+        "game_version": null,
+        "evidence": [],
+        "result_confirmed": false,
+        "reason": "Candidate from edit lists; confirm through recorded and reviewed attempts."
+      },
+      "topology": "selection_grid",
+      "mask": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          1,
+          0
+        ],
+        [
+          0,
+          1,
+          0
+        ]
+      ],
+      "result_shape": "Tall window (centre column, top two)",
+      "preconditions": [
+        "editable_target",
+        "standard_editing"
+      ],
+      "reset": "native_reset",
+      "transforms": {
+        "mirror": null,
+        "rotations": []
+      }
+    },
+    {
+      "id": "window_wide",
+      "name": "Wide window (middle row)",
+      "tiles": [
+        3,
+        4,
+        5
+      ],
+      "kind": "wall",
+      "mirror_of": null,
+      "suggest": false,
+      "confirmed": false,
+      "purpose": [
+        "peek",
+        "shoot"
+      ],
+      "exposure": "high",
+      "difficulty": 2,
+      "when_to_use": "The whole middle row: a wide firing slit across the wall.",
+      "source": "common competitive edit list (unconfirmed tile set; verify through edit review)",
+      "validation": {
+        "status": "unverified",
+        "game_version": null,
+        "evidence": [],
+        "result_confirmed": false,
+        "reason": "Candidate from edit lists; confirm through recorded and reviewed attempts."
+      },
+      "topology": "selection_grid",
+      "mask": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          1,
+          1,
+          1
+        ],
+        [
+          0,
+          0,
+          0
+        ]
+      ],
+      "result_shape": "Wide window (middle row)",
+      "preconditions": [
+        "editable_target",
+        "standard_editing"
+      ],
+      "reset": "native_reset",
+      "transforms": {
+        "mirror": null,
+        "rotations": []
+      }
+    },
+    {
+      "id": "side_door_left",
+      "name": "Side door (left)",
+      "tiles": [
+        0,
+        3
+      ],
+      "kind": "wall",
+      "mirror_of": "side_door_right",
+      "suggest": false,
+      "confirmed": false,
+      "purpose": [
+        "enter",
+        "escape"
+      ],
+      "exposure": "medium",
+      "difficulty": 2,
+      "when_to_use": "Left column, bottom two: a door at the edge of the wall, hugging the corner.",
+      "source": "common competitive edit list (unconfirmed tile set; verify through edit review)",
+      "validation": {
+        "status": "unverified",
+        "game_version": null,
+        "evidence": [],
+        "result_confirmed": false,
+        "reason": "Candidate from edit lists; confirm through recorded and reviewed attempts."
+      },
+      "topology": "selection_grid",
+      "mask": [
+        [
+          1,
+          0,
+          0
+        ],
+        [
+          1,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0
+        ]
+      ],
+      "result_shape": "Side door (left)",
+      "preconditions": [
+        "editable_target",
+        "standard_editing"
+      ],
+      "reset": "native_reset",
+      "transforms": {
+        "mirror": "side_door_right",
+        "rotations": []
+      }
+    },
+    {
+      "id": "side_door_right",
+      "name": "Side door (right)",
+      "tiles": [
+        2,
+        5
+      ],
+      "kind": "wall",
+      "mirror_of": "side_door_left",
+      "suggest": false,
+      "confirmed": false,
+      "purpose": [
+        "enter",
+        "escape"
+      ],
+      "exposure": "medium",
+      "difficulty": 2,
+      "when_to_use": "Right column, bottom two: a door at the edge of the wall, hugging the corner.",
+      "source": "common competitive edit list (unconfirmed tile set; verify through edit review)",
+      "validation": {
+        "status": "unverified",
+        "game_version": null,
+        "evidence": [],
+        "result_confirmed": false,
+        "reason": "Candidate from edit lists; confirm through recorded and reviewed attempts."
+      },
+      "topology": "selection_grid",
+      "mask": [
+        [
+          0,
+          0,
+          1
+        ],
+        [
+          0,
+          0,
+          1
+        ],
+        [
+          0,
+          0,
+          0
+        ]
+      ],
+      "result_shape": "Side door (right)",
+      "preconditions": [
+        "editable_target",
+        "standard_editing"
+      ],
+      "reset": "native_reset",
+      "transforms": {
+        "mirror": "side_door_left",
+        "rotations": []
+      }
+    },
+    {
+      "id": "crouch_hole",
+      "name": "Crouch hole (bottom middle)",
+      "tiles": [
+        1
+      ],
+      "kind": "wall",
+      "mirror_of": null,
+      "suggest": false,
+      "confirmed": false,
+      "purpose": [
+        "peek",
+        "shoot"
+      ],
+      "exposure": "low",
+      "difficulty": 2,
+      "when_to_use": "One bottom-middle tile: a low hole to shoot through while crouched.",
+      "source": "common competitive edit list (unconfirmed tile set; verify through edit review)",
+      "validation": {
+        "status": "unverified",
+        "game_version": null,
+        "evidence": [],
+        "result_confirmed": false,
+        "reason": "Candidate from edit lists; confirm through recorded and reviewed attempts."
+      },
+      "topology": "selection_grid",
+      "mask": [
+        [
+          0,
+          1,
+          0
+        ],
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0
+        ]
+      ],
+      "result_shape": "Crouch hole (bottom middle)",
+      "preconditions": [
+        "editable_target",
+        "standard_editing"
+      ],
+      "reset": "native_reset",
+      "transforms": {
+        "mirror": null,
+        "rotations": []
+      }
     }
   ],
   "other_edits": [],
@@ -556,7 +1660,35 @@
       "cover_left": 3,
       "difficulty": 1,
       "when_to_use": "Remove one floor tile: a gap to shoot down through, or an L-shaped walkway with cover.",
-      "source": "gadgethacks guide (opening in a floor)"
+      "source": "gadgethacks guide (opening in a floor)",
+      "validation": {
+        "status": "unverified",
+        "game_version": null,
+        "evidence": [],
+        "result_confirmed": false,
+        "reason": "Legacy confirmed flag is not recorded in-game verification."
+      },
+      "topology": "selection_grid",
+      "mask": [
+        [
+          1,
+          0
+        ],
+        [
+          0,
+          0
+        ]
+      ],
+      "result_shape": "Floor hole (near left)",
+      "preconditions": [
+        "editable_target",
+        "standard_editing"
+      ],
+      "reset": "native_reset",
+      "transforms": {
+        "mirror": "floor_hole_near_right",
+        "rotations": []
+      }
     },
     {
       "id": "floor_hole_near_right",
@@ -576,7 +1708,35 @@
       "cover_left": 3,
       "difficulty": 1,
       "when_to_use": "Mirror of the near-left floor hole.",
-      "source": "gadgethacks guide"
+      "source": "gadgethacks guide",
+      "validation": {
+        "status": "unverified",
+        "game_version": null,
+        "evidence": [],
+        "result_confirmed": false,
+        "reason": "Legacy confirmed flag is not recorded in-game verification."
+      },
+      "topology": "selection_grid",
+      "mask": [
+        [
+          0,
+          1
+        ],
+        [
+          0,
+          0
+        ]
+      ],
+      "result_shape": "Floor hole (near right)",
+      "preconditions": [
+        "editable_target",
+        "standard_editing"
+      ],
+      "reset": "native_reset",
+      "transforms": {
+        "mirror": "floor_hole_near_left",
+        "rotations": []
+      }
     },
     {
       "id": "floor_hole_far_left",
@@ -596,7 +1756,35 @@
       "cover_left": 3,
       "difficulty": 1,
       "when_to_use": "A floor hole at the far left, away from you.",
-      "source": "gadgethacks guide"
+      "source": "gadgethacks guide",
+      "validation": {
+        "status": "unverified",
+        "game_version": null,
+        "evidence": [],
+        "result_confirmed": false,
+        "reason": "Legacy confirmed flag is not recorded in-game verification."
+      },
+      "topology": "selection_grid",
+      "mask": [
+        [
+          0,
+          0
+        ],
+        [
+          1,
+          0
+        ]
+      ],
+      "result_shape": "Floor hole (far left)",
+      "preconditions": [
+        "editable_target",
+        "standard_editing"
+      ],
+      "reset": "native_reset",
+      "transforms": {
+        "mirror": "floor_hole_far_right",
+        "rotations": []
+      }
     },
     {
       "id": "floor_hole_far_right",
@@ -616,7 +1804,35 @@
       "cover_left": 3,
       "difficulty": 1,
       "when_to_use": "Mirror of the far-left floor hole.",
-      "source": "gadgethacks guide"
+      "source": "gadgethacks guide",
+      "validation": {
+        "status": "unverified",
+        "game_version": null,
+        "evidence": [],
+        "result_confirmed": false,
+        "reason": "Legacy confirmed flag is not recorded in-game verification."
+      },
+      "topology": "selection_grid",
+      "mask": [
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          1
+        ]
+      ],
+      "result_shape": "Floor hole (far right)",
+      "preconditions": [
+        "editable_target",
+        "standard_editing"
+      ],
+      "reset": "native_reset",
+      "transforms": {
+        "mirror": "floor_hole_far_left",
+        "rotations": []
+      }
     },
     {
       "id": "floor_half_near",
@@ -637,7 +1853,35 @@
       "cover_left": 2,
       "difficulty": 1,
       "when_to_use": "Open the whole near row.",
-      "source": "inferred; confirm in Creative"
+      "source": "inferred; confirm in Creative",
+      "validation": {
+        "status": "unverified",
+        "game_version": null,
+        "evidence": [],
+        "result_confirmed": false,
+        "reason": "Legacy confirmed flag is not recorded in-game verification."
+      },
+      "topology": "selection_grid",
+      "mask": [
+        [
+          1,
+          1
+        ],
+        [
+          0,
+          0
+        ]
+      ],
+      "result_shape": "Half floor (near side open)",
+      "preconditions": [
+        "editable_target",
+        "standard_editing"
+      ],
+      "reset": "native_reset",
+      "transforms": {
+        "mirror": "floor_half_near",
+        "rotations": []
+      }
     },
     {
       "id": "floor_half_far",
@@ -658,7 +1902,35 @@
       "cover_left": 2,
       "difficulty": 1,
       "when_to_use": "Open the whole far row.",
-      "source": "inferred; confirm in Creative"
+      "source": "inferred; confirm in Creative",
+      "validation": {
+        "status": "unverified",
+        "game_version": null,
+        "evidence": [],
+        "result_confirmed": false,
+        "reason": "Legacy confirmed flag is not recorded in-game verification."
+      },
+      "topology": "selection_grid",
+      "mask": [
+        [
+          0,
+          0
+        ],
+        [
+          1,
+          1
+        ]
+      ],
+      "result_shape": "Half floor (far side open)",
+      "preconditions": [
+        "editable_target",
+        "standard_editing"
+      ],
+      "reset": "native_reset",
+      "transforms": {
+        "mirror": "floor_half_far",
+        "rotations": []
+      }
     },
     {
       "id": "floor_half_left",
@@ -679,7 +1951,35 @@
       "cover_left": 2,
       "difficulty": 1,
       "when_to_use": "Open the left column.",
-      "source": "inferred; confirm in Creative"
+      "source": "inferred; confirm in Creative",
+      "validation": {
+        "status": "unverified",
+        "game_version": null,
+        "evidence": [],
+        "result_confirmed": false,
+        "reason": "Legacy confirmed flag is not recorded in-game verification."
+      },
+      "topology": "selection_grid",
+      "mask": [
+        [
+          1,
+          0
+        ],
+        [
+          1,
+          0
+        ]
+      ],
+      "result_shape": "Half floor (left open)",
+      "preconditions": [
+        "editable_target",
+        "standard_editing"
+      ],
+      "reset": "native_reset",
+      "transforms": {
+        "mirror": "floor_half_right",
+        "rotations": []
+      }
     },
     {
       "id": "floor_half_right",
@@ -700,7 +2000,325 @@
       "cover_left": 2,
       "difficulty": 1,
       "when_to_use": "Open the right column.",
-      "source": "inferred; confirm in Creative"
+      "source": "inferred; confirm in Creative",
+      "validation": {
+        "status": "unverified",
+        "game_version": null,
+        "evidence": [],
+        "result_confirmed": false,
+        "reason": "Legacy confirmed flag is not recorded in-game verification."
+      },
+      "topology": "selection_grid",
+      "mask": [
+        [
+          0,
+          1
+        ],
+        [
+          0,
+          1
+        ]
+      ],
+      "result_shape": "Half floor (right open)",
+      "preconditions": [
+        "editable_target",
+        "standard_editing"
+      ],
+      "reset": "native_reset",
+      "transforms": {
+        "mirror": "floor_half_left",
+        "rotations": []
+      }
+    },
+    {
+      "id": "floor_three_keep_far_right",
+      "name": "Floor, three tiles (far right kept)",
+      "tiles": [
+        0,
+        1,
+        2
+      ],
+      "kind": "grid",
+      "mirror_of": "floor_three_keep_far_left",
+      "suggest": false,
+      "confirmed": false,
+      "purpose": [
+        "shoot_down",
+        "drop"
+      ],
+      "exposure": "high",
+      "difficulty": 2,
+      "when_to_use": "Remove three tiles and keep one corner to stand on.",
+      "source": "common competitive edit list (unconfirmed tile set; verify through edit review)",
+      "validation": {
+        "status": "unverified",
+        "game_version": null,
+        "evidence": [],
+        "result_confirmed": false,
+        "reason": "Candidate from edit lists; confirm through recorded and reviewed attempts."
+      },
+      "topology": "selection_grid",
+      "mask": [
+        [
+          1,
+          1
+        ],
+        [
+          1,
+          0
+        ]
+      ],
+      "result_shape": "Floor, three tiles (far right kept)",
+      "preconditions": [
+        "editable_target",
+        "standard_editing"
+      ],
+      "reset": "native_reset",
+      "transforms": {
+        "mirror": "floor_three_keep_far_left",
+        "rotations": []
+      }
+    },
+    {
+      "id": "floor_three_keep_far_left",
+      "name": "Floor, three tiles (far left kept)",
+      "tiles": [
+        0,
+        1,
+        3
+      ],
+      "kind": "grid",
+      "mirror_of": "floor_three_keep_far_right",
+      "suggest": false,
+      "confirmed": false,
+      "purpose": [
+        "shoot_down",
+        "drop"
+      ],
+      "exposure": "high",
+      "difficulty": 2,
+      "when_to_use": "Remove three tiles and keep one corner to stand on.",
+      "source": "common competitive edit list (unconfirmed tile set; verify through edit review)",
+      "validation": {
+        "status": "unverified",
+        "game_version": null,
+        "evidence": [],
+        "result_confirmed": false,
+        "reason": "Candidate from edit lists; confirm through recorded and reviewed attempts."
+      },
+      "topology": "selection_grid",
+      "mask": [
+        [
+          1,
+          1
+        ],
+        [
+          0,
+          1
+        ]
+      ],
+      "result_shape": "Floor, three tiles (far left kept)",
+      "preconditions": [
+        "editable_target",
+        "standard_editing"
+      ],
+      "reset": "native_reset",
+      "transforms": {
+        "mirror": "floor_three_keep_far_right",
+        "rotations": []
+      }
+    },
+    {
+      "id": "floor_three_keep_near_right",
+      "name": "Floor, three tiles (near right kept)",
+      "tiles": [
+        0,
+        2,
+        3
+      ],
+      "kind": "grid",
+      "mirror_of": "floor_three_keep_near_left",
+      "suggest": false,
+      "confirmed": false,
+      "purpose": [
+        "shoot_down",
+        "drop"
+      ],
+      "exposure": "high",
+      "difficulty": 2,
+      "when_to_use": "Remove three tiles and keep one corner to stand on.",
+      "source": "common competitive edit list (unconfirmed tile set; verify through edit review)",
+      "validation": {
+        "status": "unverified",
+        "game_version": null,
+        "evidence": [],
+        "result_confirmed": false,
+        "reason": "Candidate from edit lists; confirm through recorded and reviewed attempts."
+      },
+      "topology": "selection_grid",
+      "mask": [
+        [
+          1,
+          0
+        ],
+        [
+          1,
+          1
+        ]
+      ],
+      "result_shape": "Floor, three tiles (near right kept)",
+      "preconditions": [
+        "editable_target",
+        "standard_editing"
+      ],
+      "reset": "native_reset",
+      "transforms": {
+        "mirror": "floor_three_keep_near_left",
+        "rotations": []
+      }
+    },
+    {
+      "id": "floor_three_keep_near_left",
+      "name": "Floor, three tiles (near left kept)",
+      "tiles": [
+        1,
+        2,
+        3
+      ],
+      "kind": "grid",
+      "mirror_of": "floor_three_keep_near_right",
+      "suggest": false,
+      "confirmed": false,
+      "purpose": [
+        "shoot_down",
+        "drop"
+      ],
+      "exposure": "high",
+      "difficulty": 2,
+      "when_to_use": "Remove three tiles and keep one corner to stand on.",
+      "source": "common competitive edit list (unconfirmed tile set; verify through edit review)",
+      "validation": {
+        "status": "unverified",
+        "game_version": null,
+        "evidence": [],
+        "result_confirmed": false,
+        "reason": "Candidate from edit lists; confirm through recorded and reviewed attempts."
+      },
+      "topology": "selection_grid",
+      "mask": [
+        [
+          0,
+          1
+        ],
+        [
+          1,
+          1
+        ]
+      ],
+      "result_shape": "Floor, three tiles (near left kept)",
+      "preconditions": [
+        "editable_target",
+        "standard_editing"
+      ],
+      "reset": "native_reset",
+      "transforms": {
+        "mirror": "floor_three_keep_near_right",
+        "rotations": []
+      }
+    },
+    {
+      "id": "floor_diagonal_a",
+      "name": "Floor, diagonal (near left + far right)",
+      "tiles": [
+        0,
+        3
+      ],
+      "kind": "grid",
+      "mirror_of": "floor_diagonal_b",
+      "suggest": false,
+      "confirmed": false,
+      "purpose": [
+        "shoot_down"
+      ],
+      "exposure": "medium",
+      "difficulty": 2,
+      "when_to_use": "Two opposite corners: a diagonal opening.",
+      "source": "common competitive edit list (unconfirmed tile set; verify through edit review)",
+      "validation": {
+        "status": "unverified",
+        "game_version": null,
+        "evidence": [],
+        "result_confirmed": false,
+        "reason": "Candidate from edit lists; confirm through recorded and reviewed attempts."
+      },
+      "topology": "selection_grid",
+      "mask": [
+        [
+          1,
+          0
+        ],
+        [
+          0,
+          1
+        ]
+      ],
+      "result_shape": "Floor, diagonal (near left + far right)",
+      "preconditions": [
+        "editable_target",
+        "standard_editing"
+      ],
+      "reset": "native_reset",
+      "transforms": {
+        "mirror": "floor_diagonal_b",
+        "rotations": []
+      }
+    },
+    {
+      "id": "floor_diagonal_b",
+      "name": "Floor, diagonal (near right + far left)",
+      "tiles": [
+        1,
+        2
+      ],
+      "kind": "grid",
+      "mirror_of": "floor_diagonal_a",
+      "suggest": false,
+      "confirmed": false,
+      "purpose": [
+        "shoot_down"
+      ],
+      "exposure": "medium",
+      "difficulty": 2,
+      "when_to_use": "Two opposite corners: a diagonal opening.",
+      "source": "common competitive edit list (unconfirmed tile set; verify through edit review)",
+      "validation": {
+        "status": "unverified",
+        "game_version": null,
+        "evidence": [],
+        "result_confirmed": false,
+        "reason": "Candidate from edit lists; confirm through recorded and reviewed attempts."
+      },
+      "topology": "selection_grid",
+      "mask": [
+        [
+          0,
+          1
+        ],
+        [
+          1,
+          0
+        ]
+      ],
+      "result_shape": "Floor, diagonal (near right + far left)",
+      "preconditions": [
+        "editable_target",
+        "standard_editing"
+      ],
+      "reset": "native_reset",
+      "transforms": {
+        "mirror": "floor_diagonal_a",
+        "rotations": []
+      }
     }
   ],
   "stairs_edits": [
@@ -723,7 +2341,65 @@
       "cover_left": 2,
       "difficulty": 2,
       "when_to_use": "House stairs: leave one side open so you or teammates can pass through. Tile set unconfirmed.",
-      "source": "gamewith.net (house stairs)"
+      "source": "gamewith.net (house stairs)",
+      "validation": {
+        "status": "unverified",
+        "game_version": null,
+        "evidence": [],
+        "result_confirmed": false,
+        "reason": "Legacy confirmed flag is not recorded in-game verification."
+      },
+      "topology": "gesture_graph",
+      "mask": null,
+      "result_shape": "Stairs (left open)",
+      "preconditions": [
+        "editable_target",
+        "standard_editing"
+      ],
+      "reset": "native_reset",
+      "transforms": {
+        "mirror": "stairs_open_right",
+        "rotations": []
+      },
+      "gesture": {
+        "nodes": {
+          "near_left": [
+            0.0,
+            0.0
+          ],
+          "near_middle": [
+            0.5,
+            0.0
+          ],
+          "near_right": [
+            1.0,
+            0.0
+          ],
+          "left_middle": [
+            0.0,
+            0.5
+          ],
+          "right_middle": [
+            1.0,
+            0.5
+          ],
+          "far_left": [
+            0.0,
+            1.0
+          ],
+          "far_middle": [
+            0.5,
+            1.0
+          ],
+          "far_right": [
+            1.0,
+            1.0
+          ]
+        },
+        "edges": [],
+        "routes": [],
+        "status": "requires_recorded_gesture"
+      }
     },
     {
       "id": "stairs_open_right",
@@ -744,7 +2420,65 @@
       "cover_left": 2,
       "difficulty": 2,
       "when_to_use": "Mirror of stairs open left.",
-      "source": "gamewith.net"
+      "source": "gamewith.net",
+      "validation": {
+        "status": "unverified",
+        "game_version": null,
+        "evidence": [],
+        "result_confirmed": false,
+        "reason": "Legacy confirmed flag is not recorded in-game verification."
+      },
+      "topology": "gesture_graph",
+      "mask": null,
+      "result_shape": "Stairs (right open)",
+      "preconditions": [
+        "editable_target",
+        "standard_editing"
+      ],
+      "reset": "native_reset",
+      "transforms": {
+        "mirror": "stairs_open_left",
+        "rotations": []
+      },
+      "gesture": {
+        "nodes": {
+          "near_left": [
+            0.0,
+            0.0
+          ],
+          "near_middle": [
+            0.5,
+            0.0
+          ],
+          "near_right": [
+            1.0,
+            0.0
+          ],
+          "left_middle": [
+            0.0,
+            0.5
+          ],
+          "right_middle": [
+            1.0,
+            0.5
+          ],
+          "far_left": [
+            0.0,
+            1.0
+          ],
+          "far_middle": [
+            0.5,
+            1.0
+          ],
+          "far_right": [
+            1.0,
+            1.0
+          ]
+        },
+        "edges": [],
+        "routes": [],
+        "status": "requires_recorded_gesture"
+      }
     },
     {
       "id": "stairs_l_left",
@@ -766,7 +2500,65 @@
       "cover_left": 1,
       "difficulty": 3,
       "when_to_use": "Change the direction the stairs connect: drag from one corner tile to another. Tile set unconfirmed.",
-      "source": "gamewith.net (L-shaped stairs)"
+      "source": "gamewith.net (L-shaped stairs)",
+      "validation": {
+        "status": "unverified",
+        "game_version": null,
+        "evidence": [],
+        "result_confirmed": false,
+        "reason": "Legacy confirmed flag is not recorded in-game verification."
+      },
+      "topology": "gesture_graph",
+      "mask": null,
+      "result_shape": "L-shaped stairs (left)",
+      "preconditions": [
+        "editable_target",
+        "standard_editing"
+      ],
+      "reset": "native_reset",
+      "transforms": {
+        "mirror": "stairs_l_right",
+        "rotations": []
+      },
+      "gesture": {
+        "nodes": {
+          "near_left": [
+            0.0,
+            0.0
+          ],
+          "near_middle": [
+            0.5,
+            0.0
+          ],
+          "near_right": [
+            1.0,
+            0.0
+          ],
+          "left_middle": [
+            0.0,
+            0.5
+          ],
+          "right_middle": [
+            1.0,
+            0.5
+          ],
+          "far_left": [
+            0.0,
+            1.0
+          ],
+          "far_middle": [
+            0.5,
+            1.0
+          ],
+          "far_right": [
+            1.0,
+            1.0
+          ]
+        },
+        "edges": [],
+        "routes": [],
+        "status": "requires_recorded_gesture"
+      }
     },
     {
       "id": "stairs_l_right",
@@ -788,7 +2580,65 @@
       "cover_left": 1,
       "difficulty": 3,
       "when_to_use": "Mirror of the left L-shaped stairs.",
-      "source": "gamewith.net"
+      "source": "gamewith.net",
+      "validation": {
+        "status": "unverified",
+        "game_version": null,
+        "evidence": [],
+        "result_confirmed": false,
+        "reason": "Legacy confirmed flag is not recorded in-game verification."
+      },
+      "topology": "gesture_graph",
+      "mask": null,
+      "result_shape": "L-shaped stairs (right)",
+      "preconditions": [
+        "editable_target",
+        "standard_editing"
+      ],
+      "reset": "native_reset",
+      "transforms": {
+        "mirror": "stairs_l_left",
+        "rotations": []
+      },
+      "gesture": {
+        "nodes": {
+          "near_left": [
+            0.0,
+            0.0
+          ],
+          "near_middle": [
+            0.5,
+            0.0
+          ],
+          "near_right": [
+            1.0,
+            0.0
+          ],
+          "left_middle": [
+            0.0,
+            0.5
+          ],
+          "right_middle": [
+            1.0,
+            0.5
+          ],
+          "far_left": [
+            0.0,
+            1.0
+          ],
+          "far_middle": [
+            0.5,
+            1.0
+          ],
+          "far_right": [
+            1.0,
+            1.0
+          ]
+        },
+        "edges": [],
+        "routes": [],
+        "status": "requires_recorded_gesture"
+      }
     }
   ],
   "roof_edits": [
@@ -810,7 +2660,35 @@
       "cover_left": 3,
       "difficulty": 1,
       "when_to_use": "A corner roof: one square selected, used to extend roofing.",
-      "source": "gamewith.net (roof: one square)"
+      "source": "gamewith.net (roof: one square)",
+      "validation": {
+        "status": "unverified",
+        "game_version": null,
+        "evidence": [],
+        "result_confirmed": false,
+        "reason": "Legacy confirmed flag is not recorded in-game verification."
+      },
+      "topology": "selection_grid",
+      "mask": [
+        [
+          1,
+          0
+        ],
+        [
+          0,
+          0
+        ]
+      ],
+      "result_shape": "Roof, one square (near left)",
+      "preconditions": [
+        "editable_target",
+        "standard_editing"
+      ],
+      "reset": "native_reset",
+      "transforms": {
+        "mirror": "roof_one_near_right",
+        "rotations": []
+      }
     },
     {
       "id": "roof_one_near_right",
@@ -830,7 +2708,35 @@
       "cover_left": 3,
       "difficulty": 1,
       "when_to_use": "Mirror of the near-left single-square roof.",
-      "source": "gamewith.net"
+      "source": "gamewith.net",
+      "validation": {
+        "status": "unverified",
+        "game_version": null,
+        "evidence": [],
+        "result_confirmed": false,
+        "reason": "Legacy confirmed flag is not recorded in-game verification."
+      },
+      "topology": "selection_grid",
+      "mask": [
+        [
+          0,
+          1
+        ],
+        [
+          0,
+          0
+        ]
+      ],
+      "result_shape": "Roof, one square (near right)",
+      "preconditions": [
+        "editable_target",
+        "standard_editing"
+      ],
+      "reset": "native_reset",
+      "transforms": {
+        "mirror": "roof_one_near_left",
+        "rotations": []
+      }
     },
     {
       "id": "roof_one_far_left",
@@ -850,7 +2756,35 @@
       "cover_left": 3,
       "difficulty": 1,
       "when_to_use": "A single-square roof at the far left.",
-      "source": "gamewith.net"
+      "source": "gamewith.net",
+      "validation": {
+        "status": "unverified",
+        "game_version": null,
+        "evidence": [],
+        "result_confirmed": false,
+        "reason": "Legacy confirmed flag is not recorded in-game verification."
+      },
+      "topology": "selection_grid",
+      "mask": [
+        [
+          0,
+          0
+        ],
+        [
+          1,
+          0
+        ]
+      ],
+      "result_shape": "Roof, one square (far left)",
+      "preconditions": [
+        "editable_target",
+        "standard_editing"
+      ],
+      "reset": "native_reset",
+      "transforms": {
+        "mirror": "roof_one_far_right",
+        "rotations": []
+      }
     },
     {
       "id": "roof_one_far_right",
@@ -870,7 +2804,35 @@
       "cover_left": 3,
       "difficulty": 1,
       "when_to_use": "Mirror of the far-left single-square roof.",
-      "source": "gamewith.net"
+      "source": "gamewith.net",
+      "validation": {
+        "status": "unverified",
+        "game_version": null,
+        "evidence": [],
+        "result_confirmed": false,
+        "reason": "Legacy confirmed flag is not recorded in-game verification."
+      },
+      "topology": "selection_grid",
+      "mask": [
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          1
+        ]
+      ],
+      "result_shape": "Roof, one square (far right)",
+      "preconditions": [
+        "editable_target",
+        "standard_editing"
+      ],
+      "reset": "native_reset",
+      "transforms": {
+        "mirror": "roof_one_far_left",
+        "rotations": []
+      }
     },
     {
       "id": "roof_two_near",
@@ -891,7 +2853,35 @@
       "cover_left": 2,
       "difficulty": 1,
       "when_to_use": "Two adjacent squares along the near edge.",
-      "source": "gamewith.net (two adjacent squares)"
+      "source": "gamewith.net (two adjacent squares)",
+      "validation": {
+        "status": "unverified",
+        "game_version": null,
+        "evidence": [],
+        "result_confirmed": false,
+        "reason": "Legacy confirmed flag is not recorded in-game verification."
+      },
+      "topology": "selection_grid",
+      "mask": [
+        [
+          1,
+          1
+        ],
+        [
+          0,
+          0
+        ]
+      ],
+      "result_shape": "Roof, two adjacent (near)",
+      "preconditions": [
+        "editable_target",
+        "standard_editing"
+      ],
+      "reset": "native_reset",
+      "transforms": {
+        "mirror": "roof_two_near",
+        "rotations": []
+      }
     },
     {
       "id": "roof_two_far",
@@ -912,7 +2902,35 @@
       "cover_left": 2,
       "difficulty": 1,
       "when_to_use": "Two adjacent squares along the far edge.",
-      "source": "gamewith.net"
+      "source": "gamewith.net",
+      "validation": {
+        "status": "unverified",
+        "game_version": null,
+        "evidence": [],
+        "result_confirmed": false,
+        "reason": "Legacy confirmed flag is not recorded in-game verification."
+      },
+      "topology": "selection_grid",
+      "mask": [
+        [
+          0,
+          0
+        ],
+        [
+          1,
+          1
+        ]
+      ],
+      "result_shape": "Roof, two adjacent (far)",
+      "preconditions": [
+        "editable_target",
+        "standard_editing"
+      ],
+      "reset": "native_reset",
+      "transforms": {
+        "mirror": "roof_two_far",
+        "rotations": []
+      }
     },
     {
       "id": "roof_two_left",
@@ -933,7 +2951,35 @@
       "cover_left": 2,
       "difficulty": 1,
       "when_to_use": "Two adjacent squares down the left side.",
-      "source": "gamewith.net"
+      "source": "gamewith.net",
+      "validation": {
+        "status": "unverified",
+        "game_version": null,
+        "evidence": [],
+        "result_confirmed": false,
+        "reason": "Legacy confirmed flag is not recorded in-game verification."
+      },
+      "topology": "selection_grid",
+      "mask": [
+        [
+          1,
+          0
+        ],
+        [
+          1,
+          0
+        ]
+      ],
+      "result_shape": "Roof, two adjacent (left)",
+      "preconditions": [
+        "editable_target",
+        "standard_editing"
+      ],
+      "reset": "native_reset",
+      "transforms": {
+        "mirror": "roof_two_right",
+        "rotations": []
+      }
     },
     {
       "id": "roof_two_right",
@@ -954,7 +3000,35 @@
       "cover_left": 2,
       "difficulty": 1,
       "when_to_use": "Mirror of the left two-square roof.",
-      "source": "gamewith.net"
+      "source": "gamewith.net",
+      "validation": {
+        "status": "unverified",
+        "game_version": null,
+        "evidence": [],
+        "result_confirmed": false,
+        "reason": "Legacy confirmed flag is not recorded in-game verification."
+      },
+      "topology": "selection_grid",
+      "mask": [
+        [
+          0,
+          1
+        ],
+        [
+          0,
+          1
+        ]
+      ],
+      "result_shape": "Roof, two adjacent (right)",
+      "preconditions": [
+        "editable_target",
+        "standard_editing"
+      ],
+      "reset": "native_reset",
+      "transforms": {
+        "mirror": "roof_two_left",
+        "rotations": []
+      }
     },
     {
       "id": "roof_diagonal_a",
@@ -975,7 +3049,35 @@
       "cover_left": 2,
       "difficulty": 2,
       "when_to_use": "A steep roof you can shelter under and leave quickly.",
-      "source": "hp.com guide (two-diagonal-square roof)"
+      "source": "hp.com guide (two-diagonal-square roof)",
+      "validation": {
+        "status": "unverified",
+        "game_version": null,
+        "evidence": [],
+        "result_confirmed": false,
+        "reason": "Legacy confirmed flag is not recorded in-game verification."
+      },
+      "topology": "selection_grid",
+      "mask": [
+        [
+          1,
+          0
+        ],
+        [
+          0,
+          1
+        ]
+      ],
+      "result_shape": "Roof, two diagonal squares (near-left + far-right)",
+      "preconditions": [
+        "editable_target",
+        "standard_editing"
+      ],
+      "reset": "native_reset",
+      "transforms": {
+        "mirror": "roof_diagonal_b",
+        "rotations": []
+      }
     },
     {
       "id": "roof_diagonal_b",
@@ -996,7 +3098,233 @@
       "cover_left": 2,
       "difficulty": 2,
       "when_to_use": "Mirror of the other diagonal roof.",
-      "source": "hp.com guide"
+      "source": "hp.com guide",
+      "validation": {
+        "status": "unverified",
+        "game_version": null,
+        "evidence": [],
+        "result_confirmed": false,
+        "reason": "Legacy confirmed flag is not recorded in-game verification."
+      },
+      "topology": "selection_grid",
+      "mask": [
+        [
+          0,
+          1
+        ],
+        [
+          1,
+          0
+        ]
+      ],
+      "result_shape": "Roof, two diagonal squares (near-right + far-left)",
+      "preconditions": [
+        "editable_target",
+        "standard_editing"
+      ],
+      "reset": "native_reset",
+      "transforms": {
+        "mirror": "roof_diagonal_a",
+        "rotations": []
+      }
+    },
+    {
+      "id": "roof_three_keep_far_right",
+      "name": "Cone, three squares (far right kept)",
+      "tiles": [
+        0,
+        1,
+        2
+      ],
+      "kind": "grid",
+      "mirror_of": "roof_three_keep_far_left",
+      "suggest": false,
+      "confirmed": false,
+      "purpose": [
+        "protect",
+        "peek"
+      ],
+      "exposure": "medium",
+      "difficulty": 2,
+      "when_to_use": "Three cone squares: a steep peak toward the kept corner.",
+      "source": "common competitive edit list (unconfirmed tile set; verify through edit review)",
+      "validation": {
+        "status": "unverified",
+        "game_version": null,
+        "evidence": [],
+        "result_confirmed": false,
+        "reason": "Candidate from edit lists; confirm through recorded and reviewed attempts."
+      },
+      "topology": "selection_grid",
+      "mask": [
+        [
+          1,
+          1
+        ],
+        [
+          1,
+          0
+        ]
+      ],
+      "result_shape": "Cone, three squares (far right kept)",
+      "preconditions": [
+        "editable_target",
+        "standard_editing"
+      ],
+      "reset": "native_reset",
+      "transforms": {
+        "mirror": "roof_three_keep_far_left",
+        "rotations": []
+      }
+    },
+    {
+      "id": "roof_three_keep_far_left",
+      "name": "Cone, three squares (far left kept)",
+      "tiles": [
+        0,
+        1,
+        3
+      ],
+      "kind": "grid",
+      "mirror_of": "roof_three_keep_far_right",
+      "suggest": false,
+      "confirmed": false,
+      "purpose": [
+        "protect",
+        "peek"
+      ],
+      "exposure": "medium",
+      "difficulty": 2,
+      "when_to_use": "Three cone squares: a steep peak toward the kept corner.",
+      "source": "common competitive edit list (unconfirmed tile set; verify through edit review)",
+      "validation": {
+        "status": "unverified",
+        "game_version": null,
+        "evidence": [],
+        "result_confirmed": false,
+        "reason": "Candidate from edit lists; confirm through recorded and reviewed attempts."
+      },
+      "topology": "selection_grid",
+      "mask": [
+        [
+          1,
+          1
+        ],
+        [
+          0,
+          1
+        ]
+      ],
+      "result_shape": "Cone, three squares (far left kept)",
+      "preconditions": [
+        "editable_target",
+        "standard_editing"
+      ],
+      "reset": "native_reset",
+      "transforms": {
+        "mirror": "roof_three_keep_far_right",
+        "rotations": []
+      }
+    },
+    {
+      "id": "roof_three_keep_near_right",
+      "name": "Cone, three squares (near right kept)",
+      "tiles": [
+        0,
+        2,
+        3
+      ],
+      "kind": "grid",
+      "mirror_of": "roof_three_keep_near_left",
+      "suggest": false,
+      "confirmed": false,
+      "purpose": [
+        "protect",
+        "peek"
+      ],
+      "exposure": "medium",
+      "difficulty": 2,
+      "when_to_use": "Three cone squares: a steep peak toward the kept corner.",
+      "source": "common competitive edit list (unconfirmed tile set; verify through edit review)",
+      "validation": {
+        "status": "unverified",
+        "game_version": null,
+        "evidence": [],
+        "result_confirmed": false,
+        "reason": "Candidate from edit lists; confirm through recorded and reviewed attempts."
+      },
+      "topology": "selection_grid",
+      "mask": [
+        [
+          1,
+          0
+        ],
+        [
+          1,
+          1
+        ]
+      ],
+      "result_shape": "Cone, three squares (near right kept)",
+      "preconditions": [
+        "editable_target",
+        "standard_editing"
+      ],
+      "reset": "native_reset",
+      "transforms": {
+        "mirror": "roof_three_keep_near_left",
+        "rotations": []
+      }
+    },
+    {
+      "id": "roof_three_keep_near_left",
+      "name": "Cone, three squares (near left kept)",
+      "tiles": [
+        1,
+        2,
+        3
+      ],
+      "kind": "grid",
+      "mirror_of": "roof_three_keep_near_right",
+      "suggest": false,
+      "confirmed": false,
+      "purpose": [
+        "protect",
+        "peek"
+      ],
+      "exposure": "medium",
+      "difficulty": 2,
+      "when_to_use": "Three cone squares: a steep peak toward the kept corner.",
+      "source": "common competitive edit list (unconfirmed tile set; verify through edit review)",
+      "validation": {
+        "status": "unverified",
+        "game_version": null,
+        "evidence": [],
+        "result_confirmed": false,
+        "reason": "Candidate from edit lists; confirm through recorded and reviewed attempts."
+      },
+      "topology": "selection_grid",
+      "mask": [
+        [
+          0,
+          1
+        ],
+        [
+          1,
+          1
+        ]
+      ],
+      "result_shape": "Cone, three squares (near left kept)",
+      "preconditions": [
+        "editable_target",
+        "standard_editing"
+      ],
+      "reset": "native_reset",
+      "transforms": {
+        "mirror": "roof_three_keep_near_right",
+        "rotations": []
+      }
     }
-  ]
+  ],
+  "version": 2,
+  "coverage_ledger": "edit-coverage.json"
 }

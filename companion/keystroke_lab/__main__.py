@@ -163,11 +163,6 @@ def cmd_binds(args):
     return binds_cmd.run(args.out, args.only, args.category)
 
 
-def cmd_edit_examples(args):
-    from . import edit_choice
-    return edit_choice.run(args.file)
-
-
 def cmd_import_binds(args):
     from . import fortnite_binds
     from .bind_profiles import ProfileStore
@@ -215,6 +210,53 @@ def cmd_data(args):
     from . import collector
     from .store import Store
     print(collector.summary(Store()))
+    return 0
+
+
+def cmd_cloud(args):
+    """Supabase backend: see your identity and consent, opt in or out, upload now, or delete everything."""
+    from .cloud.client import CloudClient, CloudError
+    from .cloud.sync import sync_once
+    from .store import Store
+    client = CloudClient()
+    if not client.configured:
+        print("Cloud is not configured: set SUPABASE_PROJECT_ID (or SUPABASE_URL) and SUPABASE_PUBLISHABLE_KEY in ../.env, or shared/cloud.json.")
+        return 1
+    try:
+        if args.action == "status":
+            me = client.rpc("me") or {}
+            pending = Store().rows("SELECT COUNT(*) FROM edit_attempts WHERE synced=0")[0][0]
+            print(f"player {client.player_id}  upload={bool(me.get('consent_upload'))} frames={bool(me.get('consent_frames'))} "
+                  f"raw_keys={bool(me.get('consent_raw_keys'))}  attempts waiting: {pending}")
+        elif args.action == "consent":
+            me = client.rpc("register", {"upload": args.upload == "yes", "frames": args.frames == "yes",
+                                         "raw_keys": args.raw_keys == "yes"})
+            print("saved:", {k: me.get(k) for k in ("consent_upload", "consent_frames", "consent_raw_keys")})
+        elif args.action == "sync":
+            print(sync_once(Store(), client))
+        elif args.action == "forget":
+            if input("Delete every edit attempt, stat and label stored for this player? type DELETE: ") != "DELETE":
+                print("cancelled")
+                return 1
+            client.rpc("delete_my_data")
+            client.forget_local_identity()
+            print("deleted on the server; this PC will get a new anonymous identity next time")
+    except CloudError as exc:
+        print("cloud error:", exc)
+        return 1
+    return 0
+
+
+def cmd_review_edits(args):
+    from . import attempt_review
+    server, url = attempt_review.serve(open_browser=not args.no_browser)
+    print("Edit review running at", url, "(Ctrl+C to stop)")
+    try:
+        import time
+        while True:
+            time.sleep(1)
+    except KeyboardInterrupt:
+        server.shutdown()
     return 0
 
 
@@ -283,9 +325,6 @@ def main(argv=None):
     ib.add_argument("--write", action="store_true", help="save the imported keys into the profile")
     ib.add_argument("--trust", action="store_true", help="mark imported keys verified so drills can be graded")
     ib.set_defaults(fn=cmd_import_binds)
-    ee = sub.add_parser("edit-examples", help="the wall edits you finished, and selections the edit library lacks")
-    ee.add_argument("--file", default=None)
-    ee.set_defaults(fn=cmd_edit_examples)
     au = sub.add_parser("autostart")
     au.add_argument("--install", action="store_true", help="run the watcher at every Windows login")
     au.add_argument("--uninstall", action="store_true")
@@ -296,6 +335,15 @@ def main(argv=None):
     co.set_defaults(fn=cmd_collect)
     da = sub.add_parser("data")
     da.set_defaults(fn=cmd_data)
+    cl = sub.add_parser("cloud", help="Supabase backend: status | consent | sync | forget")
+    cl.add_argument("action", choices=["status", "consent", "sync", "forget"])
+    cl.add_argument("--upload", choices=["yes", "no"], default="yes")
+    cl.add_argument("--frames", choices=["yes", "no"], default="no")
+    cl.add_argument("--raw-keys", choices=["yes", "no"], default="no")
+    cl.set_defaults(fn=cmd_cloud)
+    rv = sub.add_parser("review-edits", help="approve / reject recorded edit attempts in a local browser page")
+    rv.add_argument("--no-browser", action="store_true")
+    rv.set_defaults(fn=cmd_review_edits)
     pe = sub.add_parser("personalize")
     pe.set_defaults(fn=cmd_personalize)
     fr = sub.add_parser("first-run")

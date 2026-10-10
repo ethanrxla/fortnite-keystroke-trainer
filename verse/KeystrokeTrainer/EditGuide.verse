@@ -120,18 +120,19 @@ KTAimSide<public>(Aim:vector2, Cols:int)<transacts>:int =
     if (Aim.X < Mid - Band) then -1 else if (Aim.X > Mid + Band) then 1 else 0
 
 # The best orientation of every shape that fits the aimed side, cheapest first.
-KTRankEdits<public>(Aim:vector2, Sit:int, Kind:string)<transacts>:[]kt_edit_pick =
+# Factors: the player's personal factor per edit id (EditMemory.verse KTEditFactors); missing ids count as 1.0.
+KTRankEdits<public>(Aim:vector2, Sit:int, Kind:string, Factors:[string]float)<transacts>:[]kt_edit_pick =
     Cols := KTCols(Kind)
     var Picks:[]kt_edit_pick = array{}
     var PMax:float = 0.001
     for (J -> S : KTEditsFor(Kind)):
-        set PMax = Max(PMax, KTPriorFor(Kind, Sit, J))
+        set PMax = Max(PMax, KTPriorFor(Kind, Sit, J) * KTFactorOf(Factors, S.Id))
     for (J -> S : KTEditsFor(Kind)):
         ShapeSide := KTShapeSide(S.Tiles, Cols)
         AimSide := KTAimSide(Aim, Cols)
         # Show only edits on the side the player is aiming at; centre shapes are always allowed.
         if (not logic{ShapeSide <> 0 and AimSide <> 0 and ShapeSide <> AimSide}?):
-            Penalty := KTPriorWeight * Ln(PMax / Max(KTPriorFor(Kind, Sit, J), 0.001))
+            Penalty := KTPriorWeight * Ln(PMax / Max(KTPriorFor(Kind, Sit, J) * KTFactorOf(Factors, S.Id), 0.001))
             # Drag orders to try: forward, reversed and, for a left/right symmetric shape, both mirrored orders, so a
             # symmetric shape favours neither side (Python port: edit_ranker.py).
             Mirror := KTMirrored(S.Tiles, Cols)
@@ -362,7 +363,7 @@ kt_edit_guide_device := class(creative_device):
                 set Travel += Distance(Aim, Last)
                 set Samples += 1
                 if (AutoLock?):
-                    Ranked := KTRankEdits(Aim, KTSituation(Aim, Face.Side, Face.Far, KTCols(Face.Kind)), Face.Kind)
+                    Ranked := KTRankEdits(Aim, KTSituation(Aim, Face.Side, Face.Far, KTCols(Face.Kind)), Face.Kind, KTEditFactors(Player))
                     if (Top := Ranked[0], Top.Shape.Id <> Locked.Shape.Id):
                         var Keep:logic = false
                         for (P : Ranked, P.Shape.Id = Locked.Shape.Id, P.Cost <= Top.Cost + 0.25):
@@ -381,7 +382,9 @@ kt_edit_guide_device := class(creative_device):
                         TravelH := if (V := Round[Travel * 100.0]) then V else 0
                         IdealH := if (V := Round[Locked.Travel * 100.0]) then V else 0
                         KTLog("crosshair", "edit_guide", 0, Rep, 0, rep_result.Unchecked,
-                            "face={LockKey}|edit={Locked.Shape.Name}|samples={Samples}|travel_h={TravelH}|ideal_h={IdealH}")
+                            "face={LockKey}|edit={Locked.Shape.Name}|samples={Samples}|travel_h={TravelH}|ideal_h={IdealH}|edit_id={Locked.Shape.Id}")
+                        # Remembered across sessions: personalises this player's ranking and caption (EditMemory.verse).
+                        KTRememberEdit(Player, Locked.Shape.Id, TravelH, IdealH)
                     set LockKey = ""
                     set Samples = 0
                     set Travel = 0.0
@@ -389,7 +392,7 @@ kt_edit_guide_device := class(creative_device):
                     # New face: pick the least-travel edit from where the crosshair landed, then hold it.
                     set LockKey = Face.Key
                     set Away = 0.0
-                    Ranked := KTRankEdits(Aim, KTSituation(Aim, Face.Side, Face.Far, KTCols(Face.Kind)), Face.Kind)
+                    Ranked := KTRankEdits(Aim, KTSituation(Aim, Face.Side, Face.Far, KTCols(Face.Kind)), Face.Kind, KTEditFactors(Player))
                     if (Face.GoalId <> "", Best := (for (Pick : Ranked, Pick.Shape.Id = Face.GoalId) { Pick })[0]):
                         set AutoLock = false
                         set Locked = Best
@@ -413,7 +416,7 @@ kt_edit_guide_device := class(creative_device):
                 if (Locked.Shape.Tiles.Length > 0):
                     Paint(Tiles, Labels, Locked.Shape.Tiles, Cols)
                     Note := if (AutoLock?) then "From your aim and position; selected tiles are not measured." else "Lesson target; selected tiles are not measured."
-                    Caption.SetText(GuideText("{KindLabel(Face.Kind)}: {Locked.Shape.Name}\nTrace the numbered tiles, then confirm.\n{Note}"))
+                    Caption.SetText(GuideText("{KindLabel(Face.Kind)}: {Locked.Shape.Name}\nTrace the numbered tiles, then confirm.\n{Note}{KTEditMemorySuffix(Player, Locked.Shape.Id)}"))
                 else:
                     Paint(Tiles, Labels, array{}, Cols)
                     Caption.SetText(GuideText("{KindLabel(Face.Kind)} reference detected.\nNo confirmed edit fits where you are aiming.\nMove the crosshair onto the piece."))
