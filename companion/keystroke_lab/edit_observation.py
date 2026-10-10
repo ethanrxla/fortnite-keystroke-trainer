@@ -88,14 +88,7 @@ def _line_projection(image):
             mapped=cv2.perspectiveTransform(actual,np.linalg.inv(H))
             residual=np.linalg.norm(mapped-expected,axis=2)
             if residual.mean()>.075 or residual.max()>.15:continue
-            small=cv2.warpPerspective(image,np.diag([25.,25.,1.])@np.linalg.inv(H),(75,75)).astype(float)
-            verified=0
-            for row in range(3):
-                for col in range(3):
-                    tile=small[row*25+5:row*25+20,col*25+5:col*25+20]
-                    blue=((tile[:,:,0]>tile[:,:,2]*1.22)&(tile[:,:,0]>80)&(tile[:,:,1]>45)).mean()
-                    neutral=((tile.max(2)-tile.min(2)<25)&(tile.mean(2)>60)&(tile.mean(2)<180)).mean()
-                    if blue+neutral>.65:verified+=1
+            verified=_tile_support(image,H,3)
             if verified>=6 and (best is None or verified>best[0]):best=(verified,H,quad)
     return best
 

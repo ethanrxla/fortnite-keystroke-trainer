@@ -86,10 +86,10 @@ class VisualObserver:
 
 class PieceTargetTracker:
     """Continuity tracking never equates a fixed global grid plane with a build."""
-    def __init__(self):self.last=None;self.serial=0
+    def __init__(self,grace=1.25):self.last=None;self.serial=0;self.grace=grace
     def update(self,observation):
-        if observation.piece=='unknown':self.last=None;return None
-        if self.last is None or observation.piece!=self.last.piece or observation.captured_at-self.last.captured_at>.25:
+        if observation.piece=='unknown':return None
+        if self.last is None or observation.piece!=self.last.piece or observation.captured_at-self.last.captured_at>self.grace:
             self.serial+=1
         elif len(observation.quad)==4 and len(self.last.quad)==4:
             diagonal=max(1.,math.dist(self.last.quad[0],self.last.quad[2]))

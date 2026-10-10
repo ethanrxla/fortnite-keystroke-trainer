@@ -141,6 +141,48 @@ class RouteLineTests(unittest.TestCase):
 
 @unittest.skipIf(cv2 is None,'optional local vision dependencies missing')
 class GuideContinuityTests(unittest.TestCase):
+ def test_slow_frames_and_one_missed_mode_do_not_restart_the_lesson(self):
+  from unittest.mock import patch
+  frame=cv2.imread(str(Path(__file__).parent/'fixtures/edit-vision/front-edit.png'))
+  with tempfile.TemporaryDirectory() as d:
+   now=[1.]
+   pipe=ContextPipeline(ProfileStore(Path(d)/'binds.json'),clock=lambda:now[0])
+   try:
+    first=pipe.process(frame)
+    now[0]=1.35  # a real processing hitch must not create a different wall
+    stable=pipe.process(frame)
+    self.assertEqual(first['target_id'],stable['target_id'])
+    self.assertTrue(stable['reference_ids'])
+    now[0]=1.5
+    with patch('keystroke_lab.edit_window.observe_mode',return_value=('unknown',0.)),patch.object(pipe.motion,'follow',return_value=None):
+     missed=pipe.process(frame)
+    self.assertEqual(missed['mode'],'unknown')  # no invented new observation
+    self.assertEqual(pipe.locked,stable['reference_ids'][0])
+    self.assertIsNone(pipe.last_attempt)
+    now[0]=1.85
+    recovered=pipe.process(frame)
+    self.assertEqual(recovered['target_id'],stable['target_id'])
+    self.assertEqual(recovered['reference_ids'],stable['reference_ids'])
+    self.assertTrue(pipe.metrics.gaps)
+    now[0]=3.2
+    with patch('keystroke_lab.edit_window.observe_mode',return_value=('unknown',0.)),patch.object(pipe.motion,'follow',return_value=None):
+     pipe.process(frame)
+    self.assertIsNone(pipe.locked)
+    self.assertIsNotNone(pipe.last_attempt)
+   finally:pipe.advisor.close()
+ def test_target_continuity_does_not_cross_piece_changes_or_expiry(self):
+  from dataclasses import replace
+  from keystroke_lab.piece_observation import PieceObservation,PieceTargetTracker
+  obs=PieceObservation(1.,'wall',((0,0),(300,0),(300,300),(0,300)))
+  tracker=PieceTargetTracker();target=tracker.update(obs)
+  self.assertIsNone(tracker.update(PieceObservation(1.1)))
+  self.assertEqual(tracker.update(replace(obs,captured_at=1.5)),target)
+  self.assertNotEqual(tracker.update(replace(obs,captured_at=1.6,piece='floor')),target)
+  tracker=PieceTargetTracker();target=tracker.update(obs)
+  self.assertNotEqual(tracker.update(replace(obs,captured_at=2.3)),target)
+  tracker=PieceTargetTracker();target=tracker.update(obs)
+  shifted=tuple((x+400,y) for x,y in obs.quad)
+  self.assertNotEqual(tracker.update(replace(obs,captured_at=1.1,quad=shifted)),target)
  def test_target_tracks_a_short_detector_dropout(self):
   from keystroke_lab.piece_observation import VisualObserver,GridMotionTracker
   frame=cv2.imread(str(Path(__file__).parent/'fixtures/edit-vision/front-edit.png'))
@@ -184,6 +226,15 @@ class CombinedGuideLayerTests(unittest.TestCase):
 
 @unittest.skipIf(cv2 is None,'optional local vision dependencies missing')
 class RedGridTrackingTests(unittest.TestCase):
+ def test_fast_detector_acquires_red_edit_grid(self):
+  from tests.test_edit_grid_general import render
+  from keystroke_lab.piece_observation import VisualObserver
+  frame=render(3,[(330,70),(950,100),(940,590),(340,610)])
+  blue=(frame[:,:,0]>frame[:,:,2]*1.22)&(frame[:,:,0]>80)&(frame[:,:,1]>45)
+  frame[blue]=[20,30,170]
+  obs=VisualObserver().observe(frame,0.)
+  self.assertEqual(obs.piece,'wall')
+  self.assertEqual(obs.selected_tiles,())
  def test_red_invalid_grid_remains_trackable_without_success(self):
   import numpy as np
   from keystroke_lab.edit_observation import _tile_support

@@ -83,36 +83,52 @@ class ContextPipeline:
         self.telemetry=telemetry or TelemetryReader(clock=clock);self.metrics=EditAnalyzer()
         self.ranker=Ranker();self.motion=GridMotionTracker();self.previous_display=None;self.last_attempt=None
         self.locked=None;self.profile_identity=None;self.last_target=None
+        self.last_mode_seen=-float('inf')
+    def reset_tracking(self):
+        self.locked=None;self.selection.reset();self.targets.last=None;self.last_target=None
+        self.motion.reset();self.previous_display=None;self.last_mode_seen=-float('inf')
     def process(self,frame,captured_at=None):
         captured=self.clock() if captured_at is None else captured_at;mode,score=observe_mode(frame);profile=self.store.refresh()
+        identity=(profile.profile_id,profile.revision)
+        if identity!=self.profile_identity:
+            self.reset_tracking();self.profile_identity=identity;self.metrics.reset()
         mode_track=None
         if mode=='unknown' and self.previous_display:
             cues=cue_scores(frame,['confirm','reset'])
             if min(cues)>=.32 and sum(cues)/2>=.40:
                 mode_track=self.motion.follow(frame,captured)
                 if mode_track is not None:mode='editing'
-        identity=(profile.profile_id,profile.revision)
-        if identity!=self.profile_identity:
-            self.selection.reset();self.profile_identity=identity;self.metrics.reset()
+        if mode!='unknown':self.last_mode_seen=captured
         base={'mode':mode,'captured_at':captured,'revision':profile.revision,'projected':False,
               'reference_ids':[],'status':'Align with an editable piece','mode_score':score,
               'session_id':os.environ.get('KT_COACH_SESSION','standalone'),'profile_id':profile.profile_id,'last_attempt':self.last_attempt}
         telemetry=self.telemetry.poll()
         if self.clock()-captured>.25 or captured>self.clock():return dict(base,mode='unknown',status='Stale observation')
         if mode=='unknown':
+            # A missed HUD cue is not an observed confirm/cancel. Keep the
+            # tracker and lesson available for reacquisition; the display latch
+            # holds the original snapshot without refreshing its evidence age.
+            if captured-self.last_mode_seen<=1.25:
+                self.metrics.gaps=True
+                return dict(base,tracking='reacquiring')
             self.finish_attempt(captured,profile)
             base['last_attempt']=self.last_attempt
-            self.locked=None;self.selection.reset();self.targets.last=None;self.last_target=None;self.motion.reset();self.previous_display=None
+            self.reset_tracking()
             return base
         observation=mode_track or (self.observer.observe(frame,captured) if mode=='editing' else None)
+        if observation:base['detection_reason']=observation.reason
         tracked=mode_track is not None
         if observation and observation.piece!='unknown' and not tracked:self.motion.seed(frame,observation)
         elif mode=='editing' and not tracked:
             observation=self.motion.follow(frame,captured);tracked=observation is not None
         target=self.targets.update(observation) if observation else None
         if not target:
+            self.metrics.gaps=True
             if mode=='editing' and self.previous_display and captured-self.previous_display['captured_at']<=.75:
                 return dict(self.previous_display,captured_at=captured,projected=False,tracking='reacquiring',status='Tracking edit | reacquiring target')
+            if self.previous_display and captured-self.previous_display['captured_at']<=1.25:
+                self.metrics.gaps=True
+                return dict(base,tracking='reacquiring')
             self.locked=None;self.selection.reset();return base
         if target!=self.last_target:
             self.finish_attempt(captured,profile);self.metrics.reset();self.last_target=target
@@ -217,7 +233,7 @@ def run(profile_path=None):
                     except Exception as exc:
                         result={'mode':'unknown','captured_at':time.monotonic(),'error':type(exc).__name__}
                 else:
-                    pipeline.locked=None
+                    pipeline.reset_tracking();pipeline.metrics.reset()
                     record({'mode':'unknown'},time.time())
                 with mutex:shared.update(result=result,rect=rect)
                 # Latest snapshot only; no frame queue or network on this worker.
