@@ -17,6 +17,8 @@ from .edit_advisor import EditAdvisor,EditContext,safe_path
 from .edit_telemetry import TelemetryReader
 from .jev_client import JevClient
 from .piece_observation import VisualObserver, PieceTargetTracker
+from .edit_ranker import Ranker
+from .edit_geometry import PieceContext, tiles_to_grid, piece_to_grid
 from .edit_dictionary import TargetTracker, RoutePlanner, EditAnalyzer
 from .evidence import Evidence, ContextAssembler
 import os
@@ -76,6 +78,7 @@ class ContextPipeline:
         self.advisor=advisor or EditAdvisor(jev=JevClient(domain='edit'),clock=clock)
         self.observer=observer or VisualObserver();self.targets=PieceTargetTracker();self.selection=TargetTracker()
         self.telemetry=telemetry or TelemetryReader(clock=clock);self.metrics=EditAnalyzer()
+        self.ranker=Ranker()
         self.locked=None;self.profile_identity=None;self.last_target=None
     def process(self,frame,captured_at=None):
         captured=self.clock() if captured_at is None else captured_at;mode,score=observe_mode(frame);profile=self.store.refresh()
@@ -100,11 +103,25 @@ class ContextPipeline:
             Evidence(f'{target}:{captured}:orientation',observation.orientation,captured,'screen_projection','derived',1-observation.confidence),
             Evidence(f'{target}:{captured}:ownership',None,captured,'unavailable','unknown',1.)]).to_dict()
         candidates=self.advisor.dictionary.candidates(observation.piece,observation.selected_tiles)
-        ranked=[]
-        for edit in candidates:
-            route=RoutePlanner().plan(observation.aim_uv,edit)
-            if route:ranked.append((route[0],edit['id']))
-        best=min(ranked)[1] if ranked else None
+        ctx=PieceContext(**observation.context) if observation.context else None
+        # Ranking: crosshair travel from where you aim, Jev's prior for where you stand (side, near/far) and your
+        # personal factors (edit_ranker). Game-verified edits win when any fit; until the review catalog has verified
+        # them, suggested library edits are offered and labelled unverified.
+        kind={'cone':'roof','ramp':'stairs'}.get(observation.piece,observation.piece)
+        picks=self.ranker.rank(kind,ctx.aim,ctx.side,ctx.far) if ctx else []
+        verified={e['id'] for e in candidates}
+        fitting=[p for p in picks if set(observation.selected_tiles)<=set(tiles_to_grid(ctx,p.tiles))] if ctx else []
+        best=next((p.id for p in fitting if p.id in verified),None) or (fitting[0].id if fitting else None)
+        if best is None and candidates:
+            ranked=[]
+            for edit in candidates:
+                route=RoutePlanner().plan(observation.aim_uv,edit)
+                if route:ranked.append((route[0],edit['id']))
+            best=min(ranked)[1] if ranked else None
+        if self.locked and best and self.locked!=best and ctx:
+            # Hysteresis (EditGuide.verse AutoLock): keep the current edit while it costs within 0.25 of the best.
+            costs={p.id:p.cost for p in fitting}
+            if self.locked in costs and costs[self.locked]<=costs.get(best,0)+.25:best=self.locked
         self.locked=self.selection.update((target,observation.orientation),best,observation.selected_tiles,captured)
         context=EditContext(profile.profile_id,profile.revision,captured,mode,target,True,True,
              observation.aim_uv,observation.selected_tiles,drill_edit_id=self.locked,
@@ -115,9 +132,22 @@ class ContextPipeline:
         self.metrics.sample(captured,observation.aim_uv,observation.selected_tiles)
         advice=self.advisor.request(context)
         if candidates:self.advisor.request(replace(context,drill_edit_id=None,objective="practice"))
+        display=None
+        if self.locked:
+            edit=dict(self.advisor.dictionary.all.get(self.locked) or {})
+            pick=next((p for p in picks if p.id==self.locked),None)
+            if edit and edit.get('piece')!='ramp':
+                # Draw in the observed screen grid: tiles in the ranker's drag order, remapped for 2x2 pieces.
+                edit['tiles']=list(tiles_to_grid(ctx,pick.tiles)) if (ctx and pick) else edit.get('tiles',[])
+                display=edit
+        is_verified=bool(self.locked and self.locked in verified)
         base.update(projected=True,observation=observation.to_dict(),telemetry=telemetry,advice=advice.to_dict(),
-                    reference_ids=[self.locked] if self.locked else [],
-                    status='Edit pattern awaiting game validation' if not candidates else 'Short safe route | green = select')
+                    reference_ids=[self.locked] if self.locked else [],display_edit=display,
+                    piece_context=ctx.to_dict() if ctx else None,verified=is_verified,
+                    picks=[{'id':p.id,'name':p.name,'cost':p.cost,'travel':p.travel} for p in fitting[:3]],
+                    status=('Short safe route | green = select' if is_verified else
+                            'Suggested from your aim and position | not yet verified in game') if self.locked
+                           else 'No suggested edit fits this selection')
         return base
 
 
@@ -182,9 +212,13 @@ def run(profile_path=None):
         canvas.itemconfig(caption_id,text=data.get('status','Align with an editable piece'))
         canvas.itemconfig(panel_approach,state='hidden')
         if not ids:return
-        edit=pipeline.advisor.dictionary.edits[ids[0]]
+        edit=data.get('display_edit')
+        if not edit:return
         visual=layout(edit,observation['aim_uv']);unit=114;x=12;y=40
-        canvas.itemconfig(heading,text=visual.title.upper())
+        piece=(data.get('piece_context') or {}).get('kind','')
+        side=['left','centre','right'][(data.get('piece_context') or {}).get('side',1)]
+        canvas.itemconfig(heading,text=f"{piece.upper()} | {visual.title.upper()}")
+        canvas.itemconfig(status_id,text=f"you: {side} side, {'far' if (data.get('piece_context') or {}).get('far') else 'close'}" + ('' if data.get('verified') else ' | unverified'))
         for i,region in enumerate(visual.regions):
             l,b,r,t=region;item=cells[0][i]
             canvas.coords(item,x+l*unit+2,y+(1-t)*unit+2,x+r*unit-2,y+(1-b)*unit-2)
@@ -199,7 +233,7 @@ def run(profile_path=None):
             canvas.itemconfig(markers[0],state='normal')
             for item,(label,(u,v)) in zip(numbers[0],visual.labels):
                 canvas.coords(item,x+u*unit,y+v*unit);canvas.itemconfig(item,state='normal',text=label)
-        canvas.itemconfig(status_id,text=visual.result_shape)
+        if visual.result_shape:canvas.itemconfig(status_id,text=visual.result_shape)
 
     # Pool world markers and lines; no create/delete loop while tracing.
     world_regions=[lines_canvas.create_polygon(0,0,1,0,1,1,outline='#27d77b',fill='',width=3,state='hidden') for _ in range(9)]
@@ -210,7 +244,8 @@ def run(profile_path=None):
         for item in world_regions+world_numbers+[world_path,world_approach]:lines_canvas.itemconfig(item,state='hidden')
         observation=data.get('observation') or {};ids=data.get('reference_ids') or []
         if not data.get('projected') or not ids:return False
-        edit=pipeline.advisor.dictionary.edits[ids[0]]
+        edit=data.get('display_edit')
+        if not edit:return False
         route=RoutePlanner().plan(observation['aim_uv'],edit)
         if not route:return False
         n=1 if edit['piece']=='ramp' else edit['cols'];quad=observation['wall_quad']
@@ -234,10 +269,10 @@ def run(profile_path=None):
         now=time.monotonic()
         fresh=bool(rect and data and data['mode'] in ('editing','building','editable') and 0<=now-data['captured_at']<.25)
         # The ring is the player's aim reference: hold it through dropped frames for the whole edit / build / blueprint.
-        ring_on=fresh
+        ring_on=bool(rect) and presence.update(fresh,now)
         if not rect:presence.reset()
-        # The corner panel is a wall reference: only while the crosshair is on a detected wall grid.
-        panel_on=fresh
+        # The panel is a piece reference: only while the crosshair is on a detected edit grid.
+        panel_on=fresh and bool(data.get('projected'))
         if ring_on:
             if rect:
                 l,t,r,b=rect

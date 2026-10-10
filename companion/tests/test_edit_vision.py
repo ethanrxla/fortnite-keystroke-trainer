@@ -34,9 +34,31 @@ class EditVisionTests(unittest.TestCase):
     state=pipe.process(self.fixture('front-edit'));self.assertTrue(state['projected'])
     q=state['observation']['wall_quad'];self.assertLess(abs(q[0][0]-454),20)
     self.assertLess(abs(q[0][1]-149),20)
-    self.assertEqual(state['reference_ids'],[]) # unvalidated definitions stay disabled
+    self.assertEqual(state['reference_ids'],[]) # nothing before the 0.15 s stability window
     self.assertEqual(pipe.advisor.calls,0)
    finally:pipe.advisor.close()
+ def test_wall_suggestion_from_aim_and_position_labelled_unverified(self):
+  with tempfile.TemporaryDirectory() as d:
+   now=[100.]
+   pipe=ContextPipeline(ProfileStore(Path(d)/'binds.json'),clock=lambda:now[0])
+   try:
+    frame=self.fixture('front-edit')
+    pipe.process(frame,captured_at=now[0]);now[0]+=.2
+    state=pipe.process(frame,captured_at=now[0])
+    self.assertEqual(state['piece_context']['kind'],'wall')
+    self.assertEqual(state['reference_ids'],['window_center'])   # crosshair on the centre tile
+    self.assertEqual(state['display_edit']['tiles'],[4])
+    self.assertFalse(state['verified']);self.assertIn('not yet verified',state['status'])
+    self.assertTrue(state['picks'])
+   finally:pipe.advisor.close()
+ def test_floor_is_observed_with_near_far_context(self):
+  from keystroke_lab.piece_observation import VisualObserver
+  from tests.test_edit_grid_general import render
+  img=render(2,[(470,250),(810,250),(1110,600),(170,600)])
+  obs=VisualObserver().observe(img,0.)
+  self.assertEqual(obs.piece,'floor')
+  self.assertEqual(obs.context['cells'],2)
+  self.assertTrue(0<=obs.context['aim'][1]<2)
  def test_telemetry_old_stale_multiple_players_rejected(self):
   with tempfile.TemporaryDirectory() as d:
    p=Path(d)/'log';p.write_text('KT|context|players=1|t=0|px=0|py=0|pz=0|vx=0|vy=0|vz=0|ax=1|ay=0|az=0\n')

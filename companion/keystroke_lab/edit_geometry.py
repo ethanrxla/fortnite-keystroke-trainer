@@ -142,6 +142,27 @@ def piece_context(observation, width, height):
                         tuple(float(x) for x in body), tuple(float(x) for x in across), tuple(float(x) for x in away))
 
 
+def piece_to_grid(context, u, v):
+    """Observation grid coordinates (u right, v up the screen quad, as WallObservation.aim_uv) for a ranker point."""
+    if context.cells == 3:
+        return float(u), float(v)
+    _, w_cm, h_cm = _object_points(2)
+    centre = np.array([w_cm / 2.0, h_cm / 2.0, 0.0])
+    p = centre + np.array(context.across) * ((u / 2.0 - 0.5) * w_cm) + np.array(context.away) * ((v / 2.0 - 0.5) * h_cm)
+    return float(p[0] / w_cm * 2.0), float(2.0 - p[1] / h_cm * 2.0)
+
+
+def tiles_to_grid(context, tiles):
+    """Ranker tile numbers (near/far frame for 2x2 pieces) -> the observation grid's tile numbers, order kept."""
+    if context.cells == 3:
+        return tuple(tiles)
+    out = []
+    for t in tiles:
+        gx, gv = piece_to_grid(context, t % 2 + 0.5, t // 2 + 0.5)
+        out.append(min(1, max(0, int(gx))) + 2 * min(1, max(0, int(gv))))
+    return tuple(out)
+
+
 def piece_to_screen(context, quad, u, v):
     """Screen point for a ranker coordinate (u, v) on the piece (inverse of the aim mapping), for drawing edit lines."""
     cells = context.cells

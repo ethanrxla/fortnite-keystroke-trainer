@@ -146,13 +146,14 @@ def _cross(a,b):
     return np.linalg.solve(m,np.array([a['c'],b['c']],float))
 
 
-def _general_grid(image,aim):
+def _general_grid(image,aim,budget=.08):
     """Any-angle n x n edit grid (n = 3 for walls, 2 for floors / stairs / roofs).
 
     The near-horizontal / near-vertical detector (_line_projection) misses floors seen at an angle and walls with
     selected tiles. Here lines are split into the two dominant directions, n+1 lines are chosen from each, and the
     result must be a projective grid (every interior crossing where a homography of the outer quad puts it) whose
     cells look like edit tiles and which contains the crosshair. Returns (count, H, quad, n) or None."""
+    deadline=time.perf_counter()+budget
     h,w=image.shape[:2]
     lines=sorted(_merge_lines(_segments(image)),key=lambda l:-l['length'])[:24]
     if len(lines)<6:return None
@@ -175,44 +176,66 @@ def _general_grid(image,aim):
     overall=None
     for k in peaks:
         fam=[[l for l in lines if diff(l['angle'],k)<14],[l for l in lines if diff(l['angle'],k)>=20]]
-        found=_grid_from_families(image,aim,fam)
+        found=_grid_from_families(image,aim,fam,deadline)
         if found is not None and (overall is None or found[0]>overall[0]):overall=found
     return overall[1] if overall else None
 
 
-def _grid_from_families(image,aim,fam):
+def _grid_from_families(image,aim,fam,deadline=None):
+    """Bounded search: the crosshair must lie between the first and last line of each family (it is on the piece), so
+    only those line spans are tried, crossings are computed once, and the search stops at `deadline`."""
     h,w=image.shape[:2]
     best=None
     for n in (3,2):
         if len(fam[0])<n+1 or len(fam[1])<n+1:continue
         def order(group,ref):
-            # Sort a family across the image: where each line crosses the other family's strongest line.
-            d=np.array(ref['n'])
-            return sorted(group,key=lambda l:_cross(l,ref)@np.array([-d[1],d[0]]) if _cross(l,ref) is not None else 0)
-        a_sorted,b_sorted=order(fam[0][:9],fam[1][0]),order(fam[1][:9],fam[0][0])
-        for A in itertools.combinations(a_sorted,n+1):
-            for B in itertools.combinations(b_sorted,n+1):
-                pts=[[_cross(A[i],B[j]) for i in range(n+1)] for j in range(n+1)]
+            # Position of each line along a line through the crosshair parallel to the other family's strongest line;
+            # the crosshair sits at 0. Sorted by that, and a span is usable only if its outer lines straddle 0.
+            through={'n':ref['n'],'c':ref['n'][0]*aim[0]+ref['n'][1]*aim[1]}
+            tangent=np.array([-ref['n'][1],ref['n'][0]])
+            keyed=[]
+            for l in group:
+                p=_cross(l,through)
+                if p is not None:keyed.append((float((p-np.asarray(aim,float))@tangent),l))
+            keyed.sort(key=lambda k:k[0])
+            return [l for _,l in keyed],[k for k,_ in keyed]
+        (A_lines,A_pos),(B_lines,B_pos)=order(fam[0][:10],fam[1][0]),order(fam[1][:10],fam[0][0])
+        def spans(pos):
+            out=[]
+            for c in itertools.combinations(range(len(pos)),n+1):
+                if not pos[c[0]]<0<pos[c[-1]]:continue
+                if n==3:
+                    # Four equally spaced lines keep the cross-ratio 4/3 under any perspective; this rejects almost
+                    # every wrong set of four before any pairing.
+                    p0,p1,p2,p3=(pos[i] for i in c)
+                    if min(p1-p0,p2-p1,p3-p2)<=0:continue
+                    if abs((p2-p0)*(p3-p1)/((p2-p1)*(p3-p0))-4/3)>.15:continue
+                out.append(c)
+            return out
+        cross=[[_cross(a,b) for b in B_lines] for a in A_lines]
+        expected=np.array([[[i,j] for j in range(n+1) for i in range(n+1)]],np.float32)
+        unit=np.array([[0,0],[n,0],[n,n],[0,n]],np.float32)
+        for A in spans(A_pos):
+            for B in spans(B_pos):
+                if deadline is not None and time.perf_counter()>deadline:return best
+                pts=[[cross[A[i]][B[j]] for i in range(n+1)] for j in range(n+1)]
                 if any(p is None for row in pts for p in row):continue
                 quad=np.array([pts[0][0],pts[0][n],pts[n][n],pts[n][0]],np.float32)
                 if not cv2.isContourConvex(quad):continue
                 area=cv2.contourArea(quad)
                 if area<.08*w*h or quad[:,0].min()<-w*.05 or quad[:,0].max()>w*1.05 or quad[:,1].min()<-h*.05 or quad[:,1].max()>h*1.05:continue
-                if cv2.pointPolygonTest(quad,(float(aim[0]),float(aim[1])),False)<0:continue
-                H=cv2.getPerspectiveTransform(np.array([[0,0],[n,0],[n,n],[0,n]],np.float32),quad)
+                H=cv2.getPerspectiveTransform(unit,quad)
                 actual=np.array([[pts[j][i] for j in range(n+1) for i in range(n+1)]],np.float32)
-                expected=np.array([[[i,j] for j in range(n+1) for i in range(n+1)]],np.float32)
                 residual=np.linalg.norm(cv2.perspectiveTransform(actual,np.linalg.inv(H))-expected,axis=2)
                 if residual.mean()>.06 or residual.max()>.13:continue
-                # Equal cells: no cell may be much smaller than the others (rejects a clipped or partial grid).
                 count=_tile_support(image,H,n)
+                # A 2x2 piece must show all four tiles (a blueprint or a wall corner can fake three).
                 if count<n*n-(1 if n==3 else 0):continue
                 score=(n==3,count,-round(float(residual.mean()),2),area)
                 if best is None or score>best[0]:
                     # Corners as image top-left, top-right, bottom-right, bottom-left (as _line_projection gives them).
                     quad=_ordered(quad)
-                    H=cv2.getPerspectiveTransform(np.array([[0,0],[n,0],[n,n],[0,n]],np.float32),quad)
-                    best=(score,(count,H,quad,n))
+                    best=(score,(count,cv2.getPerspectiveTransform(unit,quad),quad,n))
         if best is not None and best[0][0]:break
     return best
 
