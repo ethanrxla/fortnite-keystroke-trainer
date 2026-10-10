@@ -111,10 +111,45 @@ class PatternTableTests(unittest.TestCase):
             r.select(t)
         self.assertEqual(r.selection, (0, 1))
 
-    def test_all_24_ramp_paths(self):
-        paths = [p.path for p in self.table.patterns("ramp") if p.id.startswith("ramp_")]
-        self.assertEqual(len(paths), 24)
-        self.assertEqual(len(set(paths)), 24)
+    def test_all_ramp_edits_have_distinct_arrows(self):
+        ramps = [p for p in self.table.patterns("ramp") if p.id.startswith("ramp_")]
+        self.assertEqual(len(ramps), 28)            # 8 half, 8 L, 8 spiral, 4 full-ramp directions
+        self.assertEqual(len({p.arrows for p in ramps}), 28)
+
+    def test_ramp_turned_with_two_strokes(self):
+        r = StairPiece()
+        r.select(0), r.select(1)
+        r.end_stroke()
+        r.select(2), r.select(3)
+        self.assertEqual(r.arrows(), (2, 2, 2, 2))
+        out = r.confirm(self.table)
+        self.assertTrue(out.valid)
+        self.assertEqual(out.pattern.id, "ramp_full_right")
+        self.assertEqual(r.visual().visible, (0, 1, 2, 3))
+        r.set_strokes([[2, 0], [3, 1]])
+        self.assertEqual(r.confirm(self.table).pattern.id, "ramp_full_down")
+
+    def test_ramp_sideways_half_and_l_turn(self):
+        self.assertEqual(self.confirm(StairPiece(), [0, 1]).pattern.id, "ramp_half_nl_nr")
+        out = self.confirm(StairPiece(), [0, 2, 3])
+        self.assertEqual((out.pattern.id, out.pattern.result_class), ("ramp_l_nl_fl_fr", "StairR"))
+
+    def test_ramp_strokes_cannot_share_tiles_or_be_single(self):
+        r = StairPiece()
+        r.set_strokes([[0, 2], [1]])
+        self.assertEqual(r.confirm(self.table).reason, "broken_path")
+
+    def test_rare_edits_show_their_common_edit(self):
+        gate = self.confirm(WallPiece(), [6, 7, 8, 4, 1]).pattern
+        self.assertEqual(gate.tier, "rare")
+        self.assertEqual(self.table.display(gate).id, "half_wall")
+        win = self.table.all["window_center"]
+        self.assertEqual(win.tier, "common")
+        self.assertIs(self.table.display(win), win)
+        for p in self.table.all.values():
+            if p.tier == "rare":
+                self.assertFalse(p.suggest, p.id)
+                self.assertEqual(self.table.display(p).tier, "common", p.id)
 
     def test_rows_view(self):
         p = self.table.all["door"]
