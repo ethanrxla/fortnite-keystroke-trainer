@@ -20,7 +20,7 @@ import json
 import math
 import pathlib
 
-from .pieces import catalog_key
+from .pieces import canonical, catalog_key
 
 SHARED = pathlib.Path(__file__).resolve().parents[2] / "shared"
 PRIOR_WEIGHT = 0.3
@@ -150,3 +150,48 @@ class Ranker:
                               {"approach": round(approach(aim, best, c), 3), "drag": round(drag(best, c), 3),
                                "prior_penalty": round(penalty, 3), "situation": key}))
         return sorted(picks, key=lambda p: p.cost)
+
+
+class IntentMap:
+    """Crosshair position -> the edit the player means, as one O(1) read from a precomputed 2-D array.
+
+    Built once from shared/edit-intent.json: for each piece a grid of RES x RES cells per tile (0.1 tile), each cell
+    holding an index into that piece's edit list (tile rule, then the junction override within junction_radius).
+    lookup(piece, (u, v)) = table[int(v * RES)][int(u * RES)]: no search, no ranking, constant time per frame."""
+    RES = 10
+
+    def __init__(self, path=None):
+        data = json.loads(pathlib.Path(path or SHARED / "edit-intent.json").read_text(encoding="utf-8"))
+        self.tables = {}
+        for piece, spec in data.items():
+            if piece.startswith("_"):
+                continue
+            n = 3 if piece == "wall" else 2
+            names = list(spec["tiles"])
+            junctions = {tuple(float(x) for x in k.split(",")): e for k, e in (spec.get("junctions") or {}).items()}
+            for e in junctions.values():
+                if e not in names:
+                    names.append(e)
+            radius = float(spec.get("junction_radius", 0))
+            size = n * self.RES
+            table = [[0] * size for _ in range(size)]
+            for row in range(size):
+                for col in range(size):
+                    u, v = (col + 0.5) / self.RES, (row + 0.5) / self.RES
+                    edit = spec["tiles"][int(v) * n + int(u)]
+                    for point, corner in junctions.items():
+                        if math.dist(point, (u, v)) <= radius:
+                            edit = corner
+                    table[row][col] = names.index(edit)
+            self.tables[canonical(piece)] = (n, names, table)
+
+    def lookup(self, piece, aim):
+        entry = self.tables.get(canonical(piece) or piece)
+        if entry is None or len(aim) != 2:
+            return None
+        n, names, table = entry
+        size = n * self.RES
+        col, row = int(aim[0] * self.RES), int(aim[1] * self.RES)
+        if not (0 <= col < size and 0 <= row < size):
+            return None
+        return names[table[row][col]]

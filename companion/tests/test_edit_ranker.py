@@ -56,3 +56,42 @@ class RankerTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class IntentMapTests(unittest.TestCase):
+    """The player's aim map (shared/edit-intent.json), 2026-10-10 screenshots: corners at corners, half wall (not quarter)
+    on the top-middle tile, window in the centre (including its edges), door bottom-middle."""
+    @classmethod
+    def setUpClass(cls):
+        from keystroke_lab.edit_ranker import IntentMap
+        cls.m = IntentMap()
+
+    def test_every_wall_tile(self):
+        expect = {(0.5, 2.5): "corner_upper_left", (1.5, 2.5): "half_wall", (2.5, 2.5): "corner_upper_right",
+                  (0.5, 1.5): "side_peek_left", (1.5, 1.5): "window_center", (2.5, 1.5): "side_peek_right",
+                  (0.5, 0.5): "corner_lower_left", (1.5, 0.5): "door", (2.5, 0.5): "corner_lower_right"}
+        for aim, edit in expect.items():
+            self.assertEqual(self.m.lookup("wall", aim), edit, aim)
+
+    def test_junctions_give_corners_and_centre_edges_give_the_window(self):
+        self.assertEqual(self.m.lookup("wall", (1.9, 1.85)), "corner_upper_right")
+        self.assertEqual(self.m.lookup("wall", (1.12, 1.15)), "corner_lower_left")
+        self.assertEqual(self.m.lookup("wall", (1.1, 1.5)), "window_center")      # left edge, mid height
+        self.assertEqual(self.m.lookup("wall", (1.5, 1.9)), "window_center")      # top edge, centred
+
+    def test_never_quarter_wall_on_the_top_row(self):
+        for u in (1.2, 1.5, 1.8):
+            self.assertNotEqual(self.m.lookup("wall", (u, 2.6)), "quarter_wall")
+
+    def test_floors_cones_and_bounds(self):
+        self.assertEqual(self.m.lookup("floor", (0.3, 1.7)), "floor_hole_far_left")
+        self.assertEqual(self.m.lookup("cone", (1.7, 0.3)), "roof_one_near_right")
+        self.assertIsNone(self.m.lookup("wall", (3.2, 1.0)))
+        self.assertIsNone(self.m.lookup("ramp", (0.5, 0.5)))
+
+    def test_every_mapped_edit_exists_in_the_catalogue(self):
+        from keystroke_lab.edit_dictionary import EditDictionary
+        known = EditDictionary().all
+        for n, names, _ in self.m.tables.values():
+            for e in names:
+                self.assertIn(e, known)

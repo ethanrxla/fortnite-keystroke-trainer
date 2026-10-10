@@ -17,7 +17,7 @@ from .edit_advisor import EditAdvisor,EditContext,safe_path
 from .edit_telemetry import TelemetryReader
 from .jev_client import JevClient
 from .piece_observation import VisualObserver, PieceTargetTracker, GridMotionTracker
-from .edit_ranker import Ranker, junction_corner
+from .edit_ranker import Ranker, junction_corner, IntentMap
 from .edit_geometry import PieceContext, tiles_to_grid, piece_to_grid, grid_to_tiles
 from .build_pieces import PatternTable, piece_for
 from .edit_dictionary import TargetTracker, RoutePlanner, RouteTracker, EditAnalyzer
@@ -85,7 +85,7 @@ class ContextPipeline:
         self.advisor=advisor or EditAdvisor(jev=JevClient(domain='edit'),clock=clock)
         self.observer=observer or VisualObserver();self.targets=PieceTargetTracker();self.selection=TargetTracker(stability=.06)   # 60 ms before a new pick shows (was 150); hysteresis already damps flicker
         self.telemetry=telemetry or TelemetryReader(clock=clock);self.metrics=EditAnalyzer()
-        self.ranker=Ranker();self.patterns=PatternTable();self.motion=GridMotionTracker();self.previous_display=None;self.last_attempt=None
+        self.ranker=Ranker();self.intent=IntentMap();self.patterns=PatternTable();self.motion=GridMotionTracker();self.previous_display=None;self.last_attempt=None
         self.locked=None;self.profile_identity=None;self.last_target=None
         self.last_mode_seen=-float('inf');self.frames_since_full=0
         # async_detect: full detection (~80-130 ms) runs on its own thread with its own observer; every frame takes the
@@ -197,11 +197,14 @@ class ContextPipeline:
             # Hysteresis (EditGuide.verse AutoLock): keep the current edit while it costs within 0.25 of the best.
             costs={p.id:p.cost for p in fitting}
             if self.locked in costs and costs[self.locked]<=costs.get(best,0)+.25:best=self.locked
-        if ctx and kind=='wall':
-            # Corner snap (after hysteresis, so it wins): aiming at an inner tile corner shows that three-tile corner
-            # edit with its green tiles and numbered route (edit_ranker.junction_corner).
-            snap=junction_corner(ctx.aim)
-            if snap and any(p.id==snap for p in fitting):best=snap
+        if ctx:
+            # The player's aim map (shared/edit-intent.json -> IntentMap, one O(1) array read): corners at corners,
+            # half wall on the top-middle tile, window in the centre, door bottom-middle... Applied after hysteresis so
+            # it wins; skipped when the mapped edit does not contain what is already selected (Jev's ranking decides).
+            intent=self.intent.lookup(observation.piece,ctx.aim)
+            if intent and intent in self.advisor.dictionary.all:
+                tiles=set(tiles_to_grid(ctx,self.advisor.dictionary.all[intent].get('tiles',[])))
+                if set(observation.selected_tiles)<=tiles:best=intent
         self.locked=self.selection.update((target,observation.orientation),best,observation.selected_tiles,captured)
         # Free-practice suggestions cannot establish player intent.
         if observation.selected_tiles and not tracked:

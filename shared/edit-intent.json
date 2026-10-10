@@ -1,0 +1,16 @@
+{
+  "_doc": "Where the crosshair is on the piece -> which edit the guide shows. Precomputed into a 2-D lookup array (edit_ranker.IntentMap, 0.1-tile cells) so each frame is one O(1) array read. 'tiles' lists the edit for each tile in tile order (walls 0..8 row-major from the bottom-left as seen; 2x2 pieces 0 near-left, 1 near-right, 2 far-left, 3 far-right). 'junctions' override within 'junction_radius' tiles of an inner tile corner (walls: the four corners of the centre tile). Player preferences (2026-10-10): corners at corners, half wall on the top row centre, door on the bottom row centre, window in the centre. Jev's ranking is the fallback when the mapped edit does not contain what is already selected.",
+  "wall": {
+    "tiles": ["corner_lower_left", "door", "corner_lower_right",
+              "side_peek_left", "window_center", "side_peek_right",
+              "corner_upper_left", "half_wall", "corner_upper_right"],
+    "junction_radius": 0.35,
+    "junctions": {"1,1": "corner_lower_left", "2,1": "corner_lower_right", "1,2": "corner_upper_left", "2,2": "corner_upper_right"}
+  },
+  "floor": {
+    "tiles": ["floor_hole_near_left", "floor_hole_near_right", "floor_hole_far_left", "floor_hole_far_right"]
+  },
+  "cone": {
+    "tiles": ["roof_one_near_left", "roof_one_near_right", "roof_one_far_left", "roof_one_far_right"]
+  }
+}
