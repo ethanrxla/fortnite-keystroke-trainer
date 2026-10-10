@@ -1208,6 +1208,340 @@
         "mirror": "tiny_wall_left",
         "rotations": []
       }
+    },
+    {
+      "id": "arch",
+      "name": "Arch (bottom two rows)",
+      "tiles": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "kind": "wall",
+      "mirror_of": null,
+      "suggest": false,
+      "confirmed": false,
+      "purpose": [
+        "enter",
+        "pass_through"
+      ],
+      "exposure": "very_high",
+      "difficulty": 2,
+      "when_to_use": "Open the bottom two rows: a full-width archway to walk or box through.",
+      "source": "common competitive edit list (unconfirmed tile set; verify through edit review)",
+      "validation": {
+        "status": "unverified",
+        "game_version": null,
+        "evidence": [],
+        "result_confirmed": false,
+        "reason": "Candidate from edit lists; confirm through recorded and reviewed attempts."
+      },
+      "topology": "selection_grid",
+      "mask": [
+        [
+          1,
+          1,
+          1
+        ],
+        [
+          1,
+          1,
+          1
+        ],
+        [
+          0,
+          0,
+          0
+        ]
+      ],
+      "result_shape": "Arch (bottom two rows)",
+      "preconditions": [
+        "editable_target",
+        "standard_editing"
+      ],
+      "reset": "native_reset",
+      "transforms": {
+        "mirror": null,
+        "rotations": []
+      }
+    },
+    {
+      "id": "window_tall",
+      "name": "Tall window (centre column, top two)",
+      "tiles": [
+        4,
+        7
+      ],
+      "kind": "wall",
+      "mirror_of": null,
+      "suggest": false,
+      "confirmed": false,
+      "purpose": [
+        "peek",
+        "shoot"
+      ],
+      "exposure": "medium",
+      "difficulty": 2,
+      "when_to_use": "A taller centre window: shoot from standing height with the low row still covering you.",
+      "source": "common competitive edit list (unconfirmed tile set; verify through edit review)",
+      "validation": {
+        "status": "unverified",
+        "game_version": null,
+        "evidence": [],
+        "result_confirmed": false,
+        "reason": "Candidate from edit lists; confirm through recorded and reviewed attempts."
+      },
+      "topology": "selection_grid",
+      "mask": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          1,
+          0
+        ],
+        [
+          0,
+          1,
+          0
+        ]
+      ],
+      "result_shape": "Tall window (centre column, top two)",
+      "preconditions": [
+        "editable_target",
+        "standard_editing"
+      ],
+      "reset": "native_reset",
+      "transforms": {
+        "mirror": null,
+        "rotations": []
+      }
+    },
+    {
+      "id": "window_wide",
+      "name": "Wide window (middle row)",
+      "tiles": [
+        3,
+        4,
+        5
+      ],
+      "kind": "wall",
+      "mirror_of": null,
+      "suggest": false,
+      "confirmed": false,
+      "purpose": [
+        "peek",
+        "shoot"
+      ],
+      "exposure": "high",
+      "difficulty": 2,
+      "when_to_use": "The whole middle row: a wide firing slit across the wall.",
+      "source": "common competitive edit list (unconfirmed tile set; verify through edit review)",
+      "validation": {
+        "status": "unverified",
+        "game_version": null,
+        "evidence": [],
+        "result_confirmed": false,
+        "reason": "Candidate from edit lists; confirm through recorded and reviewed attempts."
+      },
+      "topology": "selection_grid",
+      "mask": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          1,
+          1,
+          1
+        ],
+        [
+          0,
+          0,
+          0
+        ]
+      ],
+      "result_shape": "Wide window (middle row)",
+      "preconditions": [
+        "editable_target",
+        "standard_editing"
+      ],
+      "reset": "native_reset",
+      "transforms": {
+        "mirror": null,
+        "rotations": []
+      }
+    },
+    {
+      "id": "side_door_left",
+      "name": "Side door (left)",
+      "tiles": [
+        0,
+        3
+      ],
+      "kind": "wall",
+      "mirror_of": "side_door_right",
+      "suggest": false,
+      "confirmed": false,
+      "purpose": [
+        "enter",
+        "escape"
+      ],
+      "exposure": "medium",
+      "difficulty": 2,
+      "when_to_use": "Left column, bottom two: a door at the edge of the wall, hugging the corner.",
+      "source": "common competitive edit list (unconfirmed tile set; verify through edit review)",
+      "validation": {
+        "status": "unverified",
+        "game_version": null,
+        "evidence": [],
+        "result_confirmed": false,
+        "reason": "Candidate from edit lists; confirm through recorded and reviewed attempts."
+      },
+      "topology": "selection_grid",
+      "mask": [
+        [
+          1,
+          0,
+          0
+        ],
+        [
+          1,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0
+        ]
+      ],
+      "result_shape": "Side door (left)",
+      "preconditions": [
+        "editable_target",
+        "standard_editing"
+      ],
+      "reset": "native_reset",
+      "transforms": {
+        "mirror": "side_door_right",
+        "rotations": []
+      }
+    },
+    {
+      "id": "side_door_right",
+      "name": "Side door (right)",
+      "tiles": [
+        2,
+        5
+      ],
+      "kind": "wall",
+      "mirror_of": "side_door_left",
+      "suggest": false,
+      "confirmed": false,
+      "purpose": [
+        "enter",
+        "escape"
+      ],
+      "exposure": "medium",
+      "difficulty": 2,
+      "when_to_use": "Right column, bottom two: a door at the edge of the wall, hugging the corner.",
+      "source": "common competitive edit list (unconfirmed tile set; verify through edit review)",
+      "validation": {
+        "status": "unverified",
+        "game_version": null,
+        "evidence": [],
+        "result_confirmed": false,
+        "reason": "Candidate from edit lists; confirm through recorded and reviewed attempts."
+      },
+      "topology": "selection_grid",
+      "mask": [
+        [
+          0,
+          0,
+          1
+        ],
+        [
+          0,
+          0,
+          1
+        ],
+        [
+          0,
+          0,
+          0
+        ]
+      ],
+      "result_shape": "Side door (right)",
+      "preconditions": [
+        "editable_target",
+        "standard_editing"
+      ],
+      "reset": "native_reset",
+      "transforms": {
+        "mirror": "side_door_left",
+        "rotations": []
+      }
+    },
+    {
+      "id": "crouch_hole",
+      "name": "Crouch hole (bottom middle)",
+      "tiles": [
+        1
+      ],
+      "kind": "wall",
+      "mirror_of": null,
+      "suggest": false,
+      "confirmed": false,
+      "purpose": [
+        "peek",
+        "shoot"
+      ],
+      "exposure": "low",
+      "difficulty": 2,
+      "when_to_use": "One bottom-middle tile: a low hole to shoot through while crouched.",
+      "source": "common competitive edit list (unconfirmed tile set; verify through edit review)",
+      "validation": {
+        "status": "unverified",
+        "game_version": null,
+        "evidence": [],
+        "result_confirmed": false,
+        "reason": "Candidate from edit lists; confirm through recorded and reviewed attempts."
+      },
+      "topology": "selection_grid",
+      "mask": [
+        [
+          0,
+          1,
+          0
+        ],
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0
+        ]
+      ],
+      "result_shape": "Crouch hole (bottom middle)",
+      "preconditions": [
+        "editable_target",
+        "standard_editing"
+      ],
+      "reset": "native_reset",
+      "transforms": {
+        "mirror": null,
+        "rotations": []
+      }
     }
   ],
   "other_edits": [],
@@ -1634,6 +1968,296 @@
       "reset": "native_reset",
       "transforms": {
         "mirror": "floor_half_left",
+        "rotations": []
+      }
+    },
+    {
+      "id": "floor_three_keep_far_right",
+      "name": "Floor, three tiles (far right kept)",
+      "tiles": [
+        0,
+        1,
+        2
+      ],
+      "kind": "grid",
+      "mirror_of": "floor_three_keep_far_left",
+      "suggest": false,
+      "confirmed": false,
+      "purpose": [
+        "shoot_down",
+        "drop"
+      ],
+      "exposure": "high",
+      "difficulty": 2,
+      "when_to_use": "Remove three tiles and keep one corner to stand on.",
+      "source": "common competitive edit list (unconfirmed tile set; verify through edit review)",
+      "validation": {
+        "status": "unverified",
+        "game_version": null,
+        "evidence": [],
+        "result_confirmed": false,
+        "reason": "Candidate from edit lists; confirm through recorded and reviewed attempts."
+      },
+      "topology": "selection_grid",
+      "mask": [
+        [
+          1,
+          1
+        ],
+        [
+          1,
+          0
+        ]
+      ],
+      "result_shape": "Floor, three tiles (far right kept)",
+      "preconditions": [
+        "editable_target",
+        "standard_editing"
+      ],
+      "reset": "native_reset",
+      "transforms": {
+        "mirror": "floor_three_keep_far_left",
+        "rotations": []
+      }
+    },
+    {
+      "id": "floor_three_keep_far_left",
+      "name": "Floor, three tiles (far left kept)",
+      "tiles": [
+        0,
+        1,
+        3
+      ],
+      "kind": "grid",
+      "mirror_of": "floor_three_keep_far_right",
+      "suggest": false,
+      "confirmed": false,
+      "purpose": [
+        "shoot_down",
+        "drop"
+      ],
+      "exposure": "high",
+      "difficulty": 2,
+      "when_to_use": "Remove three tiles and keep one corner to stand on.",
+      "source": "common competitive edit list (unconfirmed tile set; verify through edit review)",
+      "validation": {
+        "status": "unverified",
+        "game_version": null,
+        "evidence": [],
+        "result_confirmed": false,
+        "reason": "Candidate from edit lists; confirm through recorded and reviewed attempts."
+      },
+      "topology": "selection_grid",
+      "mask": [
+        [
+          1,
+          1
+        ],
+        [
+          0,
+          1
+        ]
+      ],
+      "result_shape": "Floor, three tiles (far left kept)",
+      "preconditions": [
+        "editable_target",
+        "standard_editing"
+      ],
+      "reset": "native_reset",
+      "transforms": {
+        "mirror": "floor_three_keep_far_right",
+        "rotations": []
+      }
+    },
+    {
+      "id": "floor_three_keep_near_right",
+      "name": "Floor, three tiles (near right kept)",
+      "tiles": [
+        0,
+        2,
+        3
+      ],
+      "kind": "grid",
+      "mirror_of": "floor_three_keep_near_left",
+      "suggest": false,
+      "confirmed": false,
+      "purpose": [
+        "shoot_down",
+        "drop"
+      ],
+      "exposure": "high",
+      "difficulty": 2,
+      "when_to_use": "Remove three tiles and keep one corner to stand on.",
+      "source": "common competitive edit list (unconfirmed tile set; verify through edit review)",
+      "validation": {
+        "status": "unverified",
+        "game_version": null,
+        "evidence": [],
+        "result_confirmed": false,
+        "reason": "Candidate from edit lists; confirm through recorded and reviewed attempts."
+      },
+      "topology": "selection_grid",
+      "mask": [
+        [
+          1,
+          0
+        ],
+        [
+          1,
+          1
+        ]
+      ],
+      "result_shape": "Floor, three tiles (near right kept)",
+      "preconditions": [
+        "editable_target",
+        "standard_editing"
+      ],
+      "reset": "native_reset",
+      "transforms": {
+        "mirror": "floor_three_keep_near_left",
+        "rotations": []
+      }
+    },
+    {
+      "id": "floor_three_keep_near_left",
+      "name": "Floor, three tiles (near left kept)",
+      "tiles": [
+        1,
+        2,
+        3
+      ],
+      "kind": "grid",
+      "mirror_of": "floor_three_keep_near_right",
+      "suggest": false,
+      "confirmed": false,
+      "purpose": [
+        "shoot_down",
+        "drop"
+      ],
+      "exposure": "high",
+      "difficulty": 2,
+      "when_to_use": "Remove three tiles and keep one corner to stand on.",
+      "source": "common competitive edit list (unconfirmed tile set; verify through edit review)",
+      "validation": {
+        "status": "unverified",
+        "game_version": null,
+        "evidence": [],
+        "result_confirmed": false,
+        "reason": "Candidate from edit lists; confirm through recorded and reviewed attempts."
+      },
+      "topology": "selection_grid",
+      "mask": [
+        [
+          0,
+          1
+        ],
+        [
+          1,
+          1
+        ]
+      ],
+      "result_shape": "Floor, three tiles (near left kept)",
+      "preconditions": [
+        "editable_target",
+        "standard_editing"
+      ],
+      "reset": "native_reset",
+      "transforms": {
+        "mirror": "floor_three_keep_near_right",
+        "rotations": []
+      }
+    },
+    {
+      "id": "floor_diagonal_a",
+      "name": "Floor, diagonal (near left + far right)",
+      "tiles": [
+        0,
+        3
+      ],
+      "kind": "grid",
+      "mirror_of": "floor_diagonal_b",
+      "suggest": false,
+      "confirmed": false,
+      "purpose": [
+        "shoot_down"
+      ],
+      "exposure": "medium",
+      "difficulty": 2,
+      "when_to_use": "Two opposite corners: a diagonal opening.",
+      "source": "common competitive edit list (unconfirmed tile set; verify through edit review)",
+      "validation": {
+        "status": "unverified",
+        "game_version": null,
+        "evidence": [],
+        "result_confirmed": false,
+        "reason": "Candidate from edit lists; confirm through recorded and reviewed attempts."
+      },
+      "topology": "selection_grid",
+      "mask": [
+        [
+          1,
+          0
+        ],
+        [
+          0,
+          1
+        ]
+      ],
+      "result_shape": "Floor, diagonal (near left + far right)",
+      "preconditions": [
+        "editable_target",
+        "standard_editing"
+      ],
+      "reset": "native_reset",
+      "transforms": {
+        "mirror": "floor_diagonal_b",
+        "rotations": []
+      }
+    },
+    {
+      "id": "floor_diagonal_b",
+      "name": "Floor, diagonal (near right + far left)",
+      "tiles": [
+        1,
+        2
+      ],
+      "kind": "grid",
+      "mirror_of": "floor_diagonal_a",
+      "suggest": false,
+      "confirmed": false,
+      "purpose": [
+        "shoot_down"
+      ],
+      "exposure": "medium",
+      "difficulty": 2,
+      "when_to_use": "Two opposite corners: a diagonal opening.",
+      "source": "common competitive edit list (unconfirmed tile set; verify through edit review)",
+      "validation": {
+        "status": "unverified",
+        "game_version": null,
+        "evidence": [],
+        "result_confirmed": false,
+        "reason": "Candidate from edit lists; confirm through recorded and reviewed attempts."
+      },
+      "topology": "selection_grid",
+      "mask": [
+        [
+          0,
+          1
+        ],
+        [
+          1,
+          0
+        ]
+      ],
+      "result_shape": "Floor, diagonal (near right + far left)",
+      "preconditions": [
+        "editable_target",
+        "standard_editing"
+      ],
+      "reset": "native_reset",
+      "transforms": {
+        "mirror": "floor_diagonal_a",
         "rotations": []
       }
     }
@@ -2442,6 +3066,202 @@
       "reset": "native_reset",
       "transforms": {
         "mirror": "roof_diagonal_a",
+        "rotations": []
+      }
+    },
+    {
+      "id": "roof_three_keep_far_right",
+      "name": "Cone, three squares (far right kept)",
+      "tiles": [
+        0,
+        1,
+        2
+      ],
+      "kind": "grid",
+      "mirror_of": "roof_three_keep_far_left",
+      "suggest": false,
+      "confirmed": false,
+      "purpose": [
+        "protect",
+        "peek"
+      ],
+      "exposure": "medium",
+      "difficulty": 2,
+      "when_to_use": "Three cone squares: a steep peak toward the kept corner.",
+      "source": "common competitive edit list (unconfirmed tile set; verify through edit review)",
+      "validation": {
+        "status": "unverified",
+        "game_version": null,
+        "evidence": [],
+        "result_confirmed": false,
+        "reason": "Candidate from edit lists; confirm through recorded and reviewed attempts."
+      },
+      "topology": "selection_grid",
+      "mask": [
+        [
+          1,
+          1
+        ],
+        [
+          1,
+          0
+        ]
+      ],
+      "result_shape": "Cone, three squares (far right kept)",
+      "preconditions": [
+        "editable_target",
+        "standard_editing"
+      ],
+      "reset": "native_reset",
+      "transforms": {
+        "mirror": "roof_three_keep_far_left",
+        "rotations": []
+      }
+    },
+    {
+      "id": "roof_three_keep_far_left",
+      "name": "Cone, three squares (far left kept)",
+      "tiles": [
+        0,
+        1,
+        3
+      ],
+      "kind": "grid",
+      "mirror_of": "roof_three_keep_far_right",
+      "suggest": false,
+      "confirmed": false,
+      "purpose": [
+        "protect",
+        "peek"
+      ],
+      "exposure": "medium",
+      "difficulty": 2,
+      "when_to_use": "Three cone squares: a steep peak toward the kept corner.",
+      "source": "common competitive edit list (unconfirmed tile set; verify through edit review)",
+      "validation": {
+        "status": "unverified",
+        "game_version": null,
+        "evidence": [],
+        "result_confirmed": false,
+        "reason": "Candidate from edit lists; confirm through recorded and reviewed attempts."
+      },
+      "topology": "selection_grid",
+      "mask": [
+        [
+          1,
+          1
+        ],
+        [
+          0,
+          1
+        ]
+      ],
+      "result_shape": "Cone, three squares (far left kept)",
+      "preconditions": [
+        "editable_target",
+        "standard_editing"
+      ],
+      "reset": "native_reset",
+      "transforms": {
+        "mirror": "roof_three_keep_far_right",
+        "rotations": []
+      }
+    },
+    {
+      "id": "roof_three_keep_near_right",
+      "name": "Cone, three squares (near right kept)",
+      "tiles": [
+        0,
+        2,
+        3
+      ],
+      "kind": "grid",
+      "mirror_of": "roof_three_keep_near_left",
+      "suggest": false,
+      "confirmed": false,
+      "purpose": [
+        "protect",
+        "peek"
+      ],
+      "exposure": "medium",
+      "difficulty": 2,
+      "when_to_use": "Three cone squares: a steep peak toward the kept corner.",
+      "source": "common competitive edit list (unconfirmed tile set; verify through edit review)",
+      "validation": {
+        "status": "unverified",
+        "game_version": null,
+        "evidence": [],
+        "result_confirmed": false,
+        "reason": "Candidate from edit lists; confirm through recorded and reviewed attempts."
+      },
+      "topology": "selection_grid",
+      "mask": [
+        [
+          1,
+          0
+        ],
+        [
+          1,
+          1
+        ]
+      ],
+      "result_shape": "Cone, three squares (near right kept)",
+      "preconditions": [
+        "editable_target",
+        "standard_editing"
+      ],
+      "reset": "native_reset",
+      "transforms": {
+        "mirror": "roof_three_keep_near_left",
+        "rotations": []
+      }
+    },
+    {
+      "id": "roof_three_keep_near_left",
+      "name": "Cone, three squares (near left kept)",
+      "tiles": [
+        1,
+        2,
+        3
+      ],
+      "kind": "grid",
+      "mirror_of": "roof_three_keep_near_right",
+      "suggest": false,
+      "confirmed": false,
+      "purpose": [
+        "protect",
+        "peek"
+      ],
+      "exposure": "medium",
+      "difficulty": 2,
+      "when_to_use": "Three cone squares: a steep peak toward the kept corner.",
+      "source": "common competitive edit list (unconfirmed tile set; verify through edit review)",
+      "validation": {
+        "status": "unverified",
+        "game_version": null,
+        "evidence": [],
+        "result_confirmed": false,
+        "reason": "Candidate from edit lists; confirm through recorded and reviewed attempts."
+      },
+      "topology": "selection_grid",
+      "mask": [
+        [
+          0,
+          1
+        ],
+        [
+          1,
+          1
+        ]
+      ],
+      "result_shape": "Cone, three squares (near left kept)",
+      "preconditions": [
+        "editable_target",
+        "standard_editing"
+      ],
+      "reset": "native_reset",
+      "transforms": {
+        "mirror": "roof_three_keep_near_right",
         "rotations": []
       }
     }

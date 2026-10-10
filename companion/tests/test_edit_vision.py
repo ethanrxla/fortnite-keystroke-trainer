@@ -87,7 +87,7 @@ class EditWindowRuntimeTests(unittest.TestCase):
    def geometry(self,value):self.geometry_calls.append(value)
    def after(self,ms,fn):self.callbacks.append(fn)
    def mainloop(self):
-    for _ in range(100):
+    for _ in range(200):   # ~5 s: frames must get processed even under full-suite load
      time.sleep(.025)
      if self.callbacks:self.callbacks.pop(0)()
   class Capture:
@@ -191,3 +191,24 @@ class RedGridTrackingTests(unittest.TestCase):
   image=np.zeros((300,300,3),np.uint8);image[:]=[20,30,170]
   self.assertEqual(_tile_support(image,np.diag([100.,100.,1.]),3),9)
   self.assertFalse(EditAnalyzer().finish([6,7,3])['result_confirmed'])
+
+
+class DisplayLatchTests(unittest.TestCase):
+ def snapshot(self):return {'mode':'editing','captured_at':0.,'projected':True,'reference_ids':['corner_upper_right'],'display_edit':{'id':'corner_upper_right'},'profile_id':'a','revision':1}
+ def test_at_least_one_second_through_missed_frames(self):
+  from keystroke_lab.guide_layers import GuideDisplayLatch
+  latch=GuideDisplayLatch();data=self.snapshot()
+  self.assertIs(latch.update(data,0.),data)
+  missed=dict(data,captured_at=.4,projected=False,reference_ids=[],display_edit=None)
+  self.assertTrue(latch.update(missed,1.0)['display_held'])
+  self.assertIsNone(latch.update(missed,1.26))
+ def test_same_frame_cannot_keep_old_projection_alive(self):
+  from keystroke_lab.guide_layers import GuideDisplayLatch
+  latch=GuideDisplayLatch();data=self.snapshot();latch.update(data,0.)
+  self.assertIsNone(latch.update(data,1.3))
+ def test_focus_loss_and_confirmed_weapon_override_hold(self):
+  from keystroke_lab.guide_layers import GuideDisplayLatch
+  latch=GuideDisplayLatch();data=self.snapshot();latch.update(data,0.)
+  self.assertIsNone(latch.update(data,.1,focused=False))
+  latch.update(data,0.)
+  self.assertIsNone(latch.update(dict(data,negative_mode='weapon'),.1))

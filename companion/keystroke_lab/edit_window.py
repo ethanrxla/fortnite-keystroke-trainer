@@ -21,7 +21,7 @@ from .edit_ranker import Ranker
 from .edit_geometry import PieceContext, tiles_to_grid, piece_to_grid
 from .edit_dictionary import TargetTracker, RoutePlanner, EditAnalyzer
 from .evidence import Evidence, ContextAssembler
-from .guide_layers import TraceGuideLayer, RegionGuideLayer
+from .guide_layers import TraceGuideLayer, RegionGuideLayer, GuideDisplayLatch
 from .attempt_recorder import AttemptRecorder, AttemptLog, default_matcher
 from .pieces import catalog_key
 import os
@@ -237,7 +237,7 @@ def run(profile_path=None):
     lines.attributes('-transparentcolor','#010203');lines.configure(bg='#010203')
     lines_canvas=tk.Canvas(lines,width=2,height=2,bg='#010203',highlightthickness=0);lines_canvas.pack(fill='both',expand=True)
     lines.update();make_click_through(lines);exclude_from_capture(lines);lines.withdraw()
-    presence=Presence(1.2);panel_shown=False;lines_shown=False;lines_key=None
+    presence=Presence(1.2);display_latch=GuideDisplayLatch(1.25);panel_shown=False;lines_shown=False;lines_key=None
     last=None;shown=False;last_write=0.
     cells=[];numbers=[];routes=[];markers=[];side_labels=[]
     canvas.create_rectangle(0,0,420,230,fill='#0b1720',outline='#416574')
@@ -290,10 +290,12 @@ def run(profile_path=None):
     world_path=lines_canvas.create_line(0,0,1,1,fill='#f6f7a0',width=3,arrow=tk.LAST,state='hidden')
     world_approach=lines_canvas.create_line(0,0,1,1,fill='#f6f7a0',width=3,dash=(4,4),arrow=tk.LAST,state='hidden')
     world_numbers=[lines_canvas.create_text(0,0,text='',fill='white',font=('Segoe UI',10,'bold'),state='hidden') for _ in range(9)]
+    world_markers=[lines_canvas.create_oval(0,0,1,1,outline='#f6f7a0',fill='#142c34',width=2,state='hidden') for _ in range(9)]
+    world_start=lines_canvas.create_oval(0,0,1,1,fill='#ffdc46',outline='',state='hidden')
     trace_layer=TraceGuideLayer(lines_canvas,[world_path])
     region_layer=RegionGuideLayer(lines_canvas,world_regions)
     def draw_lines(data,rect):
-        for item in world_regions+world_numbers+[world_path,world_approach]:lines_canvas.itemconfig(item,state='hidden')
+        for item in world_regions+world_numbers+world_markers+[world_path,world_approach,world_start]:lines_canvas.itemconfig(item,state='hidden')
         observation=data.get('observation') or {};ids=data.get('reference_ids') or []
         if not data.get('projected') or not ids:return False
         edit=data.get('display_edit')
@@ -312,8 +314,11 @@ def run(profile_path=None):
                 c,r=tile%n,tile//n
                 outlines.append([grid_to_screen(quad,c+dc,r+dr,n,n) for dc,dr in ((0,0),(1,0),(1,1),(0,1))])
         region_layer.show(outlines,True)
+        lines_canvas.coords(world_start,aim[0]-4,aim[1]-4,aim[0]+4,aim[1]+4);lines_canvas.itemconfig(world_start,state='normal')
+        for item,p in zip(world_markers,points):
+            lines_canvas.coords(item,p[0]-12,p[1]-12,p[0]+12,p[1]+12);lines_canvas.itemconfig(item,state='normal')
         for i,(item,p) in enumerate(zip(world_numbers,points),1):
-            lines_canvas.coords(item,*p);lines_canvas.itemconfig(item,state='normal',text=str(i))
+            lines_canvas.coords(item,*p);lines_canvas.itemconfig(item,state='normal',text=str(i));lines_canvas.tag_raise(item)
         return True
 
     def poll_once():
@@ -324,8 +329,10 @@ def run(profile_path=None):
         # The ring is the player's aim reference: hold it through dropped frames for the whole edit / build / blueprint.
         ring_on=bool(rect) and presence.update(fresh,now)
         if not rect:presence.reset()
-        # The panel is a piece reference: only while the crosshair is on a detected edit grid.
-        panel_on=fresh and bool(data.get('projected') or data.get('reference_ids'))
+        raw_data=data
+        display_data=display_latch.update(data,now,focused=bool(rect))
+        panel_on=display_data is not None or (fresh and bool(data.get("projected")))
+        if display_data is not None:data=display_data;ring_on=True
         if ring_on:
             if rect:
                 l,t,r,b=rect
@@ -352,6 +359,7 @@ def run(profile_path=None):
         else:
             if panel_shown:root.withdraw();panel_shown=False;last=None
             if lines_shown:lines.withdraw();lines_shown=False;lines_key=None
+        data=raw_data
         if data and now-last_write>1:
             try:
                 temporary=BASE/'edit-state.tmp';temporary.write_text(json.dumps(data));temporary.replace(BASE/'edit-state.json')

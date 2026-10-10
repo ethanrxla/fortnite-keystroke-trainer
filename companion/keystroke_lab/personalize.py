@@ -31,20 +31,34 @@ RATINGS = {
 
 
 def edit_stats(store):
-    """Per edit: attempts acted on, completion rate, median seconds from edit to confirm, mean travel efficiency."""
-    out = {}
-    for edit_id in [r[0] for r in store.rows("SELECT DISTINCT edit_id FROM attempts WHERE edit_id IS NOT NULL")]:
-        rows = store.rows("SELECT edit_ts, confirm_ts, travel_h, ideal_h FROM attempts WHERE edit_id=? AND edit_ts IS NOT NULL", (edit_id,))
-        if not rows:
+    """Per edit, from the recorded edit attempts (attempt_recorder.py, never rejected by review): how often the player
+    tried it (the guide suggested it, or they made it), how often it ended as that edit, median seconds from opening edit
+    mode to closing it, and crosshair travel. Attempts are attributed to the edit actually made when known, else to the
+    suggestion they were trying."""
+    rows = store.rows("SELECT attempt_id, record FROM edit_attempts")
+    per = {}
+    for attempt_id, raw in rows:
+        label = store.label(attempt_id)
+        if label and label["status"] == "rejected":
             continue
-        done = [r for r in rows if r[1] is not None]
-        times = [r[1] - r[0] for r in done]
-        eff = [min(1.0, r[3] / r[2]) for r in rows if r[2] and r[2] > 0 and r[3] is not None]
+        r = json.loads(raw)
+        made = (label or {}).get("edit_id") if label and label["status"] == "relabelled" else r.get("matched_edit_id")
+        edit_id = made or r.get("suggested_edit_id")
+        if not edit_id:
+            continue
+        e = per.setdefault(edit_id, {"n": 0, "done": 0, "times": [], "travel": []})
+        e["n"] += 1
+        e["done"] += r["outcome"] == "completed" and made == edit_id
+        e["times"].append(r["t_close"] - r["t_edit_open"])
+        if r.get("travel") is not None:
+            e["travel"].append(r["travel"])
+    out = {}
+    for edit_id, e in per.items():
         out[edit_id] = {
-            "attempts": len(rows),
-            "completed_pct": round(100.0 * len(done) / len(rows)),
-            "median_confirm_s": round(statistics.median(times), 2) if times else None,
-            "travel_efficiency_pct": round(100.0 * statistics.mean(eff)) if eff else None,
+            "attempts": e["n"],
+            "completed_pct": round(100.0 * e["done"] / e["n"]),
+            "median_confirm_s": round(statistics.median(e["times"]), 2) if e["times"] else None,
+            "travel_efficiency_pct": round(100.0 / (1.0 + statistics.mean(e["travel"]))) if e["travel"] else None,
         }
     return out
 
@@ -62,14 +76,17 @@ def factors(stats, jev=None):
     todo = [e for e, s in stats.items() if s["attempts"] >= MIN_ATTEMPTS]
     if not todo or not jev.available:
         return result
-    questions = {f"e{i}": choice_question(
-        "Rate how well this Fortnite player executes the edit described. " + describe(e, stats[e]), RATINGS)
-        for i, e in enumerate(todo)}
-    answers = jev.decide({"task": "rate edit execution"}, questions) or {}
-    for i, e in enumerate(todo):
-        probs = (answers.get(f"e{i}") or {}).get("probabilities")
-        if probs:
-            result[e] = round(max(1 - SPREAD, min(1 + SPREAD, 1 + SPREAD * (probs.get("strong", 0.0) - probs.get("weak", 0.0)))), 3)
+    # Jev takes at most 8 questions per call.
+    for start in range(0, len(todo), 8):
+        chunk = todo[start:start + 8]
+        questions = {f"e{i}": choice_question(
+            "Rate how well this Fortnite player executes the edit described. " + describe(e, stats[e]), RATINGS)
+            for i, e in enumerate(chunk)}
+        answers = jev.decide({"task": "rate edit execution"}, questions) or {}
+        for i, e in enumerate(chunk):
+            probs = (answers.get(f"e{i}") or {}).get("probabilities")
+            if probs:
+                result[e] = round(max(1 - SPREAD, min(1 + SPREAD, 1 + SPREAD * (probs.get("strong", 0.0) - probs.get("weak", 0.0)))), 3)
     return result
 
 

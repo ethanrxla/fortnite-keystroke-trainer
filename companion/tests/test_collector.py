@@ -60,10 +60,12 @@ class CollectorTests(unittest.TestCase):
 
 
 class PersonalizeTests(unittest.TestCase):
-    def seed(self, store, n):
+    def seed(self, store, n, edit="window_center"):
+        import uuid
+        from tests.test_attempt_pipeline import record
         for i in range(n):
-            store.db.execute("INSERT INTO attempts(lock_ts, edit_id, edit_ts, confirm_ts, travel_h, ideal_h) VALUES(?,?,?,?,?,?)",
-                             (i, "window_center", i + 1.0, i + 1.5, 100, 90))
+            store.add_attempt(record(attempt_id=str(uuid.uuid4()), matched_edit_id=edit, suggested_edit_id=edit,
+                                     t_edit_open=float(i), t_close=i + 1.5))
 
     def test_too_little_data_means_no_opinion(self):
         store = Store(":memory:")
@@ -90,6 +92,32 @@ class PersonalizeTests(unittest.TestCase):
         f = personalize.factors(personalize.edit_stats(store), Jev())["window_center"]
         self.assertAlmostEqual(f, 1.27, places=2)
         self.assertLessEqual(f, 1.3)
+
+    def test_more_than_eight_edits_are_sent_in_batches(self):
+        store = Store(":memory:")
+        ids = ["window_center", "window_high", "half_wall", "quarter_wall", "corner_lower_left", "corner_lower_right",
+               "corner_upper_left", "corner_upper_right", "half_arch_left", "half_arch_right"]
+        for e in ids:
+            self.seed(store, 5, e)
+        sizes = []
+
+        class Jev:
+            available = True
+
+            def decide(self, state, questions):
+                sizes.append(len(questions))
+                return {q: {"probabilities": {"strong": 0.0, "average": 0.0, "weak": 1.0}} for q in questions}
+
+        f = personalize.factors(personalize.edit_stats(store), Jev())
+        self.assertEqual(sorted(sizes), [2, 8])
+        self.assertTrue(all(v == 0.7 for v in f.values()))
+
+    def test_rejected_attempts_do_not_count(self):
+        store = Store(":memory:")
+        self.seed(store, 2)
+        aid = store.rows("SELECT attempt_id FROM edit_attempts LIMIT 1")[0][0]
+        store.add_label(aid, "rejected")
+        self.assertEqual(personalize.edit_stats(store)["window_center"]["attempts"], 1)
 
     def test_policy_blend_keeps_rows_normalised_and_floored(self):
         out = personalize.apply_to_policy({(0, 0, 0, 0): [0.5, 0.5]}, ["a", "b"], {"a": 1.3, "b": 0.7})

@@ -17,7 +17,9 @@
       {
         "mask": 2,
         "status": "unverified",
-        "edit_ids": []
+        "edit_ids": [
+          "crouch_hole"
+        ]
       },
       {
         "mask": 3,
@@ -56,7 +58,9 @@
       {
         "mask": 9,
         "status": "unverified",
-        "edit_ids": []
+        "edit_ids": [
+          "side_door_left"
+        ]
       },
       {
         "mask": 10,
@@ -201,7 +205,9 @@
       {
         "mask": 36,
         "status": "unverified",
-        "edit_ids": []
+        "edit_ids": [
+          "side_door_right"
+        ]
       },
       {
         "mask": 37,
@@ -305,7 +311,9 @@
       {
         "mask": 56,
         "status": "unverified",
-        "edit_ids": []
+        "edit_ids": [
+          "window_wide"
+        ]
       },
       {
         "mask": 57,
@@ -340,7 +348,9 @@
       {
         "mask": 63,
         "status": "unverified",
-        "edit_ids": []
+        "edit_ids": [
+          "arch"
+        ]
       },
       {
         "mask": 64,
@@ -749,7 +759,9 @@
       {
         "mask": 144,
         "status": "unverified",
-        "edit_ids": []
+        "edit_ids": [
+          "window_tall"
+        ]
       },
       {
         "mask": 145,
@@ -2649,12 +2661,16 @@
       {
         "mask": 6,
         "status": "unverified",
-        "edit_ids": []
+        "edit_ids": [
+          "floor_diagonal_b"
+        ]
       },
       {
         "mask": 7,
         "status": "unverified",
-        "edit_ids": []
+        "edit_ids": [
+          "floor_three_keep_far_right"
+        ]
       },
       {
         "mask": 8,
@@ -2666,7 +2682,9 @@
       {
         "mask": 9,
         "status": "unverified",
-        "edit_ids": []
+        "edit_ids": [
+          "floor_diagonal_a"
+        ]
       },
       {
         "mask": 10,
@@ -2678,7 +2696,9 @@
       {
         "mask": 11,
         "status": "unverified",
-        "edit_ids": []
+        "edit_ids": [
+          "floor_three_keep_far_left"
+        ]
       },
       {
         "mask": 12,
@@ -2690,12 +2710,16 @@
       {
         "mask": 13,
         "status": "unverified",
-        "edit_ids": []
+        "edit_ids": [
+          "floor_three_keep_near_right"
+        ]
       },
       {
         "mask": 14,
         "status": "unverified",
-        "edit_ids": []
+        "edit_ids": [
+          "floor_three_keep_near_left"
+        ]
       },
       {
         "mask": 15,
@@ -2754,7 +2778,9 @@
       {
         "mask": 7,
         "status": "unverified",
-        "edit_ids": []
+        "edit_ids": [
+          "roof_three_keep_far_right"
+        ]
       },
       {
         "mask": 8,
@@ -2780,7 +2806,9 @@
       {
         "mask": 11,
         "status": "unverified",
-        "edit_ids": []
+        "edit_ids": [
+          "roof_three_keep_far_left"
+        ]
       },
       {
         "mask": 12,
@@ -2792,12 +2820,16 @@
       {
         "mask": 13,
         "status": "unverified",
-        "edit_ids": []
+        "edit_ids": [
+          "roof_three_keep_near_right"
+        ]
       },
       {
         "mask": 14,
         "status": "unverified",
-        "edit_ids": []
+        "edit_ids": [
+          "roof_three_keep_near_left"
+        ]
       },
       {
         "mask": 15,

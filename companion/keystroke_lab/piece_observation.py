@@ -132,7 +132,7 @@ class GridMotionTracker:
         if not .65*oldarea<area<1.5*oldarea:return None
         quad=quad/self.scale
         cross=_crosshair(frame)
-        if cv2.pointPolygonTest(quad,cross,False)<0:return None
+        if cv2.pointPolygonTest(quad,cross,True)<-min(frame.shape[:2])*.025:return None
         n=3 if self.observation.piece=='wall' else 2
         native=cv2.getPerspectiveTransform(np.array([[0,0],[n,0],[n,n],[0,n]],np.float32),quad)
         if _tile_support(frame[:,:,:3],native,n)<(6 if n==3 else 4):return None
@@ -140,7 +140,7 @@ class GridMotionTracker:
         projection=cv2.getPerspectiveTransform(quad,grid)
         aim=cv2.perspectiveTransform(np.array([[cross]],np.float32),projection)[0,0]
         obs=replace(self.observation,captured_at=now,quad=tuple(map(tuple,quad.tolist())),
-                    aim_uv=tuple(map(float,aim)),source='optical_flow',reason='target_motion_tracked')
+                    aim_uv=tuple(float(min(max(v,0.),n-1e-4)) for v in aim),source='optical_flow',reason='target_motion_tracked')
         ctx=piece_context(obs.to_dict(),frame.shape[1],frame.shape[0])
         if ctx:obs=replace(obs,context=ctx.to_dict())
         self.grey=grey;self.points=nxt[good].reshape(-1,1,2);self.observation=obs
