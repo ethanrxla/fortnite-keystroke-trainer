@@ -46,17 +46,32 @@ class VisualObserver:
             count,H,quad=projection
             H,quad,_=_lattice_shift(image,H,aim)
             wall=self.wall._from_projection(image,H,quad,now,scale,count,.93 if count==9 else .88)
-        else:
-            # Close / oblique walls whose border runs off screen: rebuild the 3x3 from three lines per direction
-            # (bounded ~0.05 s). Then the any-angle detector (walls with selected tiles, 2x2 floors / cones).
-            # One line search per frame, shared by both detectors; tighter budgets keep the guide responsive (the
-            # strongest line sets are tried first, so most answers come early).
-            segs=_segments(image)
-            found=_partial_grid(image,aim,budget=.05,segs=segs) or _general_grid(image,aim,budget=.035,segs=segs)
-            if found is None:return PieceObservation(now,reason='bounded_detector_abstained')
-            count,H,quad,n=found
-            if n==3:H,quad,_=_lattice_shift(image,H,aim)
-            wall=self.wall._from_projection(image,H,quad,now,scale,count,.92 if count>=n*n-1 else .88,n)
+            found=self._classify(image,frame,wall,H,now)
+            # A rejected projection is not the end: wood planks beside a wall can give it a lattice of the wrong size
+            # (live 2026-10-10), while the line detectors below still find the wall.
+            if found.piece!='unknown':return found
+        # Close / oblique walls whose border runs off screen: rebuild the 3x3 from three lines per direction
+        # (bounded ~0.05 s). Then the any-angle detector (walls with selected tiles, 2x2 floors / cones).
+        # One line search per frame, shared by both detectors; tighter budgets keep the guide responsive (the
+        # strongest line sets are tried first, so most answers come early).
+        result=None
+        for dark in (False,True):
+            # Bright tile gaps first; if nothing fits, once more with dark gaps too (walls in shade at an angle).
+            segs=_segments(image,dark)
+            for detect in (_partial_grid,_general_grid):
+                # Each detector's grid in turn; the first that passes the piece checks wins (the close-up detector can
+                # overshoot into wood beside a wall where the any-angle one fits it).
+                found=detect(image,aim,budget=.05 if detect is _partial_grid else .035,segs=segs)
+                if found is None:continue
+                count,H,quad,n=found
+                if n==3:H,quad,_=_lattice_shift(image,H,aim)
+                wall=self.wall._from_projection(image,H,quad,now,scale,count,.92 if count>=n*n-1 else .88,n)
+                result=self._classify(image,frame,wall,H,now)
+                if result.piece!='unknown':return result
+        return result or PieceObservation(now,reason='bounded_detector_abstained')
+
+    def _classify(self,image,frame,wall,H,now):
+        """Wall / floor / cone from one grid hypothesis, or an 'unknown' observation with the reason."""
         if wall.reason!='native_edit_grid_observed':return PieceObservation(now,reason=wall.reason)
         q=wall.wall_quad
         ctx=piece_context(wall,frame.shape[1],frame.shape[0])

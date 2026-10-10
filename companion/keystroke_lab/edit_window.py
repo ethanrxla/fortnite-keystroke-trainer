@@ -78,8 +78,21 @@ def route_lines(observation,tiles,aim=None,cols=3):
     return path,outlines
 
 
+def lattice_offset(held,new,n=3,tol=.25):
+    """(dx, dy) whole tiles by which grid quad `new` is grid quad `held` shifted (both screen quads, TL TR BR BL), or
+    None when they are not the same lattice. (0, 0) = the same grid."""
+    unit=np.float32([[0,0],[n,0],[n,n],[0,n]])
+    try:H=cv2.getPerspectiveTransform(unit,np.float32(held).reshape(4,2))
+    except Exception:return None
+    d=cv2.perspectiveTransform(np.float32(new).reshape(1,4,2),np.linalg.inv(H))[0]-unit
+    shift=np.round(d.mean(0))
+    if np.abs(d-shift).max()>tol:return None
+    return int(shift[0]),int(shift[1])
+
+
 class ContextPipeline:
     FULL_EVERY=3      # tracked frames between full detections (see process: fast path)
+    SHIFT_VOTES=3     # detections in a row that must agree before the held grid moves by whole tiles
     def __init__(self,store,advisor=None,clock=time.monotonic,observer=None,telemetry=None,async_detect=False):
         self.store=store;self.clock=clock
         self.advisor=advisor or EditAdvisor(jev=JevClient(domain='edit'),clock=clock)
@@ -90,7 +103,7 @@ class ContextPipeline:
         self.last_mode_seen=-float('inf');self.frames_since_full=0
         # async_detect: full detection (~80-130 ms) runs on its own thread with its own observer; every frame takes the
         # fast path (track + re-read, ~10 ms) and a finished detection re-seeds the tracker. Tests use the synchronous path.
-        self.async_detect=async_detect;self.pending=None
+        self.async_detect=async_detect;self.pending=None;self.shift_vote=None;self.held=None
         if async_detect:
             from concurrent.futures import ThreadPoolExecutor
             self.detector=ThreadPoolExecutor(max_workers=1,thread_name_prefix='edit-detect');self.bg_observer=VisualObserver()
@@ -99,6 +112,28 @@ class ContextPipeline:
         self.routes.reset()
         self.locked=None;self.selection.reset();self.targets.last=None;self.last_target=None
         self.motion.reset();self.previous_display=None;self.last_mode_seen=-float('inf')
+    def _hold_lattice(self,det,det_frame):
+        """A finished detection that is the held grid moved by whole tiles (same wall, anchored a row or column off:
+        the lattice is periodic) does not move the guide until SHIFT_VOTES detections in a row agree. Until then the
+        detection is re-anchored onto the held lattice, so tracking stays fresh and the crosshair keeps its tile.
+        Live 2026-10-10: the grid jumped one row between detections and the guide flipped between the upper and lower
+        corner with the crosshair still. Returns the observation to seed with (None = keep tracking as is)."""
+        held=self.held
+        if held is None or held.piece!=det.piece or det.captured_at-held.captured_at>.5:
+            self.shift_vote=None;return det
+        n=3 if det.piece=='wall' else 2
+        off=lattice_offset(held.quad,det.quad,n)
+        if off is None or off==(0,0):
+            self.shift_vote=None;return det
+        votes=self.shift_vote[1]+1 if self.shift_vote and self.shift_vote[0]==off else 1
+        if votes>=self.SHIFT_VOTES:
+            self.shift_vote=None;return det
+        self.shift_vote=(off,votes)
+        unit=np.float32([[0,0],[n,0],[n,n],[0,n]])
+        H=cv2.getPerspectiveTransform(unit,np.float32(det.quad).reshape(4,2))
+        quad=cv2.perspectiveTransform((unit-np.float32(off)).reshape(1,4,2),H)[0]
+        return self.observer.from_quad(det_frame,replace(det,quad=tuple(map(tuple,quad.tolist()))),det.captured_at)
+
     def process(self,frame,captured_at=None):
         captured=self.clock() if captured_at is None else captured_at;mode,score=observe_mode(frame,throttle=self.async_detect);profile=self.store.refresh()
         identity=(profile.profile_id,profile.revision)
@@ -137,7 +172,8 @@ class ContextPipeline:
                 try:det=future.result()
                 except Exception:det=None
                 if det is not None and det.piece!='unknown':
-                    self.motion.seed(det_frame,det);self.frames_since_full=0
+                    det=self._hold_lattice(det,det_frame)
+                    if det is not None:self.motion.seed(det_frame,det);self.frames_since_full=0
             if self.motion.observation is not None and captured-self.motion.detected_at<=1.:
                 moved=self.motion.follow(frame,captured,verify=False)
                 fast=self.observer.from_quad(frame,moved,captured) if moved else None
@@ -147,7 +183,7 @@ class ContextPipeline:
                 snapshot=frame.copy()
                 self.pending=(self.detector.submit(self.bg_observer.observe,snapshot,captured),snapshot,captured)
             observation=fast
-            if fast is not None:self.frames_since_full+=1
+            if fast is not None:self.frames_since_full+=1;self.held=fast
         elif (mode=='editing' and mode_track is None and self.motion.observation is not None
                 and self.frames_since_full<self.FULL_EVERY and captured-self.motion.detected_at<=.5):
             moved=self.motion.follow(frame,captured)

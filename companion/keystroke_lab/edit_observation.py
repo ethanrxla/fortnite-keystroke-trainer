@@ -121,7 +121,7 @@ def _tile_support(image,H,n):
     return count
 
 
-def _segments(image):
+def _segments(image,dark=False):
     """Long straight light edges (the gaps between edit tiles) as (x1,y1,x2,y2,length)."""
     h,w=image.shape[:2]
     bright=cv2.inRange(image,np.array([120,120,120],np.uint8),np.array([255,255,255],np.uint8))
@@ -131,10 +131,41 @@ def _segments(image):
     value=image.max(2)
     tophat=cv2.morphologyEx(value,cv2.MORPH_TOPHAT,cv2.getStructuringElement(cv2.MORPH_RECT,(9,9)))
     bright[tophat>40]=255
+    if dark:
+        # Second pass (VisualObserver.observe, when the bright lines found nothing): seen at an angle in shade the gaps
+        # can be darker than the tiles (live 2026-10-10: (84,63,54) between (145,76,28) tiles), so a black top-hat
+        # keeps thin dark strokes too. Off by default: on clean walls the extra edges crowd out the real ones. Dark
+        # wood seams are dropped by _beside_tiles, which keeps only segments with edit-tile colour beside them.
+        blackhat=cv2.morphologyEx(value,cv2.MORPH_BLACKHAT,cv2.getStructuringElement(cv2.MORPH_RECT,(9,9)))
+        bright[blackhat>40]=255
     _mask_hud(bright)
     lines=cv2.HoughLinesP(cv2.Canny(bright,40,120),1,np.pi/360,35,minLineLength=max(30,w*.04),maxLineGap=12)
     if lines is None:return []
-    return [(float(a),float(b),float(c),float(d),float(np.hypot(c-a,d-b))) for a,b,c,d in lines.reshape(-1,4)]
+    return _beside_tiles(image,[(float(a),float(b),float(c),float(d),float(np.hypot(c-a,d-b))) for a,b,c,d in lines.reshape(-1,4)])
+
+
+def _beside_tiles(image,segs,offset=4,keep=.35):
+    """Only segments with edit-tile colour beside them. A gap between edit tiles has tiles on both sides and a piece's
+    border on one; the planks of a wooden build next to the wall have none, and their many long edges otherwise crowd
+    the wall's own lines out of the detectors' shortlists (live 2026-10-10: close to a wall beside wooden builds the
+    grid was never found). Per-pixel colour classes as _tile_support with a strict grey; 9 samples per side, all vectorised."""
+    if not segs:return segs
+    img=image.astype(np.int16);b,g,r=img[:,:,0],img[:,:,1],img[:,:,2]
+    spread=img.max(2)-img.min(2);mean=img.mean(2)
+    # Strict classes: edit-tile blue is strongly blue (145,76,28); wood at night is tinted (87,70,60). Grey only when
+    # exactly grey (selected tiles: spread ~3; shaded wood 14..31).
+    tile=((b>r*2)&(b*10>g*14)&(b>80))|((spread<10)&(mean>60)&(mean<180))|((r*100>b*122)&(r>80)&(g<100))
+    h,w=tile.shape
+    s=np.asarray(segs,np.float32)
+    t=np.linspace(.1,.9,9,dtype=np.float32)
+    x=s[:,0,None]+(s[:,2]-s[:,0])[:,None]*t;y=s[:,1,None]+(s[:,3]-s[:,1])[:,None]*t
+    length=np.maximum(s[:,4],1e-6)
+    nx=(-(s[:,3]-s[:,1])/length)[:,None];ny=((s[:,2]-s[:,0])/length)[:,None]
+    def at(px,py):
+        xi=np.clip(px.round().astype(int),0,w-1);yi=np.clip(py.round().astype(int),0,h-1)
+        return tile[yi,xi]
+    beside=at(x+nx*offset,y+ny*offset)|at(x-nx*offset,y-ny*offset)
+    return [seg for seg,f in zip(segs,beside.mean(1)) if f>=keep]
 
 
 def _merge_lines(segs):
@@ -158,17 +189,17 @@ def _cross(a,b):
     return np.linalg.solve(m,np.array([a['c'],b['c']],float))
 
 
-def _general_grid(image,aim,budget=.08,segs=None):
+def _general_grid(image,aim,budget=.08,segs=None,sizes=(3,2),min_area=.08):
     """Any-angle n x n edit grid (n = 3 for walls, 2 for floors / stairs / roofs).
 
     The near-horizontal / near-vertical detector (_line_projection) misses floors seen at an angle and walls with
     selected tiles. Here lines are split into the two dominant directions, n+1 lines are chosen from each, and the
     result must be a projective grid (every interior crossing where a homography of the outer quad puts it) whose
     cells look like edit tiles and which contains the crosshair. Returns (count, H, quad, n) or None."""
-    deadline=time.perf_counter()+budget
     h,w=image.shape[:2]
     # segs: line segments computed once per frame by the caller and shared between detectors (~26 ms each).
     lines=sorted(_merge_lines(segs if segs is not None else _segments(image)),key=lambda l:-l['length'])[:24]
+    deadline=time.perf_counter()+budget       # the budget is for the search, after any line search done here
     if len(lines)<6:return None
     # Direction families: up to three angle peaks (selected tiles add diagonal X marks, so the strongest two are not
     # always the grid); every pair at least 25 degrees apart is tried.
@@ -189,17 +220,17 @@ def _general_grid(image,aim,budget=.08,segs=None):
     overall=None
     for k in peaks:
         fam=[[l for l in lines if diff(l['angle'],k)<14],[l for l in lines if diff(l['angle'],k)>=20]]
-        found=_grid_from_families(image,aim,fam,deadline)
+        found=_grid_from_families(image,aim,fam,deadline,sizes,min_area)
         if found is not None and (overall is None or found[0]>overall[0]):overall=found
     return overall[1] if overall else None
 
 
-def _grid_from_families(image,aim,fam,deadline=None):
+def _grid_from_families(image,aim,fam,deadline=None,sizes=(3,2),min_area=.08):
     """Bounded search: the crosshair must lie between the first and last line of each family (it is on the piece), so
     only those line spans are tried, crossings are computed once, and the search stops at `deadline`."""
     h,w=image.shape[:2]
     best=None
-    for n in (3,2):
+    for n in sizes:
         if len(fam[0])<n+1 or len(fam[1])<n+1:continue
         def order(group,ref):
             # Position of each line along a line through the crosshair parallel to the other family's strongest line;
@@ -236,7 +267,7 @@ def _grid_from_families(image,aim,fam,deadline=None):
                 quad=np.array([pts[0][0],pts[0][n],pts[n][n],pts[n][0]],np.float32)
                 if not cv2.isContourConvex(quad):continue
                 area=cv2.contourArea(quad)
-                if area<.08*w*h or quad[:,0].min()<-w*(.35 if n==3 else .05) or quad[:,0].max()>w*(1.35 if n==3 else 1.05) or quad[:,1].min()<-h*(.35 if n==3 else .05) or quad[:,1].max()>h*(1.35 if n==3 else 1.05):continue
+                if area<min_area*w*h or quad[:,0].min()<-w*(.35 if n==3 else .05) or quad[:,0].max()>w*(1.35 if n==3 else 1.05) or quad[:,1].min()<-h*(.35 if n==3 else .05) or quad[:,1].max()>h*(1.35 if n==3 else 1.05):continue
                 H=cv2.getPerspectiveTransform(unit,quad)
                 actual=np.array([[pts[j][i] for j in range(n+1) for i in range(n+1)]],np.float32)
                 residual=np.linalg.norm(cv2.perspectiveTransform(actual,np.linalg.inv(H))-expected,axis=2)
@@ -311,9 +342,9 @@ def _partial_grid(image,aim,budget=.06,segs=None):
     tiles when the grid continues there, and like background when that line is the wall's edge. A side that is off
     screen counts as 'continues' only if the opposite side is clearly background. Any tie abstains, so a wrong cell is
     never guessed. Returns (count, H, quad, 3) like _general_grid, with quad corners possibly off screen."""
-    deadline=time.perf_counter()+budget
     h,w=image.shape[:2]
     lines=sorted(_merge_lines(segs if segs is not None else _segments(image)),key=lambda l:-l['length'])[:20]
+    deadline=time.perf_counter()+budget       # the budget is for the search, after any line search done here
     if len(lines)<6:return None
     hist=np.zeros(180)
     for l in lines:hist[int(l['angle'])%180]+=l['length']
@@ -379,6 +410,7 @@ def _partial_grid(image,aim,budget=.06,segs=None):
             a=cv2.perspectiveTransform(np.float32([[aim]]),np.linalg.inv(H))[0,0]
             if not (0<=a[0]<3 and 0<=a[1]<3):continue
             count=sum(1 for c in range(3) for r in range(3) if (x:=_cell_colour(image,H,c,r)) is not None and _tile_like(x))
+            if count<6:continue           # a wall needs 6 of 9 tile cells anyway (VisualObserver); a blueprint has ~4
             score=(count,-float(np.linalg.norm(back-grid9,axis=1).mean()))
             if best is None or score>best[0]:
                 quad=_ordered(quad)

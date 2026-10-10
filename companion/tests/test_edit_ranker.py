@@ -68,7 +68,7 @@ class IntentMapTests(unittest.TestCase):
 
     def test_every_wall_tile(self):
         expect = {(0.5, 2.5): "corner_upper_left", (1.5, 2.5): "half_wall", (2.5, 2.5): "corner_upper_right",
-                  (0.5, 1.5): "corner_lower_left", (1.5, 1.7): "window_center", (2.5, 1.5): "corner_lower_right",
+                  (0.5, 1.3): "corner_lower_left", (1.5, 1.7): "window_center", (2.5, 1.3): "corner_lower_right",
                   (0.5, 0.5): "corner_lower_left", (1.5, 0.5): "door", (2.5, 0.5): "corner_lower_right"}
         for aim, edit in expect.items():
             self.assertEqual(self.m.lookup("wall", aim), edit, aim)
@@ -86,8 +86,14 @@ class IntentMapTests(unittest.TestCase):
         self.assertEqual(self.m.lookup("wall", (1.1, 0.9)), "half_arch_left")
         self.assertEqual(self.m.lookup("wall", (1.5, 1.2)), "window_center")
         self.assertEqual(self.m.lookup("wall", (1.5, 0.3)), "door")
-        self.assertEqual(self.m.lookup("wall", (0.3, 1.5)), "corner_lower_left")
-        self.assertEqual(self.m.lookup("wall", (2.7, 1.5)), "corner_lower_right")
+        self.assertEqual(self.m.lookup("wall", (0.3, 1.3)), "corner_lower_left")
+        self.assertEqual(self.m.lookup("wall", (2.7, 1.3)), "corner_lower_right")
+
+    def test_side_tiles_give_the_triangle_on_the_crosshairs_half(self):
+        # Player 2026-10-10 screenshot: crosshair above the middle of the right-middle tile -> upper right corner.
+        self.assertEqual(self.m.lookup("wall", (2.3, 1.7)), "corner_upper_right")
+        self.assertEqual(self.m.lookup("wall", (0.5, 1.8)), "corner_upper_left")
+        self.assertEqual(self.m.lookup("wall", (2.3, 1.2)), "corner_lower_right")
 
     def test_never_quarter_wall_on_the_top_row(self):
         for u in (1.2, 1.5, 1.8):

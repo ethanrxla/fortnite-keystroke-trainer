@@ -19,6 +19,7 @@ KTEditPatterns<public>:[]kt_edit_pattern = array:
     kt_edit_pattern{Id := "half_arch_right", Kind := "wall", Mask := 54, Path := array{4, 5, 2, 1}, Arrows := array{}, ResultClass := "ArchwayLarge", Suggest := true, Tier := "common", Prefer := ""}
     kt_edit_pattern{Id := "side_peek_right", Kind := "wall", Mask := 32, Path := array{5}, Arrows := array{}, ResultClass := "WindowSide", Suggest := true, Tier := "common", Prefer := ""}
     kt_edit_pattern{Id := "side_peek_left", Kind := "wall", Mask := 8, Path := array{3}, Arrows := array{}, ResultClass := "WindowSide", Suggest := true, Tier := "common", Prefer := ""}
+    kt_edit_pattern{Id := "arch_wide", Kind := "wall", Mask := 23, Path := array{4, 1, 0, 2}, Arrows := array{}, ResultClass := "", Suggest := true, Tier := "situational", Prefer := ""}
     kt_edit_pattern{Id := "corner_single_ll", Kind := "wall", Mask := 1, Path := array{0}, Arrows := array{}, ResultClass := "", Suggest := false, Tier := "situational", Prefer := ""}
     kt_edit_pattern{Id := "corner_single_lr", Kind := "wall", Mask := 4, Path := array{2}, Arrows := array{}, ResultClass := "", Suggest := false, Tier := "situational", Prefer := ""}
     kt_edit_pattern{Id := "corner_single_ul", Kind := "wall", Mask := 64, Path := array{6}, Arrows := array{}, ResultClass := "", Suggest := false, Tier := "situational", Prefer := ""}
