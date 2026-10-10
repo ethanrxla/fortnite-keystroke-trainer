@@ -55,8 +55,7 @@ def cmd_practice(args):
     presses = []
 
     def on_key(k):
-        name = getattr(k, "char", None) or getattr(k, "name", str(k))
-        name = str(name).lower()
+        name = str(keyboard_overlay.key_name(k)).lower()
         presses.append((time.perf_counter(), alternates.get(name, name)))
 
     def on_click(_x, _y, button, pressed):
@@ -162,6 +161,13 @@ def cmd_keys(args):
 
 def cmd_binds(args):
     return binds_cmd.run(args.out, args.only, args.category)
+
+
+def cmd_import_binds(args):
+    from . import fortnite_binds
+    from .bind_profiles import ProfileStore
+    store = ProfileStore(args.out, confirm_sprint=pathlib.Path(args.out) == drills.BINDS_FILE)
+    return fortnite_binds.run(store, args.file, write=args.write, trust=args.trust)
 
 
 def cmd_insights(args):
@@ -313,6 +319,12 @@ def main(argv=None):
     b.add_argument("--only", nargs="*")
     b.add_argument("--category", nargs="*", choices=["move", "combat", "build", "edit", "ui"])
     b.set_defaults(fn=cmd_binds)
+    ib = sub.add_parser("import-binds", help="read keybinds from Fortnite's local Input.ini (dry run unless --write)")
+    ib.add_argument("--file", nargs="*", help="ini files to read (default: Fortnite's WindowsClient config folder)")
+    ib.add_argument("--out", default=str(drills.BINDS_FILE))
+    ib.add_argument("--write", action="store_true", help="save the imported keys into the profile")
+    ib.add_argument("--trust", action="store_true", help="mark imported keys verified so drills can be graded")
+    ib.set_defaults(fn=cmd_import_binds)
     au = sub.add_parser("autostart")
     au.add_argument("--install", action="store_true", help="run the watcher at every Windows login")
     au.add_argument("--uninstall", action="store_true")

@@ -69,7 +69,11 @@ def rank(aim, side, far):
         if shape_side(e["tiles"]) and aim_side(aim) and shape_side(e["tiles"]) != aim_side(aim):
             continue        # never offer an edit on the opposite side of the wall from where the crosshair is
         penalty = WEIGHT * math.log(pmax / max(prior(sit, j), 0.001))
-        cost = min(rank_cost(aim, e["tiles"]), rank_cost(aim, e["tiles"][::-1])) + penalty
+        orders = [e["tiles"], e["tiles"][::-1]]
+        mirrored = mirror_tiles(e["tiles"])
+        if set(mirrored) == set(e["tiles"]):
+            orders += [mirrored, mirrored[::-1]]      # KTMirrored: symmetric shapes may be dragged mirrored too
+        cost = min(rank_cost(aim, o) for o in orders) + penalty
         out.append((cost, e["id"]))
     return sorted(out)
 

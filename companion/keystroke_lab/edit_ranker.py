@@ -138,8 +138,12 @@ class Ranker:
                 continue        # never offer an edit on the other side of the piece from the crosshair
             penalty = PRIOR_WEIGHT * math.log(pmax / max(weighted[e["id"]], 0.001))
             options = [tiles, tuple(reversed(tiles))]
+            mirrored = tuple(t - 2 * (t % c) + c - 1 for t in tiles)
+            if set(mirrored) == set(tiles) and mirrored != tiles:
+                # A left/right symmetric shape can be dragged in its mirror order too, so neither side is favoured.
+                options += [mirrored, tuple(reversed(mirrored))]
             costs = [approach(aim, t, c) + DRAG_WEIGHT * drag(t, c) + penalty for t in options]
-            best = options[int(costs[1] < costs[0])]
+            best = options[min(range(len(options)), key=lambda i: costs[i])]
             picks.append(Pick(e["id"], e["name"], best, round(min(costs), 4),
                               round(approach(aim, best, c) + drag(best, c), 4), round(weighted[e["id"]], 4),
                               self.personal.get(e["id"], 1.0),

@@ -136,7 +136,9 @@
       {
         "mask": 23,
         "status": "unverified",
-        "edit_ids": []
+        "edit_ids": [
+          "arch_wide"
+        ]
       },
       {
         "mask": 24,
