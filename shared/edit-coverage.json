@@ -229,12 +229,16 @@
       {
         "mask": 40,
         "status": "unverified",
-        "edit_ids": []
+        "edit_ids": [
+          "window_double"
+        ]
       },
       {
         "mask": 41,
         "status": "unverified",
-        "edit_ids": []
+        "edit_ids": [
+          "door_window_left"
+        ]
       },
       {
         "mask": 42,
@@ -249,7 +253,9 @@
       {
         "mask": 44,
         "status": "unverified",
-        "edit_ids": []
+        "edit_ids": [
+          "door_window_right"
+        ]
       },
       {
         "mask": 45,
@@ -1872,7 +1878,9 @@
       {
         "mask": 365,
         "status": "unverified",
-        "edit_ids": []
+        "edit_ids": [
+          "pillar"
+        ]
       },
       {
         "mask": 366,
@@ -2338,7 +2346,9 @@
       {
         "mask": 457,
         "status": "unverified",
-        "edit_ids": []
+        "edit_ids": [
+          "half_wall_side_door_left"
+        ]
       },
       {
         "mask": 458,
@@ -2383,7 +2393,9 @@
       {
         "mask": 466,
         "status": "unverified",
-        "edit_ids": []
+        "edit_ids": [
+          "half_wall_door"
+        ]
       },
       {
         "mask": 467,
@@ -2428,7 +2440,9 @@
       {
         "mask": 475,
         "status": "unverified",
-        "edit_ids": []
+        "edit_ids": [
+          "half_wall_slim_right"
+        ]
       },
       {
         "mask": 476,
@@ -2473,7 +2487,9 @@
       {
         "mask": 484,
         "status": "unverified",
-        "edit_ids": []
+        "edit_ids": [
+          "half_wall_side_door_right"
+        ]
       },
       {
         "mask": 485,
@@ -2563,7 +2579,9 @@
       {
         "mask": 502,
         "status": "unverified",
-        "edit_ids": []
+        "edit_ids": [
+          "half_wall_slim_left"
+        ]
       },
       {
         "mask": 503,
@@ -2838,5 +2856,5 @@
       }
     ]
   },
-  "ramp": "Gesture graphs require separate validation."
+  "ramp": "Ramps are ordered paths, not masks: every 2-4 tile path round the ring is a stairs_edits entry with `path` (tools/add_build_shapes.py). Gesture graphs still require separate validation."
 }
