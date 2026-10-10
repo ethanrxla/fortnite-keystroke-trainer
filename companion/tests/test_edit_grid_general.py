@@ -66,6 +66,25 @@ class GeneralGridTests(unittest.TestCase):
         self.assertEqual(o.reason, 'native_edit_grid_observed')
         self.assertTrue(all(0 <= v < 2 for v in o.aim_uv))
 
+    def test_lattice_one_tile_off_is_shifted_back_onto_the_wall(self):
+        # Live 2026-10-10: a wooden pillar and a floor plank posed as the wall's left and bottom borders, so the
+        # detected grid had the right spacing but sat one column left and one row low.
+        img = render(3, [(400, 60), (1000, 60), (1000, 660), (400, 660)])
+        img[:, 200:400] = (60, 100, 150)        # wood (BGR) left of the wall
+        img[660:] = (60, 100, 150)              # wood floor below it
+        unit = np.float32([[0, 0], [3, 0], [3, 3], [0, 3]])
+        off = cv2.getPerspectiveTransform(unit, np.float32([[200, 260], [800, 260], [800, 860], [200, 860]]))
+        H, quad, count = eo._lattice_shift(img, off, (650, 400))
+        self.assertEqual(count, 9)
+        np.testing.assert_allclose(quad, [[400, 60], [1000, 60], [1000, 660], [400, 660]], atol=1)
+
+    def test_lattice_already_on_the_wall_stays(self):
+        img = render(3, [(400, 60), (1000, 60), (1000, 660), (400, 660)])
+        unit = np.float32([[0, 0], [3, 0], [3, 3], [0, 3]])
+        on = cv2.getPerspectiveTransform(unit, np.float32([[400, 60], [1000, 60], [1000, 660], [400, 660]]))
+        H, quad, count = eo._lattice_shift(img, on, (650, 400))
+        np.testing.assert_allclose(quad, [[400, 60], [1000, 60], [1000, 660], [400, 660]], atol=1)
+
 
 if __name__ == '__main__':
     unittest.main()

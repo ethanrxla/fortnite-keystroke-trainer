@@ -273,6 +273,35 @@ def _tile_like(colour):
     return blue or neutral or red
 
 
+def _lattice_shift(image,H,aim,n=3):
+    """The tile lattice is periodic, so a detector can lock onto the right spacing one tile off: a wooden pillar or a
+    floor plank edge next to a close wall poses as its border (live 2026-10-10: the grid sat one column left and one row
+    low, so the crosshair read as the wrong tile). Try the lattice shifted by -1..1 tile on each axis and keep the
+    shift whose n x n cells most look like edit tiles. A shift must win by MARGIN cells: next to stacked or adjacent
+    walls every position looks like tiles, and the detected lines are then the better evidence. Selected tiles are an
+    exact grey here (shaded wood is greyish but warmer). Returns (H, quad, count)."""
+    def strict(colour):
+        return _tile_like(colour) and (max(colour)-min(colour)<10 or not 60<np.mean(colour)<180 or colour[0]>colour[2]*1.22 or colour[2]>colour[0]*1.22)
+    def score(Hs):
+        return sum(1 for c in range(n) for r in range(n) if (x:=_cell_colour(image,Hs,c,r)) is not None and strict(x))
+    base=score(H)
+    best=(base,H)
+    a=cv2.perspectiveTransform(np.float32([[aim]]),np.linalg.inv(H))[0,0]
+    for dx in (-1,0,1):
+        for dy in (-1,0,1):
+            # The crosshair is on the piece, so only shifts that keep it inside the grid are candidates.
+            if dx==dy==0 or not (0<=a[0]-dx<n and 0<=a[1]-dy<n):continue
+            Hs=H@np.array([[1.,0,dx],[0,1.,dy],[0,0,1.]])
+            s=score(Hs)
+            if s>=base+_SHIFT_MARGIN and s>best[0]:best=(s,Hs)
+    H=best[1]
+    unit=np.float32([[[0,0],[n,0],[n,n],[0,n]]])
+    return H,cv2.perspectiveTransform(unit,H)[0],best[0]
+
+
+_SHIFT_MARGIN=2
+
+
 def _partial_grid(image,aim,budget=.06,segs=None):
     """A 3x3 wall whose outer border is partly off screen (close, oblique views): rebuild it from three visible lines
     per direction.

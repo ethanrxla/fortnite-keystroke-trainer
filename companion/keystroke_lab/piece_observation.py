@@ -6,7 +6,7 @@ the same immutable observation without changing the planner or renderer.
 """
 from dataclasses import dataclass, asdict, replace
 import math
-from .edit_observation import EditGridObserver, _line_projection, _crosshair, _general_grid, _partial_grid, _tile_support, _segments, downscale
+from .edit_observation import EditGridObserver, _line_projection, _crosshair, _general_grid, _partial_grid, _lattice_shift, _tile_support, _segments, downscale
 from .edit_geometry import piece_context
 import cv2
 
@@ -41,11 +41,12 @@ class VisualObserver:
         image=downscale(frame,scale)
         self.wall._aim_screen=_crosshair(frame)
         projection=_line_projection(image)
+        aim=(self.wall._aim_screen[0]*scale,self.wall._aim_screen[1]*scale)
         if projection is not None:
             count,H,quad=projection
+            H,quad,_=_lattice_shift(image,H,aim)
             wall=self.wall._from_projection(image,H,quad,now,scale,count,.93 if count==9 else .88)
         else:
-            aim=(self.wall._aim_screen[0]*scale,self.wall._aim_screen[1]*scale)
             # Close / oblique walls whose border runs off screen: rebuild the 3x3 from three lines per direction
             # (bounded ~0.05 s). Then the any-angle detector (walls with selected tiles, 2x2 floors / cones).
             # One line search per frame, shared by both detectors; tighter budgets keep the guide responsive (the
@@ -54,6 +55,7 @@ class VisualObserver:
             found=_partial_grid(image,aim,budget=.05,segs=segs) or _general_grid(image,aim,budget=.035,segs=segs)
             if found is None:return PieceObservation(now,reason='bounded_detector_abstained')
             count,H,quad,n=found
+            if n==3:H,quad,_=_lattice_shift(image,H,aim)
             wall=self.wall._from_projection(image,H,quad,now,scale,count,.92 if count>=n*n-1 else .88,n)
         if wall.reason!='native_edit_grid_observed':return PieceObservation(now,reason=wall.reason)
         q=wall.wall_quad
