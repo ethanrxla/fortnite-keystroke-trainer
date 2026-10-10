@@ -234,6 +234,107 @@ def _grid_from_families(image,aim,fam,deadline=None):
     return best
 
 
+def _cell_colour(image,H,c,r):
+    """Median BGR inside grid cell (c, r) of homography H (grid units -> image), or None when mostly off screen / HUD."""
+    h,w=image.shape[:2]
+    grid=np.float32([[[c+u,r+v] for u in (.2,.35,.5,.65,.8) for v in (.2,.35,.5,.65,.8)]])
+    pts=cv2.perspectiveTransform(grid,H)[0]
+    vals=[image[int(y),int(x)] for x,y in pts if 0<=x<w and 0<=y<h*.88]
+    return np.median(np.asarray(vals,float),axis=0) if len(vals)>=10 else None
+
+
+def _tile_like(colour):
+    """An edit tile's colour: blue (unselected) or neutral grey (selected), as _tile_support classifies pixels."""
+    b,g,r=colour
+    blue=b>r*1.22 and b>80 and g>45
+    neutral=max(colour)-min(colour)<25 and 60<np.mean(colour)<180
+    return blue or neutral
+
+
+def _partial_grid(image,aim,budget=.06):
+    """A 3x3 wall whose outer border is partly off screen (close, oblique views): rebuild it from three visible lines
+    per direction.
+
+    Three consecutive lines of each family give a 3x3 lattice of crossings that must fit one homography. Which side the
+    missing (fourth) line is on comes from colour: the cells just beyond the outer visible line look like the wall's own
+    tiles when the grid continues there, and like background when that line is the wall's edge. A side that is off
+    screen counts as 'continues' only if the opposite side is clearly background. Any tie abstains, so a wrong cell is
+    never guessed. Returns (count, H, quad, 3) like _general_grid, with quad corners possibly off screen."""
+    deadline=time.perf_counter()+budget
+    h,w=image.shape[:2]
+    lines=sorted(_merge_lines(_segments(image)),key=lambda l:-l['length'])[:20]
+    if len(lines)<6:return None
+    hist=np.zeros(180)
+    for l in lines:hist[int(l['angle'])%180]+=l['length']
+    smooth=np.convolve(np.concatenate([hist[-6:],hist,hist[:6]]),np.ones(13),'valid')
+    diff=lambda a,b:min(abs(a-b),180-abs(a-b))
+    k=int(np.argmax(smooth))
+    # Oblique views spread one direction's angles widely (6..23 degrees on a real close-up), so the families are wide.
+    fams=[[l for l in lines if diff(l['angle'],k)<35][:7],[l for l in lines if diff(l['angle'],k)>=40][:7]]
+    if len(fams[0])<3 or len(fams[1])<3:return None
+    def order(group,ref):
+        through={'n':ref['n'],'c':ref['n'][0]*aim[0]+ref['n'][1]*aim[1]}
+        tangent=np.array([-ref['n'][1],ref['n'][0]])
+        keyed=[]
+        for l in group:
+            q=_cross(l,through)
+            if q is not None:keyed.append((float((q-np.asarray(aim,float))@tangent),l))
+        keyed.sort(key=lambda t:t[0])
+        return [l for _,l in keyed],[t for t,_ in keyed]
+    (A,Apos),(B,Bpos)=order(fams[0],fams[1][0]),order(fams[1],fams[0][0])
+    def triples(pos,group):
+        out=[]
+        for t in itertools.combinations(range(len(pos)),3):
+            g1,g2=pos[t[1]]-pos[t[0]],pos[t[2]]-pos[t[1]]
+            if min(g1,g2)>w*.03 and .45<g1/g2<2.2:out.append(t)
+        # Strongest (longest) line sets first: the real wall lines are long, so the answer is found early in the budget.
+        return sorted(out,key=lambda t:-sum(group[i]['length'] for i in t))
+    grid9=np.float32([[i,j] for j in range(3) for i in range(3)])
+    best=None
+    for ta in triples(Apos,A):
+        for tb in triples(Bpos,B):
+            if time.perf_counter()>deadline:return best[1] if best else None
+            pts=[_cross(A[ta[i]],B[tb[j]]) for j in range(3) for i in range(3)]
+            if any(p is None for p in pts):continue
+            pts=np.float32(pts)
+            H0,_=cv2.findHomography(grid9,pts,0)
+            if H0 is None:continue
+            back=cv2.perspectiveTransform(pts[None],np.linalg.inv(H0))[0]
+            if np.linalg.norm(back-grid9,axis=1).max()>.12:continue
+            # The player's own character often covers a middle cell: model the tile colour from the cells that look
+            # like tiles and require at least two of the four inner cells.
+            inside=[_cell_colour(image,H0,c,r) for c in (0,1) for r in (0,1)]
+            inside=[x for x in inside if x is not None and _tile_like(x)]
+            if len(inside)<2:continue
+            model=np.median(np.asarray(inside),axis=0)
+            if max(np.linalg.norm(x-model) for x in inside)>45:continue
+            def side(cells):
+                cols=[_cell_colour(image,H0,c,r) for c,r in cells]
+                seen=[x for x in cols if x is not None]
+                if not seen:return 'off'
+                like=sum(_tile_like(x) and np.linalg.norm(x-model)<45 for x in seen)
+                return 'tile' if like*2>len(seen) else 'background'
+            offsets=[]
+            for before,after in (([(-1,0),(-1,1)],[(2,0),(2,1)]),([(0,-1),(1,-1)],[(0,2),(1,2)])):
+                b,a=side(before),side(after)
+                if (b,a) in (('tile','background'),('off','background')):offsets.append(1)     # missing line is before
+                elif (b,a) in (('background','tile'),('background','off')):offsets.append(0)   # missing line is after
+                else:offsets.append(None)
+            if None in offsets:continue
+            oa,ob=offsets
+            H,_=cv2.findHomography(grid9+np.float32([oa,ob]),pts,0)
+            quad=cv2.perspectiveTransform(np.float32([[[0,0],[3,0],[3,3],[0,3]]]),H)[0]
+            if not cv2.isContourConvex(quad):continue
+            a=cv2.perspectiveTransform(np.float32([[aim]]),np.linalg.inv(H))[0,0]
+            if not (0<=a[0]<3 and 0<=a[1]<3):continue
+            count=sum(1 for c in range(3) for r in range(3) if (x:=_cell_colour(image,H,c,r)) is not None and _tile_like(x))
+            score=(count,-float(np.linalg.norm(back-grid9,axis=1).mean()))
+            if best is None or score>best[0]:
+                quad=_ordered(quad)
+                best=(score,(count,cv2.getPerspectiveTransform(np.float32([[0,0],[3,0],[3,3],[0,3]]),quad),quad,3))
+    return best[1] if best else None
+
+
 _TEMPLATE_CACHE = {}
 def cue_scores(frame, names, roi=None):
     height,width=frame.shape[:2]

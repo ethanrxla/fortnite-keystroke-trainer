@@ -74,6 +74,22 @@ def situation_key(aim, side, far, c):
     return f"{clamp(aim[0])},{clamp(aim[1])},{max(0, min(2, side))},{int(bool(far))}"
 
 
+# Corner snap (the player's preference, 2026-10-10): pointing the crosshair at one of the wall's four inner tile corners
+# means "that corner edit". The guide then shows the three-tile corner (green tiles + numbered yellow route) instead of
+# whichever single-tile edit has slightly less travel. Within SNAP_RADIUS tiles of the junction.
+WALL_JUNCTIONS = {(1.0, 1.0): "corner_lower_left", (2.0, 1.0): "corner_lower_right",
+                  (1.0, 2.0): "corner_upper_left", (2.0, 2.0): "corner_upper_right"}
+SNAP_RADIUS = 0.5
+
+
+def junction_corner(aim, radius=SNAP_RADIUS):
+    """The corner edit for the inner wall junction nearest the crosshair, or None when no junction is that close."""
+    if len(aim) != 2:
+        return None
+    point, edit = min(WALL_JUNCTIONS.items(), key=lambda kv: math.dist(kv[0], aim))
+    return edit if math.dist(point, aim) <= radius else None
+
+
 class Ranker:
     def __init__(self, shared=SHARED, personal=None, policies=None):
         """policies: optional {piece: policy dict or path} replacing the shared tables (to compare policy versions)."""

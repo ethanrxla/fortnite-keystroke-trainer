@@ -263,3 +263,47 @@ class DisplayLatchTests(unittest.TestCase):
   self.assertIsNone(latch.update(data,.1,focused=False))
   latch.update(data,0.)
   self.assertIsNone(latch.update(dict(data,negative_mode='weapon'),.1))
+
+
+@unittest.skipIf(cv2 is None,'optional local vision dependencies missing')
+class CornerGuideRegressionTests(unittest.TestCase):
+ """The guide the player asked for (IMG_9081): pointing at a wall corner shows that corner edit, three green tiles and
+ a numbered 1-2-3 route; oblique close-ups whose border is off screen still get it; a trace already under way keeps a
+ guide. Regression for 2026-10-10, when the corner showed one box (window) and close-ups showed nothing."""
+ def run_pipeline(self,name,frames=2):
+  from keystroke_lab.guide_visuals import layout
+  frame=cv2.imread(str(Path(__file__).parent/'fixtures/edit-vision'/(name+'.png')))
+  with tempfile.TemporaryDirectory() as d:
+   now=[100.]
+   pipe=ContextPipeline(ProfileStore(Path(d)/'binds.json'),clock=lambda:now[0])
+   try:
+    for _ in range(frames):
+     state=pipe.process(frame,captured_at=now[0]);now[0]+=.2
+   finally:pipe.advisor.close()
+  edit=state.get('display_edit')
+  return state,edit,(layout(edit,state['observation']['aim_uv']) if edit else None)
+ def test_junction_snaps_to_the_corner_edit(self):
+  from keystroke_lab.edit_ranker import junction_corner
+  self.assertEqual(junction_corner((1.98,1.91)),'corner_upper_right')
+  self.assertEqual(junction_corner((1.05,2.1)),'corner_upper_left')
+  self.assertEqual(junction_corner((2.2,0.9)),'corner_lower_right')
+  self.assertIsNone(junction_corner((1.5,1.5)))
+ def test_oblique_close_up_with_border_off_screen_gets_the_corner_guide(self):
+  state,edit,visual=self.run_pipeline('live-oblique-edit')
+  self.assertTrue(state['projected'])
+  self.assertEqual(edit['id'],'corner_upper_right')
+  self.assertEqual(sorted(edit['tiles']),[5,7,8])
+  self.assertEqual([l for l,_ in visual.labels],['1','2','3'])
+ def test_centre_aim_still_gets_the_window(self):
+  state,edit,visual=self.run_pipeline('front-edit')
+  self.assertEqual(edit['id'],'window_center')
+ def test_trace_already_under_way_keeps_a_guide(self):
+  state,edit,visual=self.run_pipeline('full-edit')
+  self.assertTrue(set(state['observation']['selected_tiles'])<=set(edit['tiles']))
+  self.assertEqual(len(visual.labels),len(edit['tiles']))
+ def test_partial_grid_abstains_without_a_wall(self):
+  from keystroke_lab import edit_observation as eo
+  for name in ('blueprint','weapon','pickaxe'):
+   f=cv2.imread(str(Path(__file__).parent/'fixtures/edit-vision'/(name+'.png')))
+   img=cv2.resize(f,(960,540))
+   self.assertIsNone(eo._partial_grid(img,(480.,270.),budget=1),name)

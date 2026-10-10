@@ -17,7 +17,7 @@ from .edit_advisor import EditAdvisor,EditContext,safe_path
 from .edit_telemetry import TelemetryReader
 from .jev_client import JevClient
 from .piece_observation import VisualObserver, PieceTargetTracker, GridMotionTracker
-from .edit_ranker import Ranker
+from .edit_ranker import Ranker, junction_corner
 from .edit_geometry import PieceContext, tiles_to_grid, piece_to_grid
 from .edit_dictionary import TargetTracker, RoutePlanner, EditAnalyzer
 from .evidence import Evidence, ContextAssembler
@@ -156,15 +156,24 @@ class ContextPipeline:
             # Hysteresis (EditGuide.verse AutoLock): keep the current edit while it costs within 0.25 of the best.
             costs={p.id:p.cost for p in fitting}
             if self.locked in costs and costs[self.locked]<=costs.get(best,0)+.25:best=self.locked
+        if ctx and kind=='wall':
+            # Corner snap (after hysteresis, so it wins): aiming at an inner tile corner shows that three-tile corner
+            # edit with its green tiles and numbered route (edit_ranker.junction_corner).
+            snap=junction_corner(ctx.aim)
+            if snap and any(p.id==snap for p in fitting):best=snap
         self.locked=self.selection.update((target,observation.orientation),best,observation.selected_tiles,captured)
         # Free-practice suggestions cannot establish player intent.
         if observation.selected_tiles and not tracked:
+            # Mid-trace: keep guiding with an edit that contains what is already selected. Tiles are compared in the
+            # screen grid (tiles_to_grid maps 2x2 pieces). Exact match first, else the best-ranked edit that contains
+            # the selection (selecting before the guide locked used to leave the guide empty).
+            sel=set(observation.selected_tiles)
+            grid=lambda e:set(tiles_to_grid(ctx,e.get('tiles',[]))) if ctx else set(e.get('tiles',[]))
             current=self.advisor.dictionary.all.get(self.locked,{})
-            if not self.locked or not set(observation.selected_tiles)<=set(current.get('tiles',[])):
+            if not self.locked or not sel<=grid(current):
                 matches=[e for e in self.advisor.dictionary.all.values()
-                         if e['piece']==observation.piece and e.get('suggest')
-                         and set(e.get('tiles',[]))==set(observation.selected_tiles)]
-                self.locked=matches[0]['id'] if len(matches)==1 else None
+                         if e['piece']==observation.piece and e.get('suggest') and grid(e)==sel]
+                self.locked=matches[0]['id'] if len(matches)==1 else (fitting[0].id if fitting else None)
                 self.selection.active=self.locked
         context=EditContext(profile.profile_id,profile.revision,captured,mode,target,True,True,
              observation.aim_uv,observation.selected_tiles,drill_edit_id=self.locked,
