@@ -1,9 +1,12 @@
 {
   "reason": "Explicitly rejected by current local UEFN session validation on 2026-10-07; registry presence is not Creative permission.",
   "rejected_item_paths": [
+    "/CreativeCoreDevices/Athena/Items/Traps/TID_Floor_Spikes_Athena_R_T03.TID_Floor_Spikes_Athena_R_T03",
     "/Figment_Assault_AutoDrum_Athena/Gameplay/WID_Figment_Assault_AutoDrum_Athena_R_Ore_T03.WID_Figment_Assault_AutoDrum_Athena_R_Ore_T03",
     "/Figment_Athena_BandageV2/Gameplay/WID_Figment_Paprika_Bandage.WID_Figment_Paprika_Bandage",
+    "/Figment_Athena_ChugJug/Figment_Athena_ChugJug.Figment_Athena_ChugJug",
     "/Figment_Athena_MedKitV2/Gameplay/WID_Figment_Paprika_MedBox.WID_Figment_Paprika_MedBox",
+    "/Figment_Athena_PurpleStuff/Figment_Athena_PurpleStuff.Figment_Athena_PurpleStuff",
     "/Figment_Athena_ShieldPotV2/Gameplay/WID_Figment_Paprika_ShieldPot.WID_Figment_Paprika_ShieldPot",
     "/Figment_Athena_SmallShieldV2/Gameplay/WID_Figment_Paprika_ShieldSmall.WID_Figment_Paprika_ShieldSmall",
     "/Figment_Burst_SMG/Gameplay/WID_Figment_Pistol_BurstFireSMG_Athena_C_Ore_T03.WID_Figment_Pistol_BurstFireSMG_Athena_C_Ore_T03",

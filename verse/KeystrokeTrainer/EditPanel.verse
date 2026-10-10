@@ -30,7 +30,7 @@ BuildEditPanel<public>(Guide:edit_guide):canvas =
     for (Row := 0..2, Col := 0..2):
         Index := Row * 3 + Col
         IsTarget := logic{(for (T : Guide.Tiles, T = Index) { T }).Length > 0}
-        Fill := if (IsTarget?) then color{R := 0.85, G := 0.12, B := 0.12} else color{R := 0.12, G := 0.14, B := 0.18}
+        Fill := if (IsTarget?) then color{R := 0.10, G := 0.80, B := 0.25} else color{R := 0.12, G := 0.14, B := 0.18}
         Block := color_block{DefaultColor := Fill, DefaultOpacity := 0.78, DefaultDesiredSize := vector2{X := Tile - 4.0, Y := Tile - 4.0}}
         Grid.AddWidget(MakeCanvasSlot(Block, vector2{X := Col * Tile + 2.0, Y := (2 - Row) * Tile + 2.0}, ?Size := vector2{X := Tile - 4.0, Y := Tile - 4.0}))
         if (Index = Guide.Start):

@@ -6,14 +6,12 @@ from dataclasses import dataclass, field
 
 SHARED = pathlib.Path(__file__).resolve().parents[2] / "shared" / "drills.json"
 
-# Fortnite's default PC binds. Players override these in keybinds.json.
-DEFAULT_BINDS = {
-    "wall": "q", "floor": "f2", "ramp": "f3", "cone": "f4",
-    "edit": "g", "edit_confirm": "mouse_left", "reset": "mouse_right",
-    "jump": "space", "crouch": "ctrl_l", "fire": "mouse_left", "swap_weapon": "1",
-    # VERIFY your own pickaxe bind; players override both in keybinds.json.
-    "pickaxe": "f1",
-}
+# Fortnite's default PC binds for every action in actions.py. Players override these in keybinds.json.
+# "swap_weapon" is the older name for the first gun slot; it follows slot1 unless the profile sets it itself.
+from .actions import DEFAULTS
+
+DEFAULT_BINDS = dict(DEFAULTS)
+DEFAULT_BINDS["swap_weapon"] = DEFAULTS["slot1"]
 
 
 @dataclass
@@ -61,12 +59,9 @@ BINDS_FILE = pathlib.Path(__file__).resolve().parents[1] / "keybinds.json"
 
 def load_binds(path=None):
     """Defaults, overridden by your calibrated keybinds.json (python -m keystroke_lab binds)."""
-    binds = dict(DEFAULT_BINDS)
-    if path is None and BINDS_FILE.exists():
-        path = BINDS_FILE
-    if path and pathlib.Path(path).exists():
-        binds.update(json.loads(pathlib.Path(path).read_text(encoding="utf-8")))
-    return binds
+    from .bind_profiles import ProfileStore, BindMap
+    return BindMap(ProfileStore(path or BINDS_FILE, confirm_sprint=(path is None or pathlib.Path(path) == BINDS_FILE)).snapshot)
+
 
 
 def expected_keys(drill, binds):

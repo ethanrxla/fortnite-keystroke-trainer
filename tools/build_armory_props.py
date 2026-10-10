@@ -87,7 +87,7 @@ def main():
     place(b, f"{PREFIX}Server_1", SERVER, right, back_y + 880, 0.0, yaw=-90)
     place(b, f"{PREFIX}Terminal", TERMINAL, left, back_y + 900, 0.0, yaw=90)
     bench = b.device(MOD_BENCH, f"{PREFIX}ModBench", right, back_y + 1500, 0.0)
-    b.m.tool(bm.ACTOR, "set_actor_transform", actor={"refPath": bench}, xform=bm.xform(right, back_y + 1500, 0.0, yaw=-90))
+    b.m.tool(bm.ACTOR, "set_actor_transform", actor={"refPath": bench}, xform=bm.xform(right, back_y + 1500, 0.0, yaw=90))
     print(f"armory dressed: {len(front)} locker banks, {len(xs) - 1} crate stacks, {len(racks)} gun cases")
 
 

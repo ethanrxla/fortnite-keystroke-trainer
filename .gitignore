@@ -26,3 +26,19 @@ Saved/
 *.sln
 *.suo
 Desktop.ini
+
+# Personal companion state
+companion/habits.json
+companion/.bind_token
+companion/sessions/
+
+companion/.vision_packages/
+companion/data/
+shared/edit-policy-personal.json
+companion/.calibration-state.json
+
+# local companion state
+companion/*.log
+companion/edit-state.json
+companion/edit-state.tmp
+companion/overlay-settings.json

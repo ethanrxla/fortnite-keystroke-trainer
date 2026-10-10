@@ -30,7 +30,20 @@ import wave
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 SRC = ROOT / "shared" / "drills.json"
 OUT = ROOT / "assets" / "voice"
-MODEL = "eleven_multilingual_v2"
+def dotenv(name):
+    """A non-secret setting from the process environment or the workspace .env (one folder above the repo)."""
+    if os.environ.get(name):
+        return os.environ[name]
+    env_file = ROOT.parent / ".env"
+    if env_file.is_file():
+        for line in env_file.read_text(encoding="utf-8-sig").splitlines():
+            key, sep, value = line.strip().partition("=")
+            if sep and key.strip() == name:
+                return value.split(" #", 1)[0].strip().strip("'\"")
+    return ""
+
+
+MODEL = dotenv("ELEVENLABS_MODEL_ID") or "eleven_multilingual_v2"
 SETTINGS = {"stability": 0.5, "similarity_boost": 0.75, "style": 0.15, "use_speaker_boost": True}
 
 
@@ -126,7 +139,7 @@ def select_female_narrator(voices):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--render", action="store_true", help="actually call ElevenLabs (otherwise dry run)")
-    ap.add_argument("--voice", help="ElevenLabs voice id")
+    ap.add_argument("--voice", default=dotenv("ELEVENLABS_VOICE_ID") or None, help="ElevenLabs voice id (default ELEVENLABS_VOICE_ID from .env)")
     ap.add_argument("--cues-only", action="store_true", help="render only short gameplay cues")
     ap.add_argument("--list-voices", action="store_true", help="list available voices without rendering")
     ap.add_argument("--render-recommended", action="store_true", help="choose an available adult female narrator and render cues")

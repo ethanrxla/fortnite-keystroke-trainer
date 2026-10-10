@@ -33,7 +33,7 @@ def run(out, binds, flicks=False):
     except ImportError:
         print("record needs pynput: pip install pynput")
         return 2
-    watched = set(binds.values())
+    watched = binds.all_keys() if hasattr(binds, "all_keys") else set(binds.values())
     path = pathlib.Path(out)
     path.parent.mkdir(parents=True, exist_ok=True)
     start = time.perf_counter()
@@ -41,6 +41,9 @@ def run(out, binds, flicks=False):
     state = {"x": None, "moves": [], "last_flick": -9.0}
 
     def emit(kind, name):
+        from .keyboard_overlay import game_rect
+        if not game_rect():
+            return
         f.write(json.dumps({"t": round(time.perf_counter() - start, 4), "kind": kind, "name": name}) + "\n")
         f.flush()
 
@@ -54,6 +57,11 @@ def run(out, binds, flicks=False):
         if pressed and name in watched:
             emit("key", name)
 
+    def on_scroll(_x, _y, dx, dy):
+        name = "wheel_up" if dy > 0 else "wheel_down"
+        if name in watched:
+            emit("key", name)
+
     def on_move(x, _y):
         now = time.perf_counter()
         if state["x"] is not None:
@@ -65,7 +73,7 @@ def run(out, binds, flicks=False):
         state["x"] = x
 
     print(f"recording to {path}  (Ctrl+C to stop)  watching: {', '.join(sorted(watched))}")
-    listeners = [keyboard.Listener(on_press=on_key), mouse.Listener(on_click=on_click, on_move=on_move if flicks else None)]
+    listeners = [keyboard.Listener(on_press=on_key), mouse.Listener(on_click=on_click, on_scroll=on_scroll, on_move=on_move if flicks else None)]
     for l in listeners:
         l.start()
     try:

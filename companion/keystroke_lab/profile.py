@@ -27,11 +27,18 @@ MAX_DISTANCE = 2
 BLOCKS = [("edits", "E"), ("building combos", "P"), ("fight practice", "W")]
 
 
+DRILL_ACTIONS = {"wall", "floor", "ramp", "cone", "edit", "edit_confirm", "reset", "jump", "crouch", "fire",
+                 "swap_weapon", "pickaxe"}
+
+
 def to_actions(events, binds):
     """[(t, action)] from raw events. A mouse click is edit_confirm right after an edit, otherwise fire."""
     inverse = {}
-    for action, key in binds.items():
-        inverse.setdefault(key, []).append(action)
+    entries = ((b.action, key) for b in binds.profile.bindings if b.verified for key in b.keys) if hasattr(binds, "profile") else binds.items()
+    for action, key in entries:
+        # Only the actions drills are made of; movement, hotbar and ui keys must not shadow them.
+        if action in DRILL_ACTIONS:
+            inverse.setdefault(key, []).append(action)
     out = []
     for e in sorted(events, key=lambda e: e["t"]):
         if e["kind"] == "flick":
@@ -39,6 +46,9 @@ def to_actions(events, binds):
             continue
         options = inverse.get(e["name"], [])
         if not options:
+            continue
+        if hasattr(binds, "profile") and len(set(options)) > 1:
+            # A passive recording has no reliable game context; do not choose an action arbitrarily.
             continue
         if e["name"] == "mouse_left":
             recent_edit = out and out[-1][1] == "edit" and e["t"] - out[-1][0] < 1.5

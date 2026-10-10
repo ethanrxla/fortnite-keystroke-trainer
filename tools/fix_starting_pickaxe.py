@@ -4,6 +4,7 @@
     python tools/fix_starting_pickaxe.py --apply  # back up and save the two settings
 
 The editor snapshot confirms that IslandSettings0 is the island's Experience Settings device.
+Its unusually named `enabled` property means Start with Pickaxe (not device enablement).
 Its `bDisableHarvestSlot` property controls whether the harvest slot is visible and selectable;
 `pickaxeDestructionPreset` controls normal pickaxe damage to the environment/buildings. This
 script changes only those two properties and writes the previous values to a timestamped backup.
@@ -39,8 +40,8 @@ def main():
 
     path = settings["actorPath"]
     old = decoded(m.tool(bm.OBJ, "get_properties", instance={"refPath": path},
-                         properties=["bDisableHarvestSlot", "pickaxeDestructionPreset"]))
-    desired = {"bDisableHarvestSlot": False, "pickaxeDestructionPreset": "Default"}
+                         properties=["enabled", "bDisableHarvestSlot", "pickaxeDestructionPreset"]))
+    desired = {"enabled": True, "bDisableHarvestSlot": False, "pickaxeDestructionPreset": "Default"}
     print("IslandSettings0 current:", json.dumps(old, sort_keys=True))
     print("IslandSettings0 desired:", json.dumps(desired, sort_keys=True))
     if not args.apply:

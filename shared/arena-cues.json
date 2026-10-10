@@ -1,0 +1,15 @@
+{
+  "version": 1,
+  "cues": [
+    {
+      "id": "arena_win",
+      "text": "Clean win. Save some style for the rematch.",
+      "tag": "kt10_arena_win_voice_tag"
+    },
+    {
+      "id": "arena_comeback",
+      "text": "Your comeback starts now. New round, new main character.",
+      "tag": "kt10_arena_comeback_voice_tag"
+    }
+  ]
+}

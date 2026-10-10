@@ -1,0 +1,152 @@
+"""Collect player data independently of UEFN and join it into one local database.
+
+    python -m keystroke_lab collect            # run the loop (stop with Ctrl+C); the autostart watcher runs it for you
+    python -m keystroke_lab collect --once     # ingest what is there now, correlate, print a summary, exit
+    python -m keystroke_lab data               # summary of what has been collected
+
+Two sources, joined on wall-clock UTC time:
+  * the overlay's recordings (companion/sessions/*.events.jsonl): every key and mouse press while the game was
+    focused. This works with UEFN closed.
+  * the KT| lines the map prints, read from the UEFN editor log: edit locks (face, recommended edit, aim point, your
+    position vector and crosshair vector), the build-tool gate, crosshair travel, drill steps. Verse prints only on the
+    island server, which runs inside UEFN, so these arrive only while a UEFN session is running; the Fortnite client
+    log carries no KT| lines. Everything else here still works without it.
+
+correlate() turns the two streams into `attempts`: for each edit the guide recommended, when you pressed edit, when you
+confirmed, when you reset, and how far the crosshair travelled against the ideal. personalize.py hands those to Jev.
+"""
+
+import datetime
+import json
+import os
+import pathlib
+import re
+import time
+
+from . import drills, ktlog
+from .keyboard_overlay import normal
+from .store import Store
+
+SESSIONS = pathlib.Path(__file__).resolve().parents[1] / "sessions"
+LOG_TS = re.compile(r"^\[(\d{4})\.(\d{2})\.(\d{2})-(\d{2})\.(\d{2})\.(\d{2}):(\d{3})\]")
+EDIT_WINDOW = 8.0      # seconds after a lock in which an edit press counts as acting on it
+CONFIRM_WINDOW = 4.0
+RESET_WINDOW = 6.0
+FINISH_WINDOW = 15.0
+
+
+def log_ts(line):
+    """Wall-clock UTC seconds from a UEFN log line prefix, or None."""
+    m = LOG_TS.match(line)
+    if not m:
+        return None
+    y, mo, d, h, mi, s, ms = (int(x) for x in m.groups())
+    return datetime.datetime(y, mo, d, h, mi, s, tzinfo=datetime.timezone.utc).timestamp() + ms / 1000.0
+
+
+def _read_new(store, path):
+    """Complete new lines of a growing file since the stored offset (resets if the file was rotated)."""
+    path = pathlib.Path(path)
+    if not path.exists():
+        return []
+    size = path.stat().st_size
+    offset = store.offset(path)
+    if size < offset:
+        offset = 0
+    if size == offset:
+        return []
+    with path.open("rb") as f:
+        f.seek(offset)
+        chunk = f.read(size - offset)
+    cut = chunk.rfind(b"\n")
+    if cut < 0:
+        return []                       # no complete line yet
+    store.set_offset(path, offset + cut + 1)
+    return chunk[:cut].decode("utf-8", "replace").splitlines()
+
+
+def ingest_uefn_log(store, path=ktlog.DEFAULT_LOG):
+    n = 0
+    for line in _read_new(store, path):
+        rec = ktlog.parse_line(line)
+        ts = log_ts(line)
+        if rec and ts:
+            store.add_kt(ts, rec)
+            n += 1
+    return n
+
+
+def ingest_overlay(store, folder=SESSIONS):
+    n = 0
+    for path in sorted(pathlib.Path(folder).glob("*.events.jsonl")) if pathlib.Path(folder).exists() else []:
+        for line in _read_new(store, path):
+            try:
+                e = json.loads(line)
+            except ValueError:
+                continue
+            if "ts" in e and "key" in e:
+                store.add_key(e["ts"], e["key"], e["kind"], e.get("drill"), src=path.name)
+                n += 1
+    return n
+
+
+def _first(rows, keys, lo, hi):
+    for ts, key in rows:
+        if lo < ts <= hi and key in keys:
+            return ts
+    return None
+
+
+def correlate(store, binds):
+    """Join each edit the guide recommended (a `lock`) with the presses and the crosshair travel that followed it."""
+    norm = {a: normal(k) for a, k in binds.items()}
+    edit, confirm, reset = {norm.get("edit")}, {norm.get("edit_confirm")}, {norm.get("reset")}
+    locks = store.rows("SELECT ts, data FROM kt WHERE event='lock' AND drill='edit_guide' ORDER BY ts")
+    finishes = store.rows("SELECT ts, data FROM kt WHERE event='crosshair' AND drill='edit_guide' ORDER BY ts")
+    done = 0
+    for ts, raw in locks:
+        d = json.loads(raw)
+        keys = store.rows("SELECT ts, key FROM keys WHERE ts>? AND ts<=? ORDER BY ts", (ts, ts + EDIT_WINDOW + CONFIRM_WINDOW + RESET_WINDOW))
+        edit_ts = _first(keys, edit, ts, ts + EDIT_WINDOW)
+        confirm_ts = _first(keys, confirm, edit_ts, edit_ts + CONFIRM_WINDOW) if edit_ts else None
+        reset_ts = _first(keys, reset, confirm_ts, confirm_ts + RESET_WINDOW) if confirm_ts else None
+        travel = ideal = None
+        for fts, fraw in finishes:
+            f = json.loads(fraw)
+            if ts < fts <= ts + FINISH_WINDOW and f.get("face") == d.get("face"):
+                travel, ideal = int(f.get("travel_h", 0)), int(f.get("ideal_h", 0))
+                break
+        store.db.execute("INSERT OR REPLACE INTO attempts VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)", (
+            ts, d.get("face"), d.get("edit"), int(d.get("u_h", 0)), int(d.get("v_h", 0)), int(d.get("side", 1)),
+            int(d.get("far", 0)), int(d.get("px", 0)), int(d.get("py", 0)), int(d.get("pz", 0)),
+            int(d.get("ax_h", 0)), int(d.get("ay_h", 0)), int(d.get("az_h", 0)), edit_ts, confirm_ts, reset_ts, travel, ideal))
+        done += 1
+    return done
+
+
+def summary(store):
+    q = lambda sql: store.rows(sql)[0][0]
+    return {
+        "key_events": q("SELECT COUNT(*) FROM keys"),
+        "stray_or_double": q("SELECT COUNT(*) FROM keys WHERE verdict IN ('stray','double','order')"),
+        "kt_lines": q("SELECT COUNT(*) FROM kt"),
+        "edit_locks": q("SELECT COUNT(*) FROM attempts"),
+        "edits_pressed": q("SELECT COUNT(*) FROM attempts WHERE edit_ts IS NOT NULL"),
+        "edits_confirmed": q("SELECT COUNT(*) FROM attempts WHERE confirm_ts IS NOT NULL"),
+    }
+
+
+def cycle(store, binds, log_path=ktlog.DEFAULT_LOG, folder=SESSIONS):
+    a, b = ingest_overlay(store, folder), ingest_uefn_log(store, log_path)
+    c = correlate(store, binds) if (a or b) else 0
+    store.commit()
+    return a, b, c
+
+
+def run(store=None, interval=2.0, log_path=ktlog.DEFAULT_LOG, folder=SESSIONS, stop=lambda: False, sleep=time.sleep):
+    store = store or Store()
+    binds = drills.load_binds()
+    while not stop():
+        cycle(store, binds, log_path, folder)
+        sleep(interval)
+    store.close()

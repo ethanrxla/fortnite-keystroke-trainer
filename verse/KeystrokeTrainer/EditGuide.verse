@@ -1,14 +1,6 @@
-# Map-wide edit guide (spec: "Training Ground Navigation and Presentation Spec", section Persistent edit guide).
-#
-# Every build piece snaps to the same grid (512 cm cells, 384 cm levels), so the guide does not need to see a
-# build: it finds the first grid face the crosshair crosses beyond the player, within edit range, and coaches
-# that face. Walls get a 3x3 radar with the least-travel edit (numbered drag order) and two alternatives with
-# their crosshair travel in tiles; floors and cones get the tile under the crosshair. A red outline ring sits
-# around the screen centre the whole time, so edit aim always has a reference point.
-#
-# Measured, not graded: each locked face logs actual crosshair travel against the suggested edit's ideal
-# (KT|crosshair|edit_guide|...|travel_h=|ideal_h=). Verse cannot see edit mode, the selected tiles or whether a
-# piece is really there, so this never changes progression. One device per island; place it anywhere.
+# Per-player authored-wall reference guide. Unknown build state hides the guide.
+# Authored transforms do not verify dynamic player builds, occlusion or edit selection.
+# Routes are references, never outcome grades or claims of tactical optimality.
 
 using { /Fortnite.com/Devices }
 using { /Fortnite.com/Characters }
@@ -16,86 +8,198 @@ using { /Fortnite.com/UI }
 using { /Verse.org/Colors }
 using { /Verse.org/Simulation }
 using { /Verse.org/Simulation/Tags }
+using { /Verse.org/SceneGraph }
+using { /Fortnite.com/Itemization }
 using { /UnrealEngine.com/Temporary/SpatialMath }
 using { /UnrealEngine.com/Temporary/UI }
 
 kt_edit_guide_toggle_tag<public> := class(tag){}
 
 kt_edit_shape<public> := struct<computes>:
+    Id<public>:string = ""
     Name<public>:string = ""
     # Wall tiles in drag order, 0..8 row-major from the bottom-left as the player sees the wall.
     Tiles<public>:[]int = array{}
 
-KTWallEdits<public>:[]kt_edit_shape = array:
-    kt_edit_shape{Name := "Window", Tiles := array{4}}
-    kt_edit_shape{Name := "Door", Tiles := array{1, 4}}
-    kt_edit_shape{Name := "Lower left corner", Tiles := array{1, 0, 3}}
-    kt_edit_shape{Name := "Lower right corner", Tiles := array{1, 2, 5}}
-    kt_edit_shape{Name := "Upper left corner", Tiles := array{3, 6, 7}}
-    kt_edit_shape{Name := "Upper right corner", Tiles := array{5, 8, 7}}
-    kt_edit_shape{Name := "Half wall (top row)", Tiles := array{6, 7, 8}}
-    kt_edit_shape{Name := "Low row", Tiles := array{0, 1, 2}}
-    kt_edit_shape{Name := "Left column", Tiles := array{0, 3, 6}}
-    kt_edit_shape{Name := "Right column", Tiles := array{2, 5, 8}}
+# KTWallEdits (the dictionary of real wall edits) is generated into EditCatalog.verse by tools/gen_edits.py.
 
-KTTileCentre<public>(T:int)<transacts>:vector2 =
-    Col := if (C := Mod[T, 3]) then C else 0
-    Row := if (R := Quotient[T, 3]) then R else 0
+# Columns of a piece's tile grid: walls are 3 x 3, floors, stairs and roofs 2 x 2.
+KTCols<public>(Kind:string)<computes>:int =
+    if (Kind = "wall") then 3 else 2
+
+KTEditsFor<public>(Kind:string)<computes>:[]kt_edit_shape =
+    if (Kind = "floor") then KTFloorEdits else if (Kind = "stairs") then KTStairsEdits else if (Kind = "roof") then KTRoofEdits else KTWallEdits
+
+KTTileCentre<public>(T:int, Cols:int)<transacts>:vector2 =
+    Col := if (C := Mod[T, Cols]) then C else 0
+    Row := if (R := Quotient[T, Cols]) then R else 0
     vector2{X := Col * 1.0 + 0.5, Y := Row * 1.0 + 0.5}
 
 KTReversed<public>(Tiles:[]int)<transacts>:[]int =
     for (I := 0..Tiles.Length - 1, T := Tiles[Tiles.Length - 1 - I]) { T }
 
 # Crosshair travel in tiles: from the aim point to the first tile, then through each tile centre.
-KTDragLength<public>(Tiles:[]int)<transacts>:float =
+KTDragLength<public>(Tiles:[]int, Cols:int)<transacts>:float =
     var L:float = 0.0
     for (I := 1..Tiles.Length - 1, A := Tiles[I - 1], B := Tiles[I]):
-        set L += Distance(KTTileCentre(A), KTTileCentre(B))
+        set L += Distance(KTTileCentre(A, Cols), KTTileCentre(B, Cols))
     L
 
-KTApproach<public>(Aim:vector2, Tiles:[]int)<transacts>:float =
-    if (First := Tiles[0]) then Distance(Aim, KTTileCentre(First)) else 99.0
+# The mandatory crosshair path as dot positions in radar pixels: from the aim point through each target tile
+# centre in drag order, one dot every Spacing pixels. Verse UI has no line widget, so a dotted line it is.
+KTPathPoints<public>(Aim:vector2, Tiles:[]int, Cols:int, Tile:float, Spacing:float)<transacts>:[]vector2 =
+    var Points:[]vector2 = array{}
+    var From:vector2 = vector2{X := Aim.X * Tile, Y := (3.0 - Aim.Y) * Tile}
+    for (T : Tiles):
+        C := KTTileCentre(T, Cols)
+        To := vector2{X := C.X * Tile, Y := (3.0 - C.Y) * Tile}
+        Steps := if (N := Floor[Distance(From, To) / Spacing]) then Max(N, 1) else 1
+        for (I := 1..Steps):
+            F := (I * 1.0) / (Steps * 1.0)
+            set Points += array{vector2{X := From.X + (To.X - From.X) * F, Y := From.Y + (To.Y - From.Y) * F}}
+        set From = To
+    Points
+
+KTApproach<public>(Aim:vector2, Tiles:[]int, Cols:int)<transacts>:float =
+    if (First := Tiles[0]) then Distance(Aim, KTTileCentre(First, Cols)) else 99.0
 
 # Ranking: getting to the start tile is the travel the player controls; a long drag is only a small penalty,
 # so the guide still suggests a corner when you aim at a corner (Codex's rule) rather than always a window.
-KTRankCost<public>(Aim:vector2, Tiles:[]int)<transacts>:float =
-    KTApproach(Aim, Tiles) + 0.15 * KTDragLength(Tiles)
+KTRankCost<public>(Aim:vector2, Tiles:[]int, Cols:int)<transacts>:float =
+    KTApproach(Aim, Tiles, Cols) + 0.15 * KTDragLength(Tiles, Cols)
 
 kt_edit_pick<public> := struct<computes>:
     Shape<public>:kt_edit_shape = kt_edit_shape{}
     Cost<public>:float = 99.0
     Travel<public>:float = 0.0
 
-# The best orientation of every shape, cheapest first.
-KTRankEdits<public>(Aim:vector2)<transacts>:[]kt_edit_pick =
+# The prior for edit J in situation Sit of a piece (tables built offline by tools/build_edit_policy.py from Jev:
+# EditPolicy.verse for walls, EditPolicyPieces.verse for floors, stairs and roofs).
+KTPriorFor<public>(Kind:string, Sit:int, J:int)<transacts>:float =
+    if (Kind = "wall"):
+        if (V := KTEditPriors[Sit * KTEditCount + J]) then V * 0.001 else 0.1
+    else:
+        KTPiecePrior(Kind, Sit, J)
+
+# Which row of the prior table applies: crosshair bucket on the piece (two per tile), the third of the piece you
+# stand in, near or far.
+KTSituation<public>(Aim:vector2, Side:int, Far:logic, Cols:int)<transacts>:int =
+    Buckets := Cols * 2
+    Ub := if (F := Floor[Aim.X * 2.0]) then Clamp(F, 0, Buckets - 1) else 0
+    Vb := if (F := Floor[Aim.Y * 2.0]) then Clamp(F, 0, Buckets - 1) else 0
+    ((Ub * Buckets + Vb) * 3 + Clamp(Side, 0, 2)) * 2 + (if (Far?) then 1 else 0)
+
+# The prior moves a recommendation by at most about 0.8 tiles of crosshair travel (weight x ln(best prior / this prior),
+# priors floored at 2%), so where the crosshair is always matters more than the prior; the prior only breaks near ties
+# toward the edit strong players favour in this situation.
+KTPriorWeight<public>:float = 0.3
+
+# Which side of the piece a shape sits on, from the mean column of its tiles: -1 left, 0 centre, 1 right.
+KTShapeSide<public>(Tiles:[]int, Cols:int)<transacts>:int =
+    var Sum:int = 0
+    for (T : Tiles):
+        if (C := Mod[T, Cols]):
+            set Sum += C
+    Mean := (Sum * 1.0) / (Tiles.Length * 1.0)
+    Mid := (Cols - 1) * 0.5
+    if (Mean < Mid - 0.2) then -1 else if (Mean > Mid + 0.2) then 1 else 0
+
+# Which half of the piece the crosshair is on. A dead band around the middle keeps the suggestion from flickering
+# between sides while the crosshair crosses the centre line.
+KTAimSide<public>(Aim:vector2, Cols:int)<transacts>:int =
+    Mid := Cols * 0.5
+    Band := Cols * 0.05
+    if (Aim.X < Mid - Band) then -1 else if (Aim.X > Mid + Band) then 1 else 0
+
+# The best orientation of every shape that fits the aimed side, cheapest first.
+KTRankEdits<public>(Aim:vector2, Sit:int, Kind:string)<transacts>:[]kt_edit_pick =
+    Cols := KTCols(Kind)
     var Picks:[]kt_edit_pick = array{}
-    for (S : KTWallEdits):
-        Back := KTReversed(S.Tiles)
-        Fwd := KTRankCost(Aim, S.Tiles)
-        Rev := KTRankCost(Aim, Back)
-        Tiles := if (Rev < Fwd) then Back else S.Tiles
-        Pick := kt_edit_pick{Shape := kt_edit_shape{Name := S.Name, Tiles := Tiles}, Cost := Min(Fwd, Rev),
-                             Travel := KTApproach(Aim, Tiles) + KTDragLength(Tiles)}
-        # Insertion keeps the list sorted by cost.
-        var Out:[]kt_edit_pick = array{}
-        var Placed:logic = false
-        for (P : Picks):
-            if (not Placed?, Pick.Cost < P.Cost):
+    var PMax:float = 0.001
+    for (J -> S : KTEditsFor(Kind)):
+        set PMax = Max(PMax, KTPriorFor(Kind, Sit, J))
+    for (J -> S : KTEditsFor(Kind)):
+        ShapeSide := KTShapeSide(S.Tiles, Cols)
+        AimSide := KTAimSide(Aim, Cols)
+        # Show only edits on the side the player is aiming at; centre shapes are always allowed.
+        if (not logic{ShapeSide <> 0 and AimSide <> 0 and ShapeSide <> AimSide}?):
+            Back := KTReversed(S.Tiles)
+            Penalty := KTPriorWeight * Ln(PMax / Max(KTPriorFor(Kind, Sit, J), 0.001))
+            Fwd := KTRankCost(Aim, S.Tiles, Cols) + Penalty
+            Rev := KTRankCost(Aim, Back, Cols) + Penalty
+            Tiles := if (Rev < Fwd) then Back else S.Tiles
+            Pick := kt_edit_pick{Shape := kt_edit_shape{Id := S.Id, Name := S.Name, Tiles := Tiles}, Cost := Min(Fwd, Rev),
+                                 Travel := KTApproach(Aim, Tiles, Cols) + KTDragLength(Tiles, Cols)}
+            # Insertion keeps the list sorted by cost.
+            var Out:[]kt_edit_pick = array{}
+            var Placed:logic = false
+            for (P : Picks):
+                if (not Placed?, Pick.Cost < P.Cost):
+                    set Out += array{Pick}
+                    set Placed = true
+                set Out += array{P}
+            if (not Placed?):
                 set Out += array{Pick}
-                set Placed = true
-            set Out += array{P}
-        if (not Placed?):
-            set Out += array{Pick}
-        set Picks = Out
+            set Picks = Out
     Picks
 
 kt_edit_face := struct<computes>:
     Valid:logic = false
-    IsWall:logic = false
+    # wall | floor | stairs | roof: which piece is aimed at, so the right grid and edit library apply.
+    Kind:string = "wall"
     Key:string = ""
-    # Aim point on the face in tiles: U across (left to right as seen), V up (wall) or away (floor).
+    # Aim point on the piece in tiles: U across (left to right as seen), V up (wall) or away from the player (floor, stairs, roof).
     U:float = 0.0
     V:float = 0.0
+    # Which third of the piece the player stands in (0 left, 1 centre, 2 right as seen) and whether they are far from it.
+    Side:int = 1
+    Far:logic = false
+    GoalId:string = ""
+    Source:string = "unverified"
+
+KTProjectAuthoredWall<public>(View:vector3, Aim:vector3, CameraRight:vector3, Body:vector3, Wall:kt_edit_wall_def, Range:float)<transacts>:kt_edit_face =
+    Denom := DotProduct(Aim, Wall.Normal)
+    if (Wall.Width > 0.0, Wall.Height > 0.0, Abs(Denom) > 0.05):
+        T := DotProduct(Wall.Centre - View, Wall.Normal) / Denom
+        if (T > 0.0):
+            H := View + Aim * T
+            if (Distance(H, Body) <= Range, DotProduct(H - Body, Aim) >= -20.0):
+                Right := if (DotProduct(CameraRight, Wall.Right) >= 0.0) then Wall.Right else -Wall.Right
+                U := (DotProduct(H - Wall.Centre, Right) / Wall.Width + 0.5) * 3.0
+                V := (H.Z - Wall.Centre.Z) / Wall.Height * 3.0
+                PU := (DotProduct(Body - Wall.Centre, Right) / Wall.Width + 0.5) * 3.0
+                if (U >= 0.0, U < 3.0, V >= 0.0, V < 3.0):
+                    return kt_edit_face{Valid := true, Kind := "wall", Key := Wall.Id, U := U, V := V,
+                        Side := if (PU < 1.0) then 0 else if (PU < 2.0) then 1 else 2,
+                        Far := logic{Distance(H, Body) > 256.0}, GoalId := Wall.Goal, Source := "authored_wall_reference"}
+    kt_edit_face{}
+
+# Floors, roofs and stairs: a horizontal (for stairs, sloped) plane. The grid is turned to face the player: the piece
+# axis the player looks along becomes "away" (V), so tile 0 is always near-left as they see it.
+KTProjectAuthoredPlane<public>(View:vector3, Aim:vector3, Body:vector3, Piece:kt_edit_wall_def, Range:float)<transacts>:kt_edit_face =
+    Slope := if (Piece.Kind = "stairs", Piece.Depth > 0.0) then Piece.Rise / Piece.Depth else 0.0
+    PlaneN := vector3{X := Slope * Piece.Normal.X, Y := Slope * Piece.Normal.Y, Z := 1.0}
+    PlaneC := vector3{X := Piece.Centre.X, Y := Piece.Centre.Y, Z := Piece.Centre.Z + (if (Piece.Kind = "stairs") then Piece.Rise * 0.5 else 0.0)}
+    Denom := DotProduct(Aim, PlaneN)
+    if (Piece.Width > 0.0, Piece.Depth > 0.0, Abs(Denom) > 0.05):
+        T := DotProduct(PlaneC - View, PlaneN) / Denom
+        if (T > 0.0):
+            H := View + Aim * T
+            if (Distance(H, Body) <= Range + 300.0):
+                Look := vector3{X := Aim.X, Y := Aim.Y, Z := 0.0}
+                AlongDot := DotProduct(Look, Piece.Normal)
+                AcrossDot := DotProduct(Look, Piece.Right)
+                Away := if (Abs(AcrossDot) > Abs(AlongDot)) then (if (AcrossDot >= 0.0) then Piece.Right else -Piece.Right) else (if (AlongDot >= 0.0) then Piece.Normal else -Piece.Normal)
+                Across := vector3{X := -Away.Y, Y := Away.X, Z := 0.0}
+                Rel := H - PlaneC
+                U := (DotProduct(Rel, Across) / Piece.Width + 0.5) * 2.0
+                V := (DotProduct(Rel, Away) / Piece.Depth + 0.5) * 2.0
+                PU := (DotProduct(Body - PlaneC, Across) / Piece.Width + 0.5) * 2.0
+                if (U >= 0.0, U < 2.0, V >= 0.0, V < 2.0):
+                    return kt_edit_face{Valid := true, Kind := Piece.Kind, Key := Piece.Id, U := U, V := V,
+                        Side := if (PU < 0.8) then 0 else if (PU < 1.2) then 1 else 2,
+                        Far := logic{Distance(H, Body) > 256.0}, GoalId := Piece.Goal, Source := "authored_{Piece.Kind}_reference"}
+    kt_edit_face{}
 
 kt_edit_guide_device := class(creative_device):
     @editable CellSize:float = 512.0
@@ -109,6 +213,12 @@ kt_edit_guide_device := class(creative_device):
     @editable SampleSeconds:float = 0.05
     @editable TilePixels:float = 44.0
     @editable RingPixels:float = 72.0
+    # The guide is for building and editing, so it only shows while a build tool is equipped (the player's
+    # build hotbar reports an equipped item) and for LingerSeconds after, since you often place a piece and
+    # then edit it with another item. Off = the old behaviour (show whenever a grid face is in range).
+    @editable RequireBuildTool:logic = true
+    @editable LingerSeconds:float = 0.0
+    # Generic advice is an explicit reference unless a lesson target supplies an edit goal.
 
     var Guided:[player]logic = map{}
     var Disabled:[player]logic = map{}
@@ -128,56 +238,29 @@ kt_edit_guide_device := class(creative_device):
             Now := if (Disabled[P]?) then false else true
             if (set Disabled[P] = Now) {}
 
-    # Areas with no guide: the Arena and the Fight Lab box fight (real fights, no aids).
-    Excluded(X:float, Y:float)<transacts>:logic =
-        logic{(X >= -35840.0 and X <= -25600.0 and Y >= -79872.0 and Y <= -73728.0) or
-              (X >= -20480.0 and X <= -15360.0 and Y >= -66048.0 and Y <= -63488.0)}
-
-    FirstPlane(Start:float, Dir:float, Size:float, Offset:float)<transacts>:float =
-        Cell := if (F := Floor[(Start - Offset) / Size]) then F else 0
-        if (Dir > 0.0) then (Cell + 1) * Size + Offset else Cell * Size + Offset
-
+    # Authored targets have an actual registered plane and lesson context.
+    # Arbitrary player builds are not guessed from mathematical grid boundaries.
     FindFace(Character:fort_character)<transacts>:kt_edit_face =
         View := Character.GetViewLocation()
         Aim := Character.GetViewRotation().GetLocalForward()
+        CameraRight := Character.GetViewRotation().GetLocalRight()
         Body := Character.GetTransform().Translation
-        # Start the search at the player, not the camera, so a grid line behind the player is never picked.
-        Skip := Max(DotProduct(Body - View, Aim), 0.0)
-        S := View + Aim * Skip
-        TX := if (Abs(Aim.X) > 0.05) then (FirstPlane(S.X, Aim.X, CellSize, GridOffsetX) - S.X) / Aim.X else 99999.0
-        TY := if (Abs(Aim.Y) > 0.05) then (FirstPlane(S.Y, Aim.Y, CellSize, GridOffsetY) - S.Y) / Aim.Y else 99999.0
-        TZ := if (Abs(Aim.Z) > 0.05) then (FirstPlane(S.Z, Aim.Z, LevelHeight, GridOffsetZ) - S.Z) / Aim.Z else 99999.0
-        T := Min(TX, Min(TY, TZ))
-        if (T > Range or T <= 0.0):
-            return kt_edit_face{}
-        H := S + Aim * (T + 0.5)
-        CI := if (F := Floor[(H.X - GridOffsetX) / CellSize]) then F else 0
-        CJ := if (F := Floor[(H.Y - GridOffsetY) / CellSize]) then F else 0
-        CK := if (F := Floor[(H.Z - GridOffsetZ) / LevelHeight]) then F else 0
-        LX := (H.X - GridOffsetX - CI * CellSize) / CellSize
-        LY := (H.Y - GridOffsetY - CJ * CellSize) / CellSize
-        LZ := (H.Z - GridOffsetZ - CK * LevelHeight) / LevelHeight
-        if (T = TZ):
-            # Floor or cone plane: 2x2 tiles, oriented to the way the player faces.
-            AlongX := logic{Abs(Aim.X) >= Abs(Aim.Y)}
-            Fwd := if (AlongX?) then (if (Aim.X > 0.0) then LX else 1.0 - LX) else (if (Aim.Y > 0.0) then LY else 1.0 - LY)
-            Side := if (AlongX?) then (if (Aim.X > 0.0) then LY else 1.0 - LY) else (if (Aim.Y > 0.0) then 1.0 - LX else LX)
-            kt_edit_face{Valid := true, IsWall := false, Key := "F{CI}:{CJ}:{CK}", U := Side * 2.0, V := Fwd * 2.0}
-        else if (T = TX):
-            Across := if (Aim.X > 0.0) then LY else 1.0 - LY
-            PlaneI := if (Aim.X > 0.0) then CI else CI + 1
-            kt_edit_face{Valid := true, IsWall := true, Key := "X{PlaneI}:{CJ}:{CK}", U := Across * 3.0, V := LZ * 3.0}
-        else:
-            Across := if (Aim.Y > 0.0) then 1.0 - LX else LX
-            PlaneJ := if (Aim.Y > 0.0) then CJ else CJ + 1
-            kt_edit_face{Valid := true, IsWall := true, Key := "Y{CI}:{PlaneJ}:{CK}", U := Across * 3.0, V := LZ * 3.0}
+        var Best:kt_edit_face = kt_edit_face{}
+        var Nearest:float = 999999.0
+        for (Wall : KTPracticeWalls, Distance(Body, Wall.Centre) < Range + Wall.Width + Wall.Depth):
+            Candidate := if (Wall.Kind = "wall") then KTProjectAuthoredWall(View, Aim, CameraRight, Body, Wall, Range) else KTProjectAuthoredPlane(View, Aim, Body, Wall, Range)
+            T := Distance(View, Wall.Centre)
+            if (Candidate.Valid?, T < Nearest):
+                set Nearest = T
+                set Best = Candidate
+        Best
 
     Guide(Player:player)<suspends>:void =
         Tile := TilePixels
         Ring := texture_block{DefaultImage := KT_UI.T_KT_EditRing, DefaultDesiredSize := vector2{X := RingPixels, Y := RingPixels}}
         Grid := canvas{}
         Dot := color_block{DefaultColor := color{R := 1.0, G := 0.9, B := 0.1}}
-        Caption := text_block{DefaultTextColor := NamedColors.White, DefaultTextSize := 16.0}
+        Caption := text_block{DefaultTextColor := NamedColors.White, DefaultTextSize := 14.0}
         Radar := canvas{}
         Radar.AddWidget(MakeCanvasSlot(Grid, vector2{X := 0.0, Y := 0.0}, ?Size := vector2{X := Tile * 3.0, Y := Tile * 3.0}))
         Radar.AddWidget(MakeCanvasSlot(Caption, vector2{X := 0.0, Y := Tile * 3.0 + 8.0}))
@@ -191,7 +274,7 @@ kt_edit_guide_device := class(creative_device):
         RadarLayer := canvas:
             Slots := array:
                 canvas_slot:
-                    Anchors := anchors{Minimum := vector2{X := 0.24, Y := 0.36}, Maximum := vector2{X := 0.24, Y := 0.36}}
+                    Anchors := anchors{Minimum := vector2{X := 0.72, Y := 0.36}, Maximum := vector2{X := 0.72, Y := 0.36}}
                     SizeToContent := true
                     Widget := Radar
         var Tiles:[]color_block = array{}
@@ -208,9 +291,16 @@ kt_edit_guide_device := class(creative_device):
         var RadarShown:logic = false
         var DotShown:logic = false
         var LockKey:string = ""
+        var AutoLock:logic = false
         var Locked:kt_edit_pick = kt_edit_pick{}
+        var PathDots:[]color_block = array{}
         var Away:float = 0.0
         var Travel:float = 0.0
+        var SinceBuild:float = 999.0
+        var GateWarned:logic = false
+        var LastGate:string = ""
+        var LastPos:vector3 = vector3{}
+        var LastAimVec:vector3 = vector3{}
         var Last:vector2 = vector2{}
         var Samples:int = 0
         defer:
@@ -226,7 +316,16 @@ kt_edit_guide_device := class(creative_device):
             var Allowed:logic = false
             if (Character := Player.GetFortCharacter[], Character.IsActive[], not Disabled[Player]?):
                 Pos := Character.GetTransform().Translation
-                if (not Excluded(Pos.X, Pos.Y)?):
+                # Read the player's actual inventory descendants. Missing evidence fails closed.
+                Tools := KTObserveTools(Player)
+                Intent := Tools.Building
+                State := "readable={if (Tools.Readable?) then 1 else 0}|build={Tools.BuildEquipped}|harvest={Tools.HarvestEquipped}|weapon={Tools.WeaponEquipped}|roots={Tools.RootCount}|character_entity={if (Tools.CharacterEntity?) then 1 else 0}"
+                if (State <> LastGate):
+                    set LastGate = State
+                    KTLog("gate", "edit_guide", 0, 0, 0, rep_result.Unchecked, State)
+                set LastPos = Pos
+                set LastAimVec = Character.GetViewRotation().GetLocalForward()
+                if (Intent?):
                     set Allowed = true
                     set Face = FindFace(Character)
             if (UI := GetPlayerUI[Player]):
@@ -241,6 +340,16 @@ kt_edit_guide_device := class(creative_device):
                 set Away = 0.0
                 set Travel += Distance(Aim, Last)
                 set Samples += 1
+                if (AutoLock?):
+                    Ranked := KTRankEdits(Aim, KTSituation(Aim, Face.Side, Face.Far, KTCols(Face.Kind)), Face.Kind)
+                    if (Top := Ranked[0], Top.Shape.Id <> Locked.Shape.Id):
+                        var Keep:logic = false
+                        for (P : Ranked, P.Shape.Id = Locked.Shape.Id, P.Cost <= Top.Cost + 0.25):
+                            set Keep = true
+                        if (not Keep?):
+                            set Locked = Top
+                            set PathDots = DrawPath(Grid, PathDots, Aim, Top.Shape.Tiles, KTCols(Face.Kind))
+                            LogLock(Face, Top, LastPos, LastAimVec, "aim")
             else:
                 set Away += Step
                 if (LockKey <> "" and (Face.Valid? or Away >= 0.6)):
@@ -259,51 +368,100 @@ kt_edit_guide_device := class(creative_device):
                     # New face: pick the least-travel edit from where the crosshair landed, then hold it.
                     set LockKey = Face.Key
                     set Away = 0.0
-                    if (Face.IsWall?, Best := KTRankEdits(Aim)[0]):
+                    Ranked := KTRankEdits(Aim, KTSituation(Aim, Face.Side, Face.Far, KTCols(Face.Kind)), Face.Kind)
+                    if (Face.GoalId <> "", Best := (for (Pick : Ranked, Pick.Shape.Id = Face.GoalId) { Pick })[0]):
+                        set AutoLock = false
                         set Locked = Best
+                        set PathDots = DrawPath(Grid, PathDots, Aim, Best.Shape.Tiles, KTCols(Face.Kind))
+                        LogLock(Face, Best, LastPos, LastAimVec, "lesson")
+                    else if (Best := Ranked[0]):
+                        set AutoLock = true
+                        set Locked = Best
+                        set PathDots = DrawPath(Grid, PathDots, Aim, Best.Shape.Tiles, KTCols(Face.Kind))
+                        LogLock(Face, Best, LastPos, LastAimVec, "aim")
                     else:
+                        set AutoLock = false
                         set Locked = kt_edit_pick{}
+                        set PathDots = DrawPath(Grid, PathDots, Aim, array{}, KTCols(Face.Kind))
             set Last = Aim
             if (Face.Valid?, UI := GetPlayerUI[Player]):
                 if (not RadarShown?):
                     UI.AddWidget(RadarLayer, player_ui_slot{InputMode := ui_input_mode.None})
                     set RadarShown = true
-                if (Face.IsWall?):
-                    Ranked := KTRankEdits(Aim)
-                    Paint(Tiles, Labels, Locked.Shape.Tiles, false)
-                    Alt1 := if (A := Ranked[1]) then "{A.Shape.Name} {Tenths(A.Travel)}" else ""
-                    Alt2 := if (A := Ranked[2]) then "{A.Shape.Name} {Tenths(A.Travel)}" else ""
-                    Caption.SetText(GuideText("EDIT: {Locked.Shape.Name}  travel {Tenths(Locked.Travel)} tiles\nalso: {Alt1}  |  {Alt2}\nthis face so far: {Tenths(Travel)} tiles\nAim guide only: cannot see your selected tiles"))
+                Cols := KTCols(Face.Kind)
+                if (Locked.Shape.Tiles.Length > 0):
+                    Paint(Tiles, Labels, Locked.Shape.Tiles, Cols)
+                    Note := if (AutoLock?) then "From your aim and position; selected tiles are not measured." else "Lesson target; selected tiles are not measured."
+                    Caption.SetText(GuideText("{KindLabel(Face.Kind)}: {Locked.Shape.Name}\nTrace the numbered tiles, then confirm.\n{Note}"))
                 else:
-                    FloorTile := FloorIndex(Face.U, Face.V)
-                    Paint(Tiles, Labels, array{FloorTile}, true)
-                    Caption.SetText(GuideText("FLOOR / CONE: edit the tile under your crosshair\nno travel needed; drag to the next tile for two\nAim guide only: cannot see your selected tiles"))
+                    Paint(Tiles, Labels, array{}, Cols)
+                    Caption.SetText(GuideText("{KindLabel(Face.Kind)} reference detected.\nNo confirmed edit fits where you are aiming.\nMove the crosshair onto the piece."))
                 if (DotShown?):
                     Grid.RemoveWidget(Dot)
                 DX := Clamp(Face.U * Tile, 0.0, Tile * 3.0)
                 DY2 := Clamp((3.0 - Face.V) * Tile, 0.0, Tile * 3.0)
                 Grid.AddWidget(MakeCanvasSlot(Dot, vector2{X := DX, Y := DY2}, ?Size := vector2{X := 10.0, Y := 10.0}, ?Alignment := vector2{X := 0.5, Y := 0.5}))
                 set DotShown = true
-            else if (RadarShown?, Away >= 0.6, UI := GetPlayerUI[Player]):
+            else if (Allowed?, UI := GetPlayerUI[Player]):
+                if (not RadarShown?):
+                    UI.AddWidget(RadarLayer, player_ui_slot{InputMode := ui_input_mode.None})
+                    set RadarShown = true
+                for (Cell : Tiles):
+                    Cell.SetColor(color{R := 0.08, G := 0.24, B := 0.14})
+                for (Label : Labels):
+                    Label.SetText(GuideText(""))
+                Caption.SetText(GuideText("Build tool active.\nNo verified target: edit suggestions paused."))
+                if (DotShown?):
+                    Grid.RemoveWidget(Dot)
+                    set DotShown = false
+                set PathDots = DrawPath(Grid, PathDots, Aim, array{}, 3)
+            else if (not Allowed?, RadarShown?, UI := GetPlayerUI[Player]):
                 UI.RemoveWidget(RadarLayer)
                 set RadarShown = false
 
-    # Floors use the bottom-left 2x2 of the radar: near row = bottom.
-    FloorIndex(U:float, V:float)<transacts>:int =
-        Col := if (U < 1.0) then 0 else 1
-        Row := if (V < 1.0) then 0 else 1
-        Row * 3 + Col
+    # Rebuild the dotted path on the radar grid. Called only when the locked edit changes, not every tick.
+    DrawPath(Grid:canvas, Old:[]color_block, Aim:vector2, Tiles:[]int, Cols:int):[]color_block =
+        Points := KTPathPoints(Aim, Tiles, Cols, TilePixels, 11.0)
+        var Pool:[]color_block = Old
+        for (I -> P : Points):
+            if (Dot := Pool[I]):
+                Grid.RemoveWidget(Dot)
+                Grid.AddWidget(MakeCanvasSlot(Dot, P, ?Size := vector2{X := 6.0, Y := 6.0}, ?Alignment := vector2{X := 0.5, Y := 0.5}))
+                Dot.SetOpacity(0.95)
+            else:
+                Dot := color_block{DefaultColor := color{R := 0.85, G := 1.0, B := 0.35}, DefaultOpacity := 0.95, DefaultDesiredSize := vector2{X := 6.0, Y := 6.0}}
+                Grid.AddWidget(MakeCanvasSlot(Dot, P, ?Size := vector2{X := 6.0, Y := 6.0}, ?Alignment := vector2{X := 0.5, Y := 0.5}))
+                set Pool += array{Dot}
+        for (I -> Dot : Pool, I >= Points.Length):
+            Dot.SetOpacity(0.0)
+        Pool
 
-    Paint(Tiles:[]color_block, Labels:[]text_block, Route:[]int, IsFloor:logic):void =
+    # A 2x2 piece (floor, stairs, roof) uses the bottom-left 2x2 of the radar: near row = bottom. Tiles outside the
+    # piece's grid are dimmed; Route holds the piece's own tile numbers (Cols wide) and is mapped onto the 3-wide canvas.
+    Paint(Tiles:[]color_block, Labels:[]text_block, Route:[]int, Cols:int):void =
         for (I -> Cell : Tiles, Label := Labels[I]):
-            InFloor := if (C := Mod[I, 3], R := Quotient[I, 3], C < 2, R < 2) then true else false
-            Hidden := logic{IsFloor? and not InFloor?}
-            InRoute := logic{(for (T : Route, T = I) { T }).Length > 0}
-            Cell.SetOpacity(if (Hidden?) then 0.15 else 0.85)
-            Cell.SetColor(if (InRoute?) then color{R := 0.85, G := 0.06, B := 0.06} else color{R := 0.04, G := 0.06, B := 0.09})
+            Col := if (C := Mod[I, 3]) then C else 0
+            Row := if (R := Quotient[I, 3]) then R else 0
+            InGrid := logic{Col < Cols and Row < Cols}
+            Idx := Row * Cols + Col
+            InRoute := logic{InGrid? and (for (T : Route, T = Idx) { T }).Length > 0}
+            Cell.SetOpacity(if (InGrid?) then 0.85 else 0.15)
+            Cell.SetColor(if (InRoute?) then color{R := 0.10, G := 0.80, B := 0.25} else color{R := 0.04, G := 0.06, B := 0.09})
             Label.SetText(GuideText(""))
-            for (Order -> Target : Route, Target = I):
-                Label.SetText(GuideText("{Order + 1}"))
+            if (InGrid?):
+                for (Order -> Target : Route, Target = Idx):
+                    Label.SetText(GuideText("{Order + 1}"))
+
+    LogLock(Face:kt_edit_face, Pick:kt_edit_pick, Pos:vector3, AimVec:vector3, Objective:string):void =
+        KTLog("lock", "edit_guide", 0, 0, 0, rep_result.Unchecked,
+            "face={Face.Key}|piece={Face.Kind}|edit={Pick.Shape.Id}|u_h={Hund(Face.U)}|v_h={Hund(Face.V)}|side={Face.Side}|far={if (Face.Far?) then 1 else 0}|px={Hund(Pos.X)}|py={Hund(Pos.Y)}|pz={Hund(Pos.Z)}|ax_h={Hund(AimVec.X)}|ay_h={Hund(AimVec.Y)}|az_h={Hund(AimVec.Z)}|source={Face.Source}|objective={Objective}")
+
+KindLabel(Kind:string):string =
+    if (Kind = "floor") then "FLOOR" else if (Kind = "stairs") then "STAIRS" else if (Kind = "roof") then "ROOF / CONE" else "WALL"
+
+# Hundredths as an int (positions in cm come out as cm x 100; aim components as hundredths of a unit).
+Hund(X:float)<transacts>:int =
+    if (V := Round[X * 100.0]) then V else 0
 
 Tenths(X:float)<transacts>:string =
     T := if (V := Round[X * 10.0]) then V else 0

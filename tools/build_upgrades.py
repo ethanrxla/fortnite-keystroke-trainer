@@ -91,32 +91,33 @@ class Upgrade:
   for zone,col in colors.items():
    for param,val in [('Color',(.018,.022,.03)),('LineColor',col)]:
     self.m.tool(MI,'set_vector_parameter',instance={'refPath':bm.MAT[zone]},name=param,value={'r':val[0],'g':val[1],'b':val[2],'a':1})
-  # 1v1 pads are build-grid aligned at one level, immediately against the separator.
-  ax=-31744.0;ay=-76800.0
-  for side,dy in [('A',-256),('B',256)]:
-   self.block('Arena_Pad_'+side,ax,ay+dy,0,1024,512,H)
-   self.sign('Arena_PadLabel_'+side,ax-430,ay+dy,630,'PLAYER '+side,90,1)
-   self.device(bm.BUTTON,'Arena_Start_'+side,bm.xform(ax+340,ay+dy,500),{'interaction Text':'Start 1v1 countdown','interactionRadius':.6,'delay':0.0,'resetDelay':.25},'kt3_arena_start_tag')
-   self.device(bm.BUTTON,'Arena_Mode_'+side,bm.xform(ax-340,ay+dy,500),{'interaction Text':'Toggle melee-only mode','interactionRadius':.6,'delay':0.0,'resetDelay':.25},'kt3_arena_mode_tag')
-  # Width is local X; depth is local Y. The wall stays between pads through countdown.
-  self.device(BARRIER,'Arena_Divider',bm.xform(-30720,ay,0),{'barrierWidth':20.0,'barrierDepth':.05,'barrierHeight':4.0,'zoneShape':'Box','blockWeaponFire':True,'collide with Camera':False,'baseVisibleDuringGame':False,'barrierMaterial':{'refPath':'/Game/Items/Traps/Materials/M_Barrier_BoundsTranslucent_Blue_Inst.M_Barrier_BoundsTranslucent_Blue_Inst'}},'kt3_arena_divider_tag')
-  self.device(BARRIER,'Arena_Perimeter',bm.xform(-30720,ay,0),{'barrierWidth':20.0,'barrierDepth':12.0,'barrierHeight':8.0,'zoneShape':'Hollow Box','blockWeaponFire':True,'collide with Camera':False,'baseVisibleDuringGame':False,'barrierMaterial':None})
-  self.sign('Arena_Status',ax-650,ay,900,'1v1\nStep onto both platforms\nPress START',90,2.5)
-  self.b.tag(self.f[PFX+'Arena_Status'],'kt3_arena_status_tag')
-  self.device(bm.MODULE+'/_Verse.KeystrokeTrainer-keystroke_arena_device','Arena_Controller',bm.xform(ax,ay,-100))
-  self.device(bm.EXPLOSIVE,'Arena_Clear',bm.xform(-30720,ay,768),{'blast Radius':13.0,'player Damage':0,'structure Damage':10000,'knockback':'None','can be Damaged':False,'damage Indestructible Buildings':False,'visible During Game':False,'play Audio / VFX':False,'time Until Reset Allowed':.1,'has Timed Detonation From Game Start':False},'kt3_arena_reset_tag')
-  preset=json.loads((ROOT/'shared/practice-loadout.json').read_text(encoding='utf-8'))['items']
-  for name,items,tag in [('Arena_Standard',[preset['AR'],preset['SHOTGUN']],'kt3_arena_standard_tag'),('Arena_Melee',['/CRD_Melee/SetupAssets/WID_Creative_Melee_Sword_Ninja.WID_Creative_Melee_Sword_Ninja'],'kt3_arena_melee_tag')]:
-   g=self.device(GRANTER,name,bm.xform(ax,ay,-150),{'onGrantAction':'Keep All','grant':'All Items','bEquipGrantedItem':True},tag);self.items(g,items)
-  rem=self.device(bm.ITEM_REMOVER,'Arena_RemoveLoadout',bm.xform(ax,ay,-180),{'affectedItems':'Objects In Device','removalMethod':'Remove Items','percentageToRemove':100,'bRemoveAllVariationsOfTheSelectedItem':True},'kt3_arena_remover_tag')
-  allitems=[]
-  for label,path in self.f.items():
-   if label.startswith('KT_Gun_') and not label.endswith(('_PREV','_GIVE','_NEXT')):
-    obj=decode(self.m.tool(bm.OBJ,'get_properties',instance={'refPath':path},properties=['pickupItemList']))['pickupItemList']
-    allitems += [i['itemDefinition']['refPath'] for i in decode(self.m.tool(bm.OBJ,'get_properties',instance=obj,properties=['itemListData']))['itemListData']]
-  bm.fill_item_list(self.b,rem,list(dict.fromkeys(allitems)))
-  for cue,tag in [('arena_three','kt3_arena_three_tag'),('arena_two','kt3_arena_two_tag'),('arena_one','kt3_arena_one_tag'),('arena_go','kt3_arena_go_tag'),('arena_ready','kt3_arena_ready_tag'),('arena_reset','kt3_arena_reset_voice_tag'),('arena_melee','kt3_arena_melee_voice_tag'),('arena_standard','kt3_arena_standard_voice_tag')]:
-   self.device(AUDIO,'Voice_'+cue,bm.xform(ax,ay,-220),{'can Be Heard By':'Instigator Only','enable Spatialization':False,'enable Volume Attenuation':False,'volume':.8},tag)
+  if 'KT10_Arena_NoBuild' not in self.f:
+   # 1v1 pads are build-grid aligned at one level, immediately against the separator.
+   ax=-31744.0;ay=-76800.0
+   for side,dy in [('A',-256),('B',256)]:
+    self.block('Arena_Pad_'+side,ax,ay+dy,0,1024,512,H)
+    self.sign('Arena_PadLabel_'+side,ax-430,ay+dy,630,'PLAYER '+side,90,1)
+    self.device(bm.BUTTON,'Arena_Start_'+side,bm.xform(ax+340,ay+dy,500),{'interaction Text':'Start 1v1 countdown','interactionRadius':.6,'delay':0.0,'resetDelay':.25},'kt3_arena_start_tag')
+    self.device(bm.BUTTON,'Arena_Mode_'+side,bm.xform(ax-340,ay+dy,500),{'interaction Text':'Toggle melee-only mode','interactionRadius':.6,'delay':0.0,'resetDelay':.25},'kt3_arena_mode_tag')
+   # Width is local X; depth is local Y. The wall stays between pads through countdown.
+   self.device(BARRIER,'Arena_Divider',bm.xform(-30720,ay,0),{'barrierWidth':20.0,'barrierDepth':.05,'barrierHeight':4.0,'zoneShape':'Box','blockWeaponFire':True,'collide with Camera':False,'baseVisibleDuringGame':False,'barrierMaterial':{'refPath':'/Game/Items/Traps/Materials/M_Barrier_BoundsTranslucent_Blue_Inst.M_Barrier_BoundsTranslucent_Blue_Inst'}},'kt3_arena_divider_tag')
+   self.device(BARRIER,'Arena_Perimeter',bm.xform(-30720,ay,0),{'barrierWidth':20.0,'barrierDepth':12.0,'barrierHeight':8.0,'zoneShape':'Hollow Box','blockWeaponFire':True,'collide with Camera':False,'baseVisibleDuringGame':False,'barrierMaterial':None})
+   self.sign('Arena_Status',ax-650,ay,900,'1v1\nStep onto both platforms\nPress START',90,2.5)
+   self.b.tag(self.f[PFX+'Arena_Status'],'kt3_arena_status_tag')
+   self.device(bm.MODULE+'/_Verse.KeystrokeTrainer-keystroke_arena_device','Arena_Controller',bm.xform(ax,ay,-100))
+   self.device(bm.EXPLOSIVE,'Arena_Clear',bm.xform(-30720,ay,768),{'blast Radius':13.0,'player Damage':0,'structure Damage':10000,'knockback':'None','can be Damaged':False,'damage Indestructible Buildings':False,'visible During Game':False,'play Audio / VFX':False,'time Until Reset Allowed':.1,'has Timed Detonation From Game Start':False},'kt3_arena_reset_tag')
+   preset=json.loads((ROOT/'shared/practice-loadout.json').read_text(encoding='utf-8'))['items']
+   for name,items,tag in [('Arena_Standard',[preset['AR'],preset['SHOTGUN']],'kt3_arena_standard_tag'),('Arena_Melee',['/CRD_Melee/SetupAssets/WID_Creative_Melee_Sword_Ninja.WID_Creative_Melee_Sword_Ninja'],'kt3_arena_melee_tag')]:
+    g=self.device(GRANTER,name,bm.xform(ax,ay,-150),{'onGrantAction':'Keep All','grant':'All Items','bEquipGrantedItem':True},tag);self.items(g,items)
+   rem=self.device(bm.ITEM_REMOVER,'Arena_RemoveLoadout',bm.xform(ax,ay,-180),{'affectedItems':'Objects In Device','removalMethod':'Remove Items','percentageToRemove':100,'bRemoveAllVariationsOfTheSelectedItem':True},'kt3_arena_remover_tag')
+   allitems=[]
+   for label,path in self.f.items():
+    if label.startswith('KT_Gun_') and not label.endswith(('_PREV','_GIVE','_NEXT')):
+     obj=decode(self.m.tool(bm.OBJ,'get_properties',instance={'refPath':path},properties=['pickupItemList']))['pickupItemList']
+     allitems += [i['itemDefinition']['refPath'] for i in decode(self.m.tool(bm.OBJ,'get_properties',instance=obj,properties=['itemListData']))['itemListData']]
+   bm.fill_item_list(self.b,rem,list(dict.fromkeys(allitems)))
+   for cue,tag in [('arena_three','kt3_arena_three_tag'),('arena_two','kt3_arena_two_tag'),('arena_one','kt3_arena_one_tag'),('arena_go','kt3_arena_go_tag'),('arena_ready','kt3_arena_ready_tag'),('arena_reset','kt3_arena_reset_voice_tag'),('arena_melee','kt3_arena_melee_voice_tag'),('arena_standard','kt3_arena_standard_voice_tag')]:
+    self.device(AUDIO,'Voice_'+cue,bm.xform(ax,ay,-220),{'can Be Heard By':'Instigator Only','enable Spatialization':False,'enable Volume Attenuation':False,'volume':.8},tag)
   # Native targets with actual corners and protected approach geometry in the aim district.
   for n,(x,y) in enumerate([(-32000,-88900),(-29500,-87200),(-27500,-85500)]):
    self.block('Aim_Cover_'+str(n),x-600,y,0,24,512,H)

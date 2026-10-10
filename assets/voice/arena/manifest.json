@@ -1,0 +1,32 @@
+{
+  "arena_win": {
+    "id": "arena_win",
+    "text": "Clean win. Save some style for the rematch.",
+    "tag": "kt10_arena_win_voice_tag",
+    "render_sha": "52d85a30ebfad1698fba9c7aa357e78bb8c57f1ae0aad02854d78313128fb639",
+    "voice": "pFZP5JQG7iQjIQuC4Bku",
+    "model": "eleven_multilingual_v2",
+    "settings": {
+      "stability": 0.5,
+      "similarity_boost": 0.75,
+      "style": 0.15,
+      "use_speaker_boost": true
+    },
+    "duration_seconds": 2.36843537414966
+  },
+  "arena_comeback": {
+    "id": "arena_comeback",
+    "text": "Your comeback starts now. New round, new main character.",
+    "tag": "kt10_arena_comeback_voice_tag",
+    "render_sha": "4973e4c88013ca28183125234c10ad8bd89fd49d2c11ff86d807e741e4872772",
+    "voice": "pFZP5JQG7iQjIQuC4Bku",
+    "model": "eleven_multilingual_v2",
+    "settings": {
+      "stability": 0.5,
+      "similarity_boost": 0.75,
+      "style": 0.15,
+      "use_speaker_boost": true
+    },
+    "duration_seconds": 3.7616326530612243
+  }
+}

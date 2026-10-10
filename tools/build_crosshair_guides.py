@@ -1,4 +1,4 @@
-"""Crosshair guides on the edit lanes: red marks painted on the wall plus a crosshair coach device.
+"""Crosshair guides on the edit lanes: green marks painted on the wall plus a crosshair coach device.
 
     python tools/build_crosshair_guides.py [--dry-run]
 
@@ -6,11 +6,11 @@ For every drill with an `edit_guide` in shared/drills.json that has a lane in th
   * places a kt_crosshair_coach_device (CrosshairCoach.verse) on the lane device, so the player gets a
     live 3x3 aim radar and an on-target score at every wall;
   * on the first `guided_reps` tracks only, paints the guide on the player's side of the pre-built wall in
-    the Flowstide style (reference screenshots in project files reference/flowstide): a red ring where
-    the crosshair starts and, for drag edits, two parallel red lines as the corridor to drag along.
+    the Flowstide style (reference screenshots in project files reference/flowstide): a green ring where
+    the crosshair starts and, for drag edits, two parallel green lines as the corridor to drag along.
     Later tracks are left bare so the player has to place the crosshair from memory;
-  * one finished-shape panel per lane above the far end: red tiles where the wall stays, dark where the
-    edit removes them.
+  * one finished-shape panel per lane above the far end: GREEN tiles are the tiles you select (the ones the
+    edit removes), nothing is painted on the tiles that stay.
 Marks are thin boxes with collision switched off, 5 cm in front of the wall face. Labels are
 KT4_Guide_<code>_* and KT4_Coach_<code>; only those are removed on a re-run.
 """
@@ -26,11 +26,23 @@ import build_map as bm  # noqa: E402
 PREFIX = "KT4_Guide_"
 COACH_PREFIX = "KT4_Coach_"
 COACH_DEVICE = bm.MODULE + "/_Verse.KeystrokeTrainer-kt_crosshair_coach_device"
-GUIDE_MAT = bm.MODULE + "/KT_Materials/MI_KT_Guide.MI_KT_Guide"
+GUIDE_MAT = bm.MODULE + "/KT_Materials/MI_KT_GuideGreen.MI_KT_GuideGreen"
+GUIDE_PARENT = bm.MODULE + "/Content/GreyboxExample/Materials/M_Greybox_Grid.M_Greybox_Grid"
+GREEN = {"r": 0.10, "g": 0.80, "b": 0.25, "a": 1.0}
 TILE_W = bm.CELL / 3.0          # edit grid tile width on a wall
 TILE_H = bm.LEVEL_H / 3.0       # edit grid tile height
 FACE_GAP = 45.0                 # cm in front of the wall's centre plane (player side)
 DEPTH = 4.0                     # thickness of a mark
+
+
+def ensure_green_material():
+    """MI_KT_GuideGreen: the same greybox grid material as the old red MI_KT_Guide, in green."""
+    mi = "editor_toolset.toolsets.material_instance.MaterialInstanceTools"
+    m = bm.Builder().m
+    if not m.tool("editor_toolset.toolsets.asset.AssetTools", "exists", path=GUIDE_MAT):
+        m.tool(mi, "create", folder_path=bm.MODULE + "/KT_Materials", asset_name="MI_KT_GuideGreen", parent={"refPath": GUIDE_PARENT})
+    for param in ("Color", "LineColor"):
+        m.tool(mi, "set_vector_parameter", instance={"refPath": GUIDE_MAT}, name=param, value=GREEN)
 
 
 def tile_centre(track_y, tile):
@@ -39,7 +51,7 @@ def tile_centre(track_y, tile):
 
 
 def mark(b, label, x, y0, y1, z0, z1, mat="Guide"):
-    """A flat box in the plane x, spanning y0..y1 and z0..z1, with no collision (red guide by default)."""
+    """A flat box in the plane x, spanning y0..y1 and z0..z1, with no collision (green guide by default)."""
     path = b.slab({"label": label, "bounds": (x - DEPTH / 2, x + DEPTH / 2, y0, y1), "top": z1,
                    "thick": z1 - z0, "mat": mat})
     comps = b.m.tool(bm.ACTOR, "get_components", actor={"refPath": path}) or []
@@ -55,6 +67,7 @@ def main():
     ap.add_argument("--fixed-wall-marks", action="store_true", help="Use the old drill-specific paint instead of adaptive routes")
     args = ap.parse_args()
     bm.MAT["Guide"] = GUIDE_MAT
+    ensure_green_material()
     drills = [d for d in json.loads(bm.DRILLS.read_text(encoding="utf-8"))["drills"] if d.get("edit_guide")]
     b = bm.Builder()
     acts = {a["label"]: a["actorPath"] for a in (b.m.tool(bm.SCENE, "find_actors", name="KT", collision_channels=[]) or [])}
@@ -104,15 +117,15 @@ def main():
                     mark(b, f"{PREFIX}{code}_{k}_lane_a", x, sy + gap, sy + gap + lw, z0, z1)
                     mark(b, f"{PREFIX}{code}_{k}_lane_b", x, sy - gap - lw, sy - gap, z0, z1)
             n += 1
-        # Finished-shape panel (reference 09): above the far end of the lane, red where the wall stays and
-        # dark where the edit removes tiles, facing the player.
+        # Finished-shape panel (reference 09): above the far end of the lane. Green tiles are the ones you
+        # select (the edit removes them); tiles that stay are left unpainted.
         px = o["x"] + 2.5 * bm.CELL - 20      # just in front of the lane room's end wall
         py = o["y"] + (min(d["reps"], 3) - 1) * spacing / 2
         pz0, cell = 560.0, 70.0
         mark(b, f"{PREFIX}{code}_panel_back", px + 6, py - 1.8 * cell, py + 1.8 * cell, pz0 - 0.3 * cell, pz0 + 3.3 * cell, "Void")
         for t in range(9):
             row, col = divmod(t, 3)
-            if t in g["tiles"]:
+            if t not in g["tiles"]:
                 continue
             cy = py - 1.5 * cell + (col + 0.5) * cell
             cz = pz0 + (row + 0.5) * cell

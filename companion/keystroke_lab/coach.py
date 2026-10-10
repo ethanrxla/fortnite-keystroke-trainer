@@ -14,6 +14,8 @@ player's machine; nothing here is written to disk or sent anywhere else.
 import json
 import os
 import urllib.request
+
+from . import envfile  # noqa: F401  (loads ../.env and maps CLAUDE_* to the names used below)
 from collections import Counter
 
 API_URL = "https://api.anthropic.com/v1/messages"

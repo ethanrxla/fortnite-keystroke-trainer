@@ -13,12 +13,13 @@
 """
 
 import argparse
+import pathlib
 import sys
 import time
 
 import json
 
-from . import binds as binds_cmd, coach, drills, grader, keyboard_overlay, ktlog, profile, recorder, review
+from . import autostart, binds as binds_cmd, coach, insights, drills, grader, keyboard_overlay, ktlog, profile, recorder, review
 
 
 def cmd_list(_):
@@ -37,21 +38,39 @@ def cmd_practice(args):
     _, catalog = drills.load_catalog()
     drill = catalog[args.drill]
     binds = drills.load_binds(args.binds)
+    if hasattr(binds, 'profile'):
+        verified = {b.action for b in binds.profile.bindings if b.verified}
+        missing = [a for a in drill.steps if a in binds and a not in verified]
+        if missing:
+            print('Calibrate these drill actions before grading: ' + ', '.join(dict.fromkeys(missing)))
+            return 2
     keys = drills.expected_keys(drill, binds)
-    watched = set(binds.values())
+    watched = set(keys)
+    alternates = {}
+    if hasattr(binds, 'profile'):
+        for binding in binds.profile.bindings:
+            if binding.action in drill.steps and binding.verified:
+                for key in binding.keys:
+                    alternates.setdefault(key, binds[binding.action])
     presses = []
 
     def on_key(k):
         name = getattr(k, "char", None) or getattr(k, "name", str(k))
-        presses.append((time.perf_counter(), str(name).lower()))
+        name = str(name).lower()
+        presses.append((time.perf_counter(), alternates.get(name, name)))
 
     def on_click(_x, _y, button, pressed):
         if pressed:
-            presses.append((time.perf_counter(), f"mouse_{button.name}"))
+            name = f"mouse_{button.name}"
+            presses.append((time.perf_counter(), alternates.get(name, name)))
+
+    def on_scroll(_x, _y, dx, dy):
+        name = "wheel_up" if dy > 0 else "wheel_down"
+        presses.append((time.perf_counter(), alternates.get(name, name)))
 
     interval = grader.click_interval(args.tempo)
     reps = []
-    with keyboard.Listener(on_press=on_key), mouse.Listener(on_click=on_click):
+    with keyboard.Listener(on_press=on_key), mouse.Listener(on_click=on_click, on_scroll=on_scroll):
         for rep in range(1, drill.reps + 1):
             print(f"\nrep {rep}/{drill.reps}  ({args.tempo} APM)")
             time.sleep(interval)
@@ -135,11 +154,79 @@ def cmd_review(args):
 def cmd_keys(args):
     _, catalog = drills.load_catalog()
     drill = catalog[args.drill] if args.drill else None
-    return keyboard_overlay.run(drills.load_binds(args.binds), drill)
+    base = None if args.no_log else (args.log or str(pathlib.Path("sessions") / time.strftime("keys-%Y%m%d-%H%M%S")))
+    if base:
+        print("recording to", base + ".jsonl / .events.jsonl (only while a Fortnite window is focused)")
+    return keyboard_overlay.run(drills.load_binds(args.binds), drill, base, not args.no_ai, not args.no_port, binds_path=args.binds)
 
 
 def cmd_binds(args):
-    return binds_cmd.run(args.out, args.only)
+    return binds_cmd.run(args.out, args.only, args.category)
+
+
+def cmd_insights(args):
+    records = []
+    if args.uefn_log:
+        try:
+            records = ktlog.read_records(args.uefn_log)
+        except OSError:
+            print(f"(no UEFN log at {args.uefn_log}: key analysis only)")
+    print(insights.report(args.files, records))
+    return 0
+
+
+def cmd_autostart(args):
+    return autostart.main(args)
+
+
+def cmd_collect(args):
+    from . import collector
+    from .store import Store
+    store = Store()
+    if args.once:
+        a, b, c = collector.cycle(store, drills.load_binds())
+        print(f"ingested {a} key events, {b} KT lines; correlated {c} edit locks")
+        print(collector.summary(store))
+        return 0
+    from .keyboard_overlay import single_instance
+    if not single_instance(r"Local\KeystrokeTrainerCollector"):
+        print("a collector is already running")
+        return 0
+    print("collecting (Ctrl+C to stop): overlay recordings + UEFN log -> companion/data/player.db")
+    try:
+        collector.run(store)
+    except KeyboardInterrupt:
+        pass
+    return 0
+
+
+def cmd_data(args):
+    from . import collector
+    from .store import Store
+    print(collector.summary(Store()))
+    return 0
+
+
+def cmd_personalize(args):
+    from . import personalize
+    stats, factors = personalize.run()
+    for edit_id, s in sorted(stats.items()):
+        print(f"{edit_id:22} attempts {s['attempts']:3}  factor {factors[edit_id]:.2f}")
+    print("wrote", personalize.PERSONAL_JSON)
+    return 0
+
+
+def cmd_first_run(args):
+    from . import first_run
+    if args.reset:
+        first_run.reset()
+        print("calibration prompts reset: the next game start will offer calibration again if binds are unconfirmed")
+        return 0
+    missing = first_run.unverified()
+    state = first_run.load_state()
+    print("unconfirmed core actions:", ", ".join(missing) if missing else "none (calibrated)")
+    print(f"prompts so far: {state.get('prompts', 0)} of {first_run.MAX_PROMPTS}")
+    return 0
 
 
 def main(argv=None):
@@ -177,10 +264,35 @@ def main(argv=None):
     b = sub.add_parser("binds")
     b.add_argument("--out", default=str(drills.BINDS_FILE))
     b.add_argument("--only", nargs="*")
+    b.add_argument("--category", nargs="*", choices=["move", "combat", "build", "edit", "ui"])
     b.set_defaults(fn=cmd_binds)
+    au = sub.add_parser("autostart")
+    au.add_argument("--install", action="store_true", help="run the watcher at every Windows login")
+    au.add_argument("--uninstall", action="store_true")
+    au.add_argument("--status", action="store_true")
+    au.set_defaults(fn=cmd_autostart)
+    co = sub.add_parser("collect")
+    co.add_argument("--once", action="store_true", help="ingest and correlate what is there now, then exit")
+    co.set_defaults(fn=cmd_collect)
+    da = sub.add_parser("data")
+    da.set_defaults(fn=cmd_data)
+    pe = sub.add_parser("personalize")
+    pe.set_defaults(fn=cmd_personalize)
+    fr = sub.add_parser("first-run")
+    fr.add_argument("--reset", action="store_true", help="forget earlier prompts so calibration is offered again")
+    fr.set_defaults(fn=cmd_first_run)
+    i = sub.add_parser("insights")
+    i.add_argument("files", nargs="+", help="sessions/*.events.jsonl from `keys`")
+    i.add_argument("--uefn-log", nargs="?", const=ktlog.DEFAULT_LOG, default=None,
+                   help="also read drill step results (missing / wrong / late / early) from the UEFN editor log")
+    i.set_defaults(fn=cmd_insights)
     k = sub.add_parser("keys")
     k.add_argument("--drill", help="drill id: highlights the next expected key and reports missed steps")
     k.add_argument("--binds")
+    k.add_argument("--log", help="session file base name (default sessions/keys-<time>)")
+    k.add_argument("--no-log", action="store_true")
+    k.add_argument("--no-port", action="store_true", help="do not start the local JSON port on 127.0.0.1:8765")
+    k.add_argument("--no-ai", action="store_true", help="local explanations only; send nothing to any API")
     k.set_defaults(fn=cmd_keys)
     pl = sub.add_parser("plan")
     pl.add_argument("sessions", nargs="*")

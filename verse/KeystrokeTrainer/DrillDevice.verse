@@ -79,11 +79,11 @@ keystroke_drill_device := class(creative_device):
     # Show the aim hint for each action during the first HintReps reps of a set (always when HintAlways).
     @editable HintReps:int = 4
     @editable HintAlways:logic = false
-    # Show the red edit guide (EditPanel.verse) while a step's action is "edit". Off on lanes that run
+    # Per-lane red edit panel (EditPanel.verse), off by default: the map-wide kt_edit_guide_device (EditGuide.verse) already covers every area. Was for lanes without that guide, and for lanes that run
     # CrosshairCoach, which draws its own live version of the same grid.
-    @editable ShowEditPanel:logic = true
+    @editable ShowEditPanel:logic = false
     # Fire the lane's clearing trigger at the start of every set (the player is still on the pad), and
-    # before every rep only when ClearEachRep is on. Off by default: every rep already gets a fresh track,
+    # after every completed rep only when ClearEachRep is on. Off by default: every rep already gets a fresh track,
     # and clearing between reps blew up the pieces around the player mid-set.
     @editable ClearEachRep:logic = false
     @editable ClearWaitSeconds:float = 0.4
@@ -257,15 +257,13 @@ keystroke_drill_device := class(creative_device):
         SeenBefore:logic = logic{BriefedPlayers[Player]? or Seen.BestCleanTempo > 0 or Seen.RecentAccuracy.Length > 0}
         if (set BriefedPlayers[Player] = true) {}
         Sleep(if (SeenBefore?) then BriefRepeatSeconds else BriefFirstSeconds)
-        Clearer.Trigger(Player)
-        Sleep(ClearWaitSeconds)
+        if (not ClearEachRep?):
+            Clearer.Trigger(Player)
+            Sleep(ClearWaitSeconds)
         var CleanReps:int = 0
         var ObservedReps:int = 0
         var UncheckedSteps:int = 0
         for (Rep := 1..Reps):
-            if (ClearEachRep?, Rep > 1):
-                Clearer.Trigger(Player)
-                Sleep(ClearWaitSeconds)
             MovePlayer(Player, TrackOrigin(Drill, Rep))
             Cue.SetText(CueText("{Drill.Code}  {Drill.Name}   {ModeLabel}   rep {Rep}/{Reps}\n{ChainText(Drill.Steps, -1)}"))
             Sleep(if (FlowMode?) then ReadyMinSeconds else Max(Interval, ReadyMinSeconds))
@@ -314,6 +312,11 @@ keystroke_drill_device := class(creative_device):
                 set ObservedReps += 1
             if (ScoringEnabled?, AllStepsObserved(RepResults)?):
                 set CleanReps += 1
+            if (ClearEachRep?):
+                # Every action and the final landing grace complete before any reset.
+                Clearer.Trigger(Player)
+                KTLog("rep_clear", Drill.Id, Apm, Rep, Drill.Steps.Length, rep_result.Unchecked, "boundary=rep_end")
+                Sleep(ClearWaitSeconds)
         Accuracy := if (Reps > 0) then (CleanReps * 1.0) / (Reps * 1.0) else 0.0
         Eligible := CanRecordVerifiedSet(ScoringEnabled, UncheckedSteps, Reps)
         Decision := RecordVerifiedSet(Player, Drill.Id, Accuracy, Eligible)

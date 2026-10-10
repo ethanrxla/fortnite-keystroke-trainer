@@ -18,7 +18,7 @@ import html
 import json
 import statistics
 
-from . import profile
+from . import envfile, profile  # noqa: F401  (envfile loads ../.env)
 
 ACTION_LABEL = {"turn_right": "turn", "turn_left": "turn", "edit_confirm": "confirm", "swap_weapon": "gun", "pickaxe": "pick"}
 PACE_FLOOR, PACE_CEIL = 0.18, 0.7   # seconds per action for the suggested build

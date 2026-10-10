@@ -1,0 +1,2802 @@
+[
+  {
+    "label": "KT_EditWall_E2_4",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92E60803_1811809408",
+    "kind": "wall",
+    "centre": {
+      "x": 51712,
+      "y": -92928,
+      "z": 0
+    },
+    "right": {
+      "x": 2.83276944882399e-16,
+      "y": 1.0,
+      "z": 0.0
+    },
+    "normal": {
+      "x": -1.0,
+      "y": 2.83276944882399e-16,
+      "z": 0.0
+    },
+    "width": 512.0,
+    "height": 384.0,
+    "depth": 512.0,
+    "rise": 0.0,
+    "goal": "window_center"
+  },
+  {
+    "label": "KT7_Lab_A_Drop_1W",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92870903_1691794261",
+    "kind": "wall",
+    "centre": {
+      "x": -21504,
+      "y": -68864,
+      "z": 384
+    },
+    "right": {
+      "x": 2.83276944882399e-16,
+      "y": 1.0,
+      "z": 0.0
+    },
+    "normal": {
+      "x": -1.0,
+      "y": 2.83276944882399e-16,
+      "z": 0.0
+    },
+    "width": 512.0,
+    "height": 384.0,
+    "depth": 512.0,
+    "rise": 0.0,
+    "goal": ""
+  },
+  {
+    "label": "KT7_Lab_D_Box_E",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92870903_1694691290",
+    "kind": "wall",
+    "centre": {
+      "x": -18944,
+      "y": -64768,
+      "z": 0
+    },
+    "right": {
+      "x": 2.83276944882399e-16,
+      "y": 1.0,
+      "z": 0.0
+    },
+    "normal": {
+      "x": -1.0,
+      "y": 2.83276944882399e-16,
+      "z": 0.0
+    },
+    "width": 512.0,
+    "height": 384.0,
+    "depth": 512.0,
+    "rise": 0.0,
+    "goal": ""
+  },
+  {
+    "label": "KT_EditWall_E2_0",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92E60803_1811585404",
+    "kind": "wall",
+    "centre": {
+      "x": 51712,
+      "y": -94976,
+      "z": 0
+    },
+    "right": {
+      "x": 2.83276944882399e-16,
+      "y": 1.0,
+      "z": 0.0
+    },
+    "normal": {
+      "x": -1.0,
+      "y": 2.83276944882399e-16,
+      "z": 0.0
+    },
+    "width": 512.0,
+    "height": 384.0,
+    "depth": 512.0,
+    "rise": 0.0,
+    "goal": "window_center"
+  },
+  {
+    "label": "KT7_Lab_A_Climb_2S",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92870903_1689749241",
+    "kind": "wall",
+    "centre": {
+      "x": -22784,
+      "y": -69120,
+      "z": 768
+    },
+    "right": {
+      "x": 1.0,
+      "y": 0.0,
+      "z": 0.0
+    },
+    "normal": {
+      "x": -0.0,
+      "y": 1.0,
+      "z": 0.0
+    },
+    "width": 512.0,
+    "height": 384.0,
+    "depth": 512.0,
+    "rise": 0.0,
+    "goal": ""
+  },
+  {
+    "label": "KT_EditWall_E7_8",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92E60803_1814711452",
+    "kind": "wall",
+    "centre": {
+      "x": 51712,
+      "y": -55040,
+      "z": 0
+    },
+    "right": {
+      "x": 2.83276944882399e-16,
+      "y": 1.0,
+      "z": 0.0
+    },
+    "normal": {
+      "x": -1.0,
+      "y": 2.83276944882399e-16,
+      "z": 0.0
+    },
+    "width": 512.0,
+    "height": 384.0,
+    "depth": 512.0,
+    "rise": 0.0,
+    "goal": "side_peek_right"
+  },
+  {
+    "label": "KT7_Lab_A_Climb_3E",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92870903_1690427248",
+    "kind": "wall",
+    "centre": {
+      "x": -22528,
+      "y": -68864,
+      "z": 1152
+    },
+    "right": {
+      "x": 2.83276944882399e-16,
+      "y": 1.0,
+      "z": 0.0
+    },
+    "normal": {
+      "x": -1.0,
+      "y": 2.83276944882399e-16,
+      "z": 0.0
+    },
+    "width": 512.0,
+    "height": 384.0,
+    "depth": 512.0,
+    "rise": 0.0,
+    "goal": ""
+  },
+  {
+    "label": "KT7_Lab_A_Climb_2W",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92870903_1689944243",
+    "kind": "wall",
+    "centre": {
+      "x": -23040,
+      "y": -68864,
+      "z": 768
+    },
+    "right": {
+      "x": 2.83276944882399e-16,
+      "y": 1.0,
+      "z": 0.0
+    },
+    "normal": {
+      "x": -1.0,
+      "y": 2.83276944882399e-16,
+      "z": 0.0
+    },
+    "width": 512.0,
+    "height": 384.0,
+    "depth": 512.0,
+    "rise": 0.0,
+    "goal": ""
+  },
+  {
+    "label": "KT7_Lab_A_Drop_2N",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92870903_1691886262",
+    "kind": "wall",
+    "centre": {
+      "x": -21248,
+      "y": -68608,
+      "z": 768
+    },
+    "right": {
+      "x": 1.0,
+      "y": 0.0,
+      "z": 0.0
+    },
+    "normal": {
+      "x": -0.0,
+      "y": 1.0,
+      "z": 0.0
+    },
+    "width": 512.0,
+    "height": 384.0,
+    "depth": 512.0,
+    "rise": 0.0,
+    "goal": ""
+  },
+  {
+    "label": "KT7_Lab_A_Climb_0W",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92870903_1688765231",
+    "kind": "wall",
+    "centre": {
+      "x": -23040,
+      "y": -68864,
+      "z": 0
+    },
+    "right": {
+      "x": 2.83276944882399e-16,
+      "y": 1.0,
+      "z": 0.0
+    },
+    "normal": {
+      "x": -1.0,
+      "y": 2.83276944882399e-16,
+      "z": 0.0
+    },
+    "width": 512.0,
+    "height": 384.0,
+    "depth": 512.0,
+    "rise": 0.0,
+    "goal": ""
+  },
+  {
+    "label": "KT_EditWall_E7_1",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92E60803_1814306445",
+    "kind": "wall",
+    "centre": {
+      "x": 51712,
+      "y": -58624,
+      "z": 0
+    },
+    "right": {
+      "x": 2.83276944882399e-16,
+      "y": 1.0,
+      "z": 0.0
+    },
+    "normal": {
+      "x": -1.0,
+      "y": 2.83276944882399e-16,
+      "z": 0.0
+    },
+    "width": 512.0,
+    "height": 384.0,
+    "depth": 512.0,
+    "rise": 0.0,
+    "goal": "side_peek_right"
+  },
+  {
+    "label": "KT_EditWall_E4_0",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92E60803_1812978424",
+    "kind": "wall",
+    "centre": {
+      "x": 51712,
+      "y": -80640,
+      "z": 0
+    },
+    "right": {
+      "x": 2.83276944882399e-16,
+      "y": 1.0,
+      "z": 0.0
+    },
+    "normal": {
+      "x": -1.0,
+      "y": 2.83276944882399e-16,
+      "z": 0.0
+    },
+    "width": 512.0,
+    "height": 384.0,
+    "depth": 512.0,
+    "rise": 0.0,
+    "goal": "half_wall"
+  },
+  {
+    "label": "KT_EditWall_E5_5",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92E60803_1813959439",
+    "kind": "wall",
+    "centre": {
+      "x": 51712,
+      "y": -70912,
+      "z": 0
+    },
+    "right": {
+      "x": 2.83276944882399e-16,
+      "y": 1.0,
+      "z": 0.0
+    },
+    "normal": {
+      "x": -1.0,
+      "y": 2.83276944882399e-16,
+      "z": 0.0
+    },
+    "width": 512.0,
+    "height": 384.0,
+    "depth": 512.0,
+    "rise": 0.0,
+    "goal": "window_center"
+  },
+  {
+    "label": "KT_EditWall_E5_1",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92E60803_1813716435",
+    "kind": "wall",
+    "centre": {
+      "x": 51712,
+      "y": -72960,
+      "z": 0
+    },
+    "right": {
+      "x": 2.83276944882399e-16,
+      "y": 1.0,
+      "z": 0.0
+    },
+    "normal": {
+      "x": -1.0,
+      "y": 2.83276944882399e-16,
+      "z": 0.0
+    },
+    "width": 512.0,
+    "height": 384.0,
+    "depth": 512.0,
+    "rise": 0.0,
+    "goal": "window_center"
+  },
+  {
+    "label": "KT_EditWall_E7_3",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92E60803_1814450447",
+    "kind": "wall",
+    "centre": {
+      "x": 51712,
+      "y": -57600,
+      "z": 0
+    },
+    "right": {
+      "x": 2.83276944882399e-16,
+      "y": 1.0,
+      "z": 0.0
+    },
+    "normal": {
+      "x": -1.0,
+      "y": 2.83276944882399e-16,
+      "z": 0.0
+    },
+    "width": 512.0,
+    "height": 384.0,
+    "depth": 512.0,
+    "rise": 0.0,
+    "goal": "side_peek_right"
+  },
+  {
+    "label": "KT7_Lab_D_Box_N",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92870903_1694505288",
+    "kind": "wall",
+    "centre": {
+      "x": -19200,
+      "y": -64512,
+      "z": 0
+    },
+    "right": {
+      "x": 1.0,
+      "y": 0.0,
+      "z": 0.0
+    },
+    "normal": {
+      "x": -0.0,
+      "y": 1.0,
+      "z": 0.0
+    },
+    "width": 512.0,
+    "height": 384.0,
+    "depth": 512.0,
+    "rise": 0.0,
+    "goal": ""
+  },
+  {
+    "label": "KT7_Lab_A_Box_S",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92870903_1688292226",
+    "kind": "wall",
+    "centre": {
+      "x": -24320,
+      "y": -69120,
+      "z": 0
+    },
+    "right": {
+      "x": 1.0,
+      "y": 0.0,
+      "z": 0.0
+    },
+    "normal": {
+      "x": -0.0,
+      "y": 1.0,
+      "z": 0.0
+    },
+    "width": 512.0,
+    "height": 384.0,
+    "depth": 512.0,
+    "rise": 0.0,
+    "goal": ""
+  },
+  {
+    "label": "KT7_Lab_A_Climb_1E",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92870903_1689250236",
+    "kind": "wall",
+    "centre": {
+      "x": -22528,
+      "y": -68864,
+      "z": 384
+    },
+    "right": {
+      "x": 2.83276944882399e-16,
+      "y": 1.0,
+      "z": 0.0
+    },
+    "normal": {
+      "x": -1.0,
+      "y": 2.83276944882399e-16,
+      "z": 0.0
+    },
+    "width": 512.0,
+    "height": 384.0,
+    "depth": 512.0,
+    "rise": 0.0,
+    "goal": ""
+  },
+  {
+    "label": "KT_EditWall_E4_8",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92E60803_1813546432",
+    "kind": "wall",
+    "centre": {
+      "x": 51712,
+      "y": -76544,
+      "z": 0
+    },
+    "right": {
+      "x": 2.83276944882399e-16,
+      "y": 1.0,
+      "z": 0.0
+    },
+    "normal": {
+      "x": -1.0,
+      "y": 2.83276944882399e-16,
+      "z": 0.0
+    },
+    "width": 512.0,
+    "height": 384.0,
+    "depth": 512.0,
+    "rise": 0.0,
+    "goal": "half_wall"
+  },
+  {
+    "label": "KT_EditWall_E5_7",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92E60803_1814069441",
+    "kind": "wall",
+    "centre": {
+      "x": 51712,
+      "y": -69888,
+      "z": 0
+    },
+    "right": {
+      "x": 2.83276944882399e-16,
+      "y": 1.0,
+      "z": 0.0
+    },
+    "normal": {
+      "x": -1.0,
+      "y": 2.83276944882399e-16,
+      "z": 0.0
+    },
+    "width": 512.0,
+    "height": 384.0,
+    "depth": 512.0,
+    "rise": 0.0,
+    "goal": "window_center"
+  },
+  {
+    "label": "KT7_Lab_A_Drop_2E",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92870903_1692089264",
+    "kind": "wall",
+    "centre": {
+      "x": -20992,
+      "y": -68864,
+      "z": 768
+    },
+    "right": {
+      "x": 2.83276944882399e-16,
+      "y": 1.0,
+      "z": 0.0
+    },
+    "normal": {
+      "x": -1.0,
+      "y": 2.83276944882399e-16,
+      "z": 0.0
+    },
+    "width": 512.0,
+    "height": 384.0,
+    "depth": 512.0,
+    "rise": 0.0,
+    "goal": ""
+  },
+  {
+    "label": "KT_EditWall_E7_2",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92E60803_1814393446",
+    "kind": "wall",
+    "centre": {
+      "x": 51712,
+      "y": -58112,
+      "z": 0
+    },
+    "right": {
+      "x": 2.83276944882399e-16,
+      "y": 1.0,
+      "z": 0.0
+    },
+    "normal": {
+      "x": -1.0,
+      "y": 2.83276944882399e-16,
+      "z": 0.0
+    },
+    "width": 512.0,
+    "height": 384.0,
+    "depth": 512.0,
+    "rise": 0.0,
+    "goal": "side_peek_right"
+  },
+  {
+    "label": "KT7_Lab_C_PlatWall_-128",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92870903_1694031283",
+    "kind": "wall",
+    "centre": {
+      "x": -22016,
+      "y": -65280,
+      "z": 768
+    },
+    "right": {
+      "x": 2.83276944882399e-16,
+      "y": 1.0,
+      "z": 0.0
+    },
+    "normal": {
+      "x": -1.0,
+      "y": 2.83276944882399e-16,
+      "z": 0.0
+    },
+    "width": 512.0,
+    "height": 384.0,
+    "depth": 512.0,
+    "rise": 0.0,
+    "goal": ""
+  },
+  {
+    "label": "KT7_Lab_B_Cover_2",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92870903_1693115274",
+    "kind": "wall",
+    "centre": {
+      "x": -18944,
+      "y": -67840,
+      "z": 0
+    },
+    "right": {
+      "x": 2.83276944882399e-16,
+      "y": 1.0,
+      "z": 0.0
+    },
+    "normal": {
+      "x": -1.0,
+      "y": 2.83276944882399e-16,
+      "z": 0.0
+    },
+    "width": 512.0,
+    "height": 384.0,
+    "depth": 512.0,
+    "rise": 0.0,
+    "goal": ""
+  },
+  {
+    "label": "KT7_Lab_A_Climb_0S",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92870903_1688578229",
+    "kind": "wall",
+    "centre": {
+      "x": -22784,
+      "y": -69120,
+      "z": 0
+    },
+    "right": {
+      "x": 1.0,
+      "y": 0.0,
+      "z": 0.0
+    },
+    "normal": {
+      "x": -0.0,
+      "y": 1.0,
+      "z": 0.0
+    },
+    "width": 512.0,
+    "height": 384.0,
+    "depth": 512.0,
+    "rise": 0.0,
+    "goal": ""
+  },
+  {
+    "label": "KT7_Lab_B_Cover_0",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92870903_1692893272",
+    "kind": "wall",
+    "centre": {
+      "x": -18944,
+      "y": -68864,
+      "z": 0
+    },
+    "right": {
+      "x": 2.83276944882399e-16,
+      "y": 1.0,
+      "z": 0.0
+    },
+    "normal": {
+      "x": -1.0,
+      "y": 2.83276944882399e-16,
+      "z": 0.0
+    },
+    "width": 512.0,
+    "height": 384.0,
+    "depth": 512.0,
+    "rise": 0.0,
+    "goal": ""
+  },
+  {
+    "label": "KT7_Lab_A_Climb_3N",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92870903_1690220246",
+    "kind": "wall",
+    "centre": {
+      "x": -22784,
+      "y": -68608,
+      "z": 1152
+    },
+    "right": {
+      "x": 1.0,
+      "y": 0.0,
+      "z": 0.0
+    },
+    "normal": {
+      "x": -0.0,
+      "y": 1.0,
+      "z": 0.0
+    },
+    "width": 512.0,
+    "height": 384.0,
+    "depth": 512.0,
+    "rise": 0.0,
+    "goal": ""
+  },
+  {
+    "label": "KT_EditWall_E4_7",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92E60803_1813496431",
+    "kind": "wall",
+    "centre": {
+      "x": 51712,
+      "y": -77056,
+      "z": 0
+    },
+    "right": {
+      "x": 2.83276944882399e-16,
+      "y": 1.0,
+      "z": 0.0
+    },
+    "normal": {
+      "x": -1.0,
+      "y": 2.83276944882399e-16,
+      "z": 0.0
+    },
+    "width": 512.0,
+    "height": 384.0,
+    "depth": 512.0,
+    "rise": 0.0,
+    "goal": "half_wall"
+  },
+  {
+    "label": "KT7_Lab_B_BotCover_1",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92870903_1693297276",
+    "kind": "wall",
+    "centre": {
+      "x": -16896,
+      "y": -67840,
+      "z": 0
+    },
+    "right": {
+      "x": 2.83276944882399e-16,
+      "y": 1.0,
+      "z": 0.0
+    },
+    "normal": {
+      "x": -1.0,
+      "y": 2.83276944882399e-16,
+      "z": 0.0
+    },
+    "width": 512.0,
+    "height": 384.0,
+    "depth": 512.0,
+    "rise": 0.0,
+    "goal": ""
+  },
+  {
+    "label": "KT7_Lab_A_Drop_1E",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92870903_1691702260",
+    "kind": "wall",
+    "centre": {
+      "x": -20992,
+      "y": -68864,
+      "z": 384
+    },
+    "right": {
+      "x": 2.83276944882399e-16,
+      "y": 1.0,
+      "z": 0.0
+    },
+    "normal": {
+      "x": -1.0,
+      "y": 2.83276944882399e-16,
+      "z": 0.0
+    },
+    "width": 512.0,
+    "height": 384.0,
+    "depth": 512.0,
+    "rise": 0.0,
+    "goal": ""
+  },
+  {
+    "label": "KT7_Lab_C_PlatWall_-126",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92870903_1694121284",
+    "kind": "wall",
+    "centre": {
+      "x": -22016,
+      "y": -64256,
+      "z": 768
+    },
+    "right": {
+      "x": 2.83276944882399e-16,
+      "y": 1.0,
+      "z": 0.0
+    },
+    "normal": {
+      "x": -1.0,
+      "y": 2.83276944882399e-16,
+      "z": 0.0
+    },
+    "width": 512.0,
+    "height": 384.0,
+    "depth": 512.0,
+    "rise": 0.0,
+    "goal": ""
+  },
+  {
+    "label": "KT_EditWall_E5_2",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92E60803_1813781436",
+    "kind": "wall",
+    "centre": {
+      "x": 51712,
+      "y": -72448,
+      "z": 0
+    },
+    "right": {
+      "x": 2.83276944882399e-16,
+      "y": 1.0,
+      "z": 0.0
+    },
+    "normal": {
+      "x": -1.0,
+      "y": 2.83276944882399e-16,
+      "z": 0.0
+    },
+    "width": 512.0,
+    "height": 384.0,
+    "depth": 512.0,
+    "rise": 0.0,
+    "goal": "window_center"
+  },
+  {
+    "label": "KT7_Lab_A_Climb_2N",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92870903_1689656240",
+    "kind": "wall",
+    "centre": {
+      "x": -22784,
+      "y": -68608,
+      "z": 768
+    },
+    "right": {
+      "x": 1.0,
+      "y": 0.0,
+      "z": 0.0
+    },
+    "normal": {
+      "x": -0.0,
+      "y": 1.0,
+      "z": 0.0
+    },
+    "width": 512.0,
+    "height": 384.0,
+    "depth": 512.0,
+    "rise": 0.0,
+    "goal": ""
+  },
+  {
+    "label": "KT7_Lab_A_Climb_1W",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92870903_1689342237",
+    "kind": "wall",
+    "centre": {
+      "x": -23040,
+      "y": -68864,
+      "z": 384
+    },
+    "right": {
+      "x": 2.83276944882399e-16,
+      "y": 1.0,
+      "z": 0.0
+    },
+    "normal": {
+      "x": -1.0,
+      "y": 2.83276944882399e-16,
+      "z": 0.0
+    },
+    "width": 512.0,
+    "height": 384.0,
+    "depth": 512.0,
+    "rise": 0.0,
+    "goal": ""
+  },
+  {
+    "label": "KT7_Lab_A_Drop_1S",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92870903_1691595259",
+    "kind": "wall",
+    "centre": {
+      "x": -21248,
+      "y": -69120,
+      "z": 384
+    },
+    "right": {
+      "x": 1.0,
+      "y": 0.0,
+      "z": 0.0
+    },
+    "normal": {
+      "x": -0.0,
+      "y": 1.0,
+      "z": 0.0
+    },
+    "width": 512.0,
+    "height": 384.0,
+    "depth": 512.0,
+    "rise": 0.0,
+    "goal": ""
+  },
+  {
+    "label": "KT7_Lab_A_Climb_0E",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92870903_1688672230",
+    "kind": "wall",
+    "centre": {
+      "x": -22528,
+      "y": -68864,
+      "z": 0
+    },
+    "right": {
+      "x": 2.83276944882399e-16,
+      "y": 1.0,
+      "z": 0.0
+    },
+    "normal": {
+      "x": -1.0,
+      "y": 2.83276944882399e-16,
+      "z": 0.0
+    },
+    "width": 512.0,
+    "height": 384.0,
+    "depth": 512.0,
+    "rise": 0.0,
+    "goal": ""
+  },
+  {
+    "label": "KT_EditWall_E5_3",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92E60803_1813831437",
+    "kind": "wall",
+    "centre": {
+      "x": 51712,
+      "y": -71936,
+      "z": 0
+    },
+    "right": {
+      "x": 2.83276944882399e-16,
+      "y": 1.0,
+      "z": 0.0
+    },
+    "normal": {
+      "x": -1.0,
+      "y": 2.83276944882399e-16,
+      "z": 0.0
+    },
+    "width": 512.0,
+    "height": 384.0,
+    "depth": 512.0,
+    "rise": 0.0,
+    "goal": "window_center"
+  },
+  {
+    "label": "KT7_Lab_A_Drop_3E",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92870903_1692381267",
+    "kind": "wall",
+    "centre": {
+      "x": -20992,
+      "y": -68864,
+      "z": 1152
+    },
+    "right": {
+      "x": 2.83276944882399e-16,
+      "y": 1.0,
+      "z": 0.0
+    },
+    "normal": {
+      "x": -1.0,
+      "y": 2.83276944882399e-16,
+      "z": 0.0
+    },
+    "width": 512.0,
+    "height": 384.0,
+    "depth": 512.0,
+    "rise": 0.0,
+    "goal": ""
+  },
+  {
+    "label": "KT_EditWall_E2_3",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92E60803_1811757407",
+    "kind": "wall",
+    "centre": {
+      "x": 51712,
+      "y": -93440,
+      "z": 0
+    },
+    "right": {
+      "x": 2.83276944882399e-16,
+      "y": 1.0,
+      "z": 0.0
+    },
+    "normal": {
+      "x": -1.0,
+      "y": 2.83276944882399e-16,
+      "z": 0.0
+    },
+    "width": 512.0,
+    "height": 384.0,
+    "depth": 512.0,
+    "rise": 0.0,
+    "goal": "window_center"
+  },
+  {
+    "label": "KT7_Lab_D_BotBox_N",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92870903_1694992293",
+    "kind": "wall",
+    "centre": {
+      "x": -16640,
+      "y": -64512,
+      "z": 0
+    },
+    "right": {
+      "x": 1.0,
+      "y": 0.0,
+      "z": 0.0
+    },
+    "normal": {
+      "x": -0.0,
+      "y": 1.0,
+      "z": 0.0
+    },
+    "width": 512.0,
+    "height": 384.0,
+    "depth": 512.0,
+    "rise": 0.0,
+    "goal": ""
+  },
+  {
+    "label": "KT7_Lab_D_BotBox_E",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92870903_1695183295",
+    "kind": "wall",
+    "centre": {
+      "x": -16384,
+      "y": -64768,
+      "z": 0
+    },
+    "right": {
+      "x": 2.83276944882399e-16,
+      "y": 1.0,
+      "z": 0.0
+    },
+    "normal": {
+      "x": -1.0,
+      "y": 2.83276944882399e-16,
+      "z": 0.0
+    },
+    "width": 512.0,
+    "height": 384.0,
+    "depth": 512.0,
+    "rise": 0.0,
+    "goal": ""
+  },
+  {
+    "label": "KT_EditWall_E2_9",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92E60803_1812162413",
+    "kind": "wall",
+    "centre": {
+      "x": 51712,
+      "y": -90368,
+      "z": 0
+    },
+    "right": {
+      "x": 2.83276944882399e-16,
+      "y": 1.0,
+      "z": 0.0
+    },
+    "normal": {
+      "x": -1.0,
+      "y": 2.83276944882399e-16,
+      "z": 0.0
+    },
+    "width": 512.0,
+    "height": 384.0,
+    "depth": 512.0,
+    "rise": 0.0,
+    "goal": "window_center"
+  },
+  {
+    "label": "KT7_Lab_B_BotCover_0",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92870903_1693206275",
+    "kind": "wall",
+    "centre": {
+      "x": -16896,
+      "y": -68864,
+      "z": 0
+    },
+    "right": {
+      "x": 2.83276944882399e-16,
+      "y": 1.0,
+      "z": 0.0
+    },
+    "normal": {
+      "x": -1.0,
+      "y": 2.83276944882399e-16,
+      "z": 0.0
+    },
+    "width": 512.0,
+    "height": 384.0,
+    "depth": 512.0,
+    "rise": 0.0,
+    "goal": ""
+  },
+  {
+    "label": "KT7_Lab_A_Climb_3W",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92870903_1690531249",
+    "kind": "wall",
+    "centre": {
+      "x": -23040,
+      "y": -68864,
+      "z": 1152
+    },
+    "right": {
+      "x": 2.83276944882399e-16,
+      "y": 1.0,
+      "z": 0.0
+    },
+    "normal": {
+      "x": -1.0,
+      "y": 2.83276944882399e-16,
+      "z": 0.0
+    },
+    "width": 512.0,
+    "height": 384.0,
+    "depth": 512.0,
+    "rise": 0.0,
+    "goal": ""
+  },
+  {
+    "label": "KT7_Lab_D_Mid_-128",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92870903_1695361297",
+    "kind": "wall",
+    "centre": {
+      "x": -17408,
+      "y": -65280,
+      "z": 0
+    },
+    "right": {
+      "x": 2.83276944882399e-16,
+      "y": 1.0,
+      "z": 0.0
+    },
+    "normal": {
+      "x": -1.0,
+      "y": 2.83276944882399e-16,
+      "z": 0.0
+    },
+    "width": 512.0,
+    "height": 384.0,
+    "depth": 512.0,
+    "rise": 0.0,
+    "goal": ""
+  },
+  {
+    "label": "KT7_Lab_A_Drop_2S",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92870903_1691976263",
+    "kind": "wall",
+    "centre": {
+      "x": -21248,
+      "y": -69120,
+      "z": 768
+    },
+    "right": {
+      "x": 1.0,
+      "y": 0.0,
+      "z": 0.0
+    },
+    "normal": {
+      "x": -0.0,
+      "y": 1.0,
+      "z": 0.0
+    },
+    "width": 512.0,
+    "height": 384.0,
+    "depth": 512.0,
+    "rise": 0.0,
+    "goal": ""
+  },
+  {
+    "label": "KT_EditWall_E7_7",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92E60803_1814658451",
+    "kind": "wall",
+    "centre": {
+      "x": 51712,
+      "y": -55552,
+      "z": 0
+    },
+    "right": {
+      "x": 2.83276944882399e-16,
+      "y": 1.0,
+      "z": 0.0
+    },
+    "normal": {
+      "x": -1.0,
+      "y": 2.83276944882399e-16,
+      "z": 0.0
+    },
+    "width": 512.0,
+    "height": 384.0,
+    "depth": 512.0,
+    "rise": 0.0,
+    "goal": "side_peek_right"
+  },
+  {
+    "label": "KT7_Lab_A_Climb_1N",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92870903_1689054234",
+    "kind": "wall",
+    "centre": {
+      "x": -22784,
+      "y": -68608,
+      "z": 384
+    },
+    "right": {
+      "x": 1.0,
+      "y": 0.0,
+      "z": 0.0
+    },
+    "normal": {
+      "x": -0.0,
+      "y": 1.0,
+      "z": 0.0
+    },
+    "width": 512.0,
+    "height": 384.0,
+    "depth": 512.0,
+    "rise": 0.0,
+    "goal": ""
+  },
+  {
+    "label": "KT7_Lab_D_Box_S",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92870903_1694596289",
+    "kind": "wall",
+    "centre": {
+      "x": -19200,
+      "y": -65024,
+      "z": 0
+    },
+    "right": {
+      "x": 1.0,
+      "y": 0.0,
+      "z": 0.0
+    },
+    "normal": {
+      "x": -0.0,
+      "y": 1.0,
+      "z": 0.0
+    },
+    "width": 512.0,
+    "height": 384.0,
+    "depth": 512.0,
+    "rise": 0.0,
+    "goal": ""
+  },
+  {
+    "label": "KT_EditWall_E2_2",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92E60803_1811704406",
+    "kind": "wall",
+    "centre": {
+      "x": 51712,
+      "y": -93952,
+      "z": 0
+    },
+    "right": {
+      "x": 2.83276944882399e-16,
+      "y": 1.0,
+      "z": 0.0
+    },
+    "normal": {
+      "x": -1.0,
+      "y": 2.83276944882399e-16,
+      "z": 0.0
+    },
+    "width": 512.0,
+    "height": 384.0,
+    "depth": 512.0,
+    "rise": 0.0,
+    "goal": "window_center"
+  },
+  {
+    "label": "KT_EditWall_E7_6",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92E60803_1814601450",
+    "kind": "wall",
+    "centre": {
+      "x": 51712,
+      "y": -56064,
+      "z": 0
+    },
+    "right": {
+      "x": 2.83276944882399e-16,
+      "y": 1.0,
+      "z": 0.0
+    },
+    "normal": {
+      "x": -1.0,
+      "y": 2.83276944882399e-16,
+      "z": 0.0
+    },
+    "width": 512.0,
+    "height": 384.0,
+    "depth": 512.0,
+    "rise": 0.0,
+    "goal": "side_peek_right"
+  },
+  {
+    "label": "KT7_Lab_B_Cover_1",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92870903_1693006273",
+    "kind": "wall",
+    "centre": {
+      "x": -18432,
+      "y": -68352,
+      "z": 0
+    },
+    "right": {
+      "x": 2.83276944882399e-16,
+      "y": 1.0,
+      "z": 0.0
+    },
+    "normal": {
+      "x": -1.0,
+      "y": 2.83276944882399e-16,
+      "z": 0.0
+    },
+    "width": 512.0,
+    "height": 384.0,
+    "depth": 512.0,
+    "rise": 0.0,
+    "goal": ""
+  },
+  {
+    "label": "KT_EditWall_E5_6",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92E60803_1814018440",
+    "kind": "wall",
+    "centre": {
+      "x": 51712,
+      "y": -70400,
+      "z": 0
+    },
+    "right": {
+      "x": 2.83276944882399e-16,
+      "y": 1.0,
+      "z": 0.0
+    },
+    "normal": {
+      "x": -1.0,
+      "y": 2.83276944882399e-16,
+      "z": 0.0
+    },
+    "width": 512.0,
+    "height": 384.0,
+    "depth": 512.0,
+    "rise": 0.0,
+    "goal": "window_center"
+  },
+  {
+    "label": "KT_EditWall_E4_9",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92E60803_1813612433",
+    "kind": "wall",
+    "centre": {
+      "x": 51712,
+      "y": -76032,
+      "z": 0
+    },
+    "right": {
+      "x": 2.83276944882399e-16,
+      "y": 1.0,
+      "z": 0.0
+    },
+    "normal": {
+      "x": -1.0,
+      "y": 2.83276944882399e-16,
+      "z": 0.0
+    },
+    "width": 512.0,
+    "height": 384.0,
+    "depth": 512.0,
+    "rise": 0.0,
+    "goal": "half_wall"
+  },
+  {
+    "label": "KT7_Lab_A_Drop_3S",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92870903_1692286266",
+    "kind": "wall",
+    "centre": {
+      "x": -21248,
+      "y": -69120,
+      "z": 1152
+    },
+    "right": {
+      "x": 1.0,
+      "y": 0.0,
+      "z": 0.0
+    },
+    "normal": {
+      "x": -0.0,
+      "y": 1.0,
+      "z": 0.0
+    },
+    "width": 512.0,
+    "height": 384.0,
+    "depth": 512.0,
+    "rise": 0.0,
+    "goal": ""
+  },
+  {
+    "label": "KT_EditWall_E4_6",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92E60803_1813412430",
+    "kind": "wall",
+    "centre": {
+      "x": 51712,
+      "y": -77568,
+      "z": 0
+    },
+    "right": {
+      "x": 2.83276944882399e-16,
+      "y": 1.0,
+      "z": 0.0
+    },
+    "normal": {
+      "x": -1.0,
+      "y": 2.83276944882399e-16,
+      "z": 0.0
+    },
+    "width": 512.0,
+    "height": 384.0,
+    "depth": 512.0,
+    "rise": 0.0,
+    "goal": "half_wall"
+  },
+  {
+    "label": "KT_EditWall_E4_1",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92E60803_1813038425",
+    "kind": "wall",
+    "centre": {
+      "x": 51712,
+      "y": -80128,
+      "z": 0
+    },
+    "right": {
+      "x": 2.83276944882399e-16,
+      "y": 1.0,
+      "z": 0.0
+    },
+    "normal": {
+      "x": -1.0,
+      "y": 2.83276944882399e-16,
+      "z": 0.0
+    },
+    "width": 512.0,
+    "height": 384.0,
+    "depth": 512.0,
+    "rise": 0.0,
+    "goal": "half_wall"
+  },
+  {
+    "label": "KT7_Lab_A_Drop_0S",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92870903_1691168255",
+    "kind": "wall",
+    "centre": {
+      "x": -21248,
+      "y": -69120,
+      "z": 0
+    },
+    "right": {
+      "x": 1.0,
+      "y": 0.0,
+      "z": 0.0
+    },
+    "normal": {
+      "x": -0.0,
+      "y": 1.0,
+      "z": 0.0
+    },
+    "width": 512.0,
+    "height": 384.0,
+    "depth": 512.0,
+    "rise": 0.0,
+    "goal": ""
+  },
+  {
+    "label": "KT7_Lab_A_Drop_2W",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92870903_1692192265",
+    "kind": "wall",
+    "centre": {
+      "x": -21504,
+      "y": -68864,
+      "z": 768
+    },
+    "right": {
+      "x": 2.83276944882399e-16,
+      "y": 1.0,
+      "z": 0.0
+    },
+    "normal": {
+      "x": -1.0,
+      "y": 2.83276944882399e-16,
+      "z": 0.0
+    },
+    "width": 512.0,
+    "height": 384.0,
+    "depth": 512.0,
+    "rise": 0.0,
+    "goal": ""
+  },
+  {
+    "label": "KT_EditWall_E5_8",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92E60803_1814125442",
+    "kind": "wall",
+    "centre": {
+      "x": 51712,
+      "y": -69376,
+      "z": 0
+    },
+    "right": {
+      "x": 2.83276944882399e-16,
+      "y": 1.0,
+      "z": 0.0
+    },
+    "normal": {
+      "x": -1.0,
+      "y": 2.83276944882399e-16,
+      "z": 0.0
+    },
+    "width": 512.0,
+    "height": 384.0,
+    "depth": 512.0,
+    "rise": 0.0,
+    "goal": "window_center"
+  },
+  {
+    "label": "KT_EditWall_E7_4",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92E60803_1814501448",
+    "kind": "wall",
+    "centre": {
+      "x": 51712,
+      "y": -57088,
+      "z": 0
+    },
+    "right": {
+      "x": 2.83276944882399e-16,
+      "y": 1.0,
+      "z": 0.0
+    },
+    "normal": {
+      "x": -1.0,
+      "y": 2.83276944882399e-16,
+      "z": 0.0
+    },
+    "width": 512.0,
+    "height": 384.0,
+    "depth": 512.0,
+    "rise": 0.0,
+    "goal": "side_peek_right"
+  },
+  {
+    "label": "KT_EditWall_E5_9",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92E60803_1814191443",
+    "kind": "wall",
+    "centre": {
+      "x": 51712,
+      "y": -68864,
+      "z": 0
+    },
+    "right": {
+      "x": 2.83276944882399e-16,
+      "y": 1.0,
+      "z": 0.0
+    },
+    "normal": {
+      "x": -1.0,
+      "y": 2.83276944882399e-16,
+      "z": 0.0
+    },
+    "width": 512.0,
+    "height": 384.0,
+    "depth": 512.0,
+    "rise": 0.0,
+    "goal": "window_center"
+  },
+  {
+    "label": "KT7_Lab_A_Drop_3W",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92870903_1692488268",
+    "kind": "wall",
+    "centre": {
+      "x": -21504,
+      "y": -68864,
+      "z": 1152
+    },
+    "right": {
+      "x": 2.83276944882399e-16,
+      "y": 1.0,
+      "z": 0.0
+    },
+    "normal": {
+      "x": -1.0,
+      "y": 2.83276944882399e-16,
+      "z": 0.0
+    },
+    "width": 512.0,
+    "height": 384.0,
+    "depth": 512.0,
+    "rise": 0.0,
+    "goal": ""
+  },
+  {
+    "label": "KT7_Lab_A_Drop_0E",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92870903_1691297256",
+    "kind": "wall",
+    "centre": {
+      "x": -20992,
+      "y": -68864,
+      "z": 0
+    },
+    "right": {
+      "x": 2.83276944882399e-16,
+      "y": 1.0,
+      "z": 0.0
+    },
+    "normal": {
+      "x": -1.0,
+      "y": 2.83276944882399e-16,
+      "z": 0.0
+    },
+    "width": 512.0,
+    "height": 384.0,
+    "depth": 512.0,
+    "rise": 0.0,
+    "goal": ""
+  },
+  {
+    "label": "KT4_Arena_Wall_0",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F922F0903_1140184840",
+    "kind": "wall",
+    "centre": {
+      "x": -30720,
+      "y": -77824,
+      "z": 0
+    },
+    "right": {
+      "x": 2.83276944882399e-16,
+      "y": 1.0,
+      "z": 0.0
+    },
+    "normal": {
+      "x": -1.0,
+      "y": 2.83276944882399e-16,
+      "z": 0.0
+    },
+    "width": 512.0,
+    "height": 384.0,
+    "depth": 512.0,
+    "rise": 0.0,
+    "goal": ""
+  },
+  {
+    "label": "KT_EditWall_E7_0",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92E60803_1814249444",
+    "kind": "wall",
+    "centre": {
+      "x": 51712,
+      "y": -59136,
+      "z": 0
+    },
+    "right": {
+      "x": 2.83276944882399e-16,
+      "y": 1.0,
+      "z": 0.0
+    },
+    "normal": {
+      "x": -1.0,
+      "y": 2.83276944882399e-16,
+      "z": 0.0
+    },
+    "width": 512.0,
+    "height": 384.0,
+    "depth": 512.0,
+    "rise": 0.0,
+    "goal": "side_peek_right"
+  },
+  {
+    "label": "KT7_Lab_D_Box_W",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92870903_1694783291",
+    "kind": "wall",
+    "centre": {
+      "x": -19456,
+      "y": -64768,
+      "z": 0
+    },
+    "right": {
+      "x": 2.83276944882399e-16,
+      "y": 1.0,
+      "z": 0.0
+    },
+    "normal": {
+      "x": -1.0,
+      "y": 2.83276944882399e-16,
+      "z": 0.0
+    },
+    "width": 512.0,
+    "height": 384.0,
+    "depth": 512.0,
+    "rise": 0.0,
+    "goal": ""
+  },
+  {
+    "label": "KT_EditWall_E4_3",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92E60803_1813198427",
+    "kind": "wall",
+    "centre": {
+      "x": 51712,
+      "y": -79104,
+      "z": 0
+    },
+    "right": {
+      "x": 2.83276944882399e-16,
+      "y": 1.0,
+      "z": 0.0
+    },
+    "normal": {
+      "x": -1.0,
+      "y": 2.83276944882399e-16,
+      "z": 0.0
+    },
+    "width": 512.0,
+    "height": 384.0,
+    "depth": 512.0,
+    "rise": 0.0,
+    "goal": "half_wall"
+  },
+  {
+    "label": "KT_EditWall_E2_8",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92E60803_1812107412",
+    "kind": "wall",
+    "centre": {
+      "x": 51712,
+      "y": -90880,
+      "z": 0
+    },
+    "right": {
+      "x": 2.83276944882399e-16,
+      "y": 1.0,
+      "z": 0.0
+    },
+    "normal": {
+      "x": -1.0,
+      "y": 2.83276944882399e-16,
+      "z": 0.0
+    },
+    "width": 512.0,
+    "height": 384.0,
+    "depth": 512.0,
+    "rise": 0.0,
+    "goal": "window_center"
+  },
+  {
+    "label": "KT7_Lab_A_Box_W",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92870903_1688483228",
+    "kind": "wall",
+    "centre": {
+      "x": -24576,
+      "y": -68864,
+      "z": 0
+    },
+    "right": {
+      "x": 2.83276944882399e-16,
+      "y": 1.0,
+      "z": 0.0
+    },
+    "normal": {
+      "x": -1.0,
+      "y": 2.83276944882399e-16,
+      "z": 0.0
+    },
+    "width": 512.0,
+    "height": 384.0,
+    "depth": 512.0,
+    "rise": 0.0,
+    "goal": ""
+  },
+  {
+    "label": "KT_EditWall_E2_7",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92E60803_1812020411",
+    "kind": "wall",
+    "centre": {
+      "x": 51712,
+      "y": -91392,
+      "z": 0
+    },
+    "right": {
+      "x": 2.83276944882399e-16,
+      "y": 1.0,
+      "z": 0.0
+    },
+    "normal": {
+      "x": -1.0,
+      "y": 2.83276944882399e-16,
+      "z": 0.0
+    },
+    "width": 512.0,
+    "height": 384.0,
+    "depth": 512.0,
+    "rise": 0.0,
+    "goal": "window_center"
+  },
+  {
+    "label": "KT_EditWall_E4_4",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92E60803_1813272428",
+    "kind": "wall",
+    "centre": {
+      "x": 51712,
+      "y": -78592,
+      "z": 0
+    },
+    "right": {
+      "x": 2.83276944882399e-16,
+      "y": 1.0,
+      "z": 0.0
+    },
+    "normal": {
+      "x": -1.0,
+      "y": 2.83276944882399e-16,
+      "z": 0.0
+    },
+    "width": 512.0,
+    "height": 384.0,
+    "depth": 512.0,
+    "rise": 0.0,
+    "goal": "half_wall"
+  },
+  {
+    "label": "KT_EditWall_E4_5",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92E60803_1813338429",
+    "kind": "wall",
+    "centre": {
+      "x": 51712,
+      "y": -78080,
+      "z": 0
+    },
+    "right": {
+      "x": 2.83276944882399e-16,
+      "y": 1.0,
+      "z": 0.0
+    },
+    "normal": {
+      "x": -1.0,
+      "y": 2.83276944882399e-16,
+      "z": 0.0
+    },
+    "width": 512.0,
+    "height": 384.0,
+    "depth": 512.0,
+    "rise": 0.0,
+    "goal": "half_wall"
+  },
+  {
+    "label": "KT7_Lab_D_BotBox_S",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92870903_1695083294",
+    "kind": "wall",
+    "centre": {
+      "x": -16640,
+      "y": -65024,
+      "z": 0
+    },
+    "right": {
+      "x": 1.0,
+      "y": 0.0,
+      "z": 0.0
+    },
+    "normal": {
+      "x": -0.0,
+      "y": 1.0,
+      "z": 0.0
+    },
+    "width": 512.0,
+    "height": 384.0,
+    "depth": 512.0,
+    "rise": 0.0,
+    "goal": ""
+  },
+  {
+    "label": "KT_EditWall_E5_0",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92E60803_1813665434",
+    "kind": "wall",
+    "centre": {
+      "x": 51712,
+      "y": -73472,
+      "z": 0
+    },
+    "right": {
+      "x": 2.83276944882399e-16,
+      "y": 1.0,
+      "z": 0.0
+    },
+    "normal": {
+      "x": -1.0,
+      "y": 2.83276944882399e-16,
+      "z": 0.0
+    },
+    "width": 512.0,
+    "height": 384.0,
+    "depth": 512.0,
+    "rise": 0.0,
+    "goal": "window_center"
+  },
+  {
+    "label": "KT_EditWall_E2_6",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92E60803_1811967410",
+    "kind": "wall",
+    "centre": {
+      "x": 51712,
+      "y": -91904,
+      "z": 0
+    },
+    "right": {
+      "x": 2.83276944882399e-16,
+      "y": 1.0,
+      "z": 0.0
+    },
+    "normal": {
+      "x": -1.0,
+      "y": 2.83276944882399e-16,
+      "z": 0.0
+    },
+    "width": 512.0,
+    "height": 384.0,
+    "depth": 512.0,
+    "rise": 0.0,
+    "goal": "window_center"
+  },
+  {
+    "label": "KT_EditWall_E7_5",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92E60803_1814551449",
+    "kind": "wall",
+    "centre": {
+      "x": 51712,
+      "y": -56576,
+      "z": 0
+    },
+    "right": {
+      "x": 2.83276944882399e-16,
+      "y": 1.0,
+      "z": 0.0
+    },
+    "normal": {
+      "x": -1.0,
+      "y": 2.83276944882399e-16,
+      "z": 0.0
+    },
+    "width": 512.0,
+    "height": 384.0,
+    "depth": 512.0,
+    "rise": 0.0,
+    "goal": "side_peek_right"
+  },
+  {
+    "label": "KT7_Lab_D_Mid_-126",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92870903_1695465298",
+    "kind": "wall",
+    "centre": {
+      "x": -17408,
+      "y": -64256,
+      "z": 0
+    },
+    "right": {
+      "x": 2.83276944882399e-16,
+      "y": 1.0,
+      "z": 0.0
+    },
+    "normal": {
+      "x": -1.0,
+      "y": 2.83276944882399e-16,
+      "z": 0.0
+    },
+    "width": 512.0,
+    "height": 384.0,
+    "depth": 512.0,
+    "rise": 0.0,
+    "goal": ""
+  },
+  {
+    "label": "KT_EditWall_E2_5",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92E60803_1811884409",
+    "kind": "wall",
+    "centre": {
+      "x": 51712,
+      "y": -92416,
+      "z": 0
+    },
+    "right": {
+      "x": 2.83276944882399e-16,
+      "y": 1.0,
+      "z": 0.0
+    },
+    "normal": {
+      "x": -1.0,
+      "y": 2.83276944882399e-16,
+      "z": 0.0
+    },
+    "width": 512.0,
+    "height": 384.0,
+    "depth": 512.0,
+    "rise": 0.0,
+    "goal": "window_center"
+  },
+  {
+    "label": "KT7_Lab_A_Box_E",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92870903_1688382227",
+    "kind": "wall",
+    "centre": {
+      "x": -24064,
+      "y": -68864,
+      "z": 0
+    },
+    "right": {
+      "x": 2.83276944882399e-16,
+      "y": 1.0,
+      "z": 0.0
+    },
+    "normal": {
+      "x": -1.0,
+      "y": 2.83276944882399e-16,
+      "z": 0.0
+    },
+    "width": 512.0,
+    "height": 384.0,
+    "depth": 512.0,
+    "rise": 0.0,
+    "goal": ""
+  },
+  {
+    "label": "KT_EditWall_E7_9",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92E60803_1814770453",
+    "kind": "wall",
+    "centre": {
+      "x": 51712,
+      "y": -54528,
+      "z": 0
+    },
+    "right": {
+      "x": 2.83276944882399e-16,
+      "y": 1.0,
+      "z": 0.0
+    },
+    "normal": {
+      "x": -1.0,
+      "y": 2.83276944882399e-16,
+      "z": 0.0
+    },
+    "width": 512.0,
+    "height": 384.0,
+    "depth": 512.0,
+    "rise": 0.0,
+    "goal": "side_peek_right"
+  },
+  {
+    "label": "KT4_Arena_Wall_1",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F922F0903_1140266841",
+    "kind": "wall",
+    "centre": {
+      "x": -30720,
+      "y": -77312,
+      "z": 0
+    },
+    "right": {
+      "x": 2.83276944882399e-16,
+      "y": 1.0,
+      "z": 0.0
+    },
+    "normal": {
+      "x": -1.0,
+      "y": 2.83276944882399e-16,
+      "z": 0.0
+    },
+    "width": 512.0,
+    "height": 384.0,
+    "depth": 512.0,
+    "rise": 0.0,
+    "goal": ""
+  },
+  {
+    "label": "KT7_Lab_A_Drop_1N",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92870903_1691497258",
+    "kind": "wall",
+    "centre": {
+      "x": -21248,
+      "y": -68608,
+      "z": 384
+    },
+    "right": {
+      "x": 1.0,
+      "y": 0.0,
+      "z": 0.0
+    },
+    "normal": {
+      "x": -0.0,
+      "y": 1.0,
+      "z": 0.0
+    },
+    "width": 512.0,
+    "height": 384.0,
+    "depth": 512.0,
+    "rise": 0.0,
+    "goal": ""
+  },
+  {
+    "label": "KT7_Lab_A_Drop_0W",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92870903_1691391257",
+    "kind": "wall",
+    "centre": {
+      "x": -21504,
+      "y": -68864,
+      "z": 0
+    },
+    "right": {
+      "x": 2.83276944882399e-16,
+      "y": 1.0,
+      "z": 0.0
+    },
+    "normal": {
+      "x": -1.0,
+      "y": 2.83276944882399e-16,
+      "z": 0.0
+    },
+    "width": 512.0,
+    "height": 384.0,
+    "depth": 512.0,
+    "rise": 0.0,
+    "goal": ""
+  },
+  {
+    "label": "KT_EditWall_E2_1",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92E60803_1811637405",
+    "kind": "wall",
+    "centre": {
+      "x": 51712,
+      "y": -94464,
+      "z": 0
+    },
+    "right": {
+      "x": 2.83276944882399e-16,
+      "y": 1.0,
+      "z": 0.0
+    },
+    "normal": {
+      "x": -1.0,
+      "y": 2.83276944882399e-16,
+      "z": 0.0
+    },
+    "width": 512.0,
+    "height": 384.0,
+    "depth": 512.0,
+    "rise": 0.0,
+    "goal": "window_center"
+  },
+  {
+    "label": "KT7_Lab_A_Climb_3S",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92870903_1690311247",
+    "kind": "wall",
+    "centre": {
+      "x": -22784,
+      "y": -69120,
+      "z": 1152
+    },
+    "right": {
+      "x": 1.0,
+      "y": 0.0,
+      "z": 0.0
+    },
+    "normal": {
+      "x": -0.0,
+      "y": 1.0,
+      "z": 0.0
+    },
+    "width": 512.0,
+    "height": 384.0,
+    "depth": 512.0,
+    "rise": 0.0,
+    "goal": ""
+  },
+  {
+    "label": "KT7_Lab_A_Climb_1S",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92870903_1689159235",
+    "kind": "wall",
+    "centre": {
+      "x": -22784,
+      "y": -69120,
+      "z": 384
+    },
+    "right": {
+      "x": 1.0,
+      "y": 0.0,
+      "z": 0.0
+    },
+    "normal": {
+      "x": -0.0,
+      "y": 1.0,
+      "z": 0.0
+    },
+    "width": 512.0,
+    "height": 384.0,
+    "depth": 512.0,
+    "rise": 0.0,
+    "goal": ""
+  },
+  {
+    "label": "KT_EditWall_E4_2",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92E60803_1813122426",
+    "kind": "wall",
+    "centre": {
+      "x": 51712,
+      "y": -79616,
+      "z": 0
+    },
+    "right": {
+      "x": 2.83276944882399e-16,
+      "y": 1.0,
+      "z": 0.0
+    },
+    "normal": {
+      "x": -1.0,
+      "y": 2.83276944882399e-16,
+      "z": 0.0
+    },
+    "width": 512.0,
+    "height": 384.0,
+    "depth": 512.0,
+    "rise": 0.0,
+    "goal": "half_wall"
+  },
+  {
+    "label": "KT7_Lab_A_Climb_2E",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92870903_1689847242",
+    "kind": "wall",
+    "centre": {
+      "x": -22528,
+      "y": -68864,
+      "z": 768
+    },
+    "right": {
+      "x": 2.83276944882399e-16,
+      "y": 1.0,
+      "z": 0.0
+    },
+    "normal": {
+      "x": -1.0,
+      "y": 2.83276944882399e-16,
+      "z": 0.0
+    },
+    "width": 512.0,
+    "height": 384.0,
+    "depth": 512.0,
+    "rise": 0.0,
+    "goal": ""
+  },
+  {
+    "label": "KT4_Arena_Wall_3",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F922F0903_1140470843",
+    "kind": "wall",
+    "centre": {
+      "x": -30720,
+      "y": -75264,
+      "z": 0
+    },
+    "right": {
+      "x": 2.83276944882399e-16,
+      "y": 1.0,
+      "z": 0.0
+    },
+    "normal": {
+      "x": -1.0,
+      "y": 2.83276944882399e-16,
+      "z": 0.0
+    },
+    "width": 512.0,
+    "height": 384.0,
+    "depth": 512.0,
+    "rise": 0.0,
+    "goal": ""
+  },
+  {
+    "label": "KT_EditWall_E5_4",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92E60803_1813882438",
+    "kind": "wall",
+    "centre": {
+      "x": 51712,
+      "y": -71424,
+      "z": 0
+    },
+    "right": {
+      "x": 2.83276944882399e-16,
+      "y": 1.0,
+      "z": 0.0
+    },
+    "normal": {
+      "x": -1.0,
+      "y": 2.83276944882399e-16,
+      "z": 0.0
+    },
+    "width": 512.0,
+    "height": 384.0,
+    "depth": 512.0,
+    "rise": 0.0,
+    "goal": "window_center"
+  },
+  {
+    "label": "KT4_Arena_Wall_2",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F922F0903_1140397842",
+    "kind": "wall",
+    "centre": {
+      "x": -30720,
+      "y": -75776,
+      "z": 0
+    },
+    "right": {
+      "x": 2.83276944882399e-16,
+      "y": 1.0,
+      "z": 0.0
+    },
+    "normal": {
+      "x": -1.0,
+      "y": 2.83276944882399e-16,
+      "z": 0.0
+    },
+    "width": 512.0,
+    "height": 384.0,
+    "depth": 512.0,
+    "rise": 0.0,
+    "goal": ""
+  },
+  {
+    "label": "KT12_Lab_floor_floor_hole_near_left_0",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Floor_C_UAID_30560F202F929A0903_1589012903",
+    "kind": "floor",
+    "centre": {
+      "x": -20736.0,
+      "y": -100992.0,
+      "z": 0
+    },
+    "right": {
+      "x": 2.83276944882399e-16,
+      "y": 1.0,
+      "z": 0.0
+    },
+    "normal": {
+      "x": -1.0,
+      "y": 2.83276944882399e-16,
+      "z": 0.0
+    },
+    "width": 512.0,
+    "height": 512.0,
+    "depth": 512.0,
+    "rise": 0.0,
+    "goal": "floor_hole_near_left"
+  },
+  {
+    "label": "KT12_Lab_floor_floor_hole_near_right_1",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Floor_C_UAID_30560F202F929A0903_1589375904",
+    "kind": "floor",
+    "centre": {
+      "x": -20736.0,
+      "y": -100224.0,
+      "z": 0
+    },
+    "right": {
+      "x": 2.83276944882399e-16,
+      "y": 1.0,
+      "z": 0.0
+    },
+    "normal": {
+      "x": -1.0,
+      "y": 2.83276944882399e-16,
+      "z": 0.0
+    },
+    "width": 512.0,
+    "height": 512.0,
+    "depth": 512.0,
+    "rise": 0.0,
+    "goal": "floor_hole_near_right"
+  },
+  {
+    "label": "KT12_Lab_floor_floor_hole_far_left_2",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Floor_C_UAID_30560F202F929A0903_1589736905",
+    "kind": "floor",
+    "centre": {
+      "x": -20736.0,
+      "y": -99456.0,
+      "z": 0
+    },
+    "right": {
+      "x": 2.83276944882399e-16,
+      "y": 1.0,
+      "z": 0.0
+    },
+    "normal": {
+      "x": -1.0,
+      "y": 2.83276944882399e-16,
+      "z": 0.0
+    },
+    "width": 512.0,
+    "height": 512.0,
+    "depth": 512.0,
+    "rise": 0.0,
+    "goal": "floor_hole_far_left"
+  },
+  {
+    "label": "KT12_Lab_floor_floor_hole_far_right_3",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Floor_C_UAID_30560F202F929A0903_1590106906",
+    "kind": "floor",
+    "centre": {
+      "x": -20736.0,
+      "y": -98688.0,
+      "z": 0
+    },
+    "right": {
+      "x": 2.83276944882399e-16,
+      "y": 1.0,
+      "z": 0.0
+    },
+    "normal": {
+      "x": -1.0,
+      "y": 2.83276944882399e-16,
+      "z": 0.0
+    },
+    "width": 512.0,
+    "height": 512.0,
+    "depth": 512.0,
+    "rise": 0.0,
+    "goal": "floor_hole_far_right"
+  },
+  {
+    "label": "KT12_Lab_roof_roof_one_near_left_0",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_RoofC_C_UAID_30560F202F929A0903_1590499907",
+    "kind": "roof",
+    "centre": {
+      "x": -19712.0,
+      "y": -101760.0,
+      "z": 474.0
+    },
+    "right": {
+      "x": 2.83276944882399e-16,
+      "y": 1.0,
+      "z": 0.0
+    },
+    "normal": {
+      "x": -1.0,
+      "y": 2.83276944882399e-16,
+      "z": 0.0
+    },
+    "width": 512.0,
+    "height": 512.0,
+    "depth": 512.0,
+    "rise": 0.0,
+    "goal": "roof_one_near_left"
+  },
+  {
+    "label": "KT12_Lab_roof_roof_one_far_right_1",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_RoofC_C_UAID_30560F202F929A0903_1590867908",
+    "kind": "roof",
+    "centre": {
+      "x": -19712.0,
+      "y": -100992.0,
+      "z": 474.0
+    },
+    "right": {
+      "x": 2.83276944882399e-16,
+      "y": 1.0,
+      "z": 0.0
+    },
+    "normal": {
+      "x": -1.0,
+      "y": 2.83276944882399e-16,
+      "z": 0.0
+    },
+    "width": 512.0,
+    "height": 512.0,
+    "depth": 512.0,
+    "rise": 0.0,
+    "goal": "roof_one_far_right"
+  },
+  {
+    "label": "KT12_Lab_roof_roof_two_near_2",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_RoofC_C_UAID_30560F202F929A0903_1591286909",
+    "kind": "roof",
+    "centre": {
+      "x": -19712.0,
+      "y": -100224.0,
+      "z": 474.0
+    },
+    "right": {
+      "x": 2.83276944882399e-16,
+      "y": 1.0,
+      "z": 0.0
+    },
+    "normal": {
+      "x": -1.0,
+      "y": 2.83276944882399e-16,
+      "z": 0.0
+    },
+    "width": 512.0,
+    "height": 512.0,
+    "depth": 512.0,
+    "rise": 0.0,
+    "goal": "roof_two_near"
+  },
+  {
+    "label": "KT12_Lab_roof_roof_two_left_3",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_RoofC_C_UAID_30560F202F929A0903_1591664910",
+    "kind": "roof",
+    "centre": {
+      "x": -19712.0,
+      "y": -99456.0,
+      "z": 474.0
+    },
+    "right": {
+      "x": 2.83276944882399e-16,
+      "y": 1.0,
+      "z": 0.0
+    },
+    "normal": {
+      "x": -1.0,
+      "y": 2.83276944882399e-16,
+      "z": 0.0
+    },
+    "width": 512.0,
+    "height": 512.0,
+    "depth": 512.0,
+    "rise": 0.0,
+    "goal": "roof_two_left"
+  },
+  {
+    "label": "KT12_Lab_roof_roof_diagonal_a_4",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_RoofC_C_UAID_30560F202F929A0903_1592030911",
+    "kind": "roof",
+    "centre": {
+      "x": -19712.0,
+      "y": -98688.0,
+      "z": 474.0
+    },
+    "right": {
+      "x": 2.83276944882399e-16,
+      "y": 1.0,
+      "z": 0.0
+    },
+    "normal": {
+      "x": -1.0,
+      "y": 2.83276944882399e-16,
+      "z": 0.0
+    },
+    "width": 512.0,
+    "height": 512.0,
+    "depth": 512.0,
+    "rise": 0.0,
+    "goal": "roof_diagonal_a"
+  },
+  {
+    "label": "KT12_Lab_roof_roof_diagonal_b_5",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_RoofC_C_UAID_30560F202F929A0903_1592411912",
+    "kind": "roof",
+    "centre": {
+      "x": -19712.0,
+      "y": -97920.0,
+      "z": 474.0
+    },
+    "right": {
+      "x": 2.83276944882399e-16,
+      "y": 1.0,
+      "z": 0.0
+    },
+    "normal": {
+      "x": -1.0,
+      "y": 2.83276944882399e-16,
+      "z": 0.0
+    },
+    "width": 512.0,
+    "height": 512.0,
+    "depth": 512.0,
+    "rise": 0.0,
+    "goal": "roof_diagonal_b"
+  },
+  {
+    "label": "KT12_Lab_stairs_open_0",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_StairW_C_UAID_30560F202F929A0903_1592789913",
+    "kind": "stairs",
+    "centre": {
+      "x": -18688.0,
+      "y": -100224.0,
+      "z": 0
+    },
+    "right": {
+      "x": 2.83276944882399e-16,
+      "y": 1.0,
+      "z": 0.0
+    },
+    "normal": {
+      "x": -1.0,
+      "y": 2.83276944882399e-16,
+      "z": 0.0
+    },
+    "width": 512.0,
+    "height": 512.0,
+    "depth": 512.0,
+    "rise": 384.0,
+    "goal": ""
+  },
+  {
+    "label": "KT12_Lab_stairs_open_1",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_StairW_C_UAID_30560F202F929A0903_1593167914",
+    "kind": "stairs",
+    "centre": {
+      "x": -18688.0,
+      "y": -99456.0,
+      "z": 0
+    },
+    "right": {
+      "x": 2.83276944882399e-16,
+      "y": 1.0,
+      "z": 0.0
+    },
+    "normal": {
+      "x": -1.0,
+      "y": 2.83276944882399e-16,
+      "z": 0.0
+    },
+    "width": 512.0,
+    "height": 512.0,
+    "depth": 512.0,
+    "rise": 384.0,
+    "goal": ""
+  },
+  {
+    "label": "KT12_Lab_wall_corner_lower_left_0",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F929A0903_1593561915",
+    "kind": "wall",
+    "centre": {
+      "x": -17408,
+      "y": -102528,
+      "z": 0
+    },
+    "right": {
+      "x": 2.83276944882399e-16,
+      "y": 1.0,
+      "z": 0.0
+    },
+    "normal": {
+      "x": -1.0,
+      "y": 2.83276944882399e-16,
+      "z": 0.0
+    },
+    "width": 512.0,
+    "height": 384.0,
+    "depth": 512.0,
+    "rise": 0.0,
+    "goal": "corner_lower_left"
+  },
+  {
+    "label": "KT12_Lab_wall_corner_lower_right_1",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F929A0903_1593934916",
+    "kind": "wall",
+    "centre": {
+      "x": -17408,
+      "y": -101760,
+      "z": 0
+    },
+    "right": {
+      "x": 2.83276944882399e-16,
+      "y": 1.0,
+      "z": 0.0
+    },
+    "normal": {
+      "x": -1.0,
+      "y": 2.83276944882399e-16,
+      "z": 0.0
+    },
+    "width": 512.0,
+    "height": 384.0,
+    "depth": 512.0,
+    "rise": 0.0,
+    "goal": "corner_lower_right"
+  },
+  {
+    "label": "KT12_Lab_wall_corner_upper_left_2",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F929A0903_1594321917",
+    "kind": "wall",
+    "centre": {
+      "x": -17408,
+      "y": -100992,
+      "z": 0
+    },
+    "right": {
+      "x": 2.83276944882399e-16,
+      "y": 1.0,
+      "z": 0.0
+    },
+    "normal": {
+      "x": -1.0,
+      "y": 2.83276944882399e-16,
+      "z": 0.0
+    },
+    "width": 512.0,
+    "height": 384.0,
+    "depth": 512.0,
+    "rise": 0.0,
+    "goal": "corner_upper_left"
+  },
+  {
+    "label": "KT12_Lab_wall_half_arch_left_3",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F929A0903_1594682918",
+    "kind": "wall",
+    "centre": {
+      "x": -17408,
+      "y": -100224,
+      "z": 0
+    },
+    "right": {
+      "x": 2.83276944882399e-16,
+      "y": 1.0,
+      "z": 0.0
+    },
+    "normal": {
+      "x": -1.0,
+      "y": 2.83276944882399e-16,
+      "z": 0.0
+    },
+    "width": 512.0,
+    "height": 384.0,
+    "depth": 512.0,
+    "rise": 0.0,
+    "goal": "half_arch_left"
+  },
+  {
+    "label": "KT12_Lab_wall_half_arch_right_4",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F929A0903_1595055919",
+    "kind": "wall",
+    "centre": {
+      "x": -17408,
+      "y": -99456,
+      "z": 0
+    },
+    "right": {
+      "x": 2.83276944882399e-16,
+      "y": 1.0,
+      "z": 0.0
+    },
+    "normal": {
+      "x": -1.0,
+      "y": 2.83276944882399e-16,
+      "z": 0.0
+    },
+    "width": 512.0,
+    "height": 384.0,
+    "depth": 512.0,
+    "rise": 0.0,
+    "goal": "half_arch_right"
+  },
+  {
+    "label": "KT12_Lab_wall_window_high_5",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F929A0903_1595405920",
+    "kind": "wall",
+    "centre": {
+      "x": -17408,
+      "y": -98688,
+      "z": 0
+    },
+    "right": {
+      "x": 2.83276944882399e-16,
+      "y": 1.0,
+      "z": 0.0
+    },
+    "normal": {
+      "x": -1.0,
+      "y": 2.83276944882399e-16,
+      "z": 0.0
+    },
+    "width": 512.0,
+    "height": 384.0,
+    "depth": 512.0,
+    "rise": 0.0,
+    "goal": "window_high"
+  },
+  {
+    "label": "KT12_Lab_wall_quarter_wall_6",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F929A0903_1595789921",
+    "kind": "wall",
+    "centre": {
+      "x": -17408,
+      "y": -97920,
+      "z": 0
+    },
+    "right": {
+      "x": 2.83276944882399e-16,
+      "y": 1.0,
+      "z": 0.0
+    },
+    "normal": {
+      "x": -1.0,
+      "y": 2.83276944882399e-16,
+      "z": 0.0
+    },
+    "width": 512.0,
+    "height": 384.0,
+    "depth": 512.0,
+    "rise": 0.0,
+    "goal": "quarter_wall"
+  },
+  {
+    "label": "KT12_Lab_wall_side_peek_left_7",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F929A0903_1596157922",
+    "kind": "wall",
+    "centre": {
+      "x": -17408,
+      "y": -97152,
+      "z": 0
+    },
+    "right": {
+      "x": 2.83276944882399e-16,
+      "y": 1.0,
+      "z": 0.0
+    },
+    "normal": {
+      "x": -1.0,
+      "y": 2.83276944882399e-16,
+      "z": 0.0
+    },
+    "width": 512.0,
+    "height": 384.0,
+    "depth": 512.0,
+    "rise": 0.0,
+    "goal": "side_peek_left"
+  }
+]

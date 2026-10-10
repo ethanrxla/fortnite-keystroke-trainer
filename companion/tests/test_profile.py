@@ -2,7 +2,7 @@ import unittest
 
 from keystroke_lab import drills, profile
 
-BINDS = drills.load_binds()
+BINDS = dict(drills.DEFAULT_BINDS)  # hermetic: never the player's own keybinds.json
 LADDER, CATALOG = drills.load_catalog()
 
 

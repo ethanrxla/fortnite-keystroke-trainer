@@ -23,6 +23,7 @@ EditRouteContains<public>(Route:edit_route, Tile:int)<transacts><decides>:void =
     (for (T : Route.Tiles, T = Tile) { T }).Length > 0
 
 kt_crosshair_coach_device := class(creative_device):
+    @editable Enabled:logic = true
     @editable DrillId:string = "edit_window"
     @editable CellSize:float = 512.0
     @editable WallHeight:float = 384.0
@@ -38,6 +39,8 @@ kt_crosshair_coach_device := class(creative_device):
     var Coached:[player]logic = map{}
 
     OnBegin<override>()<suspends>:void =
+        if (not Enabled?):
+            return
         if (Drill := FindDrill[DrillId], Guide := FindEditGuide[DrillId], CellSize > 0.0, WallHeight > 0.0):
             loop:
                 var ActiveCoaches:[player]logic = map{}
@@ -198,7 +201,7 @@ kt_crosshair_coach_device := class(creative_device):
 
     Paint(Tiles:[]color_block, Labels:[]text_block, Route:edit_route):void =
         for (I -> Cell : Tiles, Label := Labels[I]):
-            Cell.SetColor(if (EditRouteContains[Route, I]) then color{R := 0.8, G := 0.07, B := 0.08} else color{R := 0.04, G := 0.06, B := 0.09})
+            Cell.SetColor(if (EditRouteContains[Route, I]) then color{R := 0.10, G := 0.80, B := 0.25} else color{R := 0.04, G := 0.06, B := 0.09})
             Label.SetText(CoachText(""))
             for (Order -> Target : Route.Tiles, Target = I):
                 Label.SetText(CoachText("{Order + 1}"))
