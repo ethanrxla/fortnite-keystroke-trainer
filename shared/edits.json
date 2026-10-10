@@ -61,7 +61,9 @@
       "transforms": {
         "mirror": null,
         "rotations": []
-      }
+      },
+      "result_class": "WindowC",
+      "result_class_status": "probe_matched"
     },
     {
       "id": "window_high",
@@ -116,7 +118,9 @@
       "transforms": {
         "mirror": null,
         "rotations": []
-      }
+      },
+      "result_class": null,
+      "result_class_status": "unidentified"
     },
     {
       "id": "door",
@@ -172,7 +176,9 @@
       "transforms": {
         "mirror": null,
         "rotations": []
-      }
+      },
+      "result_class": "DoorC",
+      "result_class_status": "probe_matched"
     },
     {
       "id": "half_wall",
@@ -229,7 +235,9 @@
       "transforms": {
         "mirror": null,
         "rotations": []
-      }
+      },
+      "result_class": "HalfWallS",
+      "result_class_status": "probe_matched"
     },
     {
       "id": "quarter_wall",
@@ -289,7 +297,9 @@
       "transforms": {
         "mirror": null,
         "rotations": []
-      }
+      },
+      "result_class": "QuarterWallS",
+      "result_class_status": "probe_matched"
     },
     {
       "id": "corner_lower_left",
@@ -347,7 +357,9 @@
       "transforms": {
         "mirror": "corner_lower_right",
         "rotations": []
-      }
+      },
+      "result_class": "Brace",
+      "result_class_status": "probe_inferred"
     },
     {
       "id": "corner_lower_right",
@@ -405,7 +417,9 @@
       "transforms": {
         "mirror": "corner_lower_left",
         "rotations": []
-      }
+      },
+      "result_class": "Brace",
+      "result_class_status": "probe_matched"
     },
     {
       "id": "corner_upper_left",
@@ -462,7 +476,9 @@
       "transforms": {
         "mirror": "corner_upper_right",
         "rotations": []
-      }
+      },
+      "result_class": "RoofWall",
+      "result_class_status": "probe_matched"
     },
     {
       "id": "corner_upper_right",
@@ -519,7 +535,9 @@
       "transforms": {
         "mirror": "corner_upper_left",
         "rotations": []
-      }
+      },
+      "result_class": "RoofWall",
+      "result_class_status": "probe_inferred"
     },
     {
       "id": "half_arch_left",
@@ -578,7 +596,9 @@
       "transforms": {
         "mirror": "half_arch_right",
         "rotations": []
-      }
+      },
+      "result_class": "ArchwayLarge",
+      "result_class_status": "probe_inferred"
     },
     {
       "id": "half_arch_right",
@@ -637,7 +657,9 @@
       "transforms": {
         "mirror": "half_arch_left",
         "rotations": []
-      }
+      },
+      "result_class": "ArchwayLarge",
+      "result_class_status": "probe_matched"
     },
     {
       "id": "side_peek_right",
@@ -691,7 +713,9 @@
       "transforms": {
         "mirror": "side_peek_left",
         "rotations": []
-      }
+      },
+      "result_class": "WindowSide",
+      "result_class_status": "probe_matched"
     },
     {
       "id": "side_peek_left",
@@ -745,7 +769,9 @@
       "transforms": {
         "mirror": "side_peek_right",
         "rotations": []
-      }
+      },
+      "result_class": "WindowSide",
+      "result_class_status": "probe_inferred"
     },
     {
       "id": "arch_wide",
@@ -859,7 +885,9 @@
       "transforms": {
         "mirror": "corner_single_lr",
         "rotations": []
-      }
+      },
+      "result_class": null,
+      "result_class_status": "unidentified"
     },
     {
       "id": "corner_single_lr",
@@ -914,7 +942,9 @@
       "transforms": {
         "mirror": "corner_single_ll",
         "rotations": []
-      }
+      },
+      "result_class": null,
+      "result_class_status": "unidentified"
     },
     {
       "id": "corner_single_ul",
@@ -969,7 +999,9 @@
       "transforms": {
         "mirror": "corner_single_ur",
         "rotations": []
-      }
+      },
+      "result_class": null,
+      "result_class_status": "unidentified"
     },
     {
       "id": "corner_single_ur",
@@ -1024,7 +1056,9 @@
       "transforms": {
         "mirror": "corner_single_ul",
         "rotations": []
-      }
+      },
+      "result_class": null,
+      "result_class_status": "unidentified"
     },
     {
       "id": "slim_wall_right",
@@ -1084,7 +1118,9 @@
       "transforms": {
         "mirror": "slim_wall_left",
         "rotations": []
-      }
+      },
+      "result_class": "ArchwayLargeSupport",
+      "result_class_status": "probe_inferred"
     },
     {
       "id": "slim_wall_left",
@@ -1144,7 +1180,9 @@
       "transforms": {
         "mirror": "slim_wall_right",
         "rotations": []
-      }
+      },
+      "result_class": "ArchwayLargeSupport",
+      "result_class_status": "probe_inferred"
     },
     {
       "id": "tiny_wall_left",
@@ -1205,7 +1243,9 @@
       "transforms": {
         "mirror": "tiny_wall_right",
         "rotations": []
-      }
+      },
+      "result_class": "QuarterWallHalf",
+      "result_class_status": "probe_inferred"
     },
     {
       "id": "tiny_wall_right",
@@ -1266,7 +1306,9 @@
       "transforms": {
         "mirror": "tiny_wall_left",
         "rotations": []
-      }
+      },
+      "result_class": "QuarterWallHalf",
+      "result_class_status": "probe_inferred"
     },
     {
       "id": "arch",
@@ -1325,7 +1367,9 @@
       "transforms": {
         "mirror": null,
         "rotations": []
-      }
+      },
+      "result_class": "Archway",
+      "result_class_status": "probe_matched"
     },
     {
       "id": "window_tall",
@@ -1380,7 +1424,9 @@
       "transforms": {
         "mirror": null,
         "rotations": []
-      }
+      },
+      "result_class": null,
+      "result_class_status": "unidentified"
     },
     {
       "id": "window_wide",
@@ -1436,7 +1482,9 @@
       "transforms": {
         "mirror": null,
         "rotations": []
-      }
+      },
+      "result_class": null,
+      "result_class_status": "unidentified"
     },
     {
       "id": "side_door_left",
@@ -1491,7 +1539,9 @@
       "transforms": {
         "mirror": "side_door_right",
         "rotations": []
-      }
+      },
+      "result_class": "DoorSide",
+      "result_class_status": "probe_inferred"
     },
     {
       "id": "side_door_right",
@@ -1546,7 +1596,9 @@
       "transforms": {
         "mirror": "side_door_left",
         "rotations": []
-      }
+      },
+      "result_class": "DoorSide",
+      "result_class_status": "probe_matched"
     },
     {
       "id": "crouch_hole",
@@ -1600,6 +1652,553 @@
       "transforms": {
         "mirror": null,
         "rotations": []
+      },
+      "result_class": null,
+      "result_class_status": "unidentified"
+    },
+    {
+      "id": "window_double",
+      "name": "Double window (both side windows)",
+      "tiles": [
+        3,
+        5
+      ],
+      "kind": "wall",
+      "mirror_of": null,
+      "suggest": false,
+      "confirmed": false,
+      "purpose": [
+        "peek",
+        "shoot"
+      ],
+      "exposure": "medium",
+      "cover_left": 7,
+      "difficulty": 2,
+      "when_to_use": "Left and right middle tiles: two windows with the centre post kept. (The whole middle row would leave the top row floating; the probe shows this centre-post piece instead.)",
+      "source": "UEFN build-class probe 2026-10-10 (PBWA_W1_* placed and photographed); unconfirmed tile set",
+      "result_class": "Windows",
+      "result_class_status": "probe_matched",
+      "validation": {
+        "status": "unverified",
+        "game_version": null,
+        "evidence": [],
+        "result_confirmed": false,
+        "reason": "Shape from the build-class probe; confirm through recorded and reviewed attempts."
+      },
+      "topology": "selection_grid",
+      "mask": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          1,
+          0,
+          1
+        ],
+        [
+          0,
+          0,
+          0
+        ]
+      ],
+      "result_shape": "Double window (both side windows)",
+      "preconditions": [
+        "editable_target",
+        "standard_editing"
+      ],
+      "reset": "native_reset",
+      "transforms": {
+        "mirror": null,
+        "rotations": []
+      }
+    },
+    {
+      "id": "pillar",
+      "name": "Pillar (centre column stays)",
+      "tiles": [
+        0,
+        3,
+        6,
+        2,
+        5,
+        8
+      ],
+      "kind": "wall",
+      "mirror_of": null,
+      "suggest": false,
+      "confirmed": false,
+      "purpose": [
+        "enter",
+        "pass_through"
+      ],
+      "exposure": "very_high",
+      "cover_left": 3,
+      "difficulty": 2,
+      "when_to_use": "Remove both side columns: a single post stays, almost all of the wall is open.",
+      "source": "UEFN build-class probe 2026-10-10 (PBWA_W1_* placed and photographed); unconfirmed tile set",
+      "result_class": "Pillar",
+      "result_class_status": "probe_inferred",
+      "validation": {
+        "status": "unverified",
+        "game_version": null,
+        "evidence": [],
+        "result_confirmed": false,
+        "reason": "Shape from the build-class probe; confirm through recorded and reviewed attempts."
+      },
+      "topology": "selection_grid",
+      "mask": [
+        [
+          1,
+          0,
+          1
+        ],
+        [
+          1,
+          0,
+          1
+        ],
+        [
+          1,
+          0,
+          1
+        ]
+      ],
+      "result_shape": "Pillar (centre column stays)",
+      "preconditions": [
+        "editable_target",
+        "standard_editing"
+      ],
+      "reset": "native_reset",
+      "transforms": {
+        "mirror": null,
+        "rotations": []
+      }
+    },
+    {
+      "id": "door_window_left",
+      "name": "Door left + window right",
+      "tiles": [
+        0,
+        3,
+        5
+      ],
+      "kind": "wall",
+      "mirror_of": "door_window_right",
+      "suggest": false,
+      "confirmed": false,
+      "purpose": [
+        "enter",
+        "peek"
+      ],
+      "exposure": "high",
+      "cover_left": 6,
+      "difficulty": 2,
+      "when_to_use": "A side door with a side window across from it.",
+      "source": "UEFN build-class probe 2026-10-10 (PBWA_W1_* placed and photographed); unconfirmed tile set",
+      "result_class": "DoorS",
+      "result_class_status": "probe_inferred",
+      "validation": {
+        "status": "unverified",
+        "game_version": null,
+        "evidence": [],
+        "result_confirmed": false,
+        "reason": "Shape from the build-class probe; confirm through recorded and reviewed attempts."
+      },
+      "topology": "selection_grid",
+      "mask": [
+        [
+          1,
+          0,
+          0
+        ],
+        [
+          1,
+          0,
+          1
+        ],
+        [
+          0,
+          0,
+          0
+        ]
+      ],
+      "result_shape": "Door left + window right",
+      "preconditions": [
+        "editable_target",
+        "standard_editing"
+      ],
+      "reset": "native_reset",
+      "transforms": {
+        "mirror": "door_window_right",
+        "rotations": []
+      }
+    },
+    {
+      "id": "door_window_right",
+      "name": "Door right + window left",
+      "tiles": [
+        2,
+        5,
+        3
+      ],
+      "kind": "wall",
+      "mirror_of": "door_window_left",
+      "suggest": false,
+      "confirmed": false,
+      "purpose": [
+        "enter",
+        "peek"
+      ],
+      "exposure": "high",
+      "cover_left": 6,
+      "difficulty": 2,
+      "when_to_use": "A side door with a side window across from it.",
+      "source": "UEFN build-class probe 2026-10-10 (PBWA_W1_* placed and photographed); unconfirmed tile set",
+      "result_class": "DoorS",
+      "result_class_status": "probe_matched",
+      "validation": {
+        "status": "unverified",
+        "game_version": null,
+        "evidence": [],
+        "result_confirmed": false,
+        "reason": "Shape from the build-class probe; confirm through recorded and reviewed attempts."
+      },
+      "topology": "selection_grid",
+      "mask": [
+        [
+          0,
+          0,
+          1
+        ],
+        [
+          1,
+          0,
+          1
+        ],
+        [
+          0,
+          0,
+          0
+        ]
+      ],
+      "result_shape": "Door right + window left",
+      "preconditions": [
+        "editable_target",
+        "standard_editing"
+      ],
+      "reset": "native_reset",
+      "transforms": {
+        "mirror": "door_window_left",
+        "rotations": []
+      }
+    },
+    {
+      "id": "half_wall_door",
+      "name": "Half wall with door",
+      "tiles": [
+        6,
+        7,
+        8,
+        4,
+        1
+      ],
+      "kind": "wall",
+      "mirror_of": null,
+      "suggest": false,
+      "confirmed": false,
+      "purpose": [
+        "enter",
+        "pass_through"
+      ],
+      "exposure": "very_high",
+      "cover_left": 4,
+      "difficulty": 2,
+      "when_to_use": "Top row plus the centre door: a low wall with a gate in the middle.",
+      "source": "UEFN build-class probe 2026-10-10 (PBWA_W1_* placed and photographed); unconfirmed tile set",
+      "result_class": "HalfWallDoor",
+      "result_class_status": "probe_matched",
+      "validation": {
+        "status": "unverified",
+        "game_version": null,
+        "evidence": [],
+        "result_confirmed": false,
+        "reason": "Shape from the build-class probe; confirm through recorded and reviewed attempts."
+      },
+      "topology": "selection_grid",
+      "mask": [
+        [
+          0,
+          1,
+          0
+        ],
+        [
+          0,
+          1,
+          0
+        ],
+        [
+          1,
+          1,
+          1
+        ]
+      ],
+      "result_shape": "Half wall with door",
+      "preconditions": [
+        "editable_target",
+        "standard_editing"
+      ],
+      "reset": "native_reset",
+      "transforms": {
+        "mirror": null,
+        "rotations": []
+      }
+    },
+    {
+      "id": "half_wall_side_door_left",
+      "name": "Half wall with side door (left)",
+      "tiles": [
+        6,
+        7,
+        8,
+        3,
+        0
+      ],
+      "kind": "wall",
+      "mirror_of": "half_wall_side_door_right",
+      "suggest": false,
+      "confirmed": false,
+      "purpose": [
+        "enter",
+        "pass_through"
+      ],
+      "exposure": "very_high",
+      "cover_left": 4,
+      "difficulty": 2,
+      "when_to_use": "Top row plus the left door: a low wall with a gate at the side.",
+      "source": "UEFN build-class probe 2026-10-10 (PBWA_W1_* placed and photographed); unconfirmed tile set",
+      "result_class": "HalfWallDoorS",
+      "result_class_status": "probe_inferred",
+      "validation": {
+        "status": "unverified",
+        "game_version": null,
+        "evidence": [],
+        "result_confirmed": false,
+        "reason": "Shape from the build-class probe; confirm through recorded and reviewed attempts."
+      },
+      "topology": "selection_grid",
+      "mask": [
+        [
+          1,
+          0,
+          0
+        ],
+        [
+          1,
+          0,
+          0
+        ],
+        [
+          1,
+          1,
+          1
+        ]
+      ],
+      "result_shape": "Half wall with side door (left)",
+      "preconditions": [
+        "editable_target",
+        "standard_editing"
+      ],
+      "reset": "native_reset",
+      "transforms": {
+        "mirror": "half_wall_side_door_right",
+        "rotations": []
+      }
+    },
+    {
+      "id": "half_wall_side_door_right",
+      "name": "Half wall with side door (right)",
+      "tiles": [
+        6,
+        7,
+        8,
+        5,
+        2
+      ],
+      "kind": "wall",
+      "mirror_of": "half_wall_side_door_left",
+      "suggest": false,
+      "confirmed": false,
+      "purpose": [
+        "enter",
+        "pass_through"
+      ],
+      "exposure": "very_high",
+      "cover_left": 4,
+      "difficulty": 2,
+      "when_to_use": "Top row plus the right door: a low wall with a gate at the side.",
+      "source": "UEFN build-class probe 2026-10-10 (PBWA_W1_* placed and photographed); unconfirmed tile set",
+      "result_class": "HalfWallDoorS",
+      "result_class_status": "probe_matched",
+      "validation": {
+        "status": "unverified",
+        "game_version": null,
+        "evidence": [],
+        "result_confirmed": false,
+        "reason": "Shape from the build-class probe; confirm through recorded and reviewed attempts."
+      },
+      "topology": "selection_grid",
+      "mask": [
+        [
+          0,
+          0,
+          1
+        ],
+        [
+          0,
+          0,
+          1
+        ],
+        [
+          1,
+          1,
+          1
+        ]
+      ],
+      "result_shape": "Half wall with side door (right)",
+      "preconditions": [
+        "editable_target",
+        "standard_editing"
+      ],
+      "reset": "native_reset",
+      "transforms": {
+        "mirror": "half_wall_side_door_left",
+        "rotations": []
+      }
+    },
+    {
+      "id": "half_wall_slim_left",
+      "name": "Half wall, slim (left column stays)",
+      "tiles": [
+        8,
+        7,
+        6,
+        5,
+        4,
+        1,
+        2
+      ],
+      "kind": "wall",
+      "mirror_of": "half_wall_slim_right",
+      "suggest": false,
+      "confirmed": false,
+      "purpose": [
+        "cover"
+      ],
+      "exposure": "very_high",
+      "cover_left": 2,
+      "difficulty": 2,
+      "when_to_use": "Only the bottom two tiles of one column stay: a narrow low post.",
+      "source": "UEFN build-class probe 2026-10-10 (PBWA_W1_* placed and photographed); unconfirmed tile set",
+      "result_class": "HalfWallHalf",
+      "result_class_status": "probe_inferred",
+      "validation": {
+        "status": "unverified",
+        "game_version": null,
+        "evidence": [],
+        "result_confirmed": false,
+        "reason": "Shape from the build-class probe; confirm through recorded and reviewed attempts."
+      },
+      "topology": "selection_grid",
+      "mask": [
+        [
+          0,
+          1,
+          1
+        ],
+        [
+          0,
+          1,
+          1
+        ],
+        [
+          1,
+          1,
+          1
+        ]
+      ],
+      "result_shape": "Half wall, slim (left column stays)",
+      "preconditions": [
+        "editable_target",
+        "standard_editing"
+      ],
+      "reset": "native_reset",
+      "transforms": {
+        "mirror": "half_wall_slim_right",
+        "rotations": []
+      }
+    },
+    {
+      "id": "half_wall_slim_right",
+      "name": "Half wall, slim (right column stays)",
+      "tiles": [
+        6,
+        7,
+        8,
+        3,
+        4,
+        1,
+        0
+      ],
+      "kind": "wall",
+      "mirror_of": "half_wall_slim_left",
+      "suggest": false,
+      "confirmed": false,
+      "purpose": [
+        "cover"
+      ],
+      "exposure": "very_high",
+      "cover_left": 2,
+      "difficulty": 2,
+      "when_to_use": "Only the bottom two tiles of one column stay: a narrow low post.",
+      "source": "UEFN build-class probe 2026-10-10 (PBWA_W1_* placed and photographed); unconfirmed tile set",
+      "result_class": "HalfWallHalf",
+      "result_class_status": "probe_inferred",
+      "validation": {
+        "status": "unverified",
+        "game_version": null,
+        "evidence": [],
+        "result_confirmed": false,
+        "reason": "Shape from the build-class probe; confirm through recorded and reviewed attempts."
+      },
+      "topology": "selection_grid",
+      "mask": [
+        [
+          1,
+          1,
+          0
+        ],
+        [
+          1,
+          1,
+          0
+        ],
+        [
+          1,
+          1,
+          1
+        ]
+      ],
+      "result_shape": "Half wall, slim (right column stays)",
+      "preconditions": [
+        "editable_target",
+        "standard_editing"
+      ],
+      "reset": "native_reset",
+      "transforms": {
+        "mirror": "half_wall_slim_left",
+        "rotations": []
       }
     }
   ],
@@ -1616,28 +2215,44 @@
       "rows": 3,
       "list": "wall_edits",
       "build_slot": 0,
-      "tile_order": "0-8 row-major from the bottom-left as the player sees the wall"
+      "tile_order": "0-8 row-major from the bottom-left as the player sees the wall",
+      "class": "Wall",
+      "canonical": "wall",
+      "base_class": "Solid",
+      "edit_semantics": "remove_selected"
     },
     "floor": {
       "cols": 2,
       "rows": 2,
       "list": "floor_edits",
       "build_slot": 1,
-      "tile_order": "0 near-left, 1 near-right, 2 far-left, 3 far-right, seen from above with the player at the near edge"
+      "tile_order": "0 near-left, 1 near-right, 2 far-left, 3 far-right, seen from above with the player at the near edge",
+      "class": "Floor",
+      "canonical": "floor",
+      "base_class": "Floor",
+      "edit_semantics": "remove_selected"
     },
     "stairs": {
       "cols": 2,
       "rows": 2,
       "list": "stairs_edits",
       "build_slot": 2,
-      "tile_order": "same as floor; far = the high end of the ramp or stairs"
+      "tile_order": "same as floor; far = the high end of the ramp or stairs",
+      "class": "Stair",
+      "canonical": "ramp",
+      "base_class": "StairW",
+      "edit_semantics": "keep_path"
     },
     "roof": {
       "cols": 2,
       "rows": 2,
       "list": "roof_edits",
       "build_slot": 3,
-      "tile_order": "same as floor, seen from below/above with the player at the near edge"
+      "tile_order": "same as floor, seen from below/above with the player at the near edge",
+      "class": "Cone",
+      "canonical": "cone",
+      "base_class": "RoofC",
+      "edit_semantics": "remove_selected"
     }
   },
   "_pieces_note": "build_slot is the piece's position in the player's build hotbar (wall, floor, stairs/ramp, roof), which is how the map knows what piece the player is placing: EditGuide.verse reads the equipped slot. VERIFY the slot order in a playtest; the guide logs KT|gate|...|slot=N. Non-wall pieces are 2x2 and indexed so mirror = column c -> 1 - c.",
@@ -1688,7 +2303,9 @@
       "transforms": {
         "mirror": "floor_hole_near_right",
         "rotations": []
-      }
+      },
+      "result_class": "BalconyI",
+      "result_class_status": "probe_inferred"
     },
     {
       "id": "floor_hole_near_right",
@@ -1736,7 +2353,9 @@
       "transforms": {
         "mirror": "floor_hole_near_left",
         "rotations": []
-      }
+      },
+      "result_class": "BalconyI",
+      "result_class_status": "probe_inferred"
     },
     {
       "id": "floor_hole_far_left",
@@ -1784,7 +2403,9 @@
       "transforms": {
         "mirror": "floor_hole_far_right",
         "rotations": []
-      }
+      },
+      "result_class": "BalconyI",
+      "result_class_status": "probe_inferred"
     },
     {
       "id": "floor_hole_far_right",
@@ -1832,7 +2453,9 @@
       "transforms": {
         "mirror": "floor_hole_far_left",
         "rotations": []
-      }
+      },
+      "result_class": "BalconyI",
+      "result_class_status": "probe_inferred"
     },
     {
       "id": "floor_half_near",
@@ -1881,7 +2504,9 @@
       "transforms": {
         "mirror": "floor_half_near",
         "rotations": []
-      }
+      },
+      "result_class": "BalconyS",
+      "result_class_status": "probe_inferred"
     },
     {
       "id": "floor_half_far",
@@ -1930,7 +2555,9 @@
       "transforms": {
         "mirror": "floor_half_far",
         "rotations": []
-      }
+      },
+      "result_class": "BalconyS",
+      "result_class_status": "probe_inferred"
     },
     {
       "id": "floor_half_left",
@@ -1979,7 +2606,9 @@
       "transforms": {
         "mirror": "floor_half_right",
         "rotations": []
-      }
+      },
+      "result_class": "BalconyS",
+      "result_class_status": "probe_inferred"
     },
     {
       "id": "floor_half_right",
@@ -2028,7 +2657,9 @@
       "transforms": {
         "mirror": "floor_half_left",
         "rotations": []
-      }
+      },
+      "result_class": "BalconyS",
+      "result_class_status": "probe_inferred"
     },
     {
       "id": "floor_three_keep_far_right",
@@ -2077,7 +2708,9 @@
       "transforms": {
         "mirror": "floor_three_keep_far_left",
         "rotations": []
-      }
+      },
+      "result_class": "BalconyO",
+      "result_class_status": "probe_inferred"
     },
     {
       "id": "floor_three_keep_far_left",
@@ -2126,7 +2759,9 @@
       "transforms": {
         "mirror": "floor_three_keep_far_right",
         "rotations": []
-      }
+      },
+      "result_class": "BalconyO",
+      "result_class_status": "probe_inferred"
     },
     {
       "id": "floor_three_keep_near_right",
@@ -2175,7 +2810,9 @@
       "transforms": {
         "mirror": "floor_three_keep_near_left",
         "rotations": []
-      }
+      },
+      "result_class": "BalconyO",
+      "result_class_status": "probe_inferred"
     },
     {
       "id": "floor_three_keep_near_left",
@@ -2224,7 +2861,9 @@
       "transforms": {
         "mirror": "floor_three_keep_near_right",
         "rotations": []
-      }
+      },
+      "result_class": "BalconyO",
+      "result_class_status": "probe_inferred"
     },
     {
       "id": "floor_diagonal_a",
@@ -2271,7 +2910,9 @@
       "transforms": {
         "mirror": "floor_diagonal_b",
         "rotations": []
-      }
+      },
+      "result_class": "BalconyD",
+      "result_class_status": "probe_inferred"
     },
     {
       "id": "floor_diagonal_b",
@@ -2318,7 +2959,9 @@
       "transforms": {
         "mirror": "floor_diagonal_a",
         "rotations": []
-      }
+      },
+      "result_class": "BalconyD",
+      "result_class_status": "probe_inferred"
     }
   ],
   "stairs_edits": [
@@ -2399,7 +3042,9 @@
         "edges": [],
         "routes": [],
         "status": "requires_recorded_gesture"
-      }
+      },
+      "result_class": "StairF",
+      "result_class_status": "probe_inferred"
     },
     {
       "id": "stairs_open_right",
@@ -2478,7 +3123,9 @@
         "edges": [],
         "routes": [],
         "status": "requires_recorded_gesture"
-      }
+      },
+      "result_class": "StairF",
+      "result_class_status": "probe_inferred"
     },
     {
       "id": "stairs_l_left",
@@ -2558,7 +3205,9 @@
         "edges": [],
         "routes": [],
         "status": "requires_recorded_gesture"
-      }
+      },
+      "result_class": "StairR",
+      "result_class_status": "probe_inferred"
     },
     {
       "id": "stairs_l_right",
@@ -2598,6 +3247,2096 @@
       "reset": "native_reset",
       "transforms": {
         "mirror": "stairs_l_left",
+        "rotations": []
+      },
+      "gesture": {
+        "nodes": {
+          "near_left": [
+            0.0,
+            0.0
+          ],
+          "near_middle": [
+            0.5,
+            0.0
+          ],
+          "near_right": [
+            1.0,
+            0.0
+          ],
+          "left_middle": [
+            0.0,
+            0.5
+          ],
+          "right_middle": [
+            1.0,
+            0.5
+          ],
+          "far_left": [
+            0.0,
+            1.0
+          ],
+          "far_middle": [
+            0.5,
+            1.0
+          ],
+          "far_right": [
+            1.0,
+            1.0
+          ]
+        },
+        "edges": [],
+        "routes": [],
+        "status": "requires_recorded_gesture"
+      },
+      "result_class": "StairR",
+      "result_class_status": "probe_inferred"
+    },
+    {
+      "id": "ramp_half_nl_nr",
+      "name": "Half ramp (near left up to near right)",
+      "tiles": [
+        0,
+        1
+      ],
+      "path": [
+        0,
+        1
+      ],
+      "kind": "grid",
+      "mirror_of": "ramp_half_nr_nl",
+      "suggest": false,
+      "confirmed": false,
+      "purpose": [
+        "climb",
+        "pass_through"
+      ],
+      "exposure": "high",
+      "cover_left": 2,
+      "difficulty": 1,
+      "when_to_use": "A one-tile-wide ramp: half the material face, the other half open to walk or shoot past.",
+      "source": "UEFN build-class probe 2026-10-10 (PBWA_W1_* placed and photographed); unconfirmed tile set",
+      "result_class": "StairF",
+      "result_class_status": "probe_inferred",
+      "validation": {
+        "status": "unverified",
+        "game_version": null,
+        "evidence": [],
+        "result_confirmed": false,
+        "reason": "Ramp path from the build-class probe; confirm through recorded and reviewed attempts."
+      },
+      "topology": "gesture_graph",
+      "mask": null,
+      "result_shape": "Half ramp (near left up to near right)",
+      "preconditions": [
+        "editable_target",
+        "standard_editing"
+      ],
+      "reset": "native_reset",
+      "transforms": {
+        "mirror": "ramp_half_nr_nl",
+        "rotations": []
+      },
+      "gesture": {
+        "nodes": {
+          "near_left": [
+            0.0,
+            0.0
+          ],
+          "near_middle": [
+            0.5,
+            0.0
+          ],
+          "near_right": [
+            1.0,
+            0.0
+          ],
+          "left_middle": [
+            0.0,
+            0.5
+          ],
+          "right_middle": [
+            1.0,
+            0.5
+          ],
+          "far_left": [
+            0.0,
+            1.0
+          ],
+          "far_middle": [
+            0.5,
+            1.0
+          ],
+          "far_right": [
+            1.0,
+            1.0
+          ]
+        },
+        "edges": [],
+        "routes": [],
+        "status": "requires_recorded_gesture"
+      }
+    },
+    {
+      "id": "ramp_half_nl_fl",
+      "name": "Half ramp (near left up to far left)",
+      "tiles": [
+        0,
+        2
+      ],
+      "path": [
+        0,
+        2
+      ],
+      "kind": "grid",
+      "mirror_of": "ramp_half_nr_fr",
+      "suggest": false,
+      "confirmed": false,
+      "purpose": [
+        "climb",
+        "pass_through"
+      ],
+      "exposure": "high",
+      "cover_left": 2,
+      "difficulty": 1,
+      "when_to_use": "A one-tile-wide ramp: half the material face, the other half open to walk or shoot past.",
+      "source": "UEFN build-class probe 2026-10-10 (PBWA_W1_* placed and photographed); unconfirmed tile set",
+      "result_class": "StairF",
+      "result_class_status": "probe_inferred",
+      "validation": {
+        "status": "unverified",
+        "game_version": null,
+        "evidence": [],
+        "result_confirmed": false,
+        "reason": "Ramp path from the build-class probe; confirm through recorded and reviewed attempts."
+      },
+      "topology": "gesture_graph",
+      "mask": null,
+      "result_shape": "Half ramp (near left up to far left)",
+      "preconditions": [
+        "editable_target",
+        "standard_editing"
+      ],
+      "reset": "native_reset",
+      "transforms": {
+        "mirror": "ramp_half_nr_fr",
+        "rotations": []
+      },
+      "gesture": {
+        "nodes": {
+          "near_left": [
+            0.0,
+            0.0
+          ],
+          "near_middle": [
+            0.5,
+            0.0
+          ],
+          "near_right": [
+            1.0,
+            0.0
+          ],
+          "left_middle": [
+            0.0,
+            0.5
+          ],
+          "right_middle": [
+            1.0,
+            0.5
+          ],
+          "far_left": [
+            0.0,
+            1.0
+          ],
+          "far_middle": [
+            0.5,
+            1.0
+          ],
+          "far_right": [
+            1.0,
+            1.0
+          ]
+        },
+        "edges": [],
+        "routes": [],
+        "status": "requires_recorded_gesture"
+      }
+    },
+    {
+      "id": "ramp_half_nr_fr",
+      "name": "Half ramp (near right up to far right)",
+      "tiles": [
+        1,
+        3
+      ],
+      "path": [
+        1,
+        3
+      ],
+      "kind": "grid",
+      "mirror_of": "ramp_half_nl_fl",
+      "suggest": false,
+      "confirmed": false,
+      "purpose": [
+        "climb",
+        "pass_through"
+      ],
+      "exposure": "high",
+      "cover_left": 2,
+      "difficulty": 1,
+      "when_to_use": "A one-tile-wide ramp: half the material face, the other half open to walk or shoot past.",
+      "source": "UEFN build-class probe 2026-10-10 (PBWA_W1_* placed and photographed); unconfirmed tile set",
+      "result_class": "StairF",
+      "result_class_status": "probe_inferred",
+      "validation": {
+        "status": "unverified",
+        "game_version": null,
+        "evidence": [],
+        "result_confirmed": false,
+        "reason": "Ramp path from the build-class probe; confirm through recorded and reviewed attempts."
+      },
+      "topology": "gesture_graph",
+      "mask": null,
+      "result_shape": "Half ramp (near right up to far right)",
+      "preconditions": [
+        "editable_target",
+        "standard_editing"
+      ],
+      "reset": "native_reset",
+      "transforms": {
+        "mirror": "ramp_half_nl_fl",
+        "rotations": []
+      },
+      "gesture": {
+        "nodes": {
+          "near_left": [
+            0.0,
+            0.0
+          ],
+          "near_middle": [
+            0.5,
+            0.0
+          ],
+          "near_right": [
+            1.0,
+            0.0
+          ],
+          "left_middle": [
+            0.0,
+            0.5
+          ],
+          "right_middle": [
+            1.0,
+            0.5
+          ],
+          "far_left": [
+            0.0,
+            1.0
+          ],
+          "far_middle": [
+            0.5,
+            1.0
+          ],
+          "far_right": [
+            1.0,
+            1.0
+          ]
+        },
+        "edges": [],
+        "routes": [],
+        "status": "requires_recorded_gesture"
+      }
+    },
+    {
+      "id": "ramp_half_nr_nl",
+      "name": "Half ramp (near right up to near left)",
+      "tiles": [
+        1,
+        0
+      ],
+      "path": [
+        1,
+        0
+      ],
+      "kind": "grid",
+      "mirror_of": "ramp_half_nl_nr",
+      "suggest": false,
+      "confirmed": false,
+      "purpose": [
+        "climb",
+        "pass_through"
+      ],
+      "exposure": "high",
+      "cover_left": 2,
+      "difficulty": 1,
+      "when_to_use": "A one-tile-wide ramp: half the material face, the other half open to walk or shoot past.",
+      "source": "UEFN build-class probe 2026-10-10 (PBWA_W1_* placed and photographed); unconfirmed tile set",
+      "result_class": "StairF",
+      "result_class_status": "probe_inferred",
+      "validation": {
+        "status": "unverified",
+        "game_version": null,
+        "evidence": [],
+        "result_confirmed": false,
+        "reason": "Ramp path from the build-class probe; confirm through recorded and reviewed attempts."
+      },
+      "topology": "gesture_graph",
+      "mask": null,
+      "result_shape": "Half ramp (near right up to near left)",
+      "preconditions": [
+        "editable_target",
+        "standard_editing"
+      ],
+      "reset": "native_reset",
+      "transforms": {
+        "mirror": "ramp_half_nl_nr",
+        "rotations": []
+      },
+      "gesture": {
+        "nodes": {
+          "near_left": [
+            0.0,
+            0.0
+          ],
+          "near_middle": [
+            0.5,
+            0.0
+          ],
+          "near_right": [
+            1.0,
+            0.0
+          ],
+          "left_middle": [
+            0.0,
+            0.5
+          ],
+          "right_middle": [
+            1.0,
+            0.5
+          ],
+          "far_left": [
+            0.0,
+            1.0
+          ],
+          "far_middle": [
+            0.5,
+            1.0
+          ],
+          "far_right": [
+            1.0,
+            1.0
+          ]
+        },
+        "edges": [],
+        "routes": [],
+        "status": "requires_recorded_gesture"
+      }
+    },
+    {
+      "id": "ramp_half_fr_fl",
+      "name": "Half ramp (far right up to far left)",
+      "tiles": [
+        3,
+        2
+      ],
+      "path": [
+        3,
+        2
+      ],
+      "kind": "grid",
+      "mirror_of": "ramp_half_fl_fr",
+      "suggest": false,
+      "confirmed": false,
+      "purpose": [
+        "climb",
+        "pass_through"
+      ],
+      "exposure": "high",
+      "cover_left": 2,
+      "difficulty": 1,
+      "when_to_use": "A one-tile-wide ramp: half the material face, the other half open to walk or shoot past.",
+      "source": "UEFN build-class probe 2026-10-10 (PBWA_W1_* placed and photographed); unconfirmed tile set",
+      "result_class": "StairF",
+      "result_class_status": "probe_inferred",
+      "validation": {
+        "status": "unverified",
+        "game_version": null,
+        "evidence": [],
+        "result_confirmed": false,
+        "reason": "Ramp path from the build-class probe; confirm through recorded and reviewed attempts."
+      },
+      "topology": "gesture_graph",
+      "mask": null,
+      "result_shape": "Half ramp (far right up to far left)",
+      "preconditions": [
+        "editable_target",
+        "standard_editing"
+      ],
+      "reset": "native_reset",
+      "transforms": {
+        "mirror": "ramp_half_fl_fr",
+        "rotations": []
+      },
+      "gesture": {
+        "nodes": {
+          "near_left": [
+            0.0,
+            0.0
+          ],
+          "near_middle": [
+            0.5,
+            0.0
+          ],
+          "near_right": [
+            1.0,
+            0.0
+          ],
+          "left_middle": [
+            0.0,
+            0.5
+          ],
+          "right_middle": [
+            1.0,
+            0.5
+          ],
+          "far_left": [
+            0.0,
+            1.0
+          ],
+          "far_middle": [
+            0.5,
+            1.0
+          ],
+          "far_right": [
+            1.0,
+            1.0
+          ]
+        },
+        "edges": [],
+        "routes": [],
+        "status": "requires_recorded_gesture"
+      }
+    },
+    {
+      "id": "ramp_half_fr_nr",
+      "name": "Half ramp (far right up to near right)",
+      "tiles": [
+        3,
+        1
+      ],
+      "path": [
+        3,
+        1
+      ],
+      "kind": "grid",
+      "mirror_of": "ramp_half_fl_nl",
+      "suggest": false,
+      "confirmed": false,
+      "purpose": [
+        "climb",
+        "pass_through"
+      ],
+      "exposure": "high",
+      "cover_left": 2,
+      "difficulty": 1,
+      "when_to_use": "A one-tile-wide ramp: half the material face, the other half open to walk or shoot past.",
+      "source": "UEFN build-class probe 2026-10-10 (PBWA_W1_* placed and photographed); unconfirmed tile set",
+      "result_class": "StairF",
+      "result_class_status": "probe_inferred",
+      "validation": {
+        "status": "unverified",
+        "game_version": null,
+        "evidence": [],
+        "result_confirmed": false,
+        "reason": "Ramp path from the build-class probe; confirm through recorded and reviewed attempts."
+      },
+      "topology": "gesture_graph",
+      "mask": null,
+      "result_shape": "Half ramp (far right up to near right)",
+      "preconditions": [
+        "editable_target",
+        "standard_editing"
+      ],
+      "reset": "native_reset",
+      "transforms": {
+        "mirror": "ramp_half_fl_nl",
+        "rotations": []
+      },
+      "gesture": {
+        "nodes": {
+          "near_left": [
+            0.0,
+            0.0
+          ],
+          "near_middle": [
+            0.5,
+            0.0
+          ],
+          "near_right": [
+            1.0,
+            0.0
+          ],
+          "left_middle": [
+            0.0,
+            0.5
+          ],
+          "right_middle": [
+            1.0,
+            0.5
+          ],
+          "far_left": [
+            0.0,
+            1.0
+          ],
+          "far_middle": [
+            0.5,
+            1.0
+          ],
+          "far_right": [
+            1.0,
+            1.0
+          ]
+        },
+        "edges": [],
+        "routes": [],
+        "status": "requires_recorded_gesture"
+      }
+    },
+    {
+      "id": "ramp_half_fl_nl",
+      "name": "Half ramp (far left up to near left)",
+      "tiles": [
+        2,
+        0
+      ],
+      "path": [
+        2,
+        0
+      ],
+      "kind": "grid",
+      "mirror_of": "ramp_half_fr_nr",
+      "suggest": false,
+      "confirmed": false,
+      "purpose": [
+        "climb",
+        "pass_through"
+      ],
+      "exposure": "high",
+      "cover_left": 2,
+      "difficulty": 1,
+      "when_to_use": "A one-tile-wide ramp: half the material face, the other half open to walk or shoot past.",
+      "source": "UEFN build-class probe 2026-10-10 (PBWA_W1_* placed and photographed); unconfirmed tile set",
+      "result_class": "StairF",
+      "result_class_status": "probe_inferred",
+      "validation": {
+        "status": "unverified",
+        "game_version": null,
+        "evidence": [],
+        "result_confirmed": false,
+        "reason": "Ramp path from the build-class probe; confirm through recorded and reviewed attempts."
+      },
+      "topology": "gesture_graph",
+      "mask": null,
+      "result_shape": "Half ramp (far left up to near left)",
+      "preconditions": [
+        "editable_target",
+        "standard_editing"
+      ],
+      "reset": "native_reset",
+      "transforms": {
+        "mirror": "ramp_half_fr_nr",
+        "rotations": []
+      },
+      "gesture": {
+        "nodes": {
+          "near_left": [
+            0.0,
+            0.0
+          ],
+          "near_middle": [
+            0.5,
+            0.0
+          ],
+          "near_right": [
+            1.0,
+            0.0
+          ],
+          "left_middle": [
+            0.0,
+            0.5
+          ],
+          "right_middle": [
+            1.0,
+            0.5
+          ],
+          "far_left": [
+            0.0,
+            1.0
+          ],
+          "far_middle": [
+            0.5,
+            1.0
+          ],
+          "far_right": [
+            1.0,
+            1.0
+          ]
+        },
+        "edges": [],
+        "routes": [],
+        "status": "requires_recorded_gesture"
+      }
+    },
+    {
+      "id": "ramp_half_fl_fr",
+      "name": "Half ramp (far left up to far right)",
+      "tiles": [
+        2,
+        3
+      ],
+      "path": [
+        2,
+        3
+      ],
+      "kind": "grid",
+      "mirror_of": "ramp_half_fr_fl",
+      "suggest": false,
+      "confirmed": false,
+      "purpose": [
+        "climb",
+        "pass_through"
+      ],
+      "exposure": "high",
+      "cover_left": 2,
+      "difficulty": 1,
+      "when_to_use": "A one-tile-wide ramp: half the material face, the other half open to walk or shoot past.",
+      "source": "UEFN build-class probe 2026-10-10 (PBWA_W1_* placed and photographed); unconfirmed tile set",
+      "result_class": "StairF",
+      "result_class_status": "probe_inferred",
+      "validation": {
+        "status": "unverified",
+        "game_version": null,
+        "evidence": [],
+        "result_confirmed": false,
+        "reason": "Ramp path from the build-class probe; confirm through recorded and reviewed attempts."
+      },
+      "topology": "gesture_graph",
+      "mask": null,
+      "result_shape": "Half ramp (far left up to far right)",
+      "preconditions": [
+        "editable_target",
+        "standard_editing"
+      ],
+      "reset": "native_reset",
+      "transforms": {
+        "mirror": "ramp_half_fr_fl",
+        "rotations": []
+      },
+      "gesture": {
+        "nodes": {
+          "near_left": [
+            0.0,
+            0.0
+          ],
+          "near_middle": [
+            0.5,
+            0.0
+          ],
+          "near_right": [
+            1.0,
+            0.0
+          ],
+          "left_middle": [
+            0.0,
+            0.5
+          ],
+          "right_middle": [
+            1.0,
+            0.5
+          ],
+          "far_left": [
+            0.0,
+            1.0
+          ],
+          "far_middle": [
+            0.5,
+            1.0
+          ],
+          "far_right": [
+            1.0,
+            1.0
+          ]
+        },
+        "edges": [],
+        "routes": [],
+        "status": "requires_recorded_gesture"
+      }
+    },
+    {
+      "id": "ramp_l_nl_nr_fr",
+      "name": "L ramp (near left up to far right)",
+      "tiles": [
+        0,
+        1,
+        3
+      ],
+      "path": [
+        0,
+        1,
+        3
+      ],
+      "kind": "grid",
+      "mirror_of": "ramp_l_nr_nl_fl",
+      "suggest": false,
+      "confirmed": false,
+      "purpose": [
+        "climb",
+        "protect"
+      ],
+      "exposure": "medium",
+      "cover_left": 3,
+      "difficulty": 2,
+      "when_to_use": "Stairs that turn a corner: climb while turning, keeping cover on the turn.",
+      "source": "UEFN build-class probe 2026-10-10 (PBWA_W1_* placed and photographed); unconfirmed tile set",
+      "result_class": "StairR",
+      "result_class_status": "probe_inferred",
+      "validation": {
+        "status": "unverified",
+        "game_version": null,
+        "evidence": [],
+        "result_confirmed": false,
+        "reason": "Ramp path from the build-class probe; confirm through recorded and reviewed attempts."
+      },
+      "topology": "gesture_graph",
+      "mask": null,
+      "result_shape": "L ramp (near left up to far right)",
+      "preconditions": [
+        "editable_target",
+        "standard_editing"
+      ],
+      "reset": "native_reset",
+      "transforms": {
+        "mirror": "ramp_l_nr_nl_fl",
+        "rotations": []
+      },
+      "gesture": {
+        "nodes": {
+          "near_left": [
+            0.0,
+            0.0
+          ],
+          "near_middle": [
+            0.5,
+            0.0
+          ],
+          "near_right": [
+            1.0,
+            0.0
+          ],
+          "left_middle": [
+            0.0,
+            0.5
+          ],
+          "right_middle": [
+            1.0,
+            0.5
+          ],
+          "far_left": [
+            0.0,
+            1.0
+          ],
+          "far_middle": [
+            0.5,
+            1.0
+          ],
+          "far_right": [
+            1.0,
+            1.0
+          ]
+        },
+        "edges": [],
+        "routes": [],
+        "status": "requires_recorded_gesture"
+      }
+    },
+    {
+      "id": "ramp_l_nl_fl_fr",
+      "name": "L ramp (near left up to far right)",
+      "tiles": [
+        0,
+        2,
+        3
+      ],
+      "path": [
+        0,
+        2,
+        3
+      ],
+      "kind": "grid",
+      "mirror_of": "ramp_l_nr_fr_fl",
+      "suggest": false,
+      "confirmed": false,
+      "purpose": [
+        "climb",
+        "protect"
+      ],
+      "exposure": "medium",
+      "cover_left": 3,
+      "difficulty": 2,
+      "when_to_use": "Stairs that turn a corner: climb while turning, keeping cover on the turn.",
+      "source": "UEFN build-class probe 2026-10-10 (PBWA_W1_* placed and photographed); unconfirmed tile set",
+      "result_class": "StairR",
+      "result_class_status": "probe_inferred",
+      "validation": {
+        "status": "unverified",
+        "game_version": null,
+        "evidence": [],
+        "result_confirmed": false,
+        "reason": "Ramp path from the build-class probe; confirm through recorded and reviewed attempts."
+      },
+      "topology": "gesture_graph",
+      "mask": null,
+      "result_shape": "L ramp (near left up to far right)",
+      "preconditions": [
+        "editable_target",
+        "standard_editing"
+      ],
+      "reset": "native_reset",
+      "transforms": {
+        "mirror": "ramp_l_nr_fr_fl",
+        "rotations": []
+      },
+      "gesture": {
+        "nodes": {
+          "near_left": [
+            0.0,
+            0.0
+          ],
+          "near_middle": [
+            0.5,
+            0.0
+          ],
+          "near_right": [
+            1.0,
+            0.0
+          ],
+          "left_middle": [
+            0.0,
+            0.5
+          ],
+          "right_middle": [
+            1.0,
+            0.5
+          ],
+          "far_left": [
+            0.0,
+            1.0
+          ],
+          "far_middle": [
+            0.5,
+            1.0
+          ],
+          "far_right": [
+            1.0,
+            1.0
+          ]
+        },
+        "edges": [],
+        "routes": [],
+        "status": "requires_recorded_gesture"
+      }
+    },
+    {
+      "id": "ramp_l_nr_fr_fl",
+      "name": "L ramp (near right up to far left)",
+      "tiles": [
+        1,
+        3,
+        2
+      ],
+      "path": [
+        1,
+        3,
+        2
+      ],
+      "kind": "grid",
+      "mirror_of": "ramp_l_nl_fl_fr",
+      "suggest": false,
+      "confirmed": false,
+      "purpose": [
+        "climb",
+        "protect"
+      ],
+      "exposure": "medium",
+      "cover_left": 3,
+      "difficulty": 2,
+      "when_to_use": "Stairs that turn a corner: climb while turning, keeping cover on the turn.",
+      "source": "UEFN build-class probe 2026-10-10 (PBWA_W1_* placed and photographed); unconfirmed tile set",
+      "result_class": "StairR",
+      "result_class_status": "probe_inferred",
+      "validation": {
+        "status": "unverified",
+        "game_version": null,
+        "evidence": [],
+        "result_confirmed": false,
+        "reason": "Ramp path from the build-class probe; confirm through recorded and reviewed attempts."
+      },
+      "topology": "gesture_graph",
+      "mask": null,
+      "result_shape": "L ramp (near right up to far left)",
+      "preconditions": [
+        "editable_target",
+        "standard_editing"
+      ],
+      "reset": "native_reset",
+      "transforms": {
+        "mirror": "ramp_l_nl_fl_fr",
+        "rotations": []
+      },
+      "gesture": {
+        "nodes": {
+          "near_left": [
+            0.0,
+            0.0
+          ],
+          "near_middle": [
+            0.5,
+            0.0
+          ],
+          "near_right": [
+            1.0,
+            0.0
+          ],
+          "left_middle": [
+            0.0,
+            0.5
+          ],
+          "right_middle": [
+            1.0,
+            0.5
+          ],
+          "far_left": [
+            0.0,
+            1.0
+          ],
+          "far_middle": [
+            0.5,
+            1.0
+          ],
+          "far_right": [
+            1.0,
+            1.0
+          ]
+        },
+        "edges": [],
+        "routes": [],
+        "status": "requires_recorded_gesture"
+      }
+    },
+    {
+      "id": "ramp_l_nr_nl_fl",
+      "name": "L ramp (near right up to far left)",
+      "tiles": [
+        1,
+        0,
+        2
+      ],
+      "path": [
+        1,
+        0,
+        2
+      ],
+      "kind": "grid",
+      "mirror_of": "ramp_l_nl_nr_fr",
+      "suggest": false,
+      "confirmed": false,
+      "purpose": [
+        "climb",
+        "protect"
+      ],
+      "exposure": "medium",
+      "cover_left": 3,
+      "difficulty": 2,
+      "when_to_use": "Stairs that turn a corner: climb while turning, keeping cover on the turn.",
+      "source": "UEFN build-class probe 2026-10-10 (PBWA_W1_* placed and photographed); unconfirmed tile set",
+      "result_class": "StairR",
+      "result_class_status": "probe_inferred",
+      "validation": {
+        "status": "unverified",
+        "game_version": null,
+        "evidence": [],
+        "result_confirmed": false,
+        "reason": "Ramp path from the build-class probe; confirm through recorded and reviewed attempts."
+      },
+      "topology": "gesture_graph",
+      "mask": null,
+      "result_shape": "L ramp (near right up to far left)",
+      "preconditions": [
+        "editable_target",
+        "standard_editing"
+      ],
+      "reset": "native_reset",
+      "transforms": {
+        "mirror": "ramp_l_nl_nr_fr",
+        "rotations": []
+      },
+      "gesture": {
+        "nodes": {
+          "near_left": [
+            0.0,
+            0.0
+          ],
+          "near_middle": [
+            0.5,
+            0.0
+          ],
+          "near_right": [
+            1.0,
+            0.0
+          ],
+          "left_middle": [
+            0.0,
+            0.5
+          ],
+          "right_middle": [
+            1.0,
+            0.5
+          ],
+          "far_left": [
+            0.0,
+            1.0
+          ],
+          "far_middle": [
+            0.5,
+            1.0
+          ],
+          "far_right": [
+            1.0,
+            1.0
+          ]
+        },
+        "edges": [],
+        "routes": [],
+        "status": "requires_recorded_gesture"
+      }
+    },
+    {
+      "id": "ramp_l_fr_fl_nl",
+      "name": "L ramp (far right up to near left)",
+      "tiles": [
+        3,
+        2,
+        0
+      ],
+      "path": [
+        3,
+        2,
+        0
+      ],
+      "kind": "grid",
+      "mirror_of": "ramp_l_fl_fr_nr",
+      "suggest": false,
+      "confirmed": false,
+      "purpose": [
+        "climb",
+        "protect"
+      ],
+      "exposure": "medium",
+      "cover_left": 3,
+      "difficulty": 2,
+      "when_to_use": "Stairs that turn a corner: climb while turning, keeping cover on the turn.",
+      "source": "UEFN build-class probe 2026-10-10 (PBWA_W1_* placed and photographed); unconfirmed tile set",
+      "result_class": "StairR",
+      "result_class_status": "probe_inferred",
+      "validation": {
+        "status": "unverified",
+        "game_version": null,
+        "evidence": [],
+        "result_confirmed": false,
+        "reason": "Ramp path from the build-class probe; confirm through recorded and reviewed attempts."
+      },
+      "topology": "gesture_graph",
+      "mask": null,
+      "result_shape": "L ramp (far right up to near left)",
+      "preconditions": [
+        "editable_target",
+        "standard_editing"
+      ],
+      "reset": "native_reset",
+      "transforms": {
+        "mirror": "ramp_l_fl_fr_nr",
+        "rotations": []
+      },
+      "gesture": {
+        "nodes": {
+          "near_left": [
+            0.0,
+            0.0
+          ],
+          "near_middle": [
+            0.5,
+            0.0
+          ],
+          "near_right": [
+            1.0,
+            0.0
+          ],
+          "left_middle": [
+            0.0,
+            0.5
+          ],
+          "right_middle": [
+            1.0,
+            0.5
+          ],
+          "far_left": [
+            0.0,
+            1.0
+          ],
+          "far_middle": [
+            0.5,
+            1.0
+          ],
+          "far_right": [
+            1.0,
+            1.0
+          ]
+        },
+        "edges": [],
+        "routes": [],
+        "status": "requires_recorded_gesture"
+      }
+    },
+    {
+      "id": "ramp_l_fr_nr_nl",
+      "name": "L ramp (far right up to near left)",
+      "tiles": [
+        3,
+        1,
+        0
+      ],
+      "path": [
+        3,
+        1,
+        0
+      ],
+      "kind": "grid",
+      "mirror_of": "ramp_l_fl_nl_nr",
+      "suggest": false,
+      "confirmed": false,
+      "purpose": [
+        "climb",
+        "protect"
+      ],
+      "exposure": "medium",
+      "cover_left": 3,
+      "difficulty": 2,
+      "when_to_use": "Stairs that turn a corner: climb while turning, keeping cover on the turn.",
+      "source": "UEFN build-class probe 2026-10-10 (PBWA_W1_* placed and photographed); unconfirmed tile set",
+      "result_class": "StairR",
+      "result_class_status": "probe_inferred",
+      "validation": {
+        "status": "unverified",
+        "game_version": null,
+        "evidence": [],
+        "result_confirmed": false,
+        "reason": "Ramp path from the build-class probe; confirm through recorded and reviewed attempts."
+      },
+      "topology": "gesture_graph",
+      "mask": null,
+      "result_shape": "L ramp (far right up to near left)",
+      "preconditions": [
+        "editable_target",
+        "standard_editing"
+      ],
+      "reset": "native_reset",
+      "transforms": {
+        "mirror": "ramp_l_fl_nl_nr",
+        "rotations": []
+      },
+      "gesture": {
+        "nodes": {
+          "near_left": [
+            0.0,
+            0.0
+          ],
+          "near_middle": [
+            0.5,
+            0.0
+          ],
+          "near_right": [
+            1.0,
+            0.0
+          ],
+          "left_middle": [
+            0.0,
+            0.5
+          ],
+          "right_middle": [
+            1.0,
+            0.5
+          ],
+          "far_left": [
+            0.0,
+            1.0
+          ],
+          "far_middle": [
+            0.5,
+            1.0
+          ],
+          "far_right": [
+            1.0,
+            1.0
+          ]
+        },
+        "edges": [],
+        "routes": [],
+        "status": "requires_recorded_gesture"
+      }
+    },
+    {
+      "id": "ramp_l_fl_nl_nr",
+      "name": "L ramp (far left up to near right)",
+      "tiles": [
+        2,
+        0,
+        1
+      ],
+      "path": [
+        2,
+        0,
+        1
+      ],
+      "kind": "grid",
+      "mirror_of": "ramp_l_fr_nr_nl",
+      "suggest": false,
+      "confirmed": false,
+      "purpose": [
+        "climb",
+        "protect"
+      ],
+      "exposure": "medium",
+      "cover_left": 3,
+      "difficulty": 2,
+      "when_to_use": "Stairs that turn a corner: climb while turning, keeping cover on the turn.",
+      "source": "UEFN build-class probe 2026-10-10 (PBWA_W1_* placed and photographed); unconfirmed tile set",
+      "result_class": "StairR",
+      "result_class_status": "probe_inferred",
+      "validation": {
+        "status": "unverified",
+        "game_version": null,
+        "evidence": [],
+        "result_confirmed": false,
+        "reason": "Ramp path from the build-class probe; confirm through recorded and reviewed attempts."
+      },
+      "topology": "gesture_graph",
+      "mask": null,
+      "result_shape": "L ramp (far left up to near right)",
+      "preconditions": [
+        "editable_target",
+        "standard_editing"
+      ],
+      "reset": "native_reset",
+      "transforms": {
+        "mirror": "ramp_l_fr_nr_nl",
+        "rotations": []
+      },
+      "gesture": {
+        "nodes": {
+          "near_left": [
+            0.0,
+            0.0
+          ],
+          "near_middle": [
+            0.5,
+            0.0
+          ],
+          "near_right": [
+            1.0,
+            0.0
+          ],
+          "left_middle": [
+            0.0,
+            0.5
+          ],
+          "right_middle": [
+            1.0,
+            0.5
+          ],
+          "far_left": [
+            0.0,
+            1.0
+          ],
+          "far_middle": [
+            0.5,
+            1.0
+          ],
+          "far_right": [
+            1.0,
+            1.0
+          ]
+        },
+        "edges": [],
+        "routes": [],
+        "status": "requires_recorded_gesture"
+      }
+    },
+    {
+      "id": "ramp_l_fl_fr_nr",
+      "name": "L ramp (far left up to near right)",
+      "tiles": [
+        2,
+        3,
+        1
+      ],
+      "path": [
+        2,
+        3,
+        1
+      ],
+      "kind": "grid",
+      "mirror_of": "ramp_l_fr_fl_nl",
+      "suggest": false,
+      "confirmed": false,
+      "purpose": [
+        "climb",
+        "protect"
+      ],
+      "exposure": "medium",
+      "cover_left": 3,
+      "difficulty": 2,
+      "when_to_use": "Stairs that turn a corner: climb while turning, keeping cover on the turn.",
+      "source": "UEFN build-class probe 2026-10-10 (PBWA_W1_* placed and photographed); unconfirmed tile set",
+      "result_class": "StairR",
+      "result_class_status": "probe_inferred",
+      "validation": {
+        "status": "unverified",
+        "game_version": null,
+        "evidence": [],
+        "result_confirmed": false,
+        "reason": "Ramp path from the build-class probe; confirm through recorded and reviewed attempts."
+      },
+      "topology": "gesture_graph",
+      "mask": null,
+      "result_shape": "L ramp (far left up to near right)",
+      "preconditions": [
+        "editable_target",
+        "standard_editing"
+      ],
+      "reset": "native_reset",
+      "transforms": {
+        "mirror": "ramp_l_fr_fl_nl",
+        "rotations": []
+      },
+      "gesture": {
+        "nodes": {
+          "near_left": [
+            0.0,
+            0.0
+          ],
+          "near_middle": [
+            0.5,
+            0.0
+          ],
+          "near_right": [
+            1.0,
+            0.0
+          ],
+          "left_middle": [
+            0.0,
+            0.5
+          ],
+          "right_middle": [
+            1.0,
+            0.5
+          ],
+          "far_left": [
+            0.0,
+            1.0
+          ],
+          "far_middle": [
+            0.5,
+            1.0
+          ],
+          "far_right": [
+            1.0,
+            1.0
+          ]
+        },
+        "edges": [],
+        "routes": [],
+        "status": "requires_recorded_gesture"
+      }
+    },
+    {
+      "id": "ramp_spiral_nl_nr_fr_fl",
+      "name": "Spiral ramp (near left up to far left)",
+      "tiles": [
+        0,
+        1,
+        3,
+        2
+      ],
+      "path": [
+        0,
+        1,
+        3,
+        2
+      ],
+      "kind": "grid",
+      "mirror_of": "ramp_spiral_nr_nl_fl_fr",
+      "suggest": false,
+      "confirmed": false,
+      "purpose": [
+        "climb",
+        "protect"
+      ],
+      "exposure": "low",
+      "cover_left": 4,
+      "difficulty": 3,
+      "when_to_use": "Stairs that wind round all four tiles: climb a full storey inside one cell.",
+      "source": "UEFN build-class probe 2026-10-10 (PBWA_W1_* placed and photographed); unconfirmed tile set",
+      "result_class": "StairSpiral",
+      "result_class_status": "probe_inferred",
+      "validation": {
+        "status": "unverified",
+        "game_version": null,
+        "evidence": [],
+        "result_confirmed": false,
+        "reason": "Ramp path from the build-class probe; confirm through recorded and reviewed attempts."
+      },
+      "topology": "gesture_graph",
+      "mask": null,
+      "result_shape": "Spiral ramp (near left up to far left)",
+      "preconditions": [
+        "editable_target",
+        "standard_editing"
+      ],
+      "reset": "native_reset",
+      "transforms": {
+        "mirror": "ramp_spiral_nr_nl_fl_fr",
+        "rotations": []
+      },
+      "gesture": {
+        "nodes": {
+          "near_left": [
+            0.0,
+            0.0
+          ],
+          "near_middle": [
+            0.5,
+            0.0
+          ],
+          "near_right": [
+            1.0,
+            0.0
+          ],
+          "left_middle": [
+            0.0,
+            0.5
+          ],
+          "right_middle": [
+            1.0,
+            0.5
+          ],
+          "far_left": [
+            0.0,
+            1.0
+          ],
+          "far_middle": [
+            0.5,
+            1.0
+          ],
+          "far_right": [
+            1.0,
+            1.0
+          ]
+        },
+        "edges": [],
+        "routes": [],
+        "status": "requires_recorded_gesture"
+      }
+    },
+    {
+      "id": "ramp_spiral_nl_fl_fr_nr",
+      "name": "Spiral ramp (near left up to near right)",
+      "tiles": [
+        0,
+        2,
+        3,
+        1
+      ],
+      "path": [
+        0,
+        2,
+        3,
+        1
+      ],
+      "kind": "grid",
+      "mirror_of": "ramp_spiral_nr_fr_fl_nl",
+      "suggest": false,
+      "confirmed": false,
+      "purpose": [
+        "climb",
+        "protect"
+      ],
+      "exposure": "low",
+      "cover_left": 4,
+      "difficulty": 3,
+      "when_to_use": "Stairs that wind round all four tiles: climb a full storey inside one cell.",
+      "source": "UEFN build-class probe 2026-10-10 (PBWA_W1_* placed and photographed); unconfirmed tile set",
+      "result_class": "StairSpiral",
+      "result_class_status": "probe_inferred",
+      "validation": {
+        "status": "unverified",
+        "game_version": null,
+        "evidence": [],
+        "result_confirmed": false,
+        "reason": "Ramp path from the build-class probe; confirm through recorded and reviewed attempts."
+      },
+      "topology": "gesture_graph",
+      "mask": null,
+      "result_shape": "Spiral ramp (near left up to near right)",
+      "preconditions": [
+        "editable_target",
+        "standard_editing"
+      ],
+      "reset": "native_reset",
+      "transforms": {
+        "mirror": "ramp_spiral_nr_fr_fl_nl",
+        "rotations": []
+      },
+      "gesture": {
+        "nodes": {
+          "near_left": [
+            0.0,
+            0.0
+          ],
+          "near_middle": [
+            0.5,
+            0.0
+          ],
+          "near_right": [
+            1.0,
+            0.0
+          ],
+          "left_middle": [
+            0.0,
+            0.5
+          ],
+          "right_middle": [
+            1.0,
+            0.5
+          ],
+          "far_left": [
+            0.0,
+            1.0
+          ],
+          "far_middle": [
+            0.5,
+            1.0
+          ],
+          "far_right": [
+            1.0,
+            1.0
+          ]
+        },
+        "edges": [],
+        "routes": [],
+        "status": "requires_recorded_gesture"
+      }
+    },
+    {
+      "id": "ramp_spiral_nr_fr_fl_nl",
+      "name": "Spiral ramp (near right up to near left)",
+      "tiles": [
+        1,
+        3,
+        2,
+        0
+      ],
+      "path": [
+        1,
+        3,
+        2,
+        0
+      ],
+      "kind": "grid",
+      "mirror_of": "ramp_spiral_nl_fl_fr_nr",
+      "suggest": false,
+      "confirmed": false,
+      "purpose": [
+        "climb",
+        "protect"
+      ],
+      "exposure": "low",
+      "cover_left": 4,
+      "difficulty": 3,
+      "when_to_use": "Stairs that wind round all four tiles: climb a full storey inside one cell.",
+      "source": "UEFN build-class probe 2026-10-10 (PBWA_W1_* placed and photographed); unconfirmed tile set",
+      "result_class": "StairSpiral",
+      "result_class_status": "probe_inferred",
+      "validation": {
+        "status": "unverified",
+        "game_version": null,
+        "evidence": [],
+        "result_confirmed": false,
+        "reason": "Ramp path from the build-class probe; confirm through recorded and reviewed attempts."
+      },
+      "topology": "gesture_graph",
+      "mask": null,
+      "result_shape": "Spiral ramp (near right up to near left)",
+      "preconditions": [
+        "editable_target",
+        "standard_editing"
+      ],
+      "reset": "native_reset",
+      "transforms": {
+        "mirror": "ramp_spiral_nl_fl_fr_nr",
+        "rotations": []
+      },
+      "gesture": {
+        "nodes": {
+          "near_left": [
+            0.0,
+            0.0
+          ],
+          "near_middle": [
+            0.5,
+            0.0
+          ],
+          "near_right": [
+            1.0,
+            0.0
+          ],
+          "left_middle": [
+            0.0,
+            0.5
+          ],
+          "right_middle": [
+            1.0,
+            0.5
+          ],
+          "far_left": [
+            0.0,
+            1.0
+          ],
+          "far_middle": [
+            0.5,
+            1.0
+          ],
+          "far_right": [
+            1.0,
+            1.0
+          ]
+        },
+        "edges": [],
+        "routes": [],
+        "status": "requires_recorded_gesture"
+      }
+    },
+    {
+      "id": "ramp_spiral_nr_nl_fl_fr",
+      "name": "Spiral ramp (near right up to far right)",
+      "tiles": [
+        1,
+        0,
+        2,
+        3
+      ],
+      "path": [
+        1,
+        0,
+        2,
+        3
+      ],
+      "kind": "grid",
+      "mirror_of": "ramp_spiral_nl_nr_fr_fl",
+      "suggest": false,
+      "confirmed": false,
+      "purpose": [
+        "climb",
+        "protect"
+      ],
+      "exposure": "low",
+      "cover_left": 4,
+      "difficulty": 3,
+      "when_to_use": "Stairs that wind round all four tiles: climb a full storey inside one cell.",
+      "source": "UEFN build-class probe 2026-10-10 (PBWA_W1_* placed and photographed); unconfirmed tile set",
+      "result_class": "StairSpiral",
+      "result_class_status": "probe_inferred",
+      "validation": {
+        "status": "unverified",
+        "game_version": null,
+        "evidence": [],
+        "result_confirmed": false,
+        "reason": "Ramp path from the build-class probe; confirm through recorded and reviewed attempts."
+      },
+      "topology": "gesture_graph",
+      "mask": null,
+      "result_shape": "Spiral ramp (near right up to far right)",
+      "preconditions": [
+        "editable_target",
+        "standard_editing"
+      ],
+      "reset": "native_reset",
+      "transforms": {
+        "mirror": "ramp_spiral_nl_nr_fr_fl",
+        "rotations": []
+      },
+      "gesture": {
+        "nodes": {
+          "near_left": [
+            0.0,
+            0.0
+          ],
+          "near_middle": [
+            0.5,
+            0.0
+          ],
+          "near_right": [
+            1.0,
+            0.0
+          ],
+          "left_middle": [
+            0.0,
+            0.5
+          ],
+          "right_middle": [
+            1.0,
+            0.5
+          ],
+          "far_left": [
+            0.0,
+            1.0
+          ],
+          "far_middle": [
+            0.5,
+            1.0
+          ],
+          "far_right": [
+            1.0,
+            1.0
+          ]
+        },
+        "edges": [],
+        "routes": [],
+        "status": "requires_recorded_gesture"
+      }
+    },
+    {
+      "id": "ramp_spiral_fr_fl_nl_nr",
+      "name": "Spiral ramp (far right up to near right)",
+      "tiles": [
+        3,
+        2,
+        0,
+        1
+      ],
+      "path": [
+        3,
+        2,
+        0,
+        1
+      ],
+      "kind": "grid",
+      "mirror_of": "ramp_spiral_fl_fr_nr_nl",
+      "suggest": false,
+      "confirmed": false,
+      "purpose": [
+        "climb",
+        "protect"
+      ],
+      "exposure": "low",
+      "cover_left": 4,
+      "difficulty": 3,
+      "when_to_use": "Stairs that wind round all four tiles: climb a full storey inside one cell.",
+      "source": "UEFN build-class probe 2026-10-10 (PBWA_W1_* placed and photographed); unconfirmed tile set",
+      "result_class": "StairSpiral",
+      "result_class_status": "probe_inferred",
+      "validation": {
+        "status": "unverified",
+        "game_version": null,
+        "evidence": [],
+        "result_confirmed": false,
+        "reason": "Ramp path from the build-class probe; confirm through recorded and reviewed attempts."
+      },
+      "topology": "gesture_graph",
+      "mask": null,
+      "result_shape": "Spiral ramp (far right up to near right)",
+      "preconditions": [
+        "editable_target",
+        "standard_editing"
+      ],
+      "reset": "native_reset",
+      "transforms": {
+        "mirror": "ramp_spiral_fl_fr_nr_nl",
+        "rotations": []
+      },
+      "gesture": {
+        "nodes": {
+          "near_left": [
+            0.0,
+            0.0
+          ],
+          "near_middle": [
+            0.5,
+            0.0
+          ],
+          "near_right": [
+            1.0,
+            0.0
+          ],
+          "left_middle": [
+            0.0,
+            0.5
+          ],
+          "right_middle": [
+            1.0,
+            0.5
+          ],
+          "far_left": [
+            0.0,
+            1.0
+          ],
+          "far_middle": [
+            0.5,
+            1.0
+          ],
+          "far_right": [
+            1.0,
+            1.0
+          ]
+        },
+        "edges": [],
+        "routes": [],
+        "status": "requires_recorded_gesture"
+      }
+    },
+    {
+      "id": "ramp_spiral_fr_nr_nl_fl",
+      "name": "Spiral ramp (far right up to far left)",
+      "tiles": [
+        3,
+        1,
+        0,
+        2
+      ],
+      "path": [
+        3,
+        1,
+        0,
+        2
+      ],
+      "kind": "grid",
+      "mirror_of": "ramp_spiral_fl_nl_nr_fr",
+      "suggest": false,
+      "confirmed": false,
+      "purpose": [
+        "climb",
+        "protect"
+      ],
+      "exposure": "low",
+      "cover_left": 4,
+      "difficulty": 3,
+      "when_to_use": "Stairs that wind round all four tiles: climb a full storey inside one cell.",
+      "source": "UEFN build-class probe 2026-10-10 (PBWA_W1_* placed and photographed); unconfirmed tile set",
+      "result_class": "StairSpiral",
+      "result_class_status": "probe_inferred",
+      "validation": {
+        "status": "unverified",
+        "game_version": null,
+        "evidence": [],
+        "result_confirmed": false,
+        "reason": "Ramp path from the build-class probe; confirm through recorded and reviewed attempts."
+      },
+      "topology": "gesture_graph",
+      "mask": null,
+      "result_shape": "Spiral ramp (far right up to far left)",
+      "preconditions": [
+        "editable_target",
+        "standard_editing"
+      ],
+      "reset": "native_reset",
+      "transforms": {
+        "mirror": "ramp_spiral_fl_nl_nr_fr",
+        "rotations": []
+      },
+      "gesture": {
+        "nodes": {
+          "near_left": [
+            0.0,
+            0.0
+          ],
+          "near_middle": [
+            0.5,
+            0.0
+          ],
+          "near_right": [
+            1.0,
+            0.0
+          ],
+          "left_middle": [
+            0.0,
+            0.5
+          ],
+          "right_middle": [
+            1.0,
+            0.5
+          ],
+          "far_left": [
+            0.0,
+            1.0
+          ],
+          "far_middle": [
+            0.5,
+            1.0
+          ],
+          "far_right": [
+            1.0,
+            1.0
+          ]
+        },
+        "edges": [],
+        "routes": [],
+        "status": "requires_recorded_gesture"
+      }
+    },
+    {
+      "id": "ramp_spiral_fl_nl_nr_fr",
+      "name": "Spiral ramp (far left up to far right)",
+      "tiles": [
+        2,
+        0,
+        1,
+        3
+      ],
+      "path": [
+        2,
+        0,
+        1,
+        3
+      ],
+      "kind": "grid",
+      "mirror_of": "ramp_spiral_fr_nr_nl_fl",
+      "suggest": false,
+      "confirmed": false,
+      "purpose": [
+        "climb",
+        "protect"
+      ],
+      "exposure": "low",
+      "cover_left": 4,
+      "difficulty": 3,
+      "when_to_use": "Stairs that wind round all four tiles: climb a full storey inside one cell.",
+      "source": "UEFN build-class probe 2026-10-10 (PBWA_W1_* placed and photographed); unconfirmed tile set",
+      "result_class": "StairSpiral",
+      "result_class_status": "probe_inferred",
+      "validation": {
+        "status": "unverified",
+        "game_version": null,
+        "evidence": [],
+        "result_confirmed": false,
+        "reason": "Ramp path from the build-class probe; confirm through recorded and reviewed attempts."
+      },
+      "topology": "gesture_graph",
+      "mask": null,
+      "result_shape": "Spiral ramp (far left up to far right)",
+      "preconditions": [
+        "editable_target",
+        "standard_editing"
+      ],
+      "reset": "native_reset",
+      "transforms": {
+        "mirror": "ramp_spiral_fr_nr_nl_fl",
+        "rotations": []
+      },
+      "gesture": {
+        "nodes": {
+          "near_left": [
+            0.0,
+            0.0
+          ],
+          "near_middle": [
+            0.5,
+            0.0
+          ],
+          "near_right": [
+            1.0,
+            0.0
+          ],
+          "left_middle": [
+            0.0,
+            0.5
+          ],
+          "right_middle": [
+            1.0,
+            0.5
+          ],
+          "far_left": [
+            0.0,
+            1.0
+          ],
+          "far_middle": [
+            0.5,
+            1.0
+          ],
+          "far_right": [
+            1.0,
+            1.0
+          ]
+        },
+        "edges": [],
+        "routes": [],
+        "status": "requires_recorded_gesture"
+      }
+    },
+    {
+      "id": "ramp_spiral_fl_fr_nr_nl",
+      "name": "Spiral ramp (far left up to near left)",
+      "tiles": [
+        2,
+        3,
+        1,
+        0
+      ],
+      "path": [
+        2,
+        3,
+        1,
+        0
+      ],
+      "kind": "grid",
+      "mirror_of": "ramp_spiral_fr_fl_nl_nr",
+      "suggest": false,
+      "confirmed": false,
+      "purpose": [
+        "climb",
+        "protect"
+      ],
+      "exposure": "low",
+      "cover_left": 4,
+      "difficulty": 3,
+      "when_to_use": "Stairs that wind round all four tiles: climb a full storey inside one cell.",
+      "source": "UEFN build-class probe 2026-10-10 (PBWA_W1_* placed and photographed); unconfirmed tile set",
+      "result_class": "StairSpiral",
+      "result_class_status": "probe_inferred",
+      "validation": {
+        "status": "unverified",
+        "game_version": null,
+        "evidence": [],
+        "result_confirmed": false,
+        "reason": "Ramp path from the build-class probe; confirm through recorded and reviewed attempts."
+      },
+      "topology": "gesture_graph",
+      "mask": null,
+      "result_shape": "Spiral ramp (far left up to near left)",
+      "preconditions": [
+        "editable_target",
+        "standard_editing"
+      ],
+      "reset": "native_reset",
+      "transforms": {
+        "mirror": "ramp_spiral_fr_fl_nl_nr",
         "rotations": []
       },
       "gesture": {
@@ -2688,7 +5427,9 @@
       "transforms": {
         "mirror": "roof_one_near_right",
         "rotations": []
-      }
+      },
+      "result_class": "RoofI",
+      "result_class_status": "probe_inferred"
     },
     {
       "id": "roof_one_near_right",
@@ -2736,7 +5477,9 @@
       "transforms": {
         "mirror": "roof_one_near_left",
         "rotations": []
-      }
+      },
+      "result_class": "RoofI",
+      "result_class_status": "probe_inferred"
     },
     {
       "id": "roof_one_far_left",
@@ -2784,7 +5527,9 @@
       "transforms": {
         "mirror": "roof_one_far_right",
         "rotations": []
-      }
+      },
+      "result_class": "RoofI",
+      "result_class_status": "probe_inferred"
     },
     {
       "id": "roof_one_far_right",
@@ -2832,7 +5577,9 @@
       "transforms": {
         "mirror": "roof_one_far_left",
         "rotations": []
-      }
+      },
+      "result_class": "RoofI",
+      "result_class_status": "probe_inferred"
     },
     {
       "id": "roof_two_near",
@@ -2881,7 +5628,9 @@
       "transforms": {
         "mirror": "roof_two_near",
         "rotations": []
-      }
+      },
+      "result_class": "RoofS",
+      "result_class_status": "probe_inferred"
     },
     {
       "id": "roof_two_far",
@@ -2930,7 +5679,9 @@
       "transforms": {
         "mirror": "roof_two_far",
         "rotations": []
-      }
+      },
+      "result_class": "RoofS",
+      "result_class_status": "probe_inferred"
     },
     {
       "id": "roof_two_left",
@@ -2979,7 +5730,9 @@
       "transforms": {
         "mirror": "roof_two_right",
         "rotations": []
-      }
+      },
+      "result_class": "RoofS",
+      "result_class_status": "probe_inferred"
     },
     {
       "id": "roof_two_right",
@@ -3028,7 +5781,9 @@
       "transforms": {
         "mirror": "roof_two_left",
         "rotations": []
-      }
+      },
+      "result_class": "RoofS",
+      "result_class_status": "probe_inferred"
     },
     {
       "id": "roof_diagonal_a",
@@ -3077,7 +5832,9 @@
       "transforms": {
         "mirror": "roof_diagonal_b",
         "rotations": []
-      }
+      },
+      "result_class": "RoofD",
+      "result_class_status": "probe_inferred"
     },
     {
       "id": "roof_diagonal_b",
@@ -3126,7 +5883,9 @@
       "transforms": {
         "mirror": "roof_diagonal_a",
         "rotations": []
-      }
+      },
+      "result_class": "RoofD",
+      "result_class_status": "probe_inferred"
     },
     {
       "id": "roof_three_keep_far_right",
@@ -3175,7 +5934,9 @@
       "transforms": {
         "mirror": "roof_three_keep_far_left",
         "rotations": []
-      }
+      },
+      "result_class": "RoofO",
+      "result_class_status": "probe_inferred"
     },
     {
       "id": "roof_three_keep_far_left",
@@ -3224,7 +5985,9 @@
       "transforms": {
         "mirror": "roof_three_keep_far_right",
         "rotations": []
-      }
+      },
+      "result_class": "RoofO",
+      "result_class_status": "probe_inferred"
     },
     {
       "id": "roof_three_keep_near_right",
@@ -3273,7 +6036,9 @@
       "transforms": {
         "mirror": "roof_three_keep_near_left",
         "rotations": []
-      }
+      },
+      "result_class": "RoofO",
+      "result_class_status": "probe_inferred"
     },
     {
       "id": "roof_three_keep_near_left",
@@ -3322,9 +6087,12 @@
       "transforms": {
         "mirror": "roof_three_keep_near_right",
         "rotations": []
-      }
+      },
+      "result_class": "RoofO",
+      "result_class_status": "probe_inferred"
     }
   ],
   "version": 2,
-  "coverage_ledger": "edit-coverage.json"
+  "coverage_ledger": "edit-coverage.json",
+  "_pieces_classes_note": "class / base_class / edit_semantics / result_class: tools/add_build_shapes.py, from the 2026-10-10 UEFN probe of every PBWA_W1_* build class. remove_selected = the tiles you select are cut out; keep_path = the tiles you drag through, in order from the bottom, become the stairs. Classes are PBWA_W1_<class>; VERIFY in game."
 }

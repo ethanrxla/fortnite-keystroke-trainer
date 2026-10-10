@@ -56,6 +56,7 @@ RunAutoTests<public>(Playspace:fort_playspace)<suspends>:void=
 
 # Pure logic: tempo rules and the drill catalog. These need no player input.
 RunLogicTests(Report:autotest_report):void =
+    KTBuildPieceTests(Report)
     Report.Check("T-edit-corners", logic{EditRouteAt(0.5, 0.5) = 0 and EditRouteAt(2.5, 0.5) = 1 and EditRouteAt(0.5, 2.5) = 2 and EditRouteAt(2.5, 2.5) = 3 and EditRouteAt(1.5, 1.5) = 4}, "aim selects lower/upper corners and center window")
     Report.Check("T-edit-ray-bounds", logic{EditAimInBounds(200.0, 1.5, 1.5)? and not EditAimInBounds(-1.0, 1.5, 1.5)? and not EditAimInBounds(200.0, 3.0, 1.0)? and not EditAimInBounds(200.0, 0.0, -0.1)?}, "behind-camera and off-wall rays are rejected")
     var BadRoutes:int = 0
