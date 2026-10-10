@@ -375,13 +375,17 @@ def downscale(frame, scale):
 
 
 _TEMPLATE_CACHE = {}
+_CUE_SCALE = {}     # (name, roi, scale) -> template size index of a confident (>= 0.6) match: the HUD's fixed scale
 _CUE_HINT = {}      # (name, roi) -> (template index, x, y) of the last confident match: searched first next frame
 
 
 def _cue_mask(image):
+    """White, unsaturated HUD text: every channel >= 180 and channel spread <= 45. OpenCV per-channel min/max instead of
+    numpy reductions over the colour axis (~10x faster on the cue regions)."""
+    b,g,r=cv2.split(image)
+    spread=cv2.subtract(cv2.max(cv2.max(b,g),r),cv2.min(cv2.min(b,g),r))
     mask=cv2.inRange(image,np.array([180,180,180],np.uint8),np.array([255,255,255],np.uint8))
-    mask[(image.max(2).astype(int)-image.min(2))>45]=0
-    return mask
+    return cv2.bitwise_and(mask,cv2.compare(spread,45,cv2.CMP_LE))
 
 
 def cue_scores(frame, names, roi=None):
@@ -430,11 +434,24 @@ def cue_scores(frame, names, roi=None):
                     scores.append(float(best));continue
         mask=full_mask()
         score=0.;found=None
-        for i,current in enumerate(templates):
+        # Too few white pixels in the whole region for this cue to be there: score 0 without matching.
+        if cv2.countNonZero(mask)<int((templates[0]>0).sum()*.3) if templates else True:
+            _CUE_HINT.pop(hint_key,None);scores.append(0.);continue
+        # The HUD scale is fixed for a given resolution: once a cue was found, a miss is searched at that one learned
+        # size only (1 match instead of 6). All sizes are tried only until the size is learned.
+        learned=_CUE_SCALE.get(hint_key)
+        ui=_CUE_SCALE.get(('ui',round(scale,3)))
+        if learned is not None:sizes=[learned]
+        elif ui is not None:sizes=[i for i in (ui-1,ui,ui+1) if 0<=i<len(templates)]   # all prompts share one UI scale
+        else:sizes=range(len(templates))
+        for i in sizes:
+            current=templates[i]
             if current.shape[0]>mask.shape[0] or current.shape[1]>mask.shape[1]:continue
             _,best,_,loc=cv2.minMaxLoc(cv2.matchTemplate(mask,current,cv2.TM_CCOEFF_NORMED))
             if best>score:score=float(best);found=(i,loc[0],loc[1])
-        if found and score>=.50:_CUE_HINT[hint_key]=found+(score,)
+        if found and score>=.50:
+            _CUE_HINT[hint_key]=found+(score,)
+            if score>=.60:_CUE_SCALE[hint_key]=found[0];_CUE_SCALE[('ui',round(scale,3))]=found[0]
         else:_CUE_HINT.pop(hint_key,None)
         scores.append(score)
     return tuple(scores)
@@ -444,10 +461,27 @@ def _native_edit_cues(frame):
     scores=cue_scores(frame,['confirm','reset'])
     return min(scores)>=.56 and sum(scores)/2>=.60
 
-def observe_mode(frame):
+_MODE_STATE = {'idle': 0, 'last': ('unknown', 0.)}
+
+
+def observe_mode(frame,throttle=False):
+    """throttle=True (live overlay only): outside edit mode, build/blueprint/editable prompts every 3rd call."""
     if frame is None or frame.ndim!=3:return 'unknown',0.
     edit=cue_scores(frame,['confirm','reset'])
-    if min(edit)>=.56 and sum(edit)/2>=.60:return 'editing',min(edit)
+    if min(edit)>=.56 and sum(edit)/2>=.60:
+        _MODE_STATE['idle']=0
+        return 'editing',min(edit)
+    # Outside edit mode the build / blueprint / editable prompts are re-checked every 3rd frame (~24 ms at the live
+    # cadence); in between the last answer stands. Edit mode itself is checked every frame, so opening an edit is
+    # never delayed.
+    _MODE_STATE['idle']+=1
+    if throttle and _MODE_STATE['last'][0]=='unknown' and _MODE_STATE['idle']%3:
+        return 'unknown',0.
+    _MODE_STATE['last']=_observe_other_modes(frame)
+    return _MODE_STATE['last']
+
+
+def _observe_other_modes(frame):
     build=cue_scores(frame,['change-material','rotate','change-material-current','rotate-current','build-label'],(0.,.35,.23,.76))
     material=max(build[0],build[2]);other=max(build[1],build[3],build[4])
     if material>=.60 and other>=.60:return 'building',min(material,other)

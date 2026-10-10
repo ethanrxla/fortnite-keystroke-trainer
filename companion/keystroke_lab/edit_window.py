@@ -100,7 +100,7 @@ class ContextPipeline:
         self.locked=None;self.selection.reset();self.targets.last=None;self.last_target=None
         self.motion.reset();self.previous_display=None;self.last_mode_seen=-float('inf')
     def process(self,frame,captured_at=None):
-        captured=self.clock() if captured_at is None else captured_at;mode,score=observe_mode(frame);profile=self.store.refresh()
+        captured=self.clock() if captured_at is None else captured_at;mode,score=observe_mode(frame,throttle=self.async_detect);profile=self.store.refresh()
         identity=(profile.profile_id,profile.revision)
         if identity!=self.profile_identity:
             self.reset_tracking();self.profile_identity=identity;self.metrics.reset()
