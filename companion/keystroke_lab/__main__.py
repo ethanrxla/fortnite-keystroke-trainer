@@ -260,6 +260,18 @@ def cmd_review_edits(args):
     return 0
 
 
+def cmd_frames(args):
+    """Edit-frame dataset (companion/data/frames): import old screenshots with auto labels, or summarise."""
+    import collections
+    from . import frame_dataset
+    if args.action == "import":
+        print("imported", frame_dataset.import_folder(args.folder), "edit-mode frames")
+    recs = [r for _, r in frame_dataset.load_manifest()]
+    pieces = collections.Counter(r["auto"]["piece"] for r in recs)
+    print(f"{len(recs)} frames, {sum(r['label_status'] == 'reviewed' for r in recs)} reviewed; auto pieces {dict(pieces)}")
+    return 0
+
+
 def cmd_personalize(args):
     from . import personalize
     stats, factors = personalize.run()
@@ -341,6 +353,10 @@ def main(argv=None):
     cl.add_argument("--frames", choices=["yes", "no"], default="no")
     cl.add_argument("--raw-keys", choices=["yes", "no"], default="no")
     cl.set_defaults(fn=cmd_cloud)
+    fr_ = sub.add_parser("frames", help="edit-frame dataset: import <folder> | stats")
+    fr_.add_argument("action", choices=["import", "stats"])
+    fr_.add_argument("folder", nargs="?")
+    fr_.set_defaults(fn=cmd_frames)
     rv = sub.add_parser("review-edits", help="approve / reject recorded edit attempts in a local browser page")
     rv.add_argument("--no-browser", action="store_true")
     rv.set_defaults(fn=cmd_review_edits)

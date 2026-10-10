@@ -1,0 +1,48 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/ethanrxla/fortnite-keystroke-trainer/shared/schemas/edit_frame.v1.json",
+  "title": "Edit frame v1",
+  "description": "One captured game frame during edit mode, with what the detector concluded (auto labels) and, after review, the corrected truth. Written by companion/keystroke_lab/frame_dataset.py into companion/data/frames/<session>/manifest.jsonl next to the image. Local only. Used to measure and train the edit-grid detector (tools/eval_frames.py).",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema", "frame_id", "image", "session_id", "t_capture", "width", "height", "auto", "label_status"],
+  "properties": {
+    "schema": {"const": "edit_frame.v1"},
+    "frame_id": {"type": "string", "maxLength": 64},
+    "image": {"type": "string", "maxLength": 200},
+    "session_id": {"type": "string", "maxLength": 64},
+    "attempt_id": {"type": ["string", "null"], "maxLength": 64},
+    "t_capture": {"type": "number"},
+    "width": {"type": "integer", "minimum": 1},
+    "height": {"type": "integer", "minimum": 1},
+    "source": {"enum": ["live", "import"]},
+    "auto": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["mode", "piece"],
+      "properties": {
+        "mode": {"enum": ["editing", "building", "editable", "unknown"]},
+        "piece": {"enum": ["wall", "floor", "cone", "ramp", "unknown"]},
+        "reason": {"type": ["string", "null"], "maxLength": 64},
+        "quad": {"type": "array", "maxItems": 4, "items": {"type": "array", "items": {"type": "number"}, "minItems": 2, "maxItems": 2}},
+        "aim_uv": {"type": "array", "maxItems": 2, "items": {"type": "number"}},
+        "selected_tiles": {"type": "array", "items": {"type": "integer", "minimum": 0, "maximum": 8}},
+        "suggested_edit_id": {"type": ["string", "null"], "maxLength": 64},
+        "detector_ms": {"type": ["number", "null"]}
+      }
+    },
+    "truth": {
+      "type": ["object", "null"],
+      "additionalProperties": false,
+      "properties": {
+        "piece": {"enum": ["wall", "floor", "cone", "ramp", "none"]},
+        "grid_correct": {"type": ["boolean", "null"]},
+        "quad": {"type": "array", "maxItems": 4, "items": {"type": "array", "items": {"type": "number"}, "minItems": 2, "maxItems": 2}},
+        "selected_tiles": {"type": "array", "items": {"type": "integer", "minimum": 0, "maximum": 8}},
+        "reviewer": {"type": "string", "maxLength": 64},
+        "at": {"type": "number"}
+      }
+    },
+    "label_status": {"enum": ["auto", "reviewed", "rejected"]}
+  }
+}

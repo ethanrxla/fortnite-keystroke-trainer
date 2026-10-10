@@ -24,6 +24,7 @@ from .edit_dictionary import TargetTracker, RoutePlanner, RouteTracker, EditAnal
 from .evidence import Evidence, ContextAssembler
 from .guide_layers import TraceGuideLayer, RegionGuideLayer, GuideDisplayLatch
 from .attempt_recorder import AttemptRecorder, AttemptLog, default_matcher
+from .frame_dataset import FrameDataset
 from .pieces import catalog_key
 import os
 BASE=Path(__file__).resolve().parents[1]
@@ -256,6 +257,7 @@ def run(profile_path=None):
     session=os.environ.get('KT_COACH_SESSION') or time.strftime('%Y%m%d-%H%M%S')
     recorder=AttemptRecorder(session,sink=AttemptLog(BASE/'sessions'/f'edit-{session}.attempts.jsonl').write,
                              matcher=default_matcher(table=pipeline.patterns),catalog_version=pipeline.advisor.dictionary.version)
+    frames=FrameDataset(session)
     def record(result,utc):
         try:recorder.feed(result,utc)
         except Exception:recorder.current=None
@@ -267,9 +269,13 @@ def run(profile_path=None):
                     l,t,r,b=rect
                     try:
                         captured_at=time.monotonic();captured_utc=time.time()
-                        result=pipeline.process(np.asarray(capture.grab({'left':l,'top':t,'width':r-l,'height':b-t}))[:,:,:3],captured_at=captured_at)
+                        frame=np.asarray(capture.grab({'left':l,'top':t,'width':r-l,'height':b-t}))[:,:,:3]
+                        result=pipeline.process(frame,captured_at=captured_at)
                         result['processing_ms']=round(1000*(time.monotonic()-captured_at),1)
                         record(result,captured_utc)
+                        # Training data: a few edit-mode frames a second with their auto labels, after the guide
+                        # has its result (never delays it). companion/data/frames/<session>/, local only.
+                        frames.maybe_save(frame,result,captured_utc,recorder.current['attempt_id'] if recorder.current else None)
                     except Exception as exc:
                         result={'mode':'unknown','captured_at':time.monotonic(),'error':type(exc).__name__}
                 else:
