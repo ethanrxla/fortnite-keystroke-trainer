@@ -16,11 +16,12 @@ from .edit_observation import observe_mode,EditGridObserver,cue_scores
 from .edit_advisor import EditAdvisor,EditContext,safe_path
 from .edit_telemetry import TelemetryReader
 from .jev_client import JevClient
-from .piece_observation import VisualObserver, PieceTargetTracker
+from .piece_observation import VisualObserver, PieceTargetTracker, GridMotionTracker
 from .edit_ranker import Ranker
 from .edit_geometry import PieceContext, tiles_to_grid, piece_to_grid
 from .edit_dictionary import TargetTracker, RoutePlanner, EditAnalyzer
 from .evidence import Evidence, ContextAssembler
+from .guide_layers import TraceGuideLayer, RegionGuideLayer
 import os
 BASE=Path(__file__).resolve().parents[1]
 
@@ -78,28 +79,43 @@ class ContextPipeline:
         self.advisor=advisor or EditAdvisor(jev=JevClient(domain='edit'),clock=clock)
         self.observer=observer or VisualObserver();self.targets=PieceTargetTracker();self.selection=TargetTracker()
         self.telemetry=telemetry or TelemetryReader(clock=clock);self.metrics=EditAnalyzer()
-        self.ranker=Ranker()
+        self.ranker=Ranker();self.motion=GridMotionTracker();self.previous_display=None;self.last_attempt=None
         self.locked=None;self.profile_identity=None;self.last_target=None
     def process(self,frame,captured_at=None):
         captured=self.clock() if captured_at is None else captured_at;mode,score=observe_mode(frame);profile=self.store.refresh()
+        mode_track=None
+        if mode=='unknown' and self.previous_display:
+            cues=cue_scores(frame,['confirm','reset'])
+            if min(cues)>=.40 and sum(cues)/2>=.46:
+                mode_track=self.motion.follow(frame,captured)
+                if mode_track is not None:mode='editing'
         identity=(profile.profile_id,profile.revision)
         if identity!=self.profile_identity:
             self.selection.reset();self.profile_identity=identity;self.metrics.reset()
         base={'mode':mode,'captured_at':captured,'revision':profile.revision,'projected':False,
               'reference_ids':[],'status':'Align with an editable piece','mode_score':score,
-              'session_id':os.environ.get('KT_COACH_SESSION','standalone')}
+              'session_id':os.environ.get('KT_COACH_SESSION','standalone'),'profile_id':profile.profile_id,'last_attempt':self.last_attempt}
         telemetry=self.telemetry.poll()
         if self.clock()-captured>.25 or captured>self.clock():return dict(base,mode='unknown',status='Stale observation')
         if mode=='unknown':
-            self.locked=None;self.selection.reset();self.targets.last=None;self.last_target=None
+            self.finish_attempt(captured,profile)
+            base['last_attempt']=self.last_attempt
+            self.locked=None;self.selection.reset();self.targets.last=None;self.last_target=None;self.motion.reset();self.previous_display=None
             return base
-        observation=self.observer.observe(frame,captured) if mode=='editing' else None
+        observation=mode_track or (self.observer.observe(frame,captured) if mode=='editing' else None)
+        tracked=mode_track is not None
+        if observation and observation.piece!='unknown' and not tracked:self.motion.seed(frame,observation)
+        elif mode=='editing' and not tracked:
+            observation=self.motion.follow(frame,captured);tracked=observation is not None
         target=self.targets.update(observation) if observation else None
         if not target:
+            if mode=='editing' and self.previous_display and captured-self.previous_display['captured_at']<=.75:
+                return dict(self.previous_display,captured_at=captured,projected=False,tracking='reacquiring',status='Tracking edit | reacquiring target')
             self.locked=None;self.selection.reset();return base
-        if target!=self.last_target:self.metrics.reset();self.last_target=target
+        if target!=self.last_target:
+            self.finish_attempt(captured,profile);self.metrics.reset();self.last_target=target
         base['snapshot']=ContextAssembler().assemble(profile,base['session_id'],self.clock(),[
-            Evidence(f'{target}:{captured}:screen',observation.to_dict(),captured,'screen','observed',1-observation.confidence),
+            Evidence(f'{target}:{captured}:screen',observation.to_dict(),captured,observation.source,'derived' if tracked else 'observed',1-observation.confidence),
             Evidence(f'{target}:{captured}:orientation',observation.orientation,captured,'screen_projection','derived',1-observation.confidence),
             Evidence(f'{target}:{captured}:ownership',None,captured,'unavailable','unknown',1.)]).to_dict()
         candidates=self.advisor.dictionary.candidates(observation.piece,observation.selected_tiles)
@@ -123,13 +139,23 @@ class ContextPipeline:
             costs={p.id:p.cost for p in fitting}
             if self.locked in costs and costs[self.locked]<=costs.get(best,0)+.25:best=self.locked
         self.locked=self.selection.update((target,observation.orientation),best,observation.selected_tiles,captured)
+        # Free-practice suggestions cannot establish player intent.
+        if observation.selected_tiles and not tracked:
+            current=self.advisor.dictionary.all.get(self.locked,{})
+            if not self.locked or not set(observation.selected_tiles)<=set(current.get('tiles',[])):
+                matches=[e for e in self.advisor.dictionary.all.values()
+                         if e['piece']==observation.piece and e.get('suggest')
+                         and set(e.get('tiles',[]))==set(observation.selected_tiles)]
+                self.locked=matches[0]['id'] if len(matches)==1 else None
+                self.selection.active=self.locked
         context=EditContext(profile.profile_id,profile.revision,captured,mode,target,True,True,
              observation.aim_uv,observation.selected_tiles,drill_edit_id=self.locked,
              source='native_hud_and_screen_projection',piece=observation.piece,orientation=observation.orientation,
              session_id=base['session_id'],dictionary_version=self.advisor.dictionary.version,
              player_position=(telemetry or {}).get('player_position'),view_origin=(telemetry or {}).get('view_origin'),
              view_direction=(telemetry or {}).get('view_direction'))
-        self.metrics.sample(captured,observation.aim_uv,observation.selected_tiles)
+        if not tracked:self.metrics.sample(captured,observation.aim_uv,observation.selected_tiles)
+        else:self.metrics.gaps=True
         advice=self.advisor.request(context)
         if candidates:self.advisor.request(replace(context,drill_edit_id=None,objective="practice"))
         display=None
@@ -148,7 +174,17 @@ class ContextPipeline:
                     status=('Short safe route | green = select' if is_verified else
                             'Suggested from your aim and position | not yet verified in game') if self.locked
                            else 'No suggested edit fits this selection')
+        base['tracking']='motion' if tracked else 'detected'
+        self.previous_display=dict(base)
         return base
+    def finish_attempt(self,now,profile):
+        if not self.metrics.samples or not self.previous_display:return
+        edit=self.previous_display.get('display_edit')
+        if edit:
+            self.last_attempt=dict(self.metrics.finish(edit.get('tiles',[])),edit_id=edit['id'],
+                                   profile_id=profile.profile_id,profile_revision=profile.revision,
+                                   ended_at=now,success='unverified')
+        self.metrics.reset()
 
 
 def run(profile_path=None):
@@ -166,6 +202,7 @@ def run(profile_path=None):
                     try:
                         captured_at=time.monotonic()
                         result=pipeline.process(np.asarray(capture.grab({'left':l,'top':t,'width':r-l,'height':b-t}))[:,:,:3],captured_at=captured_at)
+                        result['processing_ms']=round(1000*(time.monotonic()-captured_at),1)
                     except Exception as exc:
                         result={'mode':'unknown','captured_at':time.monotonic(),'error':type(exc).__name__}
                 else:pipeline.locked=None
@@ -240,6 +277,8 @@ def run(profile_path=None):
     world_path=lines_canvas.create_line(0,0,1,1,fill='#f6f7a0',width=3,arrow=tk.LAST,state='hidden')
     world_approach=lines_canvas.create_line(0,0,1,1,fill='#82a8b8',width=2,dash=(4,4),state='hidden')
     world_numbers=[lines_canvas.create_text(0,0,text='',fill='white',font=('Segoe UI',10,'bold'),state='hidden') for _ in range(9)]
+    trace_layer=TraceGuideLayer(lines_canvas,[world_path])
+    region_layer=RegionGuideLayer(lines_canvas,world_regions)
     def draw_lines(data,rect):
         for item in world_regions+world_numbers+[world_path,world_approach]:lines_canvas.itemconfig(item,state='hidden')
         observation=data.get('observation') or {};ids=data.get('reference_ids') or []
@@ -253,17 +292,18 @@ def run(profile_path=None):
         aim=grid_to_screen(quad,*observation['aim_uv'],n,n)
         lines_canvas.coords(world_approach,*aim,*points[0]);lines_canvas.itemconfig(world_approach,state='normal')
         coords=[v for p in points for v in p]
-        lines_canvas.coords(world_path,*(coords if len(coords)>2 else coords+coords));lines_canvas.itemconfig(world_path,state='normal')
+        trace_layer.show(coords)
+        outlines=[]
         if edit['piece']!='ramp':
-            for item,tile in zip(world_regions,edit['tiles']):
+            for tile in edit['tiles']:
                 c,r=tile%n,tile//n
-                outline=[grid_to_screen(quad,c+dc,r+dr,n,n) for dc,dr in ((0,0),(1,0),(1,1),(0,1))]
-                lines_canvas.coords(item,*[v for p in outline for v in p]);lines_canvas.itemconfig(item,state='normal')
+                outlines.append([grid_to_screen(quad,c+dc,r+dr,n,n) for dc,dr in ((0,0),(1,0),(1,1),(0,1))])
+        region_layer.show(outlines,bool(observation.get('selected_tiles')))
         for i,(item,p) in enumerate(zip(world_numbers,points),1):
             lines_canvas.coords(item,*p);lines_canvas.itemconfig(item,state='normal',text=str(i))
         return True
 
-    def poll():
+    def poll_once():
         nonlocal last,shown,last_write,panel_shown,lines_shown,lines_key
         with mutex:data=shared['result'];rect=shared['rect']
         now=time.monotonic()
@@ -272,7 +312,7 @@ def run(profile_path=None):
         ring_on=bool(rect) and presence.update(fresh,now)
         if not rect:presence.reset()
         # The panel is a piece reference: only while the crosshair is on a detected edit grid.
-        panel_on=fresh and bool(data.get('projected'))
+        panel_on=fresh and bool(data.get('projected') or data.get('reference_ids'))
         if ring_on:
             if rect:
                 l,t,r,b=rect
@@ -299,7 +339,12 @@ def run(profile_path=None):
                 temporary=BASE/'edit-state.tmp';temporary.write_text(json.dumps(data));temporary.replace(BASE/'edit-state.json')
             except OSError:pass
             last_write=now
-        root.after(33,poll)
+    def poll():
+        try:poll_once()
+        except Exception:
+            import traceback
+            with (BASE/'edit-display-error.log').open('a') as errors:errors.write(traceback.format_exc())
+        finally:root.after(33,poll)
     root.after(33,poll)
     try:root.mainloop()
     finally:stop.set();pipeline.advisor.close()

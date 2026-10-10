@@ -364,6 +364,7 @@ def run(binds, drill=None, log_base=None, use_ai=True, serve_port=True, binds_pa
         canvas.delete("all")
         rects.clear()
         width = int(KEYS_WIDE * u) + 8
+        top=3*u
         height = len(ROWS) * u + 4 * u
         canvas.config(width=width, height=height)
         for r, row in enumerate(ROWS):
@@ -371,19 +372,19 @@ def run(binds, drill=None, log_base=None, use_ai=True, serve_port=True, binds_pa
             for label, key, w in row:
                 action = tracker.names.get(key)
                 fill = COLORS["bound"] if action else COLORS["idle"]
-                rect = canvas.create_rectangle(x, 4 + r * u, x + w * u - 3, 4 + r * u + u - 3, fill=fill, outline="#3a4256")
-                canvas.create_text(x + (w * u - 3) / 2, 4 + r * u + u * (0.31 if action else 0.48), text=label,
+                rect = canvas.create_rectangle(x, 4 + top + r * u, x + w * u - 3, 4 + top + r * u + u - 3, fill=fill, outline="#3a4256")
+                canvas.create_text(x + (w * u - 3) / 2, 4 + top + r * u + u * (0.31 if action else 0.48), text=label,
                                    fill=COLORS["text"], font=("Segoe UI", max(9, int(u * 0.38)), "bold"))
                 if action:
                     compact = action.split("/")[0].replace("move_", "").replace("edit_confirm", "OK").replace("pickaxe", "axe").replace("sprint", "run")
                     if "/" in action: compact = compact[:4] + "+"
-                    canvas.create_text(x + (w * u - 3) / 2, 4 + r * u + u * 0.77, text=compact[:6],
+                    canvas.create_text(x + (w * u - 3) / 2, 4 + top + r * u + u * 0.77, text=compact[:6],
                                        fill="#9fd5df", font=("Segoe UI", max(7, int(u * 0.24))))
                 rects[key] = (rect, fill)
                 x += w * u
-        ids["status"] = canvas.create_text(4, len(ROWS) * u + 10, anchor="nw", width=width - 8, fill=COLORS["text"],
+        ids["status"] = canvas.create_text(4, 4, anchor="nw", width=width - 8, fill=COLORS["text"],
                                            font=("Segoe UI", max(8, int(u * 0.5)), "bold"), text="")
-        ids["tip"] = canvas.create_text(4, len(ROWS) * u + 10 + u * 1.7, anchor="nw", width=width - 8, fill="#9fd6ff",
+        ids["tip"] = canvas.create_text(4, 4 + u * 1.5, anchor="nw", width=width - 8, fill="#9fd6ff",
                                         font=("Segoe UI", max(8, int(u * 0.46))), text="")
         state["unit"] = u
         state["size"] = (width, height)
@@ -432,7 +433,22 @@ def run(binds, drill=None, log_base=None, use_ai=True, serve_port=True, binds_pa
 
             threading.Thread(target=work, daemon=True).start()
 
-    def poll():
+    feedback_at=[-float('inf')]
+    def refresh_edit_feedback():
+        now=time.monotonic()
+        if now-feedback_at[0]<.5:return
+        feedback_at[0]=now
+        try:
+            data=json.loads((pathlib.Path(__file__).resolve().parents[1]/'edit-state.json').read_text())
+            attempt=data.get('last_attempt') or {}
+            if attempt.get('profile_id')!=tracker.profile_id or attempt.get('profile_revision')!=tracker.profile_revision:return
+            if time.monotonic()-attempt.get('ended_at',0)>30:return
+            text=("Edit observation incomplete" if not attempt.get('complete_observation') else
+                  f"Observed target tiles: {round(100*attempt.get('observed_coverage',0))}% | extra: {len(attempt.get('extra_selections',[]))}")
+            canvas.itemconfig(ids['tip'],text=text+' | game result unverified')
+        except (OSError,ValueError,TypeError):pass
+
+    def poll_once():
         try:
             while True:
                 kind, payload = incoming.get_nowait()
@@ -450,11 +466,18 @@ def run(binds, drill=None, log_base=None, use_ai=True, serve_port=True, binds_pa
                             log.tip(text)
         except queue.Empty:
             pass
-        root.after(POLL_MS, poll)
+        refresh_edit_feedback()
 
     calibration_button = tk.Toplevel(root)
     calibration_button.overrideredirect(True)
     calibration_button.attributes('-topmost', True)
+    def poll():
+        try:poll_once()
+        except Exception:
+            import traceback
+            with (pathlib.Path(__file__).resolve().parents[1]/'keyboard-display-error.log').open('a') as errors:errors.write(traceback.format_exc())
+        finally:root.after(POLL_MS,poll)
+
     calibration_process = [None]
     def calibrate_player():
         if calibration_process[0] is not None and calibration_process[0].poll() is None:

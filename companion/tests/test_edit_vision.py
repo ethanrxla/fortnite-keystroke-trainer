@@ -138,3 +138,28 @@ class RouteLineTests(unittest.TestCase):
  def test_no_lines_without_a_projected_grid(self):
   from keystroke_lab.edit_window import route_lines
   self.assertEqual(route_lines({},[4]),([],[]));self.assertEqual(route_lines(None,[4]),([],[]))
+
+@unittest.skipIf(cv2 is None,'optional local vision dependencies missing')
+class GuideContinuityTests(unittest.TestCase):
+ def test_target_tracks_a_short_detector_dropout(self):
+  from keystroke_lab.piece_observation import VisualObserver,GridMotionTracker
+  frame=cv2.imread(str(Path(__file__).parent/'fixtures/edit-vision/front-edit.png'))
+  obs=VisualObserver().observe(frame,1.)
+  tracker=GridMotionTracker();tracker.seed(frame,obs)
+  tracked=tracker.follow(frame,1.1)
+  self.assertIsNotNone(tracked);self.assertEqual(tracked.source,'optical_flow')
+  self.assertEqual(tracked.piece,'wall');self.assertIsNone(tracker.follow(frame,2.))
+ def test_incompatible_upper_goal_recognizes_lower_four_tiles(self):
+  from dataclasses import replace
+  from keystroke_lab.piece_observation import VisualObserver
+  frame=cv2.imread(str(Path(__file__).parent/'fixtures/edit-vision/front-edit.png'))
+  obs=VisualObserver().observe(frame,1.)
+  class Observer:
+   def observe(self,frame,now):return replace(obs,captured_at=now,selected_tiles=(0,1,3,4))
+  with tempfile.TemporaryDirectory() as d:
+   pipe=ContextPipeline(ProfileStore(Path(d)/'binds.json'),observer=Observer(),clock=lambda:1.)
+   try:
+    state=pipe.process(frame)
+    self.assertEqual(state['reference_ids'],['half_arch_left'])
+    self.assertEqual(set(state['display_edit']['tiles']),{0,1,3,4})
+   finally:pipe.advisor.close()
