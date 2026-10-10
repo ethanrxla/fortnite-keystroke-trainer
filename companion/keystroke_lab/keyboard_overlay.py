@@ -50,6 +50,30 @@ def normal(name):
     return ALIASES.get(name, name)
 
 
+# Windows virtual-key codes of the punctuation keys, as their unshifted US-layout names.
+OEM_VK = {0xC0: "`", 0xBD: "-", 0xBB: "=", 0xDB: "[", 0xDD: "]", 0xDC: "\\", 0xBA: ";", 0xDE: "'",
+          0xBC: ",", 0xBE: ".", 0xBF: "/"}
+
+
+def key_name(k, platform=sys.platform):
+    """The physical key a pynput event came from, in the same naming as keybinds.json.
+
+    pynput's `char` has modifiers applied, so with sprint (Shift) held '1' arrives as '!', and with crouch (Ctrl)
+    held 'w' arrives as a control character: bound keys then read as unmapped. Fortnite binds physical keys, so on
+    Windows the virtual-key code decides for letters, digits and punctuation; `char` is the fallback elsewhere.
+    """
+    vk = getattr(k, "vk", None)
+    if platform == "win32" and isinstance(vk, int):
+        if 0x30 <= vk <= 0x39 or 0x41 <= vk <= 0x5A:
+            return chr(vk).lower()
+        if vk in OEM_VK:
+            return OEM_VK[vk]
+    char = getattr(k, "char", None)
+    if char and char.isprintable():
+        return char
+    return getattr(k, "name", None) or str(k)
+
+
 class KeyTracker:
     """Classifies each press. Pure logic: feed it presses with a timestamp, read back a verdict."""
 
@@ -494,10 +518,10 @@ def run(binds, drill=None, log_base=None, use_ai=True, serve_port=True, binds_pa
     def on_key(k):
         if not game_rect():
             return
-        incoming.put(("key", (getattr(k, "char", None) or getattr(k, "name", str(k)), time.perf_counter())))
+        incoming.put(("key", (key_name(k), time.perf_counter())))
 
     def on_release(k):
-        incoming.put(('release', getattr(k, 'char', None) or getattr(k, 'name', str(k))))
+        incoming.put(('release', key_name(k)))
 
     def on_click(_x, _y, button, pressed):
         if pressed and not game_rect():

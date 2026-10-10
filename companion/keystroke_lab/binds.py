@@ -37,7 +37,7 @@ def run(out, only=None, categories=None):
         return 2
     import queue
     q = queue.Queue()
-    kl = keyboard.Listener(on_press=lambda k: q.put(keyboard_overlay.normal(getattr(k, "char", None) or getattr(k, "name", k))))
+    kl = keyboard.Listener(on_press=lambda k: q.put(keyboard_overlay.normal(keyboard_overlay.key_name(k))))
     ml = mouse.Listener(on_click=lambda x, y, b, p: q.put("mouse_" + b.name) if p else None,
                         on_scroll=lambda x, y, dx, dy: q.put("wheel_up" if dy > 0 else "wheel_down"))
     kl.start()
