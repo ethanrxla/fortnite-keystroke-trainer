@@ -60,8 +60,9 @@ def load_config():
 class CloudClient:
     def __init__(self, url=None, anon_key=None, session_file=SESSION_FILE, http=None, clock=time.time):
         cfg_url, cfg_key = load_config()
-        self.url = (url or cfg_url).rstrip("/")
-        self.anon_key = anon_key or cfg_key
+        # None means "use the configuration"; an explicit value (even "") is used as given (tests, other projects).
+        self.url = (cfg_url if url is None else url).rstrip("/")
+        self.anon_key = cfg_key if anon_key is None else anon_key
         self.session_file = pathlib.Path(session_file) if session_file else None
         self.http = http or _urllib_http
         self.clock = clock

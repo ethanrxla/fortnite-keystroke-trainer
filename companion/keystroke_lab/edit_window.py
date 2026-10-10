@@ -18,7 +18,8 @@ from .edit_telemetry import TelemetryReader
 from .jev_client import JevClient
 from .piece_observation import VisualObserver, PieceTargetTracker, GridMotionTracker
 from .edit_ranker import Ranker, junction_corner
-from .edit_geometry import PieceContext, tiles_to_grid, piece_to_grid
+from .edit_geometry import PieceContext, tiles_to_grid, piece_to_grid, grid_to_tiles
+from .build_pieces import PatternTable, piece_for
 from .edit_dictionary import TargetTracker, RoutePlanner, EditAnalyzer
 from .evidence import Evidence, ContextAssembler
 from .guide_layers import TraceGuideLayer, RegionGuideLayer, GuideDisplayLatch
@@ -81,7 +82,7 @@ class ContextPipeline:
         self.advisor=advisor or EditAdvisor(jev=JevClient(domain='edit'),clock=clock)
         self.observer=observer or VisualObserver();self.targets=PieceTargetTracker();self.selection=TargetTracker()
         self.telemetry=telemetry or TelemetryReader(clock=clock);self.metrics=EditAnalyzer()
-        self.ranker=Ranker();self.motion=GridMotionTracker();self.previous_display=None;self.last_attempt=None
+        self.ranker=Ranker();self.patterns=PatternTable();self.motion=GridMotionTracker();self.previous_display=None;self.last_attempt=None
         self.locked=None;self.profile_identity=None;self.last_target=None
         self.last_mode_seen=-float('inf')
     def reset_tracking(self):
@@ -171,9 +172,15 @@ class ContextPipeline:
             grid=lambda e:set(tiles_to_grid(ctx,e.get('tiles',[]))) if ctx else set(e.get('tiles',[]))
             current=self.advisor.dictionary.all.get(self.locked,{})
             if not self.locked or not sel<=grid(current):
-                matches=[e for e in self.advisor.dictionary.all.values()
-                         if e['piece']==observation.piece and e.get('suggest') and grid(e)==sel]
-                self.locked=matches[0]['id'] if len(matches)==1 else (fitting[0].id if fitting else None)
+                # The pattern table (build_pieces) knows every real shape; a rare one is coached as its common
+                # `prefer` edit. Else the best-ranked edit that contains the selection.
+                exact=None
+                if observation.piece in ('wall','floor','cone'):
+                    own=grid_to_tiles(ctx,tuple(sorted(sel))) if (ctx and observation.piece!='wall') else tuple(sorted(sel))
+                    outcome=self.patterns.match(piece_for(observation.piece),own)
+                    shown=self.patterns.display(outcome.pattern) if outcome.valid else None
+                    if shown and shown.id in self.advisor.dictionary.all:exact=shown.id
+                self.locked=exact or (fitting[0].id if fitting else None)
                 self.selection.active=self.locked
         context=EditContext(profile.profile_id,profile.revision,captured,mode,target,True,True,
              observation.aim_uv,observation.selected_tiles,drill_edit_id=self.locked,
@@ -224,7 +231,7 @@ def run(profile_path=None):
     # for the collector, the review page and the cloud sync. Recording never blocks or fails the guide.
     session=os.environ.get('KT_COACH_SESSION') or time.strftime('%Y%m%d-%H%M%S')
     recorder=AttemptRecorder(session,sink=AttemptLog(BASE/'sessions'/f'edit-{session}.attempts.jsonl').write,
-                             matcher=default_matcher(pipeline.advisor.dictionary),catalog_version=pipeline.advisor.dictionary.version)
+                             matcher=default_matcher(table=pipeline.patterns),catalog_version=pipeline.advisor.dictionary.version)
     def record(result,utc):
         try:recorder.feed(result,utc)
         except Exception:recorder.current=None

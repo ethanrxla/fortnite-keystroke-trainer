@@ -29,28 +29,26 @@ MAX_AIM_SAMPLES = 2000
 MAX_SELECTION_SAMPLES = 400
 
 
-def default_matcher(dictionary):
-    """matcher(piece, screen_tiles, context) -> edit id whose tiles are exactly the selection, or None.
+def default_matcher(dictionary=None, table=None):
+    """matcher(piece, screen_tiles, context) -> the edit id the selection makes, or None.
 
-    Wall tiles are already in the wall's frame. Floor / cone selections are in the screen grid, so each catalogue edit
-    is first mapped into that grid with the observation's pose (edit_geometry.tiles_to_grid)."""
-    from .edit_geometry import PieceContext, tiles_to_grid
+    Uses build_pieces.PatternTable: every real edit shape in shared/edits.json (suggested or not, common or rare), and
+    only shapes that hold together in game (no floating parts unless a real Fortnite class joins them). Floor / cone
+    selections are seen in the screen grid, so they are mapped back into the piece's near/far frame first
+    (edit_geometry.grid_to_tiles). Ramps are matched on drag paths, which the screen observer does not produce yet."""
+    from .build_pieces import PatternTable, piece_for
+    from .edit_geometry import PieceContext, grid_to_tiles
+    table = table or PatternTable()
 
     def match(piece, tiles, context):
-        if not tiles:
+        if not tiles or piece not in ("wall", "floor", "cone"):
             return None
         ctx = PieceContext(**context) if context and piece != "wall" else None
-        wanted = set(tiles)
-        hits = []
-        for e in dictionary.all.values():
-            if canonical(e.get("piece")) != piece or not e.get("tiles"):
-                continue
-            mapped = set(tiles_to_grid(ctx, e["tiles"])) if ctx else set(e["tiles"])
-            if mapped == wanted:
-                hits.append(e)
-        # Prefer a suggested edit when two definitions share a mask.
-        hits.sort(key=lambda e: (not e.get("suggest"), e["id"]))
-        return hits[0]["id"] if hits else None
+        if piece != "wall" and ctx is None:
+            return None
+        own = grid_to_tiles(ctx, tiles) if ctx else tuple(tiles)
+        outcome = table.match(piece_for(piece), own)
+        return outcome.pattern.id if outcome.valid and outcome.pattern else None
     return match
 
 
