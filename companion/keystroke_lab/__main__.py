@@ -214,7 +214,7 @@ def cmd_cloud(args):
     from .store import Store
     client = CloudClient()
     if not client.configured:
-        print("Cloud is not configured: set SUPABASE_URL and SUPABASE_ANON_KEY (../.env) or shared/cloud.json.")
+        print("Cloud is not configured: set SUPABASE_PROJECT_ID (or SUPABASE_URL) and SUPABASE_PUBLISHABLE_KEY in ../.env, or shared/cloud.json.")
         return 1
     try:
         if args.action == "status":

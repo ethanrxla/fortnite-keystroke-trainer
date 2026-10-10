@@ -146,16 +146,16 @@ alter table keystroke_trainer.labels enable row level security;
 alter table keystroke_trainer.player_edit_stats enable row level security;
 alter table keystroke_trainer.key_summaries enable row level security;
 
-create policy maps_read on core.maps for select using (true);
-create policy catalog_read on core.edit_catalog for select using (true);
-create policy policies_read on core.policies for select using (active);
-create policy players_own on core.players for select using (id = auth.uid());
-create policy sessions_own on core.sessions for select using (player_id = auth.uid());
-create policy attempts_own on keystroke_trainer.attempts for select using (player_id = auth.uid());
-create policy stats_own on keystroke_trainer.player_edit_stats for select using (player_id = auth.uid());
-create policy keys_own on keystroke_trainer.key_summaries for select using (player_id = auth.uid());
-create policy labels_own on keystroke_trainer.labels for select using (
-  exists (select 1 from keystroke_trainer.attempts a where a.attempt_id = labels.attempt_id and a.player_id = auth.uid()));
+create policy maps_read on core.maps for select to anon, authenticated using (true);
+create policy catalog_read on core.edit_catalog for select to anon, authenticated using (true);
+create policy policies_read on core.policies for select to anon, authenticated using (active);
+create policy players_own on core.players for select to authenticated using ((select auth.uid()) = id);
+create policy sessions_own on core.sessions for select to authenticated using ((select auth.uid()) = player_id);
+create policy attempts_own on keystroke_trainer.attempts for select to authenticated using ((select auth.uid()) = player_id);
+create policy stats_own on keystroke_trainer.player_edit_stats for select to authenticated using ((select auth.uid()) = player_id);
+create policy keys_own on keystroke_trainer.key_summaries for select to authenticated using ((select auth.uid()) = player_id);
+create policy labels_own on keystroke_trainer.labels for select to authenticated using (
+  exists (select 1 from keystroke_trainer.attempts a where a.attempt_id = labels.attempt_id and a.player_id = (select auth.uid())));
 -- No insert/update/delete policies: writes happen only in security-definer functions and the ingest Edge Function.
 
 -- ---------------------------------------------------------------- api: the public interface
@@ -177,9 +177,10 @@ begin
   return me;
 end $$;
 
+-- Reads run as the caller (security invoker), so row-level security decides what comes back.
 create or replace function api.me() returns core.players
-language sql stable security definer set search_path = '' as $$
-  select * from core.players where id = auth.uid();
+language sql stable security invoker set search_path = '' as $$
+  select * from core.players where id = (select auth.uid());
 $$;
 
 create or replace function api.delete_my_data() returns boolean
@@ -192,17 +193,17 @@ end $$;
 
 create or replace function api.my_edit_stats()
 returns setof keystroke_trainer.player_edit_stats
-language sql stable security definer set search_path = '' as $$
-  select * from keystroke_trainer.player_edit_stats where player_id = auth.uid() order by edit_id;
+language sql stable security invoker set search_path = '' as $$
+  select * from keystroke_trainer.player_edit_stats where player_id = (select auth.uid()) order by edit_id;
 $$;
 
 create or replace function api.active_policies(p_map text default 'keystroke_trainer')
-returns setof core.policies language sql stable security definer set search_path = '' as $$
+returns setof core.policies language sql stable security invoker set search_path = '' as $$
   select * from core.policies where map_id = p_map and active;
 $$;
 
 create or replace function api.latest_catalog(p_map text default 'keystroke_trainer')
-returns core.edit_catalog language sql stable security definer set search_path = '' as $$
+returns core.edit_catalog language sql stable security invoker set search_path = '' as $$
   select * from core.edit_catalog where map_id = p_map order by version desc limit 1;
 $$;
 
@@ -226,6 +227,10 @@ begin
   return row;
 end $$;
 
+-- Writes and the reviewer queue must bypass row-level security (there are no insert/update policies), so they are
+-- security definer, live only in the api schema (or unexposed schemas), check the caller's identity first and are
+-- granted explicitly to the roles that may call them.
+
 -- Recompute one player's per-edit stats from their attempts (also run nightly for everyone, see below).
 create or replace function keystroke_trainer.refresh_player_stats(p_player uuid default null)
 returns integer language plpgsql security definer set search_path = '' as $$
@@ -245,9 +250,14 @@ begin
   return n;
 end $$;
 
--- Privileges: the API roles see only the api schema; map schemas stay private.
+-- Privileges. Only `api` is exposed through the Data API (config.toml). The invoker read functions need the caller to
+-- reach the underlying rows, so the API roles get USAGE + SELECT on exactly those tables; RLS limits the rows.
 revoke all on schema core, keystroke_trainer from anon, authenticated;
-grant usage on schema api to anon, authenticated;
+grant usage on schema api, core to anon, authenticated;
+grant usage on schema keystroke_trainer to authenticated;
+grant select on core.policies, core.edit_catalog, core.maps to anon, authenticated;
+grant select on core.players to authenticated;
+grant select on keystroke_trainer.player_edit_stats to authenticated;
 revoke execute on all functions in schema api from public;
 grant execute on function api.active_policies(text), api.latest_catalog(text) to anon, authenticated;
 grant execute on function api.register(boolean, boolean, boolean), api.me(), api.delete_my_data(), api.my_edit_stats(),

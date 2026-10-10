@@ -169,7 +169,7 @@ class ContextPipeline:
                 edit['tiles']=list(tiles_to_grid(ctx,pick.tiles)) if (ctx and pick) else edit.get('tiles',[])
                 display=edit
         is_verified=bool(self.locked and self.locked in verified)
-        base.update(projected=True,observation=observation.to_dict(),telemetry=telemetry,advice=advice.to_dict(),
+        base.update(projected=True,target_id=target,observation=observation.to_dict(),telemetry=telemetry,advice=advice.to_dict(),
                     reference_ids=[self.locked] if self.locked else [],display_edit=display,
                     piece_context=ctx.to_dict() if ctx else None,verified=is_verified,
                     picks=[{'id':p.id,'name':p.name,'cost':p.cost,'travel':p.travel} for p in fitting[:3]],

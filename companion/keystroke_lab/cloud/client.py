@@ -1,7 +1,7 @@
 """Supabase client for the companion: anonymous identity, the `api` RPCs and the Edge Functions. Standard library only.
 
-Configuration: SUPABASE_URL and SUPABASE_ANON_KEY from the environment (../.env), else shared/cloud.json. The anon key
-is public by design (row-level security protects the data); the service-role key must never be on a player's PC.
+Configuration: see load_config (../.env, else shared/cloud.json). The publishable / anon key is public by design
+(row-level security protects the data); secret and service-role keys must never be on a player's PC.
 
 Identity: the first time it is needed, the client signs in anonymously (no account, no login screen) and keeps the
 session in companion/.cloud-session.json (gitignored). Tokens are refreshed before they expire. Nothing here sends
@@ -45,10 +45,15 @@ def _urllib_http(method, url, headers, body, timeout=15):
 
 
 def load_config():
-    url, key = os.environ.get("SUPABASE_URL"), os.environ.get("SUPABASE_ANON_KEY")
+    """(url, public key). URL: SUPABASE_URL, else https://<SUPABASE_PROJECT_ID>.supabase.co. Key: the publishable key
+    (SUPABASE_PUBLISHABLE_KEY, Supabase's recommended client key), else the legacy anon key. Secret / service-role keys
+    are never read here: this code runs on players' PCs."""
+    env = os.environ
+    url = env.get("SUPABASE_URL") or (f"https://{env['SUPABASE_PROJECT_ID']}.supabase.co" if env.get("SUPABASE_PROJECT_ID") else "")
+    key = env.get("SUPABASE_PUBLISHABLE_KEY") or env.get("SUPABASE_ANON_KEY") or env.get("SUPABASE_ANON_PUBLIC_KEY") or ""
     if (not url or not key) and CONFIG_FILE.exists():
         data = json.loads(CONFIG_FILE.read_text(encoding="utf-8"))
-        url, key = url or data.get("url"), key or data.get("anon_key")
+        url, key = url or data.get("url", ""), key or data.get("publishable_key") or data.get("anon_key", "")
     return (url or "").rstrip("/"), key or ""
 
 
