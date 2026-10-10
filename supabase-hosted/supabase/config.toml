@@ -1,0 +1,12 @@
+# Minimal config for `supabase config push` to the hosted project (tools/deploy_supabase.py).
+# Declares ONLY the two settings this backend needs, so every other hosted setting (email confirmation, MFA, pooler,
+# storage, site URL) is left exactly as it is. The full supabase/config.toml is for the local stack only.
+project_id = "KeystrokeTrainer"
+
+[api]
+# Data API serves only the api schema; core and map schemas stay private.
+schemas = ["api"]
+
+[auth]
+# Each companion install gets an invisible anonymous identity (no login screen); RLS needs it.
+enable_anonymous_sign_ins = true

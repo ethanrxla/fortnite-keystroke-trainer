@@ -197,10 +197,29 @@ def cycle(store, binds, log_path=ktlog.DEFAULT_LOG, folder=SESSIONS):
     return a, b, c
 
 
-def run(store=None, interval=2.0, log_path=ktlog.DEFAULT_LOG, folder=SESSIONS, stop=lambda: False, sleep=time.sleep):
+def cloud_sync(store, client=None, now=None):
+    """Upload consented edit attempts (cloud/sync.py). Silent no-op when the cloud is not configured or the player has
+    not opted in; any network or server error is swallowed so collection never stops. Returns the report or None."""
+    try:
+        from .cloud.client import CloudClient
+        from .cloud.sync import sync_once
+        client = client or CloudClient()
+        if not client.configured:
+            return None
+        return sync_once(store, client, now=now)
+    except Exception:
+        return None
+
+
+def run(store=None, interval=2.0, log_path=ktlog.DEFAULT_LOG, folder=SESSIONS, stop=lambda: False, sleep=time.sleep,
+        sync_every=60.0):
     store = store or Store()
     binds = drills.load_binds()
+    last_sync = 0.0
     while not stop():
         cycle(store, binds, log_path, folder)
+        if time.time() - last_sync >= sync_every:
+            cloud_sync(store)
+            last_sync = time.time()
         sleep(interval)
     store.close()
