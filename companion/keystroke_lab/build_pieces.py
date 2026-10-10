@@ -160,17 +160,33 @@ class BuildPiece:
     # -- edit state -----------------------------------------------------------------------------------------------------
     def select(self, tile):
         """Toggle a tile in edit mode (re-selecting a tile deselects it, as in game)."""
-        if not 0 <= tile < self.tiles:
+        if type(tile) is not int or not 0 <= tile < self.tiles:
             raise ValueError(f"tile {tile} outside a {self.cols} x {self.rows} {self.kind}")
         self.selection = tuple(t for t in self.selection if t != tile) if tile in self.selection else self.selection + (tile,)
         return self.selection
 
     def set_selection(self, tiles):
+        tiles = tuple(tiles)
         for t in tiles:
-            if not 0 <= t < self.tiles:
+            if type(t) is not int or not 0 <= t < self.tiles:
                 raise ValueError(f"tile {t} outside a {self.cols} x {self.rows} {self.kind}")
         self.selection = tuple(dict.fromkeys(tiles))
         return self.selection
+
+    def selection_rows(self):
+        """Boolean selection grid, bottom/near row first; not a collision mesh."""
+        selected=set(self.selection)
+        return [[r*self.cols+c in selected for c in range(self.cols)] for r in range(self.rows)]
+
+    def set_selection_rows(self, rows):
+        """Import a grid atomically. Ramps require ordered strokes instead."""
+        if self.semantics=='keep_path':raise ValueError('Ramp edits require ordered strokes')
+        rows=tuple(tuple(row) for row in rows)
+        if len(rows)!=self.rows or any(len(row)!=self.cols for row in rows):
+            raise ValueError('Selection grid dimensions do not match the piece')
+        if any(type(value) is not bool for row in rows for value in row):
+            raise ValueError('Selection grid must contain booleans')
+        return self.set_selection(r*self.cols+c for r,row in enumerate(rows) for c,value in enumerate(row) if value)
 
     def reset(self):
         """Edit reset: back to the full piece."""
@@ -246,7 +262,7 @@ class StairPiece(TwoByTwoPiece):
 
     def select(self, tile):
         """Drag onto a tile: extends the current stroke; stepping back onto the previous tile undoes the last step."""
-        if not 0 <= tile < self.tiles:
+        if type(tile) is not int or not 0 <= tile < self.tiles:
             raise ValueError(f"tile {tile} outside a 2 x 2 ramp")
         if not self.strokes:
             self.strokes = [[]]
@@ -263,7 +279,10 @@ class StairPiece(TwoByTwoPiece):
             self.strokes.append([])
 
     def set_strokes(self, strokes):
-        self.strokes = [list(s) for s in strokes if s]
+        candidate = [list(s) for s in strokes]
+        if any(type(t) is not int or not 0<=t<self.tiles for s in candidate for t in s):
+            raise ValueError('Ramp stroke contains an invalid tile')
+        self.strokes = [s for s in candidate if s]
         return self._sync()
 
     def set_selection(self, tiles):

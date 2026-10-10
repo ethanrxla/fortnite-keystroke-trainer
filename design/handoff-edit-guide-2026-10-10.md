@@ -118,3 +118,14 @@ whether it persists across sessions still needs checking in a private version.
   - detection takes about 128 ms per frame.
   Next idea: a small learned per-tile classifier (blue / selected / red / background) trained on set1 tiles
   labelled through `review-edits`, plus temporal tracking (`GridMotionTracker`) seeded from the last good homography.
+
+## Codex route/build-state integration after f85e25e
+
+- Reviewed PR #2: https://github.com/ethanrxla/fortnite-keystroke-trainer/pull/2 . Continued its existing four piece types; no per-edit subclasses or native gameplay geometry changes.
+- Added validated boolean selection-grid import/export for wall/floor/cone. Invalid state updates are atomic; stairs retain ordered strokes rather than losing direction in a mask.
+- Both guide renderers now consume the same piece-local stroke snapshot. Yellow selecting lines, dashed non-selecting approaches/transfers, numbered markers, green regions and the red ring remain. Ramp strokes are separate drags; disconnected floor/cone regions are separate taps. These describe dictionary data, not newly verified Fortnite legality.
+- Route waypoints lock once selection begins and release on reset or target/profile/orientation/edit changes. Incidental ordering of an equivalent selection mask no longer resets the lock. Screen projection continues to follow the observed piece.
+- Removed the renderer's blanket ramp exclusion; this does NOT establish ramp detection. The detector work in f85e25e belongs to the other agent and was not overwritten.
+- Validation: 247 companion tests passed; `tools/gen_edits.py --check` passed. Tests emit existing resource-cleanup warnings. No live Fortnite validation or companion restart in this pass.
+- Video reference supplied by user: https://youtu.be/0Dy2FlnVids . Web access exposed its title but not demonstrations/transcript. Treat it as a reference awaiting review, never as recorded game-validation evidence.
+- Still required: reliable live floor/cone/ramp identity and orientation, controlled accepted-edit recordings, moving-camera persistence checks, and verification that the running companion uses this revision. Do not report all edits complete. Preserve map/armory/loadout fixes, keyboard scale/bindings, the 1.25-second display hold, and existing visual layers.

@@ -6,9 +6,11 @@ the same immutable observation without changing the planner or renderer.
 """
 from dataclasses import dataclass, asdict, replace
 import math
-from .edit_observation import EditGridObserver, _line_projection, _crosshair, _general_grid, _partial_grid, _tile_support
+from .edit_observation import EditGridObserver, _line_projection, _crosshair, _general_grid, _partial_grid, _tile_support, _segments
 from .edit_geometry import piece_context
 import cv2
+
+DETECT_WIDTH=640.   # px the live detectors work at (see VisualObserver.observe)
 import numpy as np
 
 @dataclass(frozen=True)
@@ -34,7 +36,8 @@ class VisualObserver:
     def observe(self,frame,now):
         # The full exploratory detector can enumerate hundreds of thousands of
         # line intersections. Keep that offline; this live provider is bounded.
-        scale=min(1.,960./frame.shape[1])
+        # DETECT_WIDTH 640: same accuracy as 960 on 224 live frames (131 vs 126 walls), ~25% faster.
+        scale=min(1.,DETECT_WIDTH/frame.shape[1])
         image=cv2.resize(frame[:,:,:3],(round(frame.shape[1]*scale),round(frame.shape[0]*scale)))
         self.wall._aim_screen=_crosshair(frame)
         projection=_line_projection(image)
@@ -45,7 +48,10 @@ class VisualObserver:
             aim=(self.wall._aim_screen[0]*scale,self.wall._aim_screen[1]*scale)
             # Close / oblique walls whose border runs off screen: rebuild the 3x3 from three lines per direction
             # (bounded ~0.05 s). Then the any-angle detector (walls with selected tiles, 2x2 floors / cones).
-            found=_partial_grid(image,aim,budget=.09) or _general_grid(image,aim,budget=.05)
+            # One line search per frame, shared by both detectors; tighter budgets keep the guide responsive (the
+            # strongest line sets are tried first, so most answers come early).
+            segs=_segments(image)
+            found=_partial_grid(image,aim,budget=.05,segs=segs) or _general_grid(image,aim,budget=.035,segs=segs)
             if found is None:return PieceObservation(now,reason='bounded_detector_abstained')
             count,H,quad,n=found
             wall=self.wall._from_projection(image,H,quad,now,scale,count,.92 if count>=n*n-1 else .88,n)
@@ -73,6 +79,25 @@ class VisualObserver:
             return PieceObservation(now,reason='piece_topology_ambiguous')
         return PieceObservation(now,'wall',q,wall.aim_uv,wall.selected_tiles,'screen_front',wall.confidence,
                                 wall.supported_cells,'native_edit_grid_observed',context=context)
+
+    def from_quad(self,frame,tracked,now):
+        """Re-read a tracked grid without searching for it: aim point, selected tiles and pose from the quad that
+        optical flow carried forward (GridMotionTracker.follow). ~5 ms instead of a full detection, so consecutive
+        frames of one edit stay fast; selection changes are still read from the pixels of this frame."""
+        scale=min(1.,DETECT_WIDTH/frame.shape[1])
+        image=cv2.resize(frame[:,:,:3],(round(frame.shape[1]*scale),round(frame.shape[0]*scale)))
+        n=3 if tracked.piece=='wall' else 2
+        quad=np.float32(tracked.quad)*scale
+        H=cv2.getPerspectiveTransform(np.float32([[0,0],[n,0],[n,n],[0,n]]),quad)
+        self.wall._aim_screen=_crosshair(frame)
+        count=_tile_support(image,H,n)
+        if count<(6 if n==3 else 4):return None
+        wall=self.wall._from_projection(image,H,quad,now,scale,count,.9,n)
+        if wall.reason!='native_edit_grid_observed':return None
+        ctx=piece_context(wall,frame.shape[1],frame.shape[0])
+        return PieceObservation(now,tracked.piece,wall.wall_quad,wall.aim_uv,wall.selected_tiles,tracked.orientation,
+                                wall.confidence,wall.supported_cells,'native_edit_grid_observed','tracked_refined',
+                                context=ctx.to_dict() if ctx else tracked.context)
 
     @staticmethod
     def _continues(image,H):

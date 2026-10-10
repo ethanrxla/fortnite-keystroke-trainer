@@ -20,7 +20,7 @@ from .piece_observation import VisualObserver, PieceTargetTracker, GridMotionTra
 from .edit_ranker import Ranker, junction_corner
 from .edit_geometry import PieceContext, tiles_to_grid, piece_to_grid, grid_to_tiles
 from .build_pieces import PatternTable, piece_for
-from .edit_dictionary import TargetTracker, RoutePlanner, EditAnalyzer
+from .edit_dictionary import TargetTracker, RoutePlanner, RouteTracker, EditAnalyzer
 from .evidence import Evidence, ContextAssembler
 from .guide_layers import TraceGuideLayer, RegionGuideLayer, GuideDisplayLatch
 from .attempt_recorder import AttemptRecorder, AttemptLog, default_matcher
@@ -77,15 +77,18 @@ def route_lines(observation,tiles,aim=None,cols=3):
 
 
 class ContextPipeline:
+    FULL_EVERY=3      # tracked frames between full detections (see process: fast path)
     def __init__(self,store,advisor=None,clock=time.monotonic,observer=None,telemetry=None):
         self.store=store;self.clock=clock
         self.advisor=advisor or EditAdvisor(jev=JevClient(domain='edit'),clock=clock)
-        self.observer=observer or VisualObserver();self.targets=PieceTargetTracker();self.selection=TargetTracker()
+        self.observer=observer or VisualObserver();self.targets=PieceTargetTracker();self.selection=TargetTracker(stability=.06)   # 60 ms before a new pick shows (was 150); hysteresis already damps flicker
         self.telemetry=telemetry or TelemetryReader(clock=clock);self.metrics=EditAnalyzer()
         self.ranker=Ranker();self.patterns=PatternTable();self.motion=GridMotionTracker();self.previous_display=None;self.last_attempt=None
         self.locked=None;self.profile_identity=None;self.last_target=None
-        self.last_mode_seen=-float('inf')
+        self.last_mode_seen=-float('inf');self.frames_since_full=0
+        self.routes=RouteTracker()
     def reset_tracking(self):
+        self.routes.reset()
         self.locked=None;self.selection.reset();self.targets.last=None;self.last_target=None
         self.motion.reset();self.previous_display=None;self.last_mode_seen=-float('inf')
     def process(self,frame,captured_at=None):
@@ -116,10 +119,22 @@ class ContextPipeline:
             base['last_attempt']=self.last_attempt
             self.reset_tracking()
             return base
-        observation=mode_track or (self.observer.observe(frame,captured) if mode=='editing' else None)
-        if observation:base['detection_reason']=observation.reason
+        # Fast path: during one edit consecutive frames barely move. Follow the last detected grid with optical flow
+        # and re-read aim + selection from it (~10 ms); a full detection (~80-130 ms) runs every FULL_EVERY frames,
+        # after 0.5 s, or whenever following fails, so drift and new pieces are still caught.
+        fast=None
+        if (mode=='editing' and mode_track is None and self.motion.observation is not None
+                and self.frames_since_full<self.FULL_EVERY and captured-self.motion.detected_at<=.5):
+            moved=self.motion.follow(frame,captured)
+            fast=self.observer.from_quad(frame,moved,captured) if moved else None
+        if fast is not None:
+            observation=fast;self.frames_since_full+=1
+        else:
+            observation=mode_track or (self.observer.observe(frame,captured) if mode=='editing' else None)
+            self.frames_since_full=0
+        if observation:base['detection_reason']=observation.reason if fast is None else 'tracked_refined'
         tracked=mode_track is not None
-        if observation and observation.piece!='unknown' and not tracked:self.motion.seed(frame,observation)
+        if observation and observation.piece!='unknown' and not tracked and fast is None:self.motion.seed(frame,observation)
         elif mode=='editing' and not tracked:
             observation=self.motion.follow(frame,captured);tracked=observation is not None
         target=self.targets.update(observation) if observation else None
@@ -196,13 +211,22 @@ class ContextPipeline:
         if self.locked:
             edit=dict(self.advisor.dictionary.all.get(self.locked) or {})
             pick=next((p for p in picks if p.id==self.locked),None)
-            if edit and edit.get('piece')!='ramp':
+            if edit:
                 # Draw in the observed screen grid: tiles in the ranker's drag order, remapped for 2x2 pieces.
-                edit['tiles']=list(tiles_to_grid(ctx,pick.tiles)) if (ctx and pick) else edit.get('tiles',[])
+                edit['tiles']=list(tiles_to_grid(ctx,pick.tiles)) if (ctx and pick and edit['piece']!='ramp') else edit.get('tiles',[])
+                if ctx and edit['piece']=='ramp' and edit.get('strokes'):
+                    edit['strokes']=[list(tiles_to_grid(ctx,stroke)) for stroke in edit['strokes']]
+                    edit['tiles']=[t for stroke in edit['strokes'] for t in stroke]
                 display=edit
+        paths=()
+        if display:
+            paths=self.routes.update((identity,target,observation.orientation,display['id'],tuple(sorted(display.get('tiles',()))),
+                                      tuple(tuple(s) for s in display.get('strokes',()))),
+                                     observation.aim_uv,display,observation.selected_tiles)
+        else:self.routes.reset()
         is_verified=bool(self.locked and self.locked in verified)
         base.update(projected=True,target_id=target,observation=observation.to_dict(),telemetry=telemetry,advice=advice.to_dict(),
-                    reference_ids=[self.locked] if self.locked else [],display_edit=display,
+                    reference_ids=[self.locked] if self.locked else [],display_edit=display,guide_strokes=paths,
                     piece_context=ctx.to_dict() if ctx else None,verified=is_verified,
                     picks=[{'id':p.id,'name':p.name,'cost':p.cost,'travel':p.travel} for p in fitting[:3]],
                     status=('Short safe route | green = select' if is_verified else
@@ -281,12 +305,14 @@ def run(profile_path=None):
         markers.append(canvas.create_oval(0,0,1,1,fill='#ffdc46',outline=''))
         side_labels.append(canvas.create_text(12+j*200,162,anchor='nw',fill='#b8dadd',font=('Segoe UI',9)))
     panel_approach=canvas.create_line(0,0,1,1,fill='#f6f7a0',width=3,dash=(4,4),arrow=tk.LAST,state='hidden')
+    panel_paths=[routes[0]]+[canvas.create_line(0,0,1,1,fill='#f6f7a0',width=3,arrow=tk.LAST,state='hidden') for _ in range(8)]
+    panel_approaches=[panel_approach]+[canvas.create_line(0,0,1,1,fill='#f6f7a0',width=3,dash=(4,4),arrow=tk.LAST,state='hidden') for _ in range(8)]
     caption_id=canvas.create_text(12,185,anchor='nw',fill='#e3eeed',font=('Segoe UI',10))
     status_id=canvas.create_text(12,208,anchor='nw',fill='#9bb7c1',font=('Segoe UI',9))
     def draw(data):
         from .guide_visuals import layout
         ids=data.get('reference_ids',[]);observation=data.get('observation') or {}
-        for group in cells+numbers+[[*routes,*markers,*side_labels]]:
+        for group in cells+numbers+[[*routes,*markers,*side_labels,*panel_paths,*panel_approaches]]:
             for item in group:canvas.itemconfig(item,state='hidden')
         canvas.coords(caption_id,12,185 if ids else 40)
         canvas.itemconfig(status_id,state='normal' if ids else 'hidden')
@@ -296,7 +322,7 @@ def run(profile_path=None):
         if not ids:return
         edit=data.get('display_edit')
         if not edit:return
-        visual=layout(edit,observation['aim_uv']);unit=114;x=12;y=40
+        visual=layout(edit,observation['aim_uv'],data.get('guide_strokes'));unit=114;x=12;y=40
         piece=(data.get('piece_context') or {}).get('kind','')
         side=['left','centre','right'][(data.get('piece_context') or {}).get('side',1)]
         canvas.itemconfig(heading,text=f"{piece.upper()} | {visual.title.upper()}")
@@ -305,12 +331,13 @@ def run(profile_path=None):
             l,b,r,t=region;item=cells[0][i]
             canvas.coords(item,x+l*unit+2,y+(1-t)*unit+2,x+r*unit-2,y+(1-b)*unit-2)
             canvas.itemconfig(item,state='normal',fill='#27d77b' if i in visual.selected else '#142c34')
-        if visual.approach:
-            canvas.coords(panel_approach,*[v for u,vv in visual.approach for v in (x+u*unit,y+vv*unit)])
-            canvas.itemconfig(panel_approach,state='normal')
+        for item,approach in zip(panel_approaches,visual.approaches):
+            canvas.coords(item,*[v for u,vv in approach for v in (x+u*unit,y+vv*unit)])
+            canvas.itemconfig(item,state='normal')
+        for item,path in zip(panel_paths,visual.strokes):
+            coords=[v for u,vv in path for v in (x+u*unit,y+vv*unit)]
+            canvas.coords(item,*(coords if len(coords)>2 else coords+coords));canvas.itemconfig(item,state='normal')
         if visual.path:
-            coords=[v for u,vv in visual.path for v in (x+u*unit,y+vv*unit)]
-            canvas.coords(routes[0],*(coords if len(coords)>2 else coords+coords));canvas.itemconfig(routes[0],state='normal')
             u,v=visual.path[0];canvas.coords(markers[0],x+u*unit-4,y+v*unit-4,x+u*unit+4,y+v*unit+4)
             canvas.itemconfig(markers[0],state='normal')
             for item,(label,(u,v)) in zip(numbers[0],visual.labels):
@@ -321,30 +348,35 @@ def run(profile_path=None):
     world_regions=[lines_canvas.create_polygon(0,0,1,0,1,1,outline='#27d77b',fill='',width=3,state='hidden') for _ in range(9)]
     world_path=lines_canvas.create_line(0,0,1,1,fill='#f6f7a0',width=3,arrow=tk.LAST,state='hidden')
     world_approach=lines_canvas.create_line(0,0,1,1,fill='#f6f7a0',width=3,dash=(4,4),arrow=tk.LAST,state='hidden')
+    world_paths=[world_path]+[lines_canvas.create_line(0,0,1,1,fill='#f6f7a0',width=3,arrow=tk.LAST,state='hidden') for _ in range(8)]
+    world_approaches=[world_approach]+[lines_canvas.create_line(0,0,1,1,fill='#f6f7a0',width=3,dash=(4,4),arrow=tk.LAST,state='hidden') for _ in range(8)]
     world_numbers=[lines_canvas.create_text(0,0,text='',fill='white',font=('Segoe UI',10,'bold'),state='hidden') for _ in range(9)]
     world_markers=[lines_canvas.create_oval(0,0,1,1,outline='#f6f7a0',fill='#142c34',width=2,state='hidden') for _ in range(9)]
     world_start=lines_canvas.create_oval(0,0,1,1,fill='#ffdc46',outline='',state='hidden')
-    trace_layer=TraceGuideLayer(lines_canvas,[world_path])
+    trace_layers=[TraceGuideLayer(lines_canvas,[item]) for item in world_paths]
     region_layer=RegionGuideLayer(lines_canvas,world_regions)
     def draw_lines(data,rect):
-        for item in world_regions+world_numbers+world_markers+[world_path,world_approach,world_start]:lines_canvas.itemconfig(item,state='hidden')
+        for item in world_regions+world_numbers+world_markers+world_paths+world_approaches+[world_start]:lines_canvas.itemconfig(item,state='hidden')
         observation=data.get('observation') or {};ids=data.get('reference_ids') or []
         if not data.get('projected') or not ids:return False
         edit=data.get('display_edit')
         if not edit:return False
-        route=RoutePlanner(inset=.35).plan(observation['aim_uv'],edit)
-        if not route:return False
-        n=1 if edit['piece']=='ramp' else edit['cols'];quad=observation['wall_quad']
-        points=[grid_to_screen(quad,*p,n,n) for p in route[1]]
+        paths=data.get('guide_strokes')
+        if paths is None:paths=RoutePlanner(inset=.35).strokes(observation['aim_uv'],edit)
+        if not paths:return False
+        n=edit['cols'];quad=observation['wall_quad']
+        screen_paths=[[grid_to_screen(quad,*p,n,n) for p in path] for path in paths]
+        points=[p for path in screen_paths for p in path]
         aim=grid_to_screen(quad,*observation['aim_uv'],n,n)
-        lines_canvas.coords(world_approach,*aim,*points[0]);lines_canvas.itemconfig(world_approach,state='normal')
-        coords=[v for p in points for v in p]
-        trace_layer.show(coords)
+        previous=aim
+        for layer,approach,path in zip(trace_layers,world_approaches,screen_paths):
+            lines_canvas.coords(approach,*previous,*path[0]);lines_canvas.itemconfig(approach,state='normal')
+            layer.show([v for p in path for v in p])
+            previous=path[-1]
         outlines=[]
-        if edit['piece']!='ramp':
-            for tile in edit['tiles']:
-                c,r=tile%n,tile//n
-                outlines.append([grid_to_screen(quad,c+dc,r+dr,n,n) for dc,dr in ((0,0),(1,0),(1,1),(0,1))])
+        for tile in edit['tiles']:
+            c,r=tile%n,tile//n
+            outlines.append([grid_to_screen(quad,c+dc,r+dr,n,n) for dc,dr in ((0,0),(1,0),(1,1),(0,1))])
         region_layer.show(outlines,True)
         lines_canvas.coords(world_start,aim[0]-4,aim[1]-4,aim[0]+4,aim[1]+4);lines_canvas.itemconfig(world_start,state='normal')
         for item,p in zip(world_markers,points):

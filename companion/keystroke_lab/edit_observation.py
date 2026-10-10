@@ -158,7 +158,7 @@ def _cross(a,b):
     return np.linalg.solve(m,np.array([a['c'],b['c']],float))
 
 
-def _general_grid(image,aim,budget=.08):
+def _general_grid(image,aim,budget=.08,segs=None):
     """Any-angle n x n edit grid (n = 3 for walls, 2 for floors / stairs / roofs).
 
     The near-horizontal / near-vertical detector (_line_projection) misses floors seen at an angle and walls with
@@ -167,7 +167,8 @@ def _general_grid(image,aim,budget=.08):
     cells look like edit tiles and which contains the crosshair. Returns (count, H, quad, n) or None."""
     deadline=time.perf_counter()+budget
     h,w=image.shape[:2]
-    lines=sorted(_merge_lines(_segments(image)),key=lambda l:-l['length'])[:24]
+    # segs: line segments computed once per frame by the caller and shared between detectors (~26 ms each).
+    lines=sorted(_merge_lines(segs if segs is not None else _segments(image)),key=lambda l:-l['length'])[:24]
     if len(lines)<6:return None
     # Direction families: up to three angle peaks (selected tiles add diagonal X marks, so the strongest two are not
     # always the grid); every pair at least 25 degrees apart is tried.
@@ -272,7 +273,7 @@ def _tile_like(colour):
     return blue or neutral or red
 
 
-def _partial_grid(image,aim,budget=.06):
+def _partial_grid(image,aim,budget=.06,segs=None):
     """A 3x3 wall whose outer border is partly off screen (close, oblique views): rebuild it from three visible lines
     per direction.
 
@@ -283,7 +284,7 @@ def _partial_grid(image,aim,budget=.06):
     never guessed. Returns (count, H, quad, 3) like _general_grid, with quad corners possibly off screen."""
     deadline=time.perf_counter()+budget
     h,w=image.shape[:2]
-    lines=sorted(_merge_lines(_segments(image)),key=lambda l:-l['length'])[:20]
+    lines=sorted(_merge_lines(segs if segs is not None else _segments(image)),key=lambda l:-l['length'])[:20]
     if len(lines)<6:return None
     hist=np.zeros(180)
     for l in lines:hist[int(l['angle'])%180]+=l['length']
@@ -357,10 +358,18 @@ def _partial_grid(image,aim,budget=.06):
 
 
 _TEMPLATE_CACHE = {}
+_CUE_HINT = {}      # (name, roi) -> (template index, x, y) of the last confident match: searched first next frame
+
+
 def cue_scores(frame, names, roi=None):
+    """Best template-match score per HUD cue (CONFIRM, RESET, build labels...) in a region of the frame.
+
+    Fast path: the HUD does not move between frames, so the scale and position of the last confident match are tried
+    first in a small window (about 1 ms instead of ~17 ms per cue). The full six-scale search runs only when that
+    fails, so a cue that moved or disappeared is still found or correctly scored low."""
     height,width=frame.shape[:2]
     scale=min(1.,960./width)
-    image=cv2.resize(frame[:,:,:3],(round(width*scale),round(height*scale)))
+    image=cv2.resize(frame[:,:,:3],(round(width*scale),round(height*scale)))   # default interpolation: templates were tuned on it
     h,w=image.shape[:2]
     if roi is None:roi=(.20,.30,1.,.76)
     x1,y1,x2,y2=roi
@@ -373,12 +382,30 @@ def cue_scores(frame, names, roi=None):
         if key not in _TEMPLATE_CACHE:
             template=cv2.imread(str(Path(__file__).resolve().parents[1]/'assets/edit-observer'/(name+'.png')),0)
             _TEMPLATE_CACHE[key]=[] if template is None else [cv2.resize(template,None,fx=k*scale,fy=k*scale) for k in [.7,.85,1.,1.15,1.3,1.5]]
-        score=0.
-        for current in _TEMPLATE_CACHE[key]:
+        templates=_TEMPLATE_CACHE[key]
+        hint_key=(name,roi,round(scale,3))
+        hint=_CUE_HINT.get(hint_key)
+        if hint is not None:
+            i,x,y=hint
+            t=templates[i];pad=24
+            ya,yb=max(0,y-pad),min(mask.shape[0],y+t.shape[0]+pad)
+            xa,xb=max(0,x-pad),min(mask.shape[1],x+t.shape[1]+pad)
+            window=mask[ya:yb,xa:xb]
+            if window.shape[0]>=t.shape[0] and window.shape[1]>=t.shape[1]:
+                _,best,_,loc=cv2.minMaxLoc(cv2.matchTemplate(window,t,cv2.TM_CCOEFF_NORMED))
+                if best>=.70:      # strong match where it was last time: trust it; else search the whole region
+                    _CUE_HINT[hint_key]=(i,xa+loc[0],ya+loc[1])
+                    scores.append(float(best));continue
+        score=0.;found=None
+        for i,current in enumerate(templates):
             if current.shape[0]>mask.shape[0] or current.shape[1]>mask.shape[1]:continue
-            score=max(score,float(cv2.minMaxLoc(cv2.matchTemplate(mask,current,cv2.TM_CCOEFF_NORMED))[1]))
+            _,best,_,loc=cv2.minMaxLoc(cv2.matchTemplate(mask,current,cv2.TM_CCOEFF_NORMED))
+            if best>score:score=float(best);found=(i,loc[0],loc[1])
+        if found and score>=.55:_CUE_HINT[hint_key]=found
+        else:_CUE_HINT.pop(hint_key,None)
         scores.append(score)
     return tuple(scores)
+
 
 def _native_edit_cues(frame):
     scores=cue_scores(frame,['confirm','reset'])
