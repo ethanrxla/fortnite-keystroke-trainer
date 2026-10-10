@@ -36,11 +36,7 @@ def run(args, e, stdin=None):
     text = SECRET.sub(lambda m: m.group(1) + "<redacted>", (p.stdout or "") + (p.stderr or ""))
     print(text)
     with LOG.open("a", encoding="utf-8") as f:
-        f.write(f"
-$ supabase {' '.join(args)}
-{text}
-[exit {p.returncode}]
-")
+        f.write(f"\n$ supabase {' '.join(args)}\n{text}\n[exit {p.returncode}]\n")
     return p.returncode
 
 
