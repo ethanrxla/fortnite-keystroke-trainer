@@ -45,3 +45,4 @@ companion/overlay-settings.json
 
 # Cross-process scheduling metadata
 companion/.runtime/
+companion/.cloud-session.json

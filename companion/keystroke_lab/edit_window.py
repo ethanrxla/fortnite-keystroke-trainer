@@ -88,7 +88,7 @@ class ContextPipeline:
         mode_track=None
         if mode=='unknown' and self.previous_display:
             cues=cue_scores(frame,['confirm','reset'])
-            if min(cues)>=.40 and sum(cues)/2>=.46:
+            if min(cues)>=.32 and sum(cues)/2>=.40:
                 mode_track=self.motion.follow(frame,captured)
                 if mode_track is not None:mode='editing'
         identity=(profile.profile_id,profile.revision)
@@ -248,7 +248,7 @@ def run(profile_path=None):
         routes.append(canvas.create_line(0,0,1,1,fill='#f6f7a0',width=3,arrow=tk.LAST))
         markers.append(canvas.create_oval(0,0,1,1,fill='#ffdc46',outline=''))
         side_labels.append(canvas.create_text(12+j*200,162,anchor='nw',fill='#b8dadd',font=('Segoe UI',9)))
-    panel_approach=canvas.create_line(0,0,1,1,fill='#82a8b8',width=2,dash=(4,4),state='hidden')
+    panel_approach=canvas.create_line(0,0,1,1,fill='#f6f7a0',width=3,dash=(4,4),arrow=tk.LAST,state='hidden')
     caption_id=canvas.create_text(12,185,anchor='nw',fill='#e3eeed',font=('Segoe UI',10))
     status_id=canvas.create_text(12,208,anchor='nw',fill='#9bb7c1',font=('Segoe UI',9))
     def draw(data):
@@ -288,7 +288,7 @@ def run(profile_path=None):
     # Pool world markers and lines; no create/delete loop while tracing.
     world_regions=[lines_canvas.create_polygon(0,0,1,0,1,1,outline='#27d77b',fill='',width=3,state='hidden') for _ in range(9)]
     world_path=lines_canvas.create_line(0,0,1,1,fill='#f6f7a0',width=3,arrow=tk.LAST,state='hidden')
-    world_approach=lines_canvas.create_line(0,0,1,1,fill='#82a8b8',width=2,dash=(4,4),state='hidden')
+    world_approach=lines_canvas.create_line(0,0,1,1,fill='#f6f7a0',width=3,dash=(4,4),arrow=tk.LAST,state='hidden')
     world_numbers=[lines_canvas.create_text(0,0,text='',fill='white',font=('Segoe UI',10,'bold'),state='hidden') for _ in range(9)]
     trace_layer=TraceGuideLayer(lines_canvas,[world_path])
     region_layer=RegionGuideLayer(lines_canvas,world_regions)
@@ -298,7 +298,7 @@ def run(profile_path=None):
         if not data.get('projected') or not ids:return False
         edit=data.get('display_edit')
         if not edit:return False
-        route=RoutePlanner().plan(observation['aim_uv'],edit)
+        route=RoutePlanner(inset=.35).plan(observation['aim_uv'],edit)
         if not route:return False
         n=1 if edit['piece']=='ramp' else edit['cols'];quad=observation['wall_quad']
         points=[grid_to_screen(quad,*p,n,n) for p in route[1]]
@@ -311,7 +311,7 @@ def run(profile_path=None):
             for tile in edit['tiles']:
                 c,r=tile%n,tile//n
                 outlines.append([grid_to_screen(quad,c+dc,r+dr,n,n) for dc,dr in ((0,0),(1,0),(1,1),(0,1))])
-        region_layer.show(outlines,bool(observation.get('selected_tiles')))
+        region_layer.show(outlines,True)
         for i,(item,p) in enumerate(zip(world_numbers,points),1):
             lines_canvas.coords(item,*p);lines_canvas.itemconfig(item,state='normal',text=str(i))
         return True
@@ -320,7 +320,7 @@ def run(profile_path=None):
         nonlocal last,shown,last_write,panel_shown,lines_shown,lines_key
         with mutex:data=shared['result'];rect=shared['rect']
         now=time.monotonic()
-        fresh=bool(rect and data and data['mode'] in ('editing','building','editable') and 0<=now-data['captured_at']<.25)
+        fresh=bool(rect and data and data['mode'] in ('editing','building','editable') and 0<=now-data['captured_at']<.60)
         # The ring is the player's aim reference: hold it through dropped frames for the whole edit / build / blueprint.
         ring_on=bool(rect) and presence.update(fresh,now)
         if not rect:presence.reset()

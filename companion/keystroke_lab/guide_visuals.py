@@ -15,7 +15,7 @@ class GuideVisual:
 def layout(edit,aim):
     ramp=edit['piece']=='ramp'
     n=1 if ramp else edit['cols']
-    route=RoutePlanner().plan(aim,edit)
+    route=RoutePlanner(inset=.35).plan(aim,edit)
     regions=tuple((c/n,r/n,(c+1)/n,(r+1)/n) for r in range(n) for c in range(n)) if not ramp else ()
     if route:
         _,points,order=route

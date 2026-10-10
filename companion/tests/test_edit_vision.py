@@ -148,7 +148,7 @@ class GuideContinuityTests(unittest.TestCase):
   tracker=GridMotionTracker();tracker.seed(frame,obs)
   tracked=tracker.follow(frame,1.1)
   self.assertIsNotNone(tracked);self.assertEqual(tracked.source,'optical_flow')
-  self.assertEqual(tracked.piece,'wall');self.assertIsNone(tracker.follow(frame,2.))
+  self.assertEqual(tracked.piece,'wall');self.assertIsNotNone(tracker.follow(frame,2.));self.assertIsNone(tracker.follow(frame,3.1))
  def test_incompatible_upper_goal_recognizes_lower_four_tiles(self):
   from dataclasses import replace
   from keystroke_lab.piece_observation import VisualObserver
@@ -163,3 +163,31 @@ class GuideContinuityTests(unittest.TestCase):
     self.assertEqual(state['reference_ids'],['half_arch_left'])
     self.assertEqual(set(state['display_edit']['tiles']),{0,1,3,4})
    finally:pipe.advisor.close()
+
+
+class CombinedGuideLayerTests(unittest.TestCase):
+ def test_boxes_and_route_remain_independent_and_visible(self):
+  from keystroke_lab.guide_layers import TraceGuideLayer,RegionGuideLayer
+  class Canvas:
+   def __init__(self):self.states={};self.points={}
+   def coords(self,item,*coords):self.points[item]=coords
+   def itemconfig(self,item,**kwargs):self.states[item]=kwargs.get('state')
+  c=Canvas();trace=TraceGuideLayer(c,[1]);regions=RegionGuideLayer(c,[2,3])
+  trace.show([0,0,40,40,80,40]);regions.show([[(0,0),(40,0),(40,40)],[(40,0),(80,0),(80,40)]],True)
+  self.assertEqual(c.states,{1:'normal',2:'normal',3:'normal'})
+  regions.hide();self.assertEqual(c.states[1],'normal')
+ def test_upper_corner_has_a_visible_safe_tracing_line(self):
+  from keystroke_lab.guide_visuals import layout
+  visual=layout({'piece':'wall','cols':3,'tiles':[5,8,7],'name':'Upper corner'},(2.,2.))
+  self.assertEqual(len(visual.path),3)
+  self.assertGreater(sum(__import__('math').dist(a,b) for a,b in zip(visual.path,visual.path[1:])),.4)
+
+@unittest.skipIf(cv2 is None,'optional local vision dependencies missing')
+class RedGridTrackingTests(unittest.TestCase):
+ def test_red_invalid_grid_remains_trackable_without_success(self):
+  import numpy as np
+  from keystroke_lab.edit_observation import _tile_support
+  from keystroke_lab.edit_dictionary import EditAnalyzer
+  image=np.zeros((300,300,3),np.uint8);image[:]=[20,30,170]
+  self.assertEqual(_tile_support(image,np.diag([100.,100.,1.]),3),9)
+  self.assertFalse(EditAnalyzer().finish([6,7,3])['result_confirmed'])

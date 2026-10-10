@@ -6,7 +6,7 @@ the same immutable observation without changing the planner or renderer.
 """
 from dataclasses import dataclass, asdict, replace
 import math
-from .edit_observation import EditGridObserver, _line_projection, _crosshair, _general_grid
+from .edit_observation import EditGridObserver, _line_projection, _crosshair, _general_grid, _tile_support
 from .edit_geometry import piece_context
 import cv2
 import numpy as np
@@ -80,7 +80,8 @@ class VisualObserver:
             blue=((tile[:,:,0]>tile[:,:,2]*1.2)&(tile[:,:,0]>80)).mean()
             # Native blue edit tiles continuing at matching scale are stronger
             # evidence than the planar-camera above/below heuristic.
-            if blue>.70:return True
+            red=((tile[:,:,2]>tile[:,:,0]*1.2)&(tile[:,:,2]>80)&(tile[:,:,1]<100)).mean()
+            if blue+red>.70:return True
         return False
 
 class PieceTargetTracker:
@@ -103,7 +104,7 @@ class GridMotionTracker:
     A carried selection is unknown: tracking supplies position, never new edit
     accuracy evidence. Lost features, target changes and expired tracks abstain.
     """
-    def __init__(self, grace=.75):
+    def __init__(self, grace=2.):
         self.grace=grace;self.reset()
     def reset(self):self.grey=None;self.points=None;self.observation=None;self.detected_at=-math.inf;self.scale=1.
     def seed(self,frame,observation):
@@ -133,6 +134,8 @@ class GridMotionTracker:
         cross=_crosshair(frame)
         if cv2.pointPolygonTest(quad,cross,False)<0:return None
         n=3 if self.observation.piece=='wall' else 2
+        native=cv2.getPerspectiveTransform(np.array([[0,0],[n,0],[n,n],[0,n]],np.float32),quad)
+        if _tile_support(frame[:,:,:3],native,n)<(6 if n==3 else 4):return None
         grid=np.array([[0,n],[n,n],[n,0],[0,0]],np.float32)
         projection=cv2.getPerspectiveTransform(quad,grid)
         aim=cv2.perspectiveTransform(np.array([[cross]],np.float32),projection)[0,0]

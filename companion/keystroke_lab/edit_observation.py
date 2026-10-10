@@ -110,7 +110,8 @@ def _tile_support(image,H,n):
             tile=small[row*size+5:row*size+20,col*size+5:col*size+20]
             blue=((tile[:,:,0]>tile[:,:,2]*1.22)&(tile[:,:,0]>80)&(tile[:,:,1]>45)).mean()
             neutral=((tile.max(2)-tile.min(2)<25)&(tile.mean(2)>60)&(tile.mean(2)<180)).mean()
-            if blue+neutral>.65:count+=1
+            red=((tile[:,:,2]>tile[:,:,0]*1.22)&(tile[:,:,2]>80)&(tile[:,:,1]<100)).mean()
+            if blue+neutral+red>.65:count+=1
     return count
 
 

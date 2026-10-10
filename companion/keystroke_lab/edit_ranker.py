@@ -20,6 +20,8 @@ import json
 import math
 import pathlib
 
+from .pieces import catalog_key
+
 SHARED = pathlib.Path(__file__).resolve().parents[2] / "shared"
 PRIOR_WEIGHT = 0.3
 DRAG_WEIGHT = 0.15
@@ -73,7 +75,8 @@ def situation_key(aim, side, far, c):
 
 
 class Ranker:
-    def __init__(self, shared=SHARED, personal=None):
+    def __init__(self, shared=SHARED, personal=None, policies=None):
+        """policies: optional {piece: policy dict or path} replacing the shared tables (to compare policy versions)."""
         shared = pathlib.Path(shared)
         data = json.loads((shared / "edits.json").read_text(encoding="utf-8"))
         self.library, self.policy = {}, {}
@@ -83,6 +86,10 @@ class Ranker:
             if path.is_file():
                 p = json.loads(path.read_text(encoding="utf-8"))
                 self.policy[kind] = (p["edits"], p["priors"])
+        for kind, p in (policies or {}).items():
+            if not isinstance(p, dict):
+                p = json.loads(pathlib.Path(p).read_text(encoding="utf-8"))
+            self.policy[catalog_key(kind) or kind] = (p["edits"], p["priors"])
         if personal is None:
             path = shared / "edit-policy-personal.json"
             personal = json.loads(path.read_text(encoding="utf-8")).get("factors", {}) if path.is_file() else {}
@@ -99,6 +106,7 @@ class Ranker:
         return row[ids.index(edit_id)]
 
     def rank(self, kind, aim, side=1, far=False):
+        kind = catalog_key(kind) or kind          # accepts canonical names (cone, ramp) and catalogue keys
         c = cols(kind)
         if kind not in self.library or len(aim) != 2 or not all(0 <= v < c for v in aim):
             return []

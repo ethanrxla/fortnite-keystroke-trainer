@@ -32,9 +32,10 @@ class EditDictionary:
                 and (objective is None or objective in e.get('purpose',[]))]
 
 class RoutePlanner:
+    def __init__(self,inset=.15):self.inset=inset
     def plan(self,aim,edit):
         from .edit_advisor import safe_path
-        if edit['piece']!='ramp':return safe_path(aim,edit['tiles'],cols=edit['cols'])
+        if edit['piece']!='ramp':return safe_path(aim,edit['tiles'],cols=edit['cols'],inset=self.inset)
         import math
         gesture=edit.get('gesture',{});nodes=gesture.get('nodes',{});edges={tuple(e) for e in gesture.get('edges',[])}
         routes=[]
