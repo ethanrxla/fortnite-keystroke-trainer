@@ -66,7 +66,12 @@ keystroke_section_device := class(creative_device):
                 break
             if (DrillId := Section.Drills[Index]):
                 if (Lane := LaneFor[DrillId]):
-                    Lane.PlaySet(Player, Pad, RepsPerDrill)
+                    # The player left the lane (walked away or took a portal): end the section where they are.
+                    Completed := Lane.PlaySet(Player, Pad, RepsPerDrill)
+                    if (not Completed?):
+                        KTLog("section_end", Section.Id, 0, Index, 0, rep_result.Unchecked, "abandoned=1")
+                        set Busy = false
+                        return
                 else:
                     KTLog("config_error", DrillId, 0, 0, 0, rep_result.Missing, "reason=no_lane_for_drill")
                 set Index += 1
