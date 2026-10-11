@@ -23,6 +23,10 @@ kt_autotest_device := class(creative_device):
                 GhostReport.Check("G00-guide-present", logic{GhostReport.Passed + GhostReport.Failed > 0}, "at least one tagged guide ran its runtime tests")
                 for (Object : FindCreativeObjectsWithTag(kt_court_controls_tag), Controls := keystroke_court_controls_device[Object]):
                     Controls.RunSmokeTests(P, GhostReport)
+                for (Object : FindCreativeObjectsWithTag(kt_skills_test_tag), Skills := kt_skills_test_device[Object]):
+                    Skills.RunSmokeTests(P, GhostReport)
+                for (Object : FindCreativeObjectsWithTag(kt_op_device_tag), Op := kt_operation_device[Object]):
+                    Op.RunSmokeTests(P, GhostReport)
                 Print("AUTOTEST: GHOST END passed={GhostReport.Passed} failed={GhostReport.Failed}")
                 RunTransportTests(P)
                 RunEditPreview(P)

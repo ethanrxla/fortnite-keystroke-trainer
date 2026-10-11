@@ -79,7 +79,7 @@ def plan():
             slab(f"LaneLine_{n}", FIRE_X, X1, yb - 8, yb + 8, 2.0, 2.0, "Aim")
         slab(f"Counter_{n}", FIRE_X - 70, FIRE_X, ya + 30, yb - 30, 110, 110, "Hub")
         signs.append({"label": f"{PREFIX}LaneSign_{n}", "pos": (FIRE_X + 150, yc, 520), "yaw": 180, "zone": "Aim",
-                      "size": 40, "text": f"LANE {n + 1}" + ("  POP-UP" if kind == "popup" else "  MOVING")})
+                      "size": 24, "text": str(n + 1)})
         devices.append({"label": f"{PREFIX}Light_Booth_{n}", "asset": LIGHT, "pos": (FIRE_X - C, yc, HEIGHT - 120),
                         "props": {"maximumRadius": 1400.0}})
         if kind == "popup":
@@ -98,8 +98,7 @@ def plan():
     for m in BAFFLES_M:
         x = FIRE_X + m * 100.0
         slab(f"Baffle_{m}m", x - 30, x + 30, Y0, Y1, HEIGHT, 260, "Armory")
-        signs.append({"label": f"{PREFIX}Distance_{m}m", "pos": (x - 40, (Y0 + Y1) / 2, HEIGHT - 300), "yaw": 180,
-                      "zone": "Hub", "size": 44, "text": f"{m} m"})
+        # The "<m> m" text on each baffle is floating text from tools/build_range_markers.py (no board behind it).
     for k, f in enumerate((0.1, 0.3, 0.5, 0.7, 0.9)):
         x = FIRE_X + (X1 - FIRE_X) * f
         for side, y in (("S", Y0 + (Y1 - Y0) * 0.3), ("N", Y0 + (Y1 - Y0) * 0.75)):
@@ -166,7 +165,13 @@ def main():
         if isinstance(speed, (int, float)):
             b.props(rail, {"speed": speed * r["factor"]})
     for s in signs:
-        b.sign(s)
+        path = b.sign(s)
+        if "LaneSign_" in s["label"] or "Distance_" in s["label"]:
+            b.props(path, {"showBorder": False, "backgroundColor": {"r": 0, "g": 0, "b": 0, "a": 0}})
+            x, y, z = s["pos"]
+            scale = 0.7 if "LaneSign_" in s["label"] else 1.0
+            b.m.tool(bm.ACTOR, "set_actor_transform", actor={"refPath": path},
+                     xform=bm.xform(x, y, z, scale, scale, scale, yaw=(s["yaw"] + 90) % 360))
     print("gun range placed")
 
 

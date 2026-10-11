@@ -159,6 +159,11 @@ def cmd_keys(args):
     return keyboard_overlay.run(drills.load_binds(args.binds), drill, base, not args.no_ai, not args.no_port, binds_path=args.binds)
 
 
+def cmd_stats_panel(args):
+    from . import stats_panel
+    return stats_panel.run(args.sessions)
+
+
 def cmd_binds(args):
     return binds_cmd.run(args.out, args.only, args.category)
 
@@ -331,6 +336,9 @@ def main(argv=None):
     b.add_argument("--only", nargs="*")
     b.add_argument("--category", nargs="*", choices=["move", "combat", "build", "edit", "ui"])
     b.set_defaults(fn=cmd_binds)
+    sp = sub.add_parser("stats-panel", help="small session-stats strip over the game (missed keys, accidental presses, edits)")
+    sp.add_argument("--sessions", help="folder of *.events.jsonl (default companion/sessions)")
+    sp.set_defaults(fn=cmd_stats_panel)
     ib = sub.add_parser("import-binds", help="read keybinds from Fortnite's local Input.ini (dry run unless --write)")
     ib.add_argument("--file", nargs="*", help="ini files to read (default: Fortnite's WindowsClient config folder)")
     ib.add_argument("--out", default=str(drills.BINDS_FILE))

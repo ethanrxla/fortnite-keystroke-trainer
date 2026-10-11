@@ -4,8 +4,9 @@
 # target has three hidden triggers at its foot, wired natively by tools/build_gun_range.py: kt_range_up_tag
 # (On Triggered -> target Pop-Up), kt_range_down_tag (-> Pop-Down) and kt_range_hit_tag (target On Hit ->
 # Trigger). The device takes the triggers in its own lane (within LaneHalfWidth sideways, 0..LaneLength down
-# range of +X) and pairs them by position, plus the button tagged kt_range_start_tag nearest to it. Outside a round every target is up (free fire). Pressing the button runs
-# a round: Reps times, one random target pops up after a short random wait and stays up for WindowSeconds
+# range of +X) and pairs them by position, plus the button tagged kt_range_start_tag nearest to it. Outside a round every target is up (free fire). Pressing any lane's button runs
+# a round over the WHOLE range: every target in every lane drops (within RangeHalfWidth), then Reps times one random target
+# from anywhere in the range pops up after a short random wait and stays up for WindowSeconds
 # (more for far targets); it counts as a hit if it is shot before it drops. The player gets a summary on
 # screen: hits, misses and average time to hit, plus a split for near and far targets.
 # Why: the reference ranges train first-shot speed on a target you did not expect, at varying distance.
@@ -31,6 +32,10 @@ kt_range_target := struct:
     Hit:trigger_device
     DownRange:float
 
+# Whole-range rounds (player 2026-10-11): any lane's START clears every target in the range and pops one target at a
+# time from anywhere in it, not just that lane. One round at a time across all lanes (session-wide flag).
+var KTRangeBusy:weak_map(session, logic) = map{}
+
 kt_gun_range_lane_device := class(creative_device):
     @editable LaneHalfWidth:float = 480.0
     @editable LaneLength:float = 12000.0
@@ -39,8 +44,11 @@ kt_gun_range_lane_device := class(creative_device):
     # Extra time per 10 m of distance, so far targets are not unfair.
     @editable WindowPer10m:float = 0.1
     @editable NearFarSplit:float = 3000.0
+    # How far sideways a round reaches: every pop-up lane of the range (KT8 range is 12 cells = 6144 cm wide).
+    @editable RangeHalfWidth:float = 6200.0
 
     var Targets:[]kt_range_target = array{}
+    var AllTargets:[]kt_range_target = array{}
     var Running:logic = false
 
     OnBegin<override>()<suspends>:void =
@@ -54,6 +62,8 @@ kt_gun_range_lane_device := class(creative_device):
             H := (for (X : Hits, Near[X, U]) { X })[0]
         do:
             kt_range_target{Up := U, Down := D, Hit := H, DownRange := U.GetTransform().Translation.X - Here.X}
+        set AllTargets = PairTargets(RangeTriggers(kt_range_up_tag, Here), RangeTriggers(kt_range_down_tag, Here),
+                                     RangeTriggers(kt_range_hit_tag, Here), Here)
         var Best:?button_device = false
         var BestD:float = 1500.0
         for (O : FindCreativeObjectsWithTag(kt_range_start_tag), B := button_device[O]):
@@ -63,7 +73,26 @@ kt_gun_range_lane_device := class(creative_device):
                 set BestD = Dist
         if (B := Best?):
             B.InteractedWithEvent.Subscribe(OnStart)
-        Print("KTRange: lane at {Here.Y} has {Targets.Length} targets, button={if (Best?) then "yes" else "no"}")
+        Print("KTRange: lane at {Here.Y} has {Targets.Length} targets, range rounds use {AllTargets.Length}, button={if (Best?) then "yes" else "no"}")
+
+    RangeTriggers(T:castable_subtype(tag), Here:vector3)<transacts>:[]trigger_device =
+        for:
+            O : FindCreativeObjectsWithTag(T)
+            Tr := trigger_device[O]
+            D := Tr.GetTransform().Translation - Here
+            Abs(D.Y) <= RangeHalfWidth
+            D.X > 0.0
+            D.X <= LaneLength
+        do:
+            Tr
+
+    PairTargets(Ups:[]trigger_device, Downs:[]trigger_device, Hits:[]trigger_device, Here:vector3)<transacts>:[]kt_range_target =
+        for:
+            U : Ups
+            D := (for (X : Downs, Near[X, U]) { X })[0]
+            H := (for (X : Hits, Near[X, U]) { X })[0]
+        do:
+            kt_range_target{Up := U, Down := D, Hit := H, DownRange := U.GetTransform().Translation.X - Here.X}
 
     LaneTriggers(T:castable_subtype(tag), Here:vector3)<transacts>:[]trigger_device =
         for:
@@ -80,12 +109,16 @@ kt_gun_range_lane_device := class(creative_device):
         Distance(A.GetTransform().Translation, B.GetTransform().Translation) < 60.0
 
     OnStart(A:agent):void =
-        if (not Running?, Targets.Length > 0):
+        Busy := if (KTRangeBusy[GetSession()]?) then true else false
+        if (not Running?, not Busy?, AllTargets.Length > 0):
             set Running = true
+            if (set KTRangeBusy[GetSession()] = true) {}
             spawn{ Round(A) }
 
     Round(A:agent)<suspends>:void =
-        for (R : Targets):
+        defer:
+            if (set KTRangeBusy[GetSession()] = false) {}
+        for (R : AllTargets):
             R.Down.Trigger()
         Sleep(1.0)
         var Hits:int = 0
@@ -96,7 +129,7 @@ kt_gun_range_lane_device := class(creative_device):
         var TotalTime:float = 0.0
         for (Rep := 1..Reps):
             Sleep(GetRandomFloat(0.6, 1.6))
-            if (Pick := Targets[GetRandomInt(0, Targets.Length - 1)]):
+            if (Pick := AllTargets[GetRandomInt(0, AllTargets.Length - 1)]):
                 Far := if (Pick.DownRange > NearFarSplit) then true else false
                 if (Far?) then set FarShown += 1 else set NearShown += 1
                 Window := WindowSeconds + WindowPer10m * Pick.DownRange / 1000.0
@@ -120,7 +153,7 @@ kt_gun_range_lane_device := class(creative_device):
         Print("KTRange: {Summary}")
         ShowSummary(A, Summary)
         Sleep(1.0)
-        for (R : Targets):
+        for (R : AllTargets):
             R.Up.Trigger()
         set Running = false
 

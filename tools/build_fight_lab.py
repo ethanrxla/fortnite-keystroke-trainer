@@ -11,6 +11,8 @@ ceiling, room A has no outer walls (the wall to room B stays, it blocks B's bots
 beside its doorway (out of the walking line, so leaving the room never sends you back in). Room A loops: the top of
 the climb tower has a rift back to the top of the drop tower. Rifts are routed by the Verse rift router
 (tools/install_rift_router.py, LAB_RIFTS).
+Room A's west wall now belongs to the Operation (tools/build_operation.py, KT16_Op_LabWall_*): it carries the door from
+the Operation's compound into the towers, so this builder must not place a Wall_W_S again.
 
 Layout (cells of 512 cm, i = x / 512, j = y / 512): i -50..-31, j -136..-125, directly east of KT_Area_Scenario,
 so players walk in from the Scenario portal. A two-cell spine (j -131..-130) runs west to east; two rooms on

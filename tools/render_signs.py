@@ -30,8 +30,9 @@ MT = "editor_toolset.toolsets.material.MaterialTools"
 AS = "editor_toolset.toolsets.asset.AssetTools"
 TT = "editor_toolset.toolsets.texture.TextureTools"
 PLANE = "/Engine/BasicShapes/Plane.Plane"
-SKIP = ("KT9_ArmoryWall_", "KT20_", "KT19_",       # gun-wall tile labels sit inside their own plates
-        "KT8_Range_Distance_", "KT15_Skills_Marker_")  # distance markers: plain numbers, no panel (player 2026-10-11)
+SKIP = ("KT9_ArmoryWall_", "KT20_", "KT19_", "KT21_",   # gun-wall tile labels sit inside their own plates
+        "KT8_Range_LaneSign_", "KT8_Range_Distance_", "KT15_Skills_Marker_")
+# Compact lane numbers and floating distance markers never get a panel (player 2026-10-11).
 PX_PER_CM = 4.0
 MAX_PX = 2048
 dec = lambda v: json.loads(v) if isinstance(v, str) else v
