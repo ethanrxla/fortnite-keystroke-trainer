@@ -184,9 +184,11 @@ def _merge_lines(segs):
 
 
 def _cross(a,b):
-    m=np.array([a['n'],b['n']],float)
-    if abs(np.linalg.det(m))<1e-6:return None
-    return np.linalg.solve(m,np.array([a['c'],b['c']],float))
+    # Two lines in normal form: Cramer's rule in plain floats (np.linalg.solve cost ~13 us a call, ~130k calls a second).
+    (a0,a1),(b0,b1)=a['n'],b['n']
+    det=a0*b1-a1*b0
+    if abs(det)<1e-6:return None
+    return np.array(((a['c']*b1-a1*b['c'])/det,(a0*b['c']-a['c']*b0)/det))
 
 
 def _general_grid(image,aim,budget=.08,segs=None,sizes=(3,2),min_area=.08):
@@ -373,10 +375,12 @@ def _partial_grid(image,aim,budget=.06,segs=None):
         return sorted(out,key=lambda t:-sum(group[i]['length'] for i in t))
     grid9=np.float32([[i,j] for j in range(3) for i in range(3)])
     best=None
+    # Every A x B crossing once (at most 7 x 7), not nine times per tried pair of triples.
+    XC=[[_cross(a,b) for b in B] for a in A]
     for ta in triples(Apos,A):
         for tb in triples(Bpos,B):
             if time.perf_counter()>deadline:return best[1] if best else None
-            pts=[_cross(A[ta[i]],B[tb[j]]) for j in range(3) for i in range(3)]
+            pts=[XC[ta[i]][tb[j]] for j in range(3) for i in range(3)]
             if any(p is None for p in pts):continue
             pts=np.float32(pts)
             H0,_=cv2.findHomography(grid9,pts,0)
