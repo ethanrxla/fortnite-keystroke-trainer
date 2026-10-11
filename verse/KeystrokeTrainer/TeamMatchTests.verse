@@ -50,6 +50,32 @@ RunTeamRuleTests<public>():void =
     ZoneStarted := Z.Begin(kt_team_mode.Zone, 1, 1)
     for (I := 1..11):
         Z.Tick(Z.Epoch, 0.5, 0, 0)
-    Z.Survivors(Z.Epoch, 0, 0)
-    R.Check("TM09-trade", logic{Z.Winner = 0 and Z.Phase = kt_team_phase.Recovery}, "simultaneous elimination is draw")
+    Z.Territory(Z.Epoch, 0.5, array{1, 1, 0}, array{0, 0, 1})
+    R.Check("TM09-territory-neutral", logic{Z.RedScore = 0 and Z.BlueScore = 0}, "three points start neutral")
+    Gap := kt_team_match{}
+    GapStarted := Gap.Begin(kt_team_mode.Skirmish, 1, 1)
+    Gap.Tick(Gap.Epoch, 6.0, 0, 0)
+    Clock := Gap.Remaining
+    Gap.Tick(Gap.Epoch, 3.0, 1, 0)
+    R.Check("TM10-gap-clock", logic{Gap.Phase = kt_team_phase.Live and Gap.Remaining = Clock - 3.0 and Gap.Owner = 0 and Gap.RedScore = 0}, "stall advances deadline without awarding capture")
+    Gap.Tick(Gap.Epoch, 500.0, 1, 0)
+    R.Check("TM11-gap-timeout", logic{Gap.Phase = kt_team_phase.Recovery and Gap.Winner = 0}, "long stall still ends timed match")
+    for (I := 1..20):
+        Z.Territory(Z.Epoch, 0.5, array{1, 1, 0}, array{0, 0, 1})
+    R.Check("TM12-three-points", logic{Z.RedScore = 2 * Z.BlueScore and Z.BlueScore > 0}, "two owned points score twice one point")
+    Q := kt_match_queue{}
+    J1 := Q.Join(1)
+    J2 := Q.Join(2)
+    DuplicateJoin := Q.Join(1)
+    Q.Tick(36.0)
+    V1 := Q.Vote(1, Q.Epoch, 0)
+    V2 := Q.Vote(1, Q.Epoch, 2)
+    BuildVote := Q.Vote(2, Q.Epoch, 4)
+    R.Check("TM15-no-build-quorum", logic{not Q.NoBuild()?}, "one no-build ballot cannot override an abstaining player")
+    BuildVote2 := Q.Vote(1, Q.Epoch, 4)
+    R.Check("TM13-queue-ballot", logic{J1? and J2? and not DuplicateJoin? and V1? and V2? and Q.Count() = 2 and Q.ModeCount(0) = 0 and Q.ModeCount(2) = 1 and Q.NoBuild()?}, "one replaceable ballot per joined player")
+    Old := Q.Epoch
+    Q.Leave(2)
+    StaleVote := Q.Vote(1, Old, 1)
+    R.Check("TM14-quorum", logic{not StaleVote? and Q.Phase = kt_queue_phase.Collecting}, "lost quorum cancels voting and rejects stale ballot")
     Print("AUTOTEST: TEAM RULES END passed={R.Passed} failed={R.Failed}")

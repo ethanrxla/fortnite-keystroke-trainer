@@ -1,0 +1,78 @@
+{
+  "pass_name": "stairs",
+  "actors": [
+    {
+      "label": "KT26_TeamDetail_RedSecondUp1",
+      "state": "already_present",
+      "bounds": {
+        "min": {
+          "x": 72192.0859375,
+          "y": -57870.008071899414,
+          "z": -12.041900634765625
+        },
+        "max": {
+          "x": 72707.02508544922,
+          "y": -57345.70539855957,
+          "z": 390.9039001464844
+        },
+        "isValid": true
+      },
+      "actorPath": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_StairW_C_UAID_30560F202F92280A03_1692984100"
+    },
+    {
+      "label": "KT26_TeamDetail_BlueSecondUp1",
+      "state": "already_present",
+      "bounds": {
+        "min": {
+          "x": 78844.97491455078,
+          "y": -54270.29460144043,
+          "z": -12.041900634765625
+        },
+        "max": {
+          "x": 79359.9140625,
+          "y": -53745.991928100586,
+          "z": 390.9039001464844
+        },
+        "isValid": true
+      },
+      "actorPath": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_StairW_C_UAID_30560F202F92280A03_1693583101"
+    },
+    {
+      "label": "KT26_TeamDetail_RedSecondUp2",
+      "state": "already_present",
+      "bounds": {
+        "min": {
+          "x": 73728.0859375,
+          "y": -55822.008071899414,
+          "z": 371.9580993652344
+        },
+        "max": {
+          "x": 74243.02508544922,
+          "y": -55297.70539855957,
+          "z": 774.9039001464844
+        },
+        "isValid": true
+      },
+      "actorPath": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_StairW_C_UAID_30560F202F92280A03_1694240102"
+    },
+    {
+      "label": "KT26_TeamDetail_BlueSecondUp2",
+      "state": "already_present",
+      "bounds": {
+        "min": {
+          "x": 77313.70539855957,
+          "y": -55807.9140625,
+          "z": 371.9580993652344
+        },
+        "max": {
+          "x": 77838.00807189941,
+          "y": -55292.97491455078,
+          "z": 774.9039001464844
+        },
+        "isValid": true
+      },
+      "actorPath": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_StairW_C_UAID_30560F202F92280A03_1694920103"
+    }
+  ],
+  "verification": "saved native bounds within 20 cm trim tolerance; traversal untested"
+}

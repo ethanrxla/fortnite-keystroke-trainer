@@ -1,0 +1,26 @@
+[
+  {
+    "label": "KT26_TeamDetail_RedSecondUp1",
+    "properties": "{\"bCanBeDamaged\":false}"
+  },
+  {
+    "label": "KT26_TeamDetail_BlueSecondUp1",
+    "properties": "{\"bCanBeDamaged\":false}"
+  },
+  {
+    "label": "KT26_TeamDetail_RedSecondUp2",
+    "properties": "{\"bCanBeDamaged\":false}"
+  },
+  {
+    "label": "KT26_TeamDetail_BlueSecondUp2",
+    "properties": "{\"bCanBeDamaged\":false}"
+  },
+  {
+    "label": "KT26_TeamDetail_LoadingTruckRed",
+    "properties": "{\"bCanBeDamaged\":false}"
+  },
+  {
+    "label": "KT26_TeamDetail_LoadingTruckBlue",
+    "properties": "{\"bCanBeDamaged\":false}"
+  }
+]

@@ -1,0 +1,11 @@
+{
+  "method": "128 cm raster with 50 cm expansion; static ground cover only, stairs excluded as traversable; not a live navigation test",
+  "reachable": {
+    "red_point": true,
+    "middle_point": true,
+    "blue_point": true,
+    "service": true,
+    "loading": true
+  },
+  "unique_detail_actors": 18
+}

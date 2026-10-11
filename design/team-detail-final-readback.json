@@ -1,0 +1,560 @@
+[
+  {
+    "guid": "9A8C0E1B-4009-30CD-062C-32865C6C8DF6",
+    "nativeClass": {
+      "refPath": "/Script/FortniteGame.FortStaticMeshActor"
+    },
+    "class": {
+      "refPath": "/Script/FortniteGame.FortStaticMeshActor"
+    },
+    "name": "FortStaticMeshActor_UAID_30560F202F92280A03_1574712092",
+    "label": "KT26_TeamDetail_ServiceRed",
+    "bounds": {
+      "min": {
+        "x": 73716,
+        "y": -58880,
+        "z": 0
+      },
+      "max": {
+        "x": 73740,
+        "y": -58368,
+        "z": 384
+      },
+      "isValid": true
+    },
+    "runtimeGrid": "None",
+    "bIsSpatiallyLoaded": false,
+    "bActorIsEditorOnly": false,
+    "actorPackage": "None",
+    "actorPath": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.FortStaticMeshActor_UAID_30560F202F92280A03_1574712092",
+    "folderPath": "None",
+    "dataLayerAssets": []
+  },
+  {
+    "guid": "0387D668-4165-0237-6642-8BA724E32C0A",
+    "nativeClass": {
+      "refPath": "/Script/FortniteGame.FortStaticMeshActor"
+    },
+    "class": {
+      "refPath": "/Script/FortniteGame.FortStaticMeshActor"
+    },
+    "name": "FortStaticMeshActor_UAID_30560F202F92280A03_1575720093",
+    "label": "KT26_TeamDetail_ServiceBlue",
+    "bounds": {
+      "min": {
+        "x": 77300,
+        "y": -58368,
+        "z": 0
+      },
+      "max": {
+        "x": 77324,
+        "y": -57856,
+        "z": 384
+      },
+      "isValid": true
+    },
+    "runtimeGrid": "None",
+    "bIsSpatiallyLoaded": false,
+    "bActorIsEditorOnly": false,
+    "actorPackage": "None",
+    "actorPath": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.FortStaticMeshActor_UAID_30560F202F92280A03_1575720093",
+    "folderPath": "None",
+    "dataLayerAssets": []
+  },
+  {
+    "guid": "9ABBDE29-48BD-31A5-1B2A-E29077F2E61D",
+    "nativeClass": {
+      "refPath": "/Script/FortniteGame.FortStaticMeshActor"
+    },
+    "class": {
+      "refPath": "/Script/FortniteGame.FortStaticMeshActor"
+    },
+    "name": "FortStaticMeshActor_UAID_30560F202F92280A03_1576352094",
+    "label": "KT26_TeamDetail_LoadingRed",
+    "bounds": {
+      "min": {
+        "x": 74240,
+        "y": -53260,
+        "z": 0
+      },
+      "max": {
+        "x": 74752,
+        "y": -53236,
+        "z": 384
+      },
+      "isValid": true
+    },
+    "runtimeGrid": "None",
+    "bIsSpatiallyLoaded": false,
+    "bActorIsEditorOnly": false,
+    "actorPackage": "None",
+    "actorPath": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.FortStaticMeshActor_UAID_30560F202F92280A03_1576352094",
+    "folderPath": "None",
+    "dataLayerAssets": []
+  },
+  {
+    "guid": "F9D70DD1-4672-9679-BC4C-59885D3D416A",
+    "nativeClass": {
+      "refPath": "/Script/FortniteGame.FortStaticMeshActor"
+    },
+    "class": {
+      "refPath": "/Script/FortniteGame.FortStaticMeshActor"
+    },
+    "name": "FortStaticMeshActor_UAID_30560F202F92280A03_1576922095",
+    "label": "KT26_TeamDetail_LoadingBlue",
+    "bounds": {
+      "min": {
+        "x": 76800,
+        "y": -53772,
+        "z": 0
+      },
+      "max": {
+        "x": 77312,
+        "y": -53748,
+        "z": 384
+      },
+      "isValid": true
+    },
+    "runtimeGrid": "None",
+    "bIsSpatiallyLoaded": false,
+    "bActorIsEditorOnly": false,
+    "actorPackage": "None",
+    "actorPath": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.FortStaticMeshActor_UAID_30560F202F92280A03_1576922095",
+    "folderPath": "None",
+    "dataLayerAssets": []
+  },
+  {
+    "guid": "7A8FB5F2-45F3-5378-EDA5-258652A55799",
+    "nativeClass": {
+      "refPath": "/Script/FortniteGame.FortStaticMeshActor"
+    },
+    "class": {
+      "refPath": "/Script/FortniteGame.FortStaticMeshActor"
+    },
+    "name": "FortStaticMeshActor_UAID_30560F202F92280A03_1591864096",
+    "label": "KT26_TeamDetail_HighRedSouth",
+    "bounds": {
+      "min": {
+        "x": 74228,
+        "y": -56832,
+        "z": 768
+      },
+      "max": {
+        "x": 74252,
+        "y": -56320,
+        "z": 1152
+      },
+      "isValid": true
+    },
+    "runtimeGrid": "None",
+    "bIsSpatiallyLoaded": false,
+    "bActorIsEditorOnly": false,
+    "actorPackage": "None",
+    "actorPath": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.FortStaticMeshActor_UAID_30560F202F92280A03_1591864096",
+    "folderPath": "None",
+    "dataLayerAssets": []
+  },
+  {
+    "guid": "D37B913F-49B2-C6DA-C110-47B7823635E8",
+    "nativeClass": {
+      "refPath": "/Script/FortniteGame.FortStaticMeshActor"
+    },
+    "class": {
+      "refPath": "/Script/FortniteGame.FortStaticMeshActor"
+    },
+    "name": "FortStaticMeshActor_UAID_30560F202F92280A03_1592431097",
+    "label": "KT26_TeamDetail_HighRedNorth",
+    "bounds": {
+      "min": {
+        "x": 74228,
+        "y": -55296,
+        "z": 768
+      },
+      "max": {
+        "x": 74252,
+        "y": -54784,
+        "z": 1152
+      },
+      "isValid": true
+    },
+    "runtimeGrid": "None",
+    "bIsSpatiallyLoaded": false,
+    "bActorIsEditorOnly": false,
+    "actorPackage": "None",
+    "actorPath": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.FortStaticMeshActor_UAID_30560F202F92280A03_1592431097",
+    "folderPath": "None",
+    "dataLayerAssets": []
+  },
+  {
+    "guid": "1FC21D2A-433F-1A36-208A-90BF6A238921",
+    "nativeClass": {
+      "refPath": "/Script/FortniteGame.FortStaticMeshActor"
+    },
+    "class": {
+      "refPath": "/Script/FortniteGame.FortStaticMeshActor"
+    },
+    "name": "FortStaticMeshActor_UAID_30560F202F92280A03_1592961098",
+    "label": "KT26_TeamDetail_HighBlueSouth",
+    "bounds": {
+      "min": {
+        "x": 77300,
+        "y": -56832,
+        "z": 768
+      },
+      "max": {
+        "x": 77324,
+        "y": -56320,
+        "z": 1152
+      },
+      "isValid": true
+    },
+    "runtimeGrid": "None",
+    "bIsSpatiallyLoaded": false,
+    "bActorIsEditorOnly": false,
+    "actorPackage": "None",
+    "actorPath": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.FortStaticMeshActor_UAID_30560F202F92280A03_1592961098",
+    "folderPath": "None",
+    "dataLayerAssets": []
+  },
+  {
+    "guid": "A3A4BB76-44D9-EF5F-7A88-099E6F7BDA73",
+    "nativeClass": {
+      "refPath": "/Script/FortniteGame.FortStaticMeshActor"
+    },
+    "class": {
+      "refPath": "/Script/FortniteGame.FortStaticMeshActor"
+    },
+    "name": "FortStaticMeshActor_UAID_30560F202F92280A03_1593543099",
+    "label": "KT26_TeamDetail_HighBlueNorth",
+    "bounds": {
+      "min": {
+        "x": 77300,
+        "y": -55296,
+        "z": 768
+      },
+      "max": {
+        "x": 77324,
+        "y": -54784,
+        "z": 1152
+      },
+      "isValid": true
+    },
+    "runtimeGrid": "None",
+    "bIsSpatiallyLoaded": false,
+    "bActorIsEditorOnly": false,
+    "actorPackage": "None",
+    "actorPath": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.FortStaticMeshActor_UAID_30560F202F92280A03_1593543099",
+    "folderPath": "None",
+    "dataLayerAssets": []
+  },
+  {
+    "guid": "E526C36F-4DE8-EC52-0077-169E55764637",
+    "nativeClass": {
+      "refPath": "/Game/Building/ActorBlueprints/Player/Wood/L1/PBWA_W1_StairW.PBWA_W1_StairW_C"
+    },
+    "class": {
+      "refPath": "/Game/Building/ActorBlueprints/Player/Wood/L1/PBWA_W1_StairW.PBWA_W1_StairW_C"
+    },
+    "name": "PBWA_W1_StairW_C_UAID_30560F202F92280A03_1692984100",
+    "label": "KT26_TeamDetail_RedSecondUp1",
+    "bounds": {
+      "min": {
+        "x": 72192.0859375,
+        "y": -57870.008071899414,
+        "z": -12.041900634765625
+      },
+      "max": {
+        "x": 72707.02508544922,
+        "y": -57345.70539855957,
+        "z": 390.9039001464844
+      },
+      "isValid": true
+    },
+    "runtimeGrid": "None",
+    "bIsSpatiallyLoaded": false,
+    "bActorIsEditorOnly": false,
+    "actorPackage": "None",
+    "actorPath": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_StairW_C_UAID_30560F202F92280A03_1692984100",
+    "folderPath": "None",
+    "dataLayerAssets": []
+  },
+  {
+    "guid": "3B8B375C-493D-DF65-5B99-F6AB94A2AD5C",
+    "nativeClass": {
+      "refPath": "/Game/Building/ActorBlueprints/Player/Wood/L1/PBWA_W1_StairW.PBWA_W1_StairW_C"
+    },
+    "class": {
+      "refPath": "/Game/Building/ActorBlueprints/Player/Wood/L1/PBWA_W1_StairW.PBWA_W1_StairW_C"
+    },
+    "name": "PBWA_W1_StairW_C_UAID_30560F202F92280A03_1693583101",
+    "label": "KT26_TeamDetail_BlueSecondUp1",
+    "bounds": {
+      "min": {
+        "x": 78844.97491455078,
+        "y": -54270.29460144043,
+        "z": -12.041900634765625
+      },
+      "max": {
+        "x": 79359.9140625,
+        "y": -53745.991928100586,
+        "z": 390.9039001464844
+      },
+      "isValid": true
+    },
+    "runtimeGrid": "None",
+    "bIsSpatiallyLoaded": false,
+    "bActorIsEditorOnly": false,
+    "actorPackage": "None",
+    "actorPath": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_StairW_C_UAID_30560F202F92280A03_1693583101",
+    "folderPath": "None",
+    "dataLayerAssets": []
+  },
+  {
+    "guid": "73D840DE-477A-003F-870D-40AAFF94D107",
+    "nativeClass": {
+      "refPath": "/Game/Building/ActorBlueprints/Player/Wood/L1/PBWA_W1_StairW.PBWA_W1_StairW_C"
+    },
+    "class": {
+      "refPath": "/Game/Building/ActorBlueprints/Player/Wood/L1/PBWA_W1_StairW.PBWA_W1_StairW_C"
+    },
+    "name": "PBWA_W1_StairW_C_UAID_30560F202F92280A03_1694240102",
+    "label": "KT26_TeamDetail_RedSecondUp2",
+    "bounds": {
+      "min": {
+        "x": 73728.0859375,
+        "y": -55822.008071899414,
+        "z": 371.9580993652344
+      },
+      "max": {
+        "x": 74243.02508544922,
+        "y": -55297.70539855957,
+        "z": 774.9039001464844
+      },
+      "isValid": true
+    },
+    "runtimeGrid": "None",
+    "bIsSpatiallyLoaded": false,
+    "bActorIsEditorOnly": false,
+    "actorPackage": "None",
+    "actorPath": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_StairW_C_UAID_30560F202F92280A03_1694240102",
+    "folderPath": "None",
+    "dataLayerAssets": []
+  },
+  {
+    "guid": "98417050-40A8-6346-E0A5-4A8D1E8F0C5D",
+    "nativeClass": {
+      "refPath": "/Game/Building/ActorBlueprints/Player/Wood/L1/PBWA_W1_StairW.PBWA_W1_StairW_C"
+    },
+    "class": {
+      "refPath": "/Game/Building/ActorBlueprints/Player/Wood/L1/PBWA_W1_StairW.PBWA_W1_StairW_C"
+    },
+    "name": "PBWA_W1_StairW_C_UAID_30560F202F92280A03_1694920103",
+    "label": "KT26_TeamDetail_BlueSecondUp2",
+    "bounds": {
+      "min": {
+        "x": 77313.70539855957,
+        "y": -55807.9140625,
+        "z": 371.9580993652344
+      },
+      "max": {
+        "x": 77838.00807189941,
+        "y": -55292.97491455078,
+        "z": 774.9039001464844
+      },
+      "isValid": true
+    },
+    "runtimeGrid": "None",
+    "bIsSpatiallyLoaded": false,
+    "bActorIsEditorOnly": false,
+    "actorPackage": "None",
+    "actorPath": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_StairW_C_UAID_30560F202F92280A03_1694920103",
+    "folderPath": "None",
+    "dataLayerAssets": []
+  },
+  {
+    "guid": "93DA4BA6-4B22-2E34-E5EC-4DB25DD57EB6",
+    "nativeClass": {
+      "refPath": "/Game/Building/ActorBlueprints/Prop/Car_SemiTruck_Tractor.Car_SemiTruck_Tractor_C"
+    },
+    "class": {
+      "refPath": "/Game/Building/ActorBlueprints/Prop/Car_SemiTruck_Tractor.Car_SemiTruck_Tractor_C"
+    },
+    "name": "Car_SemiTruck_Tractor_C_UAID_30560F202F92280A03_1811441104",
+    "label": "KT26_TeamDetail_LoadingTruckRed",
+    "bounds": {
+      "min": {
+        "x": 74389.46780395508,
+        "y": -53660.5432434082,
+        "z": 0
+      },
+      "max": {
+        "x": 75114.53219604492,
+        "y": -53347.4567565918,
+        "z": 417.4097595214844
+      },
+      "isValid": true
+    },
+    "runtimeGrid": "None",
+    "bIsSpatiallyLoaded": false,
+    "bActorIsEditorOnly": false,
+    "actorPackage": "None",
+    "actorPath": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.Car_SemiTruck_Tractor_C_UAID_30560F202F92280A03_1811441104",
+    "folderPath": "None",
+    "dataLayerAssets": []
+  },
+  {
+    "guid": "CE58A5EF-4C55-DD46-463B-86AAC9C8A1A0",
+    "nativeClass": {
+      "refPath": "/Game/Building/ActorBlueprints/Prop/Car_SemiTruck_Tractor.Car_SemiTruck_Tractor_C"
+    },
+    "class": {
+      "refPath": "/Game/Building/ActorBlueprints/Prop/Car_SemiTruck_Tractor.Car_SemiTruck_Tractor_C"
+    },
+    "name": "Car_SemiTruck_Tractor_C_UAID_30560F202F92280A03_1812250105",
+    "label": "KT26_TeamDetail_LoadingTruckBlue",
+    "bounds": {
+      "min": {
+        "x": 76437.46780395508,
+        "y": -53148.5432434082,
+        "z": 0
+      },
+      "max": {
+        "x": 77162.53219604492,
+        "y": -52835.4567565918,
+        "z": 417.4097595214844
+      },
+      "isValid": true
+    },
+    "runtimeGrid": "None",
+    "bIsSpatiallyLoaded": false,
+    "bActorIsEditorOnly": false,
+    "actorPackage": "None",
+    "actorPath": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.Car_SemiTruck_Tractor_C_UAID_30560F202F92280A03_1812250105",
+    "folderPath": "None",
+    "dataLayerAssets": []
+  },
+  {
+    "guid": "928252A0-466F-3E4E-83A3-C89CD93DC5C7",
+    "nativeClass": {
+      "refPath": "/Script/FortniteGame.FortStaticMeshActor"
+    },
+    "class": {
+      "refPath": "/Script/FortniteGame.FortStaticMeshActor"
+    },
+    "name": "FortStaticMeshActor_UAID_30560F202F92280A03_1843449106",
+    "label": "KT26_TeamDetail_CentreRedLeg",
+    "bounds": {
+      "min": {
+        "x": 74740,
+        "y": -57344,
+        "z": 0
+      },
+      "max": {
+        "x": 74764,
+        "y": -56832,
+        "z": 384
+      },
+      "isValid": true
+    },
+    "runtimeGrid": "None",
+    "bIsSpatiallyLoaded": false,
+    "bActorIsEditorOnly": false,
+    "actorPackage": "None",
+    "actorPath": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.FortStaticMeshActor_UAID_30560F202F92280A03_1843449106",
+    "folderPath": "None",
+    "dataLayerAssets": []
+  },
+  {
+    "guid": "EFFB0D2A-49E9-9F3D-BDAE-B68080120269",
+    "nativeClass": {
+      "refPath": "/Script/FortniteGame.FortStaticMeshActor"
+    },
+    "class": {
+      "refPath": "/Script/FortniteGame.FortStaticMeshActor"
+    },
+    "name": "FortStaticMeshActor_UAID_30560F202F92280A03_1844021107",
+    "label": "KT26_TeamDetail_CentreRedReturn",
+    "bounds": {
+      "min": {
+        "x": 74752,
+        "y": -57356,
+        "z": 0
+      },
+      "max": {
+        "x": 75264,
+        "y": -57332,
+        "z": 384
+      },
+      "isValid": true
+    },
+    "runtimeGrid": "None",
+    "bIsSpatiallyLoaded": false,
+    "bActorIsEditorOnly": false,
+    "actorPackage": "None",
+    "actorPath": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.FortStaticMeshActor_UAID_30560F202F92280A03_1844021107",
+    "folderPath": "None",
+    "dataLayerAssets": []
+  },
+  {
+    "guid": "E39075A3-4EAE-BBFF-352C-DE8FFC6F9A9C",
+    "nativeClass": {
+      "refPath": "/Script/FortniteGame.FortStaticMeshActor"
+    },
+    "class": {
+      "refPath": "/Script/FortniteGame.FortStaticMeshActor"
+    },
+    "name": "FortStaticMeshActor_UAID_30560F202F92280A03_1844598108",
+    "label": "KT26_TeamDetail_CentreBlueLeg",
+    "bounds": {
+      "min": {
+        "x": 76788,
+        "y": -54784,
+        "z": 0
+      },
+      "max": {
+        "x": 76812,
+        "y": -54272,
+        "z": 384
+      },
+      "isValid": true
+    },
+    "runtimeGrid": "None",
+    "bIsSpatiallyLoaded": false,
+    "bActorIsEditorOnly": false,
+    "actorPackage": "None",
+    "actorPath": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.FortStaticMeshActor_UAID_30560F202F92280A03_1844598108",
+    "folderPath": "None",
+    "dataLayerAssets": []
+  },
+  {
+    "guid": "005AE85F-4FE1-EE1B-E604-64A610AA1FE7",
+    "nativeClass": {
+      "refPath": "/Script/FortniteGame.FortStaticMeshActor"
+    },
+    "class": {
+      "refPath": "/Script/FortniteGame.FortStaticMeshActor"
+    },
+    "name": "FortStaticMeshActor_UAID_30560F202F92280A03_1845190109",
+    "label": "KT26_TeamDetail_CentreBlueReturn",
+    "bounds": {
+      "min": {
+        "x": 76288,
+        "y": -54284,
+        "z": 0
+      },
+      "max": {
+        "x": 76800,
+        "y": -54260,
+        "z": 384
+      },
+      "isValid": true
+    },
+    "runtimeGrid": "None",
+    "bIsSpatiallyLoaded": false,
+    "bActorIsEditorOnly": false,
+    "actorPackage": "None",
+    "actorPath": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.FortStaticMeshActor_UAID_30560F202F92280A03_1845190109",
+    "folderPath": "None",
+    "dataLayerAssets": []
+  }
+]

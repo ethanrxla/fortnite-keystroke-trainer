@@ -3,7 +3,21 @@
 # roster-verified teams and accepted device events, never inferred capture outcomes.
 using { /Verse.org/Simulation }
 
-kt_team_mode<public> := enum{Skirmish, CTF, Zone}
+# Player 2026-10-11 names: CTF is "Rift", Zone (three-point territory) is "Control"; Elimination is rounds with no
+# respawn except a teammate's reboot; Rumble is free for all.
+kt_team_mode<public> := enum{Skirmish, CTF, Zone, Elimination, Rumble}
+
+KTModeName<public>(M:kt_team_mode)<computes>:string =
+    case (M):
+        kt_team_mode.Skirmish => "SKIRMISH"
+        kt_team_mode.CTF => "RIFT"
+        kt_team_mode.Zone => "CONTROL"
+        kt_team_mode.Elimination => "ELIMINATION"
+        kt_team_mode.Rumble => "RUMBLE"
+
+# Elimination: first team to this many rounds wins. Rumble: first player to this many eliminations wins.
+KTRoundsToWin<public>:int = 3
+KTRumbleKills<public>:int = 15
 kt_team_phase<public> := enum{Waiting, Countdown, Live, Recovery}
 
 kt_team_match<public> := class:
@@ -13,6 +27,7 @@ kt_team_match<public> := class:
     var RedScore<public>:int = 0
     var BlueScore<public>:int = 0
     var Winner<public>:int = 0 # 0 draw/no winner; 1 red; 2 blue
+    var Cancelled<public>:logic = false
     var Remaining<public>:float = 0.0
     var Owner<public>:int = 0
     var CaptureTeam:int = 0
@@ -22,15 +37,23 @@ kt_team_match<public> := class:
     var BlueHold:float = 0.0
     var RedHome<public>:logic = true
     var BlueHome<public>:logic = true
+    var Points:[]kt_capture_point = array{}
 
     Begin<public>(Requested:kt_team_mode, RedCount:int, BlueCount:int)<transacts>:logic =
-        if (Phase <> kt_team_phase.Waiting or RedCount < 1 or RedCount <> BlueCount or RedCount > 4):
+        if (Phase <> kt_team_phase.Waiting):
+            return false
+        # Rumble is every player for themselves: RedCount carries the whole roster, BlueCount is 0.
+        if (Requested = kt_team_mode.Rumble):
+            if (RedCount + BlueCount < 2 or RedCount + BlueCount > 8):
+                return false
+        else if (RedCount < 1 or RedCount <> BlueCount or RedCount > 4):
             return false
         set Epoch += 1
         set Mode = Requested
         set RedScore = 0
         set BlueScore = 0
         set Winner = 0
+        set Cancelled = false
         set Owner = 0
         set CaptureTeam = 0
         set CaptureSeconds = 0.0
@@ -39,6 +62,7 @@ kt_team_match<public> := class:
         set BlueHold = 0.0
         set RedHome = true
         set BlueHome = true
+        set Points = array{kt_capture_point{}, kt_capture_point{}, kt_capture_point{}}
         set Remaining = 5.0
         set Phase = kt_team_phase.Countdown
         true
@@ -51,16 +75,21 @@ kt_team_match<public> := class:
             # All asynchronous callbacks holding the old epoch become invalid.
             set Epoch += 1
 
+    Cancel<public>()<transacts>:void =
+        if (Phase = kt_team_phase.Live or Phase = kt_team_phase.Countdown):
+            set Cancelled = true
+            Finish(0)
+
     # A tick describes only the elapsed interval ending in the supplied occupancy.
     # Adapter samples at 0.1 s. Long stalls must not award unobserved objective time.
     Tick<public>(Token:int, Dt:float, RedInside:int, BlueInside:int)<transacts>:void =
-        if (Token <> Epoch or Dt <= 0.0 or Dt > 0.5):
+        if (Token <> Epoch or Dt <= 0.0):
             return
         if (Phase = kt_team_phase.Countdown):
             set Remaining -= Dt
             if (Remaining <= 0.0):
                 set Phase = kt_team_phase.Live
-                set Remaining = if (Mode = kt_team_mode.CTF) then 720.0 else 480.0
+                set Remaining = if (Mode = kt_team_mode.CTF) then 720.0 else if (Mode = kt_team_mode.Elimination) then 600.0 else 480.0
             return
         if (Phase = kt_team_phase.Recovery):
             set Remaining -= Dt
@@ -70,7 +99,12 @@ kt_team_match<public> := class:
         if (Phase <> kt_team_phase.Live):
             return
         set Remaining -= Dt
-        if (Mode = kt_team_mode.Skirmish):
+        if (Dt > 0.5):
+            # Wall-clock deadlines continue through stalls, but occupancy was
+            # not observed continuously. Break capture and award no hold time.
+            set CaptureTeam = 0
+            set CaptureSeconds = 0.0
+        if (Mode = kt_team_mode.Skirmish and Dt <= 0.5):
             Occupant := if (RedInside > 0 and BlueInside = 0) then 1 else if (BlueInside > 0 and RedInside = 0) then 2 else 0
             if (Occupant > 0 and Occupant <> Owner):
                 if (CaptureTeam <> Occupant):
@@ -114,6 +148,19 @@ kt_team_match<public> := class:
             else:
                 Finish(0)
 
+    # Elimination: the coordinator reports a wiped team; scores count rounds. Returns true while the match goes on.
+    RoundWon<public>(Token:int, Team:int)<transacts>:logic =
+        if (Token <> Epoch or Phase <> kt_team_phase.Live or Mode <> kt_team_mode.Elimination):
+            return false
+        if (Team = 1) then set RedScore += 1 else if (Team = 2) then set BlueScore += 1
+        if (RedScore >= KTRoundsToWin):
+            Finish(1)
+            return false
+        if (BlueScore >= KTRoundsToWin):
+            Finish(2)
+            return false
+        true
+
     FlagHome<public>(Token:int, Team:int, Home:logic)<transacts>:void =
         if (Token = Epoch and Phase = kt_team_phase.Live and Mode = kt_team_mode.CTF):
             if (Team = 1):
@@ -139,11 +186,15 @@ kt_team_match<public> := class:
             return true
         false
 
-    Survivors<public>(Token:int, RedAlive:int, BlueAlive:int)<transacts>:void =
+    Territory<public>(Token:int, Dt:float, Reds:[]int, Blues:[]int)<transacts>:void =
         if (Token = Epoch and Phase = kt_team_phase.Live and Mode = kt_team_mode.Zone):
-            if (RedAlive = 0 and BlueAlive = 0):
+            for (I -> Point : Points, Red := Reds[I], Blue := Blues[I]):
+                Scored := Point.Tick(Dt, Red, Blue)
+                if (Scored = 1) then set RedScore += 1
+                else if (Scored = 2) then set BlueScore += 1
+            if (RedScore >= 200 and BlueScore >= 200):
                 Finish(0)
-            else if (RedAlive = 0):
-                Finish(2)
-            else if (BlueAlive = 0):
+            else if (RedScore >= 200):
                 Finish(1)
+            else if (BlueScore >= 200):
+                Finish(2)
