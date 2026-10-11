@@ -1,0 +1,21 @@
+{
+  "schema": "team_supplies.v1",
+  "respawn_delay_s": 15,
+  "fast_reboot_hold_s": 4,
+  "reboot_cooldown_s": 30,
+  "resupply_interval_s": 60,
+  "ammo_on_respawn": [
+    {"id": "light", "quantity": 90, "asset": "/Game/Athena/Items/Ammo/AthenaAmmoDataBulletsLight.AthenaAmmoDataBulletsLight"},
+    {"id": "medium", "quantity": 60, "asset": "/Game/Athena/Items/Ammo/AthenaAmmoDataBulletsMedium.AthenaAmmoDataBulletsMedium"},
+    {"id": "shells", "quantity": 16, "asset": "/Game/Athena/Items/Ammo/AthenaAmmoDataShells.AthenaAmmoDataShells"},
+    {"id": "heavy", "quantity": 12, "asset": "/Game/Athena/Items/Ammo/AthenaAmmoDataBulletsHeavy.AthenaAmmoDataBulletsHeavy"},
+    {"id": "rockets", "quantity": 2, "asset": "/Game/Athena/Items/Ammo/AmmoDataRockets.AmmoDataRockets"},
+    {"id": "energy", "quantity": 30, "asset": "/Game/Athena/Items/Ammo/AthenaAmmoDataEnergyCell.AthenaAmmoDataEnergyCell"}
+  ],
+  "ammo_boxes": {"asset": "/CRP_Foundation/SetupAssets/Maps/PPIDs/PPID_CRP_Foundation_Tiered_Ammo_Athena.PPID_CRP_Foundation_Tiered_Ammo_Athena", "validation": "registry_found_not_playtested"},
+  "heal_request": ["chug_splash", "flopper"],
+  "heal_validation": "entity_items_found_legacy_registration_pending",
+  "flag_request": {"asset": "/EntityItems/_Verse.Items-Flag_Creative_V1_Rare", "dropped_return": "manual", "validation": "legacy_capture_item_registration_pending"},
+  "shield_truck_request": {"count": 2, "shield_on_break": 100, "validation": "functional_shield_truck_not_placed"},
+  "ammo_policy_validation": "finite_reserve_override_and_elimination_drops_not_verified"
+}

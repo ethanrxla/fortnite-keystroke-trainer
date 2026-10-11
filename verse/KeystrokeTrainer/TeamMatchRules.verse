@@ -13,6 +13,7 @@ kt_team_match<public> := class:
     var RedScore<public>:int = 0
     var BlueScore<public>:int = 0
     var Winner<public>:int = 0 # 0 draw/no winner; 1 red; 2 blue
+    var Cancelled<public>:logic = false
     var Remaining<public>:float = 0.0
     var Owner<public>:int = 0
     var CaptureTeam:int = 0
@@ -22,6 +23,7 @@ kt_team_match<public> := class:
     var BlueHold:float = 0.0
     var RedHome<public>:logic = true
     var BlueHome<public>:logic = true
+    var Points:[]kt_capture_point = array{}
 
     Begin<public>(Requested:kt_team_mode, RedCount:int, BlueCount:int)<transacts>:logic =
         if (Phase <> kt_team_phase.Waiting or RedCount < 1 or RedCount <> BlueCount or RedCount > 4):
@@ -31,6 +33,7 @@ kt_team_match<public> := class:
         set RedScore = 0
         set BlueScore = 0
         set Winner = 0
+        set Cancelled = false
         set Owner = 0
         set CaptureTeam = 0
         set CaptureSeconds = 0.0
@@ -39,6 +42,7 @@ kt_team_match<public> := class:
         set BlueHold = 0.0
         set RedHome = true
         set BlueHome = true
+        set Points = array{kt_capture_point{}, kt_capture_point{}, kt_capture_point{}}
         set Remaining = 5.0
         set Phase = kt_team_phase.Countdown
         true
@@ -50,6 +54,11 @@ kt_team_match<public> := class:
             set Remaining = 10.0
             # All asynchronous callbacks holding the old epoch become invalid.
             set Epoch += 1
+
+    Cancel<public>()<transacts>:void =
+        if (Phase = kt_team_phase.Live or Phase = kt_team_phase.Countdown):
+            set Cancelled = true
+            Finish(0)
 
     # A tick describes only the elapsed interval ending in the supplied occupancy.
     # Adapter samples at 0.1 s. Long stalls must not award unobserved objective time.
@@ -144,11 +153,15 @@ kt_team_match<public> := class:
             return true
         false
 
-    Survivors<public>(Token:int, RedAlive:int, BlueAlive:int)<transacts>:void =
+    Territory<public>(Token:int, Dt:float, Reds:[]int, Blues:[]int)<transacts>:void =
         if (Token = Epoch and Phase = kt_team_phase.Live and Mode = kt_team_mode.Zone):
-            if (RedAlive = 0 and BlueAlive = 0):
+            for (I -> Point : Points, Red := Reds[I], Blue := Blues[I]):
+                Scored := Point.Tick(Dt, Red, Blue)
+                if (Scored = 1) then set RedScore += 1
+                else if (Scored = 2) then set BlueScore += 1
+            if (RedScore >= 200 and BlueScore >= 200):
                 Finish(0)
-            else if (RedAlive = 0):
-                Finish(2)
-            else if (BlueAlive = 0):
+            else if (RedScore >= 200):
                 Finish(1)
+            else if (BlueScore >= 200):
+                Finish(2)

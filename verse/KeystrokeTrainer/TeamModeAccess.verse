@@ -29,11 +29,11 @@ kt_team_access_device<public> := class(creative_device):
                 if (P.X < 70000.0):
                     set Enter = D
                     set Found += 1
+                else if (Abs(P.X - 73728.0) < 20.0 and Abs(P.Y + 61696.0) < 20.0):
+                    set Leave = D
+                    set Found += 1
                 else if (Abs(P.X - 72500.0) < 20.0):
-                    if (Abs(P.Y + 58200.0) < 20.0):
-                        set Leave = D
-                        set Found += 1
-                    else if (Abs(P.Y + 57600.0) < 20.0):
+                    if (Abs(P.Y + 57600.0) < 20.0):
                         set JoinRed = D
                         set Found += 1
                     else if (Abs(P.Y + 57000.0) < 20.0):
@@ -61,7 +61,7 @@ kt_team_access_device<public> := class(creative_device):
             for (A -> Active : Visiting, Active?, C := A.GetFortCharacter[], C.IsActive[]):
                 P := C.GetTransform().Translation
                 # Restore team after a portal, respawn or external teleport away.
-                if (P.X < 71600.0 or P.X > 80000.0 or P.Y < -60500.0 or P.Y > -51500.0):
+                if (P.X < 71600.0 or P.X > 80000.0 or P.Y < -62464.0 or P.Y > -51500.0):
                     Restore(A)
 
     OnEnter(A:agent):void =
@@ -90,6 +90,7 @@ kt_team_access_device<public> := class(creative_device):
                 if (set Visiting[A] = false) {}
 
     OnLeave(A:agent):void =
+        KTLeaveTeamQueue(A)
         Restore(A)
         Hub.Teleport(A)
 

@@ -22,7 +22,7 @@ def plan():
         ("JoinBlue", (72500, -57000, 100), "JOIN BLUE"),
         ("StartSkirmish", (72200, -57600, 100), "SKIRMISH"),
         ("StartCTF", (72200, -57000, 100), "CAPTURE THE FLAG"),
-        ("StartZone", (72200, -56400, 100), "ZONE WARS"),
+        ("StartZone", (72200, -56400, 100), "3-POINT TERRITORY"),
         ("Cancel", (72500, -56400, 100), "CANCEL MATCH"),
     ]
     devices = [(name, bm.BUTTON, pos, {"interaction Text": text, "delay": 0.0, "resetDelay": 0.5})
@@ -32,8 +32,8 @@ def plan():
         ("Hub", bm.TELEPORTER, (1300, -60300, 50), {}),
         ("Arena", VOLUME, (75776, -55808, 2304), {"volumeWidth":16.0,"volumeDepth":16.0,"volumeHeight":12.0,"visibleInGame":False,"playerEventsEnabled":True}),
         ("Objective", VOLUME, (75776, -55808, 50), {"volumeWidth":2.0,"volumeDepth":2.0,"volumeHeight":3.0,"visibleInGame":False,"playerEventsEnabled":True}),
-        ("RedFlag", FLAG, (72192, -55808, 0), {"bEnabledAtGameStart":False,"returnDroppedItems":"10 Seconds","scoreValue":0,"friendlyTeam":{"teamType":"TeamIndex","teamIndex":1}}),
-        ("BlueFlag", FLAG, (79360, -55808, 0), {"bEnabledAtGameStart":False,"returnDroppedItems":"10 Seconds","scoreValue":0,"friendlyTeam":{"teamType":"TeamIndex","teamIndex":2}}),
+        ("RedFlag", FLAG, (72448, -55808, 0), {"bEnabledAtGameStart":False,"returnDroppedItems":"Never","scoreValue":0,"friendlyTeam":{"teamType":"TeamIndex","teamIndex":1}}),
+        ("BlueFlag", FLAG, (79104, -55808, 0), {"bEnabledAtGameStart":False,"returnDroppedItems":"Never","scoreValue":0,"friendlyTeam":{"teamType":"TeamIndex","teamIndex":2}}),
         ("Status", HUD, (75776, -55808, -700), {}),
         ("Match", bm.MODULE + "/_Verse.KeystrokeTrainer-kt_team_match_device", (75776, -55808, -700), {}),
         ("Access", bm.MODULE + "/_Verse.KeystrokeTrainer-kt_team_access_device", (75776, -55808, -700), {}),
@@ -82,15 +82,16 @@ def apply():
     # Controls report their validation state; activation stays explicit until the
     # native volumes, loadouts and respawns pass an in-game acceptance run.
     for name, pos, text in (
-        ("HubLabel", (1500, -60700, 200), "TEAM MODES\nSkirmish / CTF / Zone Wars\nInteract with TEAM MODES"),
-        ("RulesLabel", (73300, -58000, 220), "TEAM MODES - DEVELOPMENT COURT\nJoin RED or BLUE, then select a mode\nSkirmish: hold centre / CTF: bring flag home\nZone Wars: survival / Return: back to hub"),
+        ("HubLabel", (1500, -60700, 200), "TEAM MODES\nSkirmish / CTF / Territory\nStep on a glowing pad to queue"),
+        ("RulesLabel", (73300, -58000, 220), "TEAM MODES - DEVELOPMENT COURT\n8-player queue / mode + No Build vote\nSkirmish: hold centre / CTF: bring flag home\nTerritory: hold the 3 zones / no kill points"),
     ):
         label = PREFIX + name
-        if label not in existing:
-            path = b.sign(dict(label=label, pos=pos, yaw=180, text=text, size=20, zone="Hub"))
-            b.m.tool(bm.ACTOR, "set_actor_transform", actor={"refPath": path},
-                     xform=bm.xform(*pos, .9, .9, .9, yaw=270))
-            paths[name] = path
+        path=existing.get(label) or b.sign(dict(label=label,pos=pos,yaw=180,text=text,size=20,zone="Hub"))
+        b.m.tool(bm.OBJ,'list_properties',instance={'refPath':path})
+        b.props(path,{'text':text,'textSize':20})
+        b.m.tool(bm.ACTOR, "set_actor_transform", actor={"refPath": path},
+                 xform=bm.xform(*pos, .9, .9, .9, yaw=270))
+        paths[name]=path
     for path in paths.values():
         b.m.tool(bm.SCENE, "save_actor", actor={"refPath": path})
     print("Saved team access and mode controls. Runtime activation requires validation.")

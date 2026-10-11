@@ -62,7 +62,10 @@ def main():
   device('KT10_Arena_Mute_'+side,b.BUTTON,b.xform(ax-210,ay+(-12 if side=='A' else 12),120,yaw=face),{'interaction Text':'My arena voice: mute / unmute','interactionRadius':.6},'kt10_arena_mute_tag')
   label='KT10_Arena_Ramp_'+side
   if label not in u.f:
-   r=m.tool(b.SCENE,'add_to_scene_from_asset',asset_path='/Game/Building/ActorBlueprints/Player/Wood/L1/PBWA_W1_StairW.PBWA_W1_StairW_C',name=label,xform=b.xform(ax,ay+dy*3,0,yaw=270 if side=='A' else 90));u.f[label]=r['refPath'];note(dict(created=label,path=r['refPath']))
+   r=m.tool(b.SCENE,'add_to_scene_from_asset',asset_path='/Game/Building/ActorBlueprints/Player/Wood/L1/PBWA_W1_StairW.PBWA_W1_StairW_C',name=label,xform=b.xform(ax+(-256 if side=='A' else 256),ay+dy*3,0,yaw=270 if side=='A' else 90));u.f[label]=r['refPath'];note(dict(created=label,path=r['refPath']))
+  # Rotated native stairs use a corner pivot: compensate half a tile laterally
+  # so their actual 512 cm footprint meets the pad's full width.
+  m.tool(b.ACTOR,'set_actor_transform',actor={'refPath':u.f[label]},xform=b.xform(ax+(-256 if side=='A' else 256),ay+dy*3,0,yaw=270 if side=='A' else 90))
   props(u.f[label],{'bCanBeDamaged':False});u.paths.append(u.f[label])
   old=u.f['KT3_Upgrade_Arena_PadLabel_'+side];m.tool(b.ACTOR,'set_actor_transform',actor={'refPath':old},xform=b.xform(ax-600,ay+dy,180,yaw=face));u.paths.append(old)
  divider=u.f['KT3_Upgrade_Arena_Divider'];props(divider,{'barrierWidth':20.0,'barrierDepth':.05,'barrierHeight':8.0,'blockWeaponFire':True,'collide with Camera':False})
