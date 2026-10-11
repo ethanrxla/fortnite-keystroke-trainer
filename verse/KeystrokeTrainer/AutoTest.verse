@@ -57,6 +57,9 @@ RunAutoTests<public>(Playspace:fort_playspace)<suspends>:void=
 # Pure logic: tempo rules and the drill catalog. These need no player input.
 RunLogicTests(Report:autotest_report):void =
     KTBuildPieceTests(Report)
+    Report.Check("SK-T1-windows", logic{KTSkillsWindow(0) > KTSkillsWindow(1) and KTSkillsWindow(1) > KTSkillsWindow(2) and KTSkillsWindow(2) >= 0.4}, "skills bots stay shorter as difficulty rises")
+    Report.Check("SK-T2-cycle", logic{KTSkillsNext(0, KTSkillsLevels) = 1 and KTSkillsNext(2, KTSkillsLevels) = 0 and KTSkillsNext(1, 2) = 0}, "difficulty and weapon buttons cycle")
+    Report.Check("SK-T3-reps", logic{KTSkillsReps(0) < KTSkillsReps(2) and KTSkillsGapMin(2) < KTSkillsGapMax(2)}, "harder runs are longer with shorter gaps")
     Report.Check("T-edit-corners", logic{EditRouteAt(0.5, 0.5) = 0 and EditRouteAt(2.5, 0.5) = 1 and EditRouteAt(0.5, 2.5) = 2 and EditRouteAt(2.5, 2.5) = 3 and EditRouteAt(1.5, 1.5) = 4}, "aim selects lower/upper corners and center window")
     Report.Check("T-edit-ray-bounds", logic{EditAimInBounds(200.0, 1.5, 1.5)? and not EditAimInBounds(-1.0, 1.5, 1.5)? and not EditAimInBounds(200.0, 3.0, 1.0)? and not EditAimInBounds(200.0, 0.0, -0.1)?}, "behind-camera and off-wall rays are rejected")
     var BadRoutes:int = 0
