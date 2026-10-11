@@ -33,32 +33,6 @@ class EditDictionary:
 
 class RoutePlanner:
     def __init__(self,inset=.15):self.inset=inset
-    def strokes(self,aim,edit):
-        """Piece-local selection strokes. Gaps require release, never a drag."""
-        cols=edit['cols'];rows=edit.get('rows',cols)
-        tiles=edit.get('tiles',[])
-        valid=lambda t:type(t) is int and 0<=t<cols*rows
-        if any(not valid(t) for t in tiles):return ()
-        if edit['piece']=='ramp' and edit.get('strokes'):
-            strokes=edit['strokes'];flat=[t for stroke in strokes for t in stroke]
-            if any(not valid(t) for t in flat) or len(flat)!=len(set(flat)):return ()
-            if any(len(s)<2 or any(abs(a%cols-b%cols)+abs(a//cols-b//cols)!=1
-                                  for a,b in zip(s,s[1:])) for s in strokes):return ()
-            return tuple(tuple((t%cols+.5,t//cols+.5) for t in s) for s in strokes)
-        route=self.plan(aim,edit)
-        if route:
-            # Legacy ramp gesture nodes are normalized; grid strokes use tiles.
-            return (tuple((u*cols,v*rows) for u,v in route[1]),) if edit['piece']=='ramp' else (route[1],)
-        if edit['piece'] in ('floor','cone') and tiles:
-            # Disconnected regions must be tapped separately. Do not join them
-            # with a selecting line across an untouched region.
-            import math
-            remaining=set(tiles);result=[];point=aim
-            while remaining:
-                t=min(remaining,key=lambda t:(math.dist(point,(t%cols+.5,t//cols+.5)),t))
-                point=(t%cols+.5,t//cols+.5);result.append((point,));remaining.remove(t)
-            return tuple(result)
-        return ()
     def plan(self,aim,edit):
         from .edit_advisor import safe_path
         if edit['piece']!='ramp':return safe_path(aim,edit['tiles'],cols=edit['cols'],inset=self.inset)
@@ -71,18 +45,6 @@ class RoutePlanner:
             length=math.dist(aim,points[0])+sum(math.dist(a,b) for a,b in zip(points,points[1:]))
             routes.append((length,points,tuple(order)))
         return min(routes,key=lambda r:r[0]) if routes else None
-
-class RouteTracker:
-    """Lock piece-local waypoints through selection, while the screen pose moves."""
-    def __init__(self):self.reset()
-    def reset(self):self.key=None;self.paths=();self.tracing=False
-    def update(self,key,aim,edit,selected):
-        if key!=self.key:self.reset();self.key=key
-        if self.tracing and not selected:self.paths=();self.tracing=False
-        if not self.paths or not selected:
-            self.paths=RoutePlanner(inset=.35).strokes(aim,edit)
-        self.tracing=bool(selected)
-        return self.paths
 
 class TargetTracker:
     """Piece-local identity; stability before selection and lock through tracing."""

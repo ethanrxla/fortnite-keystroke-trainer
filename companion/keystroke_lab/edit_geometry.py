@@ -163,14 +163,6 @@ def tiles_to_grid(context, tiles):
     return tuple(out)
 
 
-def grid_to_tiles(context, grid_tiles):
-    """Inverse of tiles_to_grid: screen-grid tile numbers -> the piece's own tile numbers (near/far frame for 2x2)."""
-    if context.cells == 3:
-        return tuple(grid_tiles)
-    inverse = {tiles_to_grid(context, (t,))[0]: t for t in range(4)}
-    return tuple(inverse[g] for g in grid_tiles if g in inverse)
-
-
 def piece_to_screen(context, quad, u, v):
     """Screen point for a ranker coordinate (u, v) on the piece (inverse of the aim mapping), for drawing edit lines."""
     cells = context.cells
