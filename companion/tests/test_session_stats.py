@@ -23,18 +23,18 @@ class SessionStats(unittest.TestCase):
                   {"t": 3.00, "kind": "unmapped", "key": "caps_lock"},
                   {"t": 3.50, "kind": "unmapped", "key": "caps_lock"}]
         a = ss.accidental(events)
-        self.assertEqual((a["strays"], a["doubles"]), (2, 1))
+        self.assertEqual((a["strays"], a["unmapped"], a["doubles"]), (0, 2, 1))
         self.assertEqual(a["top_keys"][0], "caps_lock")
 
-    def test_only_confident_verdicts_count_and_every_stray_is_on_the_bar(self):
+    def test_only_confident_findings_count_and_unmapped_inputs_stay_unclassified(self):
         findings = [{"intent": "slip", "confidence": 0.91, "uncertainty": False},
                     {"intent": "deliberate", "confidence": 0.85, "uncertainty": False},
                     {"intent": "slip", "confidence": 0.6, "uncertainty": False},
                     {"intent": "insufficient_evidence", "confidence": 0.95, "uncertainty": True}]
         events = [{"t": i, "kind": "unmapped", "key": "x"} for i in range(6)] + [{"kind": "analysis", "findings": findings}]
         v = ss.accidental(events)["verdicts"]
-        self.assertEqual((v["slip"], v["deliberate"], v["noise"], v["unsure"]), (1, 1, 0, 4))
-        self.assertEqual(sum(v.values()), 6)
+        self.assertEqual((v["slip"], v["deliberate"], v["noise"], v["unsure"]), (1, 1, 0, 1))
+        self.assertEqual(sum(v.values()), 3)
 
     def test_drill_grading_never_feeds_the_stats(self):
         store = Store(":memory:")
@@ -84,20 +84,23 @@ class SessionStats(unittest.TestCase):
         self.assertTrue(ss.edits_on_release(store, True))
         from keystroke_lab import stats_panel
         snap = ss.snapshot([{"ts": 1000.0, "t": 0, "kind": "ok", "key": "w"}], store)
-        self.assertEqual(stats_panel.lines(snap)[0][1], "not visible: edit on release")
+        self.assertEqual(stats_panel.lines(snap)[0][1], "not observable: edit on release")
 
-    def test_edit_accuracy_follows_labels_and_measures_travel_against_ideal(self):
+    def test_selection_match_follows_labels_and_measures_travel_against_ideal(self):
         store = Store(":memory:")
-        store.add_attempt(attempt(1, "window_center", followed=True, travel=1.2, ideal=1.0))
-        store.add_attempt(attempt(2, "window_center", followed=True, travel=1.6, ideal=1.0))
+        selected = [attempt(1, "window_center", followed=True, travel=1.2, ideal=1.0),
+                    attempt(2, "window_center", followed=True, travel=1.6, ideal=1.0),
+                    attempt(4, "corner_lower_left", suggested="window_center", followed=False, travel=3.0, ideal=2.0),
+                    attempt(5, "window_center", followed=True),
+                    attempt(0, "window_center", t_open=10.0)]  # before this session
+        for rec in selected:
+            rec.update(final_tiles=[4], selection_trace=[{"t": rec["t_edit_open"], "tiles": [4]}])
+            store.add_attempt(rec)
         store.add_attempt(attempt(3, None, outcome="reset", suggested="half_arch_right", followed=None))
-        store.add_attempt(attempt(4, "corner_lower_left", suggested="window_center", followed=False, travel=3.0, ideal=2.0))
-        store.add_attempt(attempt(5, "window_center", followed=True))
-        store.add_attempt(attempt(0, "window_center", t_open=10.0))          # before this session
         store.add_label("a5", "rejected")
         e = ss.edits(store, 1000.0)
-        self.assertEqual(e["attempts"], 4)
-        self.assertEqual(e["completed_pct"], 75)
+        self.assertEqual(e["attempts"], 3)
+        self.assertEqual(e["completed_pct"], 100)
         self.assertEqual(e["followed_pct"], 67)
         self.assertEqual(e["travel_vs_ideal"], 1.5)   # median of 1.2, 1.6 and 3.0 / 2.0
         self.assertEqual(e["per_edit"][0], {"edit": "window_center", "attempts": 2, "enough": False, "completed_pct": 100})
@@ -113,7 +116,7 @@ class SessionStats(unittest.TestCase):
             os.utime(old, (1, 1))
             events = ss.read_events(ss.newest_events(folder))
             snap = ss.snapshot(events, Store(":memory:"))
-            self.assertEqual((snap["since"], snap["accidental"]["strays"], snap["tip"]), (2000.0, 1, "Slow reps."))
+            self.assertEqual((snap["since"], snap["accidental"]["unmapped"], snap["tip"]), (2000.0, 1, "Slow reps."))
             self.assertEqual(snap["edits"]["attempts"], 0)
             self.assertIsNone(ss.newest_events(Path(folder) / "none"))
 
@@ -127,29 +130,32 @@ class PanelLayout(unittest.TestCase):
         from keystroke_lab import stats_panel
         self.sp = stats_panel
 
-    def test_panel_sits_above_the_edit_guide_and_the_keyboard(self):
+    def test_panel_sits_below_the_edit_guide_and_above_the_keyboard(self):
         for rect, scale in (((0, 0, 1920, 1080), 1.5), ((0, 0, 2560, 1440), 1.5), ((0, 0, 1920, 1080), 2.0),
                             ((100, 50, 2020, 1130), 1.0)):
             left, top, right, bottom = rect
             gh = bottom - top
             x, y, w, h = self.sp.geometry(rect, scale)
             u_edit = max(22, min(42, int(gh / 54 * 1.5)))
-            edit_top = bottom - int(gh * 0.135) - 11 * u_edit - 240 - 8
             u_keys = max(22, min(42, int(gh / 54 * max(1.0, min(scale, 2.0)))))
+            from keystroke_lab.overlay_layout import edit_guide_lift
+            lift = edit_guide_lift(gh, scale, 11)
+            edit_top = max(top + 8, bottom - int(gh * 0.135) - 11 * u_edit - 240 - 8 - lift)
             keys_top = bottom - int(gh * 0.135) - 11 * u_keys
-            self.assertLessEqual(y + h, min(edit_top, keys_top) - 8, rect)
+            self.assertGreaterEqual(y, edit_top + 240 + 8, rect)
+            self.assertLessEqual(y + h, keys_top - 8, rect)
             self.assertGreaterEqual(y, top + int(gh * 0.12), rect)
-        self.assertEqual(self.sp.geometry((0, 0, 1920, 1080), 1.5), (23, 199, 380, 150))
+        self.assertEqual(self.sp.geometry((0, 0, 1920, 1080), 1.5), (23, 447, 380, 150))
         self.assertIsNone(self.sp.geometry((0, 0, 800, 600), 1.5))
 
     def test_lines_show_empty_states_and_numbers(self):
         empty = ss.snapshot([], None)
-        self.assertEqual([l[1] for l in self.sp.lines(empty)], ["none yet", "none", "no edits yet"])
+        self.assertEqual([l[1] for l in self.sp.lines(empty)], ["none yet", "none", "no attempts yet"])
         snap = {"missed": {"steps": [{"drill": "edit_peek", "step": 2, "missed": 4, "graded": 18}]},
                 "accidental": {"strays": 23, "doubles": 6, "top_keys": ["caps_lock", "x"],
                                "verdicts": {"slip": 11, "deliberate": 3, "noise": 0, "unsure": 9}},
                 "edits": {"attempts": 12, "completed_pct": 81, "followed_pct": 78, "travel_vs_ideal": 1.3}, "tip": ""}
         rows = self.sp.lines(snap)
         self.assertEqual(rows[0][1], "4 / 18")
-        self.assertEqual(rows[2][1], "81% done · followed 78% · travel 1.3×")
+        self.assertEqual(rows[2][1], "81% selection match · followed 78% · travel 1.3×")
         self.assertEqual(self.sp.verdict_parts(snap), [("slip", 11), ("deliberate", 3), ("unsure", 9)])

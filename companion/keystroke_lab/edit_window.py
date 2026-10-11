@@ -10,6 +10,7 @@ from dataclasses import replace
 import tkinter as tk
 import cv2,numpy as np
 from .keyboard_overlay import game_rect,make_click_through,exclude_from_capture,single_instance,ROWS,BOTTOM_MARGIN,LEFT_MARGIN
+from .overlay_layout import edit_guide_lift
 from .bind_profiles import ProfileStore
 from .drills import BINDS_FILE
 from .edit_observation import observe_mode,EditGridObserver,cue_scores
@@ -315,6 +316,8 @@ def run(profile_path=None):
     if not single_instance('Local\\KeystrokeLabEditReference'):return
     import mss
     cv2.setNumThreads(1)
+    try: display_scale=float(json.loads((BASE/'overlay-settings.json').read_text()).get('scale',1.5))
+    except (OSError,ValueError,TypeError): display_scale=1.5
     store=ProfileStore(profile_path or BINDS_FILE);pipeline=ContextPipeline(store,async_detect=True)
     shared={'result':None,'rect':None};mutex=threading.Lock();stop=threading.Event()
     # Every edit attempt (open edit mode -> confirm / reset / leave) goes to sessions/edit-<session>.attempts.jsonl
@@ -491,7 +494,9 @@ def run(profile_path=None):
             u=max(22,min(42,int((b-t)/54*1.5)))
             panel_height=240 if data['reference_ids'] else 70
             panel_x=l+int((r-l)*LEFT_MARGIN)
-            panel_y=max(t+8,b-int((b-t)*BOTTOM_MARGIN)-(len(ROWS)+4)*u-panel_height-8)
+            # Reserve the slot beneath the edit guide for session stats.
+            lift=edit_guide_lift(b-t,display_scale,len(ROWS)+4)
+            panel_y=max(t+8,b-int((b-t)*BOTTOM_MARGIN)-(len(ROWS)+4)*u-panel_height-8-lift)
             root.geometry(f"420x{panel_height}+{panel_x}+{panel_y}")
             if not panel_shown:root.deiconify();panel_shown=True
             if data['captured_at']!=lines_key:
