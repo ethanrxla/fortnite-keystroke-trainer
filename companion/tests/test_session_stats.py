@@ -36,16 +36,16 @@ class SessionStats(unittest.TestCase):
         self.assertEqual((v["slip"], v["deliberate"], v["noise"], v["unsure"]), (1, 1, 0, 4))
         self.assertEqual(sum(v.values()), 6)
 
-    def test_missed_steps_from_the_island_and_the_overlay(self):
+    def test_drill_grading_never_feeds_the_stats(self):
         store = Store(":memory:")
-        for n, result in enumerate(("ok", "missing", "ok", "missing", "late")):
+        for n, result in enumerate(("missing", "missing", "late")):
             store.add_kt(1000.0 + n, {"event": "step", "drill_id": "edit_peek", "step": 1, "result": result})
-        store.add_kt(900.0, {"event": "step", "drill_id": "edit_peek", "step": 1, "result": "missing"})   # older session
         events = [{"ts": 1000.0, "t": 0, "kind": "ok", "key": "w"},
-                  {"t": 5, "kind": "missed", "drill": "edit_half_wall", "actions": ["jump"]}]
-        m = ss.missed(events, store, ss.session_start(events))
-        self.assertEqual((m["missed"], m["graded"]), (4, 6))
-        self.assertEqual((m["steps"][0]["drill"], m["steps"][0]["missed"]), ("edit_half_wall", 1))
+                  {"t": 5, "kind": "missed", "drill": "edit_half_wall", "actions": ["jump"]},
+                  {"t": 6, "kind": "order", "key": "q", "drill": "edit_half_wall"}]
+        snap = ss.snapshot(events, store)
+        self.assertEqual(snap["missed"], {"steps": [], "graded": 0, "missed": 0})
+        self.assertNotIn("order", snap["accidental"])
         self.assertEqual(ss.missed([], None, None), {"steps": [], "graded": 0, "missed": 0})
 
     def test_missed_confirm_in_ordinary_play_without_any_drill(self):
