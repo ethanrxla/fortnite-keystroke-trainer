@@ -264,10 +264,12 @@ def place_switch_targets(b, p):
             y = track_y(ln, k)
             if "gun" in hits:
                 dm = b.device(DUMMY, f"KT_GunTarget_{d['code']}_{k}", ox + 3 * CELL, y + CELL, 0.0)
+                b.face(dm, 180.0)
                 b.props(dm, {"infiniteHealth": True})
                 b.bind(dm, "On Hit", hits["gun"], "Trigger")
             if "pickaxe" in hits:
                 dm = b.device(DUMMY, f"KT_PickTarget_{d['code']}_{k}", ox + CELL / 2 + 40, y, 0.0)
+                b.face(dm, 180.0)
                 b.props(dm, {"infiniteHealth": True})
                 b.bind(dm, "On Hit", hits["pickaxe"], "Trigger")
         print(f"switch targets {d['code']}: {sorted(targets)}")
@@ -592,6 +594,14 @@ class Builder:
     def device(self, asset, label, x, y, z=0.0, yaw=0.0):
         ref = self.m.tool(DEVICE, "PlaceDevice", assetPath={"refPath": asset}, transform=xform(x, y, z, yaw=yaw))
         return self.labelled(ref["refPath"], label)
+
+    def face(self, path, yaw):
+        """Turn a placed actor to yaw (PlaceDevice ignores the rotation it is given). A target dummy at yaw 0 faces
+        +X; lanes run +X, so a dummy facing the player is yaw 180 (player 2026-10-10: dummies were side-on)."""
+        cur = self.m.tool(ACTOR, "get_actor_transform", actor={"refPath": path})
+        loc, sc = cur["location"], cur["scale"]
+        self.m.tool(ACTOR, "set_actor_transform", actor={"refPath": path},
+                    xform=xform(loc["x"], loc["y"], loc["z"], sc["x"], sc["y"], sc["z"], yaw=yaw))
 
     def tag(self, path, tag_name):
         """Add a Verse Tag Markup component carrying one of the tags declared in Tags.verse."""
