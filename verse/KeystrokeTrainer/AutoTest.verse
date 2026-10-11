@@ -60,6 +60,13 @@ RunLogicTests(Report:autotest_report):void =
     Report.Check("SK-T1-windows", logic{KTSkillsWindow(0) > KTSkillsWindow(1) and KTSkillsWindow(1) > KTSkillsWindow(2) and KTSkillsWindow(2) >= 0.4}, "skills bots stay shorter as difficulty rises")
     Report.Check("SK-T2-cycle", logic{KTSkillsNext(0, KTSkillsLevels) = 1 and KTSkillsNext(2, KTSkillsLevels) = 0 and KTSkillsNext(1, 2) = 0}, "difficulty and weapon buttons cycle")
     Report.Check("SK-T3-reps", logic{KTSkillsReps(0) < KTSkillsReps(2) and KTSkillsGapMin(2) < KTSkillsGapMax(2)}, "harder runs are longer with shorter gaps")
+    var BadCheckpoints:int = 0
+    for (I -> St : KTOpStages):
+        if (KTOpStageAt(St.Checkpoint) <> I):
+            set BadCheckpoints += 1
+    Report.Check("OP-T1-checkpoints", logic{KTOpStages.Length = 7 and BadCheckpoints = 0}, "every operation checkpoint lies in its own room ({BadCheckpoints} wrong)")
+    Report.Check("OP-T2-clock", logic{KTOpClock(75.4) = "1:15" and KTOpClock(9.0) = "0:09"}, "run clock reads m:ss")
+    Report.Check("OP-T3-storm", logic{KTOpStormX(0.0) = KTOpStormStartX and KTOpStormX(KTOpStormSeconds * 2.0) = KTOpStormEndX}, "storm edge starts at the east wall and stops at its end line")
     Report.Check("T-edit-corners", logic{EditRouteAt(0.5, 0.5) = 0 and EditRouteAt(2.5, 0.5) = 1 and EditRouteAt(0.5, 2.5) = 2 and EditRouteAt(2.5, 2.5) = 3 and EditRouteAt(1.5, 1.5) = 4}, "aim selects lower/upper corners and center window")
     Report.Check("T-edit-ray-bounds", logic{EditAimInBounds(200.0, 1.5, 1.5)? and not EditAimInBounds(-1.0, 1.5, 1.5)? and not EditAimInBounds(200.0, 3.0, 1.0)? and not EditAimInBounds(200.0, 0.0, -0.1)?}, "behind-camera and off-wall rays are rejected")
     var BadRoutes:int = 0

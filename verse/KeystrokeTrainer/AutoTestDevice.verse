@@ -25,6 +25,8 @@ kt_autotest_device := class(creative_device):
                     Controls.RunSmokeTests(P, GhostReport)
                 for (Object : FindCreativeObjectsWithTag(kt_skills_test_tag), Skills := kt_skills_test_device[Object]):
                     Skills.RunSmokeTests(P, GhostReport)
+                for (Object : FindCreativeObjectsWithTag(kt_op_device_tag), Op := kt_operation_device[Object]):
+                    Op.RunSmokeTests(P, GhostReport)
                 Print("AUTOTEST: GHOST END passed={GhostReport.Passed} failed={GhostReport.Failed}")
                 RunTransportTests(P)
                 RunEditPreview(P)
