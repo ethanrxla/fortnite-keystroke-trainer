@@ -257,6 +257,7 @@ class VoiceWorker:
         self.seen_attempt = None
         self.epoch = 0
         self.speaking = False
+        self.last_health = -1e20
         self.thread = threading.Thread(target=self.run, daemon=True)
         if start:
             self.thread.start()
@@ -360,6 +361,9 @@ class VoiceWorker:
     def run(self):
         while not self.stop.wait(.5):
             try:
+                if self.clock()-self.last_health >= 10:
+                    health('worker', 'running')
+                    self.last_health = self.clock()
                 self.tick()
             except Exception:
                 # A failing service must not bring down the overlay or retry rapidly.
