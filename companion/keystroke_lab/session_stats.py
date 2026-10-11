@@ -76,33 +76,54 @@ def accidental(events):
             "top_keys": [k for k, _ in (strays + doubles).most_common(3)], "verdicts": dict(verdicts)}
 
 
-def edit_misses(store, since, binds=None):
-    """Missed keystrokes in ordinary play, no drill needed: edits where tiles were selected but the edit closed without
-    the confirm key (the collector joins each recorded edit with the overlay's confirm / reset presses; only joined
-    attempts count). With edit and confirm on one key (edit-on-release setups) a confirm cannot be told apart from the
-    press that opened the edit, so the measure is skipped rather than guessed."""
-    if store is None or since is None:
-        return None
-    if binds:
-        from .keyboard_overlay import normal
-        if binds.get("edit") and normal(binds.get("edit")) == normal(binds.get("edit_confirm", "")):
-            return None
-    selected, unconfirmed = 0, 0
-    for (raw,) in store.rows("SELECT record FROM edit_attempts WHERE enriched=1 AND t_open >= ?", (since,)):
+RELEASE_MIN = 8            # edits with a selection needed before deciding the player edits on release
+RELEASE_SHARE = 0.15       # below this share of edits with a confirm press, confirms must be happening on release
+
+
+def _selected_edits(store, since=None):
+    """(confirmed?) per joined edit attempt where tiles were selected and that was not deliberately reset."""
+    sql = "SELECT record FROM edit_attempts WHERE enriched=1" + (" AND t_open >= ?" if since is not None else "")
+    out = []
+    for (raw,) in store.rows(sql, (since,) if since is not None else ()):
         r = json.loads(raw)
         if not r.get("final_tiles") and not r.get("selection_trace"):
             continue
         if r.get("t_reset") is not None and r.get("outcome") == "reset":
             continue                    # a reset is a deliberate cancel, not a missed confirm
-        selected += 1
-        unconfirmed += r.get("t_confirm") is None
-    return {"drill": "edit", "step": "confirm", "missed": unconfirmed, "graded": selected} if selected else None
+        out.append(r.get("t_confirm") is not None)
+    return out
 
 
-def missed(events, store, since, binds=None):
+def edits_on_release(store, setting=None):
+    """True when the player's confirms happen on releasing the edit key (no second press to see). The setting wins
+    (overlay-settings.json "edit_on_release"); otherwise judged from all their recorded edits: with enough of them and
+    almost none showing a confirm press, the confirms must be releases. Too few edits: assume presses."""
+    if setting is not None:
+        return bool(setting)
+    history = _selected_edits(store)
+    return len(history) >= RELEASE_MIN and sum(history) / len(history) < RELEASE_SHARE
+
+
+def edit_misses(store, since, binds=None, on_release=None):
+    """Missed keystrokes in ordinary play: edits where tiles were selected but the edit closed without the confirm key.
+    The collector joins each recorded edit with the overlay's presses; the press that opened the edit is skipped, so with
+    edit and confirm on one key (C / C, common) the second press is the confirm and this works as with separate keys.
+    Only edit-on-release can't be seen (the confirm is a key release, never logged): then the result says so instead of
+    counting false misses."""
+    if store is None or since is None:
+        return None
+    if edits_on_release(store, on_release):
+        return {"drill": "edit", "step": "confirm", "missed": 0, "graded": 0, "release": True}
+    session = _selected_edits(store, since)
+    if not session:
+        return None
+    return {"drill": "edit", "step": "confirm", "missed": session.count(False), "graded": len(session)}
+
+
+def missed(events, store, since, binds=None, on_release=None):
     """Missed keystrokes in ordinary play (edit_misses). Drill grading never feeds in: no KT|step results, no
     drill-mode `missed` reps; presses made while doing a drill count like any others, through the same edit records."""
-    natural = edit_misses(store, since, binds)
+    natural = edit_misses(store, since, binds, on_release)
     steps = [natural] if natural else []
     return {"steps": steps, "graded": sum(m["graded"] for m in steps), "missed": sum(m["missed"] for m in steps)}
 
@@ -156,7 +177,7 @@ def tip(events):
     return ""
 
 
-def snapshot(events, store, binds=None):
+def snapshot(events, store, binds=None, on_release=None):
     since = session_start(events)
-    return {"since": since, "accidental": accidental(events), "missed": missed(events, store, since, binds),
+    return {"since": since, "accidental": accidental(events), "missed": missed(events, store, since, binds, on_release),
             "edits": edits(store, since), "tip": tip(events)}

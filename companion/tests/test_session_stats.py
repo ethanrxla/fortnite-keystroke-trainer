@@ -66,8 +66,25 @@ class SessionStats(unittest.TestCase):
         events = [{"ts": 1000.0, "t": 0, "kind": "ok", "key": "w"}]
         m = ss.missed(events, store, 1000.0, {"edit": "g", "edit_confirm": "mouse_left"})
         self.assertEqual(m["steps"][0], {"drill": "edit", "step": "confirm", "missed": 2, "graded": 3})
-        # Edit and confirm on one key: a confirm press cannot be told apart, so no guess.
-        self.assertIsNone(ss.edit_misses(store, 1000.0, {"edit": "g", "edit_confirm": "G"}))
+        # Edit and confirm on one key (C / C): the second press is the confirm, counted the same way.
+        self.assertEqual(ss.missed(events, store, 1000.0, {"edit": "c", "edit_confirm": "c"})["steps"][0]["missed"], 2)
+
+    def test_edit_on_release_is_recognised_instead_of_counted_as_misses(self):
+        store = Store(":memory:")
+        for n in range(1, 10):                      # nine edits with a selection, none with a confirm press
+            rec = attempt(n, "window_center")
+            rec.update(final_tiles=[4], selection_trace=[{"t": 1, "tiles": [4]}], t_confirm=None, t_reset=None)
+            store.add_attempt(rec)
+            store.update_attempt(rec, enriched=True)
+        m = ss.edit_misses(store, 1000.0)
+        self.assertTrue(m["release"])
+        self.assertEqual((m["missed"], m["graded"]), (0, 0))
+        # The player's own setting wins over the guess either way.
+        self.assertEqual(ss.edit_misses(store, 1000.0, on_release=False)["missed"], 9)
+        self.assertTrue(ss.edits_on_release(store, True))
+        from keystroke_lab import stats_panel
+        snap = ss.snapshot([{"ts": 1000.0, "t": 0, "kind": "ok", "key": "w"}], store)
+        self.assertEqual(stats_panel.lines(snap)[0][1], "not visible: edit on release")
 
     def test_edit_accuracy_follows_labels_and_measures_travel_against_ideal(self):
         store = Store(":memory:")

@@ -26,6 +26,15 @@ COLOURS = {"bg": "#121820", "edge": "#2f3b48", "text": "#e8ecf4", "muted": "#9aa
 SETTINGS = pathlib.Path(__file__).resolve().parents[1] / "overlay-settings.json"
 
 
+def edit_on_release_setting(path=SETTINGS):
+    """overlay-settings.json "edit_on_release": true / false, or None to let session_stats judge it from your edits."""
+    try:
+        v = json.loads(pathlib.Path(path).read_text()).get("edit_on_release")
+    except (OSError, ValueError, TypeError, AttributeError):
+        return None
+    return v if isinstance(v, bool) else None
+
+
 def overlay_scale(path=SETTINGS):
     try:
         return float(json.loads(pathlib.Path(path).read_text()).get("scale", 1.5))
@@ -53,7 +62,9 @@ def geometry(rect, scale=1.5):
 def lines(snap):
     """The panel's text, row by row, from a session_stats.snapshot: (label, value, meter fraction or None)."""
     m, a, e = snap["missed"], snap["accidental"], snap["edits"]
-    if m["steps"]:
+    if m["steps"] and m["steps"][0].get("release"):
+        miss = ("Missed confirms", "not visible: edit on release", None)
+    elif m["steps"]:
         s = m["steps"][0]
         name = "confirm after editing" if (s["drill"], s["step"]) == ("edit", "confirm") else f"{s['drill']} · {s['step']}"
         miss = (f"Missed: {name}", f"{s['missed']} / {s['graded']}", s["missed"] / s["graded"])
@@ -108,7 +119,7 @@ def run(sessions=None):
             try:
                 binds = dict(drills.load_binds())
                 events = session_stats.read_events(session_stats.newest_events(folder))
-                latest.put(session_stats.snapshot(events, store, binds))
+                latest.put(session_stats.snapshot(events, store, binds, edit_on_release_setting()))
             except Exception as exc:  # noqa: BLE001  a bad read must never take the panel down; try again next tick
                 print("stats panel: read failed:", type(exc).__name__, exc)
             stop.wait(REFRESH_S)
