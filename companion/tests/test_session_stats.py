@@ -33,8 +33,8 @@ class SessionStats(unittest.TestCase):
                     {"intent": "insufficient_evidence", "confidence": 0.95, "uncertainty": True}]
         events = [{"t": i, "kind": "unmapped", "key": "x"} for i in range(6)] + [{"kind": "analysis", "findings": findings}]
         v = ss.accidental(events)["verdicts"]
-        self.assertEqual((v["slip"], v["deliberate"], v["noise"], v["unsure"]), (1, 1, 0, 1))
-        self.assertEqual(sum(v.values()), 3)
+        self.assertEqual((v["slip"], v["deliberate"], v["noise"], v["unsure"]), (1, 1, 0, 2))
+        self.assertEqual(sum(v.values()), 4)
 
     def test_drill_grading_never_feeds_the_stats(self):
         store = Store(":memory:")
@@ -150,7 +150,7 @@ class PanelLayout(unittest.TestCase):
 
     def test_lines_show_empty_states_and_numbers(self):
         empty = ss.snapshot([], None)
-        self.assertEqual([l[1] for l in self.sp.lines(empty)], ["none yet", "none", "no attempts yet"])
+        self.assertEqual([l[1] for l in self.sp.lines(empty)], ["none yet", "none", "no observed attempts yet"])
         snap = {"missed": {"steps": [{"drill": "edit_peek", "step": 2, "missed": 4, "graded": 18}]},
                 "accidental": {"strays": 23, "doubles": 6, "top_keys": ["caps_lock", "x"],
                                "verdicts": {"slip": 11, "deliberate": 3, "noise": 0, "unsure": 9}},
