@@ -33,9 +33,9 @@ PLANE = "/Engine/BasicShapes/Plane.Plane"
 GRANTER = "/CreativeCoreDevices/SetupAssets/PID_Device_ItemGranter.PID_Device_ItemGranter"
 WALL_Y = -66560.0          # back wall face (KT_Wall_Hub_0)
 PROUD = 60.0               # plates stand this far off the wall
-TILE = 220.0
+TILE = 270.0               # player 2026-10-11: bigger, easier to shoot
 PITCH = 300.0              # column pitch (12 gun columns + the item block fit the back wall)
-ROW_PITCH = 250.0
+ROW_PITCH = 290.0
 BLOCK_GAP = 250.0          # extra space between the weapons, items and heals blocks
 X_CENTER = 256.0
 ROW_Z0 = 150.0             # centre of the bottom (common) row
@@ -56,8 +56,8 @@ LOGO_Y, LOGO_Z = -62996.0, 1150.0
 # A target dummy in play stands about 550 cm per unit of Z scale and 125 cm per unit of Y (twice its editor height:
 # 0.82 poked 2 m above the top row). These fill most of a 220 cm tile and stay inside it.
 # Player 2026-10-11: bigger hit boxes, "easier to shoot": now a little wider and taller than the 220 cm plate.
-HIT_SCALE = (0.15, 2.0, 0.44)
-HIT_DROP = 120.0
+HIT_SCALE = (0.15, 2.15, 0.49)      # 269 x 270 cm in play: the whole plate
+HIT_DROP = 135.0
 NO_BOUNCE = {"bAffectDynamicIndirectLighting": False, "bAffectDistanceFieldLighting": False}
 dec = lambda v: json.loads(v) if isinstance(v, str) else v
 

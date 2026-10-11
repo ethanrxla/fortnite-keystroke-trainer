@@ -48,4 +48,6 @@ Nothing open source does build/edit drill grading, so that part is ours.
   `File:Prime Minister of Jamaica, Sir Alexander Bustamante (04) (cropped).jpg`,
   `File:Norman Manley, The Miami Herald 1955 08 04 (cropped).jpg`, `File:Haile Selassie in full dress (cropped).jpg`.
   Nanny of the Maroons, Samuel Sharpe and Paul Bogle have no public-domain portrait; their cards use a drawn bust.
+- Lion of Judah flag: `File:Flag of Ethiopia (1897–1974).svg` on Wikimedia Commons, public domain
+  (`assets/theme/heroes/lion_of_judah_flag.png`, gold border added).
 - Everything else in `assets/theme/` (67s, LARP / MOG words, 6-7 characters, lion of Judah, cross) is drawn in code.

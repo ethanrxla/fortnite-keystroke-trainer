@@ -45,6 +45,8 @@ HEADER_W, HEADER_Z = 2350.0, 1135.0
 # It replaces the KT7_ArmoryArt_Focal panel (import_armory_art.py --apply brings that back).
 ROOTS_Y, ROOTS_Z, ROOTS_GAP = -65025.0, 700.0, 50.0
 ROOTS_CARD_W, ROOTS_CALVARY_W = 300.0, 920.0
+# The historical Lion of Judah flag (Ethiopian Empire 1897-1974, public domain, Wikimedia Commons; SOURCES.md).
+ROOTS_FLAG_W = 600.0
 ROOTS_HEADER_W, ROOTS_HEADER_Z = 2000.0, 1150.0
 
 # Build wing ("67 room").
@@ -142,7 +144,7 @@ def cross(b, actors):
             b.m.tool(bm.SCENE, "remove_from_scene", actor={"refPath": a["actorPath"]})
     h = ART / "heroes"
     row = [(h / "hero_selassie.png", ROOTS_CARD_W), (h / "calvary.png", ROOTS_CALVARY_W),
-           (h / "tribute_reggae.png", ROOTS_CARD_W), (h / "tribute_rasta.png", ROOTS_CARD_W)]
+           (h / "tribute_reggae.png", ROOTS_CARD_W), (h / "lion_of_judah_flag.png", ROOTS_FLAG_W)]
     span = sum(w for _, w in row) + ROOTS_GAP * (len(row) - 1)
     x = WEST_FACE_X + 4.0
     # Facing this wall (towards -X) a viewer has -Y on their right, so the row runs towards -Y.

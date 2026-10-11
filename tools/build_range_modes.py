@@ -33,8 +33,8 @@ PREFIX = "KT26_RangeMode_"
 C = bm.CELL
 FACE_X = FIRE_X - 70.0          # player side of the counter
 Z = 58.0                         # tile centre (counter top is 110)
-SIZE = 100.0
-PITCH = 155.0
+SIZE = 140.0  # player 2026-10-11: shootable buttons bigger and easier to hit
+PITCH = 175.0
 # name, plate rgb (linear), trigger tag, light tag, light rgb
 TILES = [("WIDE", (0.12, 0.03, 0.30), "kt_range_wide_shot_tag", "kt_range_light_wide_tag", (0.6, 0.2, 1.0)),
          ("NARROW", (0.02, 0.12, 0.30), "kt_range_narrow_shot_tag", "kt_range_light_narrow_tag", (0.2, 0.5, 1.0)),
@@ -80,7 +80,7 @@ def main():
         m.tool(bm.SCENE, "remove_from_scene", actor={"refPath": p})
     print(f"removed {len(old)} old actors")
     yaw = 270.0                                   # faces -X, towards the booth
-    sy, sz = SIZE * 0.85 / W_UNIT, SIZE * 0.85 / H_UNIT
+    sy, sz = SIZE / W_UNIT, SIZE / H_UNIT          # the whole plate is the hitbox
     for n in range(POPUP_LANES):
         yc = lane_centre(n)
         for k, (name, rgb, tag, light_tag, light_rgb) in enumerate(TILES):
