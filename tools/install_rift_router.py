@@ -9,7 +9,9 @@ PAIRS=[('KT2_QuickStart','KT2_CourtArrival'),('KT2_FreeStart','KT2_FreeArrival')
 # and room A's loop from the climb tower roof back to the top of the drop tower. Appended, so the button indices
 # below still name the same pairs.
 LAB_RIFTS=[(f'KT7_Lab_Rift_{r}_In',f'KT7_Lab_Rift_{r}_Start') for r in 'ABCD']+[('KT7_Lab_Rift_A_Loop','KT7_Lab_Rift_A_Start')]
-PAIRS=PAIRS+LAB_RIFTS
+# Rebox Arena (tools/build_rebox_arena.py): court bay 02 -> inside your box, and the way back.
+REBOX_RIFTS=[('KT14_Rebox_Rift_In','KT14_Rebox_Rift_Start'),('KT14_Rebox_Rift_Back','KT14_Rebox_Rift_Home')]
+PAIRS=PAIRS+LAB_RIFTS+REBOX_RIFTS
 
 def decode(v):return json.loads(v) if isinstance(v,str) else v
 def main():
