@@ -40,14 +40,20 @@ kt_skills_start_shot_tag<public> := class(tag){}
 kt_skills_light_easy_tag<public> := class(tag){}
 kt_skills_light_medium_tag<public> := class(tag){}
 kt_skills_light_hard_tag<public> := class(tag){}
+# Wide mode (player 2026-10-11: one bot at a time across the whole aim plate, not just the lane, for wider flicks):
+# a second set of spawners spread over the plate, a WIDE tile that switches between the lane and the plate, and a
+# light that is on while wide is chosen (tools/build_skills_wide.py).
+kt_skills_wide_bot_tag<public> := class(tag){}
+kt_skills_mode_shot_tag<public> := class(tag){}
+kt_skills_light_wide_tag<public> := class(tag){}
 
 kt_skills_tile_listener := class:
     Level:int
     Owner:kt_skills_test_device
-    # Level -1 is the START tile.
+    # Level -1 is the START tile, -2 the WIDE tile.
     OnShot(MaybeAgent:?agent):void =
         if (A := MaybeAgent?):
-            if (Level < 0) then Owner.OnStart(A) else Owner.PickLevel(Level)
+            if (Level = -2) then Owner.ToggleWide() else if (Level < 0) then Owner.OnStart(A) else Owner.PickLevel(Level)
 
 # Difficulty 0 Easy, 1 Medium, 2 Hard: how long a bot stays, the pause before the next one and how many reps.
 KTSkillsLevels<public>:int = 3
@@ -147,11 +153,16 @@ kt_skills_hud := class:
 
 kt_skills_test_device<public> := class(creative_device):
     var Centre:vector3 = vector3{}
-    @editable HalfExtent:vector3 = vector3{X := 4000.0, Y := 2600.0, Z := 1500.0}
+    # Covers the lane and the whole aim plate's wide spawners from the device on the A2 lane.
+    @editable HalfExtent:vector3 = vector3{X := 6500.0, Y := 3400.0, Z := 1500.0}
 
     SpawnedSignal<public>:event(int) = event(int){}
     DownSignal<public>:event(int) = event(int){}
+    # Lane spawners first (0 .. LaneCount - 1), then the wide ones.
     var Bots:[]guard_spawner_device = array{}
+    var LaneCount:int = 0
+    var Wide:logic = false
+    var WideLight:?customizable_light_device = false
     var StartButton:?button_device = false
     var LevelButton:?button_device = false
     var WeaponButton:?button_device = false
@@ -168,6 +179,13 @@ kt_skills_test_device<public> := class(creative_device):
         set Centre = GetTransform().Translation
         for (O : FindCreativeObjectsWithTag(kt_skills_bot_tag), S := guard_spawner_device[O], Inside[S.GetTransform().Translation]):
             set Bots += array{S}
+        set LaneCount = Bots.Length
+        for (O : FindCreativeObjectsWithTag(kt_skills_wide_bot_tag), S := guard_spawner_device[O], Inside[S.GetTransform().Translation]):
+            set Bots += array{S}
+        for (O : FindCreativeObjectsWithTag(kt_skills_light_wide_tag), Li := customizable_light_device[O], Inside[Li.GetTransform().Translation]):
+            set WideLight = option{Li}
+        for (O : FindCreativeObjectsWithTag(kt_skills_mode_shot_tag), Tr := trigger_device[O], Inside[Tr.GetTransform().Translation]):
+            Tr.TriggeredEvent.Subscribe(kt_skills_tile_listener{Level := -2, Owner := Self}.OnShot)
         for (O : FindCreativeObjectsWithTag(kt_skills_start_tag), B := button_device[O], Inside[B.GetTransform().Translation]):
             set StartButton = option{B}
         for (O : FindCreativeObjectsWithTag(kt_skills_difficulty_tag), B := button_device[O], Inside[B.GetTransform().Translation]):
@@ -200,7 +218,7 @@ kt_skills_test_device<public> := class(creative_device):
             Tr.TriggeredEvent.Subscribe(kt_skills_tile_listener{Level := -1, Owner := Self}.OnShot)
         UpdateButtons()
         KTLog("setup", "skills_test", 0, 0, 0, rep_result.Unchecked,
-            "bots={Bots.Length}|start={if (StartButton?) then 1 else 0}|granters={(if (HandCannon?) then 1 else 0) + (if (HeavyAR?) then 1 else 0)}")
+            "bots={LaneCount}|wide_bots={Bots.Length - LaneCount}|start={if (StartButton?) then 1 else 0}|granters={(if (HandCannon?) then 1 else 0) + (if (HeavyAR?) then 1 else 0)}")
 
     Inside(Pos:vector3)<transacts><decides>:void =
         Abs(Pos.X - Centre.X) <= HalfExtent.X
@@ -212,9 +230,21 @@ kt_skills_test_device<public> := class(creative_device):
             set Level = L
             UpdateButtons()
 
+    ToggleWide<public>():void =
+        if (not Running?, Bots.Length > LaneCount):
+            set Wide = if (Wide?) then false else true
+            UpdateButtons()
+
+    # The spawner index range of the chosen mode, and how long a bot stays (wide flicks travel further: +0.3 s).
+    PoolLo()<transacts>:int = if (Wide?) then LaneCount else 0
+    PoolHi()<transacts>:int = if (Wide?) then Bots.Length - 1 else LaneCount - 1
+    ModeName()<transacts>:string = if (Wide?) then "wide" else "lane"
+
     UpdateButtons():void =
         for (L -> MaybeLight : Lights, Li := MaybeLight?):
             if (L = Level) then Li.TurnOn() else Li.TurnOff()
+        if (Li := WideLight?):
+            if (Wide?) then Li.TurnOn() else Li.TurnOff()
         if (B := StartButton?):
             B.SetInteractionText(SkillsText(if (Running?) then "Skills Test running" else "START Skills Test ({KTSkillsLevelName(Level)}, {KTSkillsWeaponName(Weapon)})"))
         if (B := LevelButton?):
@@ -223,7 +253,7 @@ kt_skills_test_device<public> := class(creative_device):
             B.SetInteractionText(SkillsText("Weapon: {KTSkillsWeaponName(Weapon)} - swap"))
 
     OnStart<public>(A:agent):void =
-        if (not Running?, Bots.Length > 0):
+        if (not Running?, PoolHi() >= PoolLo()):
             set Running = true
             UpdateButtons()
             spawn{ Round(A) }
@@ -249,11 +279,16 @@ kt_skills_test_device<public> := class(creative_device):
         Grant(A)
         Lvl := Level
         Reps := KTSkillsReps(Lvl)
-        Window := KTSkillsWindow(Lvl)
+        Window := KTSkillsWindow(Lvl) + (if (Wide?) then 0.3 else 0.0)
+        Lo := PoolLo()
+        Hi := PoolHi()
+        Mode := ModeName()
         set Runs += 1
         Run := Runs
         Hud := kt_skills_hud{}
         Hud.Build(KTSkillsLevelName(Lvl), KTSkillsWeaponName(Weapon), Window)
+        if (Wide?):
+            Hud.Title.SetText(SkillsText("SKILLS TEST  WIDE"))
         Hud.Show("0/{Reps}", 0, 0, 0)
         Panel := KTHudPanel(Hud.Card, 0.16, 720.0, 210.0)
         MaybeUI:?player_ui = if (P := player[A], UI := GetPlayerUI[P]) then option{UI} else false
@@ -281,9 +316,9 @@ kt_skills_test_device<public> := class(creative_device):
         for (Rep := 1..Reps):
             Sleep(GetRandomFloat(KTSkillsGapMin(Lvl), KTSkillsGapMax(Lvl)))
             # A different spawner from the last one, so two reps never pop in the same place.
-            var I:int = GetRandomInt(0, Bots.Length - 1)
-            if (Bots.Length > 1, I = Last):
-                set I = KTSkillsNext(I, Bots.Length)
+            var I:int = GetRandomInt(Lo, Hi)
+            if (Hi > Lo, I = Last):
+                set I = Lo + KTSkillsNext(I - Lo, Hi - Lo + 1)
             set Last = I
             if (S := Bots[I]):
                 Index := I
@@ -320,7 +355,7 @@ kt_skills_test_device<public> := class(creative_device):
                     else:
                         set Misses += 1
                     KTLog("rep", "skills_test", 0, Rep, 0, if (Hit?) then rep_result.Ok else rep_result.Missing,
-                        "difficulty={KTSkillsLevelName(Lvl)}|weapon={KTSkillsWeaponName(Weapon)}|hit={if (Hit?) then 1 else 0}|ms={Ms}|spawner={Index}|run={Run}")
+                        "difficulty={KTSkillsLevelName(Lvl)}|weapon={KTSkillsWeaponName(Weapon)}|hit={if (Hit?) then 1 else 0}|ms={Ms}|spawner={Index}|run={Run}|mode={Mode}")
                 else:
                     set Skipped += 1
                     KTLog("rep", "skills_test", 0, Rep, 0, rep_result.Unchecked, "difficulty={KTSkillsLevelName(Lvl)}|spawn_timeout=1|spawner={Index}|run={Run}")
@@ -334,8 +369,8 @@ kt_skills_test_device<public> := class(creative_device):
         if (NewBest?, set Best[Lvl] = Hits) {}
         Record := if (B := Best[Lvl]) then B else Hits
         KTLog("summary", "skills_test", 0, Reps, 0, rep_result.Unchecked,
-            "difficulty={KTSkillsLevelName(Lvl)}|weapon={KTSkillsWeaponName(Weapon)}|hits={Hits}|misses={Misses}|skipped={Skipped}|avg_ms={Avg}|best={Record}|run={Run}")
-        Hud.Title.SetText(SkillsText("SKILLS TEST DONE"))
+            "difficulty={KTSkillsLevelName(Lvl)}|weapon={KTSkillsWeaponName(Weapon)}|hits={Hits}|misses={Misses}|skipped={Skipped}|avg_ms={Avg}|best={Record}|run={Run}|mode={Mode}")
+        Hud.Title.SetText(SkillsText(if (Wide?) then "WIDE SKILLS TEST DONE" else "SKILLS TEST DONE"))
         Hud.Show("{Hits}/{Reps - Skipped}", Hits, Misses, Avg)
         Hud.Message.SetText(SkillsText("{if (NewBest?) then "New best!" else "Best: {Record}"}   Press START to go again"))
         Sleep(6.0)

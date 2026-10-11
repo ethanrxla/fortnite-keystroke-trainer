@@ -80,11 +80,11 @@ def plan():
 
 
 def check(errors, devices):
-    """Every tagged device must sit inside the Verse device's box (SkillsTest.verse HalfExtent 4000 x 2600 x 1500)."""
+    """Every tagged device must sit inside the Verse device's box (SkillsTest.verse HalfExtent 6500 x 3400 x 1500)."""
     centre = next(d["pos"] for d in devices if d["asset"] == DEVICE)
     for d in devices:
         dx, dy, dz = (abs(a - b) for a, b in zip(d["pos"], centre))
-        if d.get("tag") and (dx > 4000 or dy > 2600 or dz > 1500):
+        if d.get("tag") and (dx > 6500 or dy > 3400 or dz > 1500):
             errors.append(f"{d['label']} is outside the skills device's box")
     return errors
 

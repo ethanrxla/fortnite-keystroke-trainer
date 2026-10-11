@@ -27,13 +27,13 @@ MATERIALS = bm.MODULE + "/KT_Materials"
 PLANE = "/Engine/BasicShapes/Plane.Plane"
 SETS = ("/Hera/Sets/PicketFence/Textures/Graffiti/", "/Hermes/Sets/AlleyTown/Textures/Murals/",
         "/Hera/Foliage/Trees/Beach_Palm/Textures/Graffiti/")   # SunStroke murals fail UEFN validation (disallowed)
-WALLS = ("KT_Wall_",)      # the main area: hub and wing enclosure walls (player 2026-10-11)
+WALLS = ("KT_Wall_", "KT8_Range_Wall_")      # hub, wings, lane rooms (player 2026-10-11) and the gun range
 WEB = bm.ROOT / "assets" / "graffiti" / "openclipart"     # CC0 pieces, imported as textures (SOURCES.md)
 TEX_FOLDER = bm.MODULE + "/KT_Graffiti"
 TT = "editor_toolset.toolsets.texture.TextureTools"
 # Never over the armory gun wall: its face on the back wall (y -66560, facing +Y), x span with a margin.
 KEEP_CLEAR = [{"normal": (0, 1), "y": -66560.0, "x0": -600.0, "x1": 1100.0}]
-SPACING = 1800.0           # one piece per this many cm of wall face, on average
+SPACING = 1150.0           # one piece per this many cm of wall face, on average (player: "repeat them throughout the walls")
 SEED = 20261011
 # Textures UEFN validation rejects (disallowed references), found on push 2026-10-11.
 DISALLOWED = ("T_graffiti_003", "T_Graffiti_Fish_C")

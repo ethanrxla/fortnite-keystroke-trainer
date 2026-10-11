@@ -47,6 +47,13 @@
       "pattern": "/Game/Athena/Items/Weapons/WID_Assault_Heavy_Athena_{r}_Ore_T03.WID_Assault_Heavy_Athena_{r}_Ore_T03"
     },
     {
+      "name": "Suppressed AR",
+      "pattern": "/Game/Athena/Items/Weapons/WID_Assault_Suppressed_Athena_{r}_Ore_T03.WID_Assault_Suppressed_Athena_{r}_Ore_T03",
+      "paths": {
+        "UC": "/Game/Athena/Items/Weapons/WID_Assault_Suppressed_Athena_UC.WID_Assault_Suppressed_Athena_UC"
+      }
+    },
+    {
       "name": "Pump",
       "pattern": "/Game/Athena/Items/Weapons/WID_Shotgun_Standard_Athena_{r}_Ore_T03.WID_Shotgun_Standard_Athena_{r}_Ore_T03"
     },
@@ -60,6 +67,13 @@
     {
       "name": "Tactical SMG",
       "pattern": "/Game/Athena/Items/Weapons/WID_Pistol_AutoHeavyPDW_Athena_{r}_Ore_T03.WID_Pistol_AutoHeavyPDW_Athena_{r}_Ore_T03"
+    },
+    {
+      "name": "Suppressed SMG",
+      "pattern": "/Game/Athena/Items/Weapons/WID_Pistol_AutoHeavySuppressed_Athena_{r}_Ore_T03.WID_Pistol_AutoHeavySuppressed_Athena_{r}_Ore_T03",
+      "paths": {
+        "C": "/Game/Athena/Items/Weapons/WID_Pistol_AutoHeavySuppressed_Athena_C_Ore_T02.WID_Pistol_AutoHeavySuppressed_Athena_C_Ore_T02"
+      }
     },
     {
       "name": "Suppressed pistol",
