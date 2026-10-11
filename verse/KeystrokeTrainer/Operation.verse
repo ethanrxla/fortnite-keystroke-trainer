@@ -32,7 +32,7 @@ kt_op_grenade_tag<public> := class(tag){}
 KTOpStageAt<public>(Pos:vector3)<transacts>:int =
     var Found:int = -1
     for (I -> S : KTOpStages, Found < 0):
-        if (Pos.X >= S.Min.X, Pos.X <= S.Max.X, Pos.Y >= S.Min.Y, Pos.Y <= S.Max.Y, Pos.Z >= S.Min.Z, Pos.Z <= S.Max.Z):
+        if (Pos.X >= S.Lo.X, Pos.X <= S.Hi.X, Pos.Y >= S.Lo.Y, Pos.Y <= S.Hi.Y, Pos.Z >= S.Lo.Z, Pos.Z <= S.Hi.Z):
             set Found = I
     Found
 
@@ -158,7 +158,7 @@ kt_operation_device<public> := class(creative_device):
             UI.RemoveWidget(Old)
         set Panel = false
 
-    StageBots(Index:int):[]guard_spawner_device =
+    StageBots(Index:int)<transacts>:[]guard_spawner_device =
         for (I -> S : Bots, BotStage[I] = Index) { S }
 
     EnterStage(Index:int):void =

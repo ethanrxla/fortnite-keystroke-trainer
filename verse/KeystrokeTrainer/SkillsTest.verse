@@ -155,7 +155,7 @@ kt_skills_test_device<public> := class(creative_device):
                     Alignment := vector2{X := 0.5, Y := 0.0}
                     SizeToContent := true
                     Widget := Hud
-        MaybeUI := if (P := player[A], UI := GetPlayerUI[P]) then option{UI} else false
+        MaybeUI:?player_ui = if (P := player[A], UI := GetPlayerUI[P]) then option{UI} else false
         if (UI := MaybeUI?):
             UI.AddWidget(Panel, player_ui_slot{InputMode := ui_input_mode.None})
         PauseAimBots(true)
@@ -222,8 +222,8 @@ kt_skills_test_device<public> := class(creative_device):
                     KTLog("rep", "skills_test", 0, Rep, 0, rep_result.Unchecked, "difficulty={KTSkillsLevelName(Lvl)}|spawn_timeout=1|spawner={Index}|run={Run}")
                 S.Despawn()
                 S.Disable()
-            Avg := if (Hits > 0, V := Quotient[TotalMs, Hits]) then V else 0
-            Hud.SetText(SkillsText("SKILLS TEST  {KTSkillsLevelName(Lvl)}  {Rep}/{Reps}\nHits {Hits}   Misses {Misses}   Avg {Avg} ms"))
+            RunningAvg := if (Hits > 0, V := Quotient[TotalMs, Hits]) then V else 0
+            Hud.SetText(SkillsText("SKILLS TEST  {KTSkillsLevelName(Lvl)}  {Rep}/{Reps}\nHits {Hits}   Misses {Misses}   Avg {RunningAvg} ms"))
         Avg := if (Hits > 0, V := Quotient[TotalMs, Hits]) then V else 0
         Previous := if (B := Best[Lvl]) then B else 0
         NewBest := logic{Hits > Previous}
@@ -235,8 +235,8 @@ kt_skills_test_device<public> := class(creative_device):
         Sleep(6.0)
 
     PauseAimBots(Pause:logic):void =
-        for (O : FindCreativeObjectsWithTag(kt_aim_bot_control_tag), Bots := kt_practice_bot_control_device[O]):
-            if (Pause?) then Bots.SuspendForDuel() else Bots.ResumeAfterDuel()
+        for (O : FindCreativeObjectsWithTag(kt_aim_bot_control_tag), Control := kt_practice_bot_control_device[O]):
+            if (Pause?) then Control.SuspendForDuel() else Control.ResumeAfterDuel()
 
     # Runtime checks for the playtest runner (AutoTestDevice): the bay is wired and one bot can appear and vanish.
     RunSmokeTests<public>(P:player, Report:autotest_report)<suspends>:void =

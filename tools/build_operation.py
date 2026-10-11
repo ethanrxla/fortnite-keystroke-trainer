@@ -266,8 +266,8 @@ def render_verse(p):
              "    Name<public>:string = \"\"",
              "    Level<public>:string = \"\"",
              "    Instruction<public>:string = \"\"",
-             "    Min<public>:vector3 = vector3{}",
-             "    Max<public>:vector3 = vector3{}",
+             "    Lo<public>:vector3 = vector3{}",   # room box corners; Min/Max clash with the built-in functions
+             "    Hi<public>:vector3 = vector3{}",
              "    Checkpoint<public>:vector3 = vector3{}",
              "    HasGate<public>:logic = false",
              "    Gate<public>:vector3 = vector3{}",
@@ -283,7 +283,7 @@ def render_verse(p):
         (mn, mx), gate = s["box"], s["gate"]
         g = f", HasGate := true, Gate := {verse_vec((gate[0], gate[1], 0.0))}" if gate else ""
         lines.append(f"    kt_op_stage{{Name := {verse_str(s['name'])}, Level := {verse_str(s['level'])}, "
-                     f"Instruction := {verse_str(s['instruction'])}, Min := {verse_vec(mn)}, Max := {verse_vec(mx)}, "
+                     f"Instruction := {verse_str(s['instruction'])}, Lo := {verse_vec(mn)}, Hi := {verse_vec(mx)}, "
                      f"Checkpoint := {verse_vec(s['checkpoint'])}{g}, Kind := {s['kind']}}}")
     return "\n".join(lines) + "\n"
 
