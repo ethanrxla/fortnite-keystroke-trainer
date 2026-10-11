@@ -47,6 +47,8 @@ A UEFN island that teaches Fortnite building and editing at a slow tempo first
   hand-edit it). The Operation owns Fight Lab room A's west wall (`KT16_Op_LabWall_*`).
   `KT21_Marker_` (`build_range_markers.py`): the range distance markers as floating text; rerun it after `build_gun_range.py`
   or `build_skills_test.py`.
+  `KT21_Team_` (`build_team_arena.py`): reserved team-arena greybox, separate from
+  `KT21_Marker_`. Never delete all `KT21_*` actors to rebuild either one.
 - Teleporters that share a group are picked between. The Greybox template used A-D and Z (deleted); ours use E-U
   and H-K. Never reuse a group.
 - `shared/drills.json` `steps` is the reference order; `accepts` lists other orders that count. The sources for

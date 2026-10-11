@@ -34,9 +34,12 @@ source builder now preserves that prior fix. Do not recreate their chair-shaped
 device visualization at the firing line. An actual decorative chair, if still
 visible after a content push, needs separate identification before rotating it.
 
-The sign-art renderer in the main working folder has uncommitted changes from
-other work. Those were left untouched. Exclude the compact lane/distance labels
-when rendering sign art again, or rerun the targeted cleanup afterwards.
+Concurrent PR changes were merged after this pass: the range now uses the
+`build_range_markers.py` floating-text implementation instead of rebuilding
+distance billboards, and GunRange runs whole-range pop-up rounds. Both are
+preserved. The merged sign-art renderer explicitly excludes lane and distance
+labels so later renders cannot restore their opaque panels. The main checkout's
+uncommitted files remain untouched.
 
 ## Not playable/validated yet — keep these open
 
