@@ -6,7 +6,7 @@ $pythonw = Join-Path $env:LOCALAPPDATA 'Python\pythoncore-3.14-64\pythonw.exe'
 $autostart = Join-Path $companion 'autostart.pyw'
 # Overlay processes: matched by command line, plus pythonw windows whose command line Windows hides (elevated ones).
 $targets = Get-CimInstance Win32_Process -Filter "name like 'python%'" | Where-Object {
-    ($_.CommandLine -match 'keystroke_lab (keys|stats-panel)|keystroke_lab\.edit_window') -or
+    ($_.CommandLine -match 'keystroke_lab (keys|stats-panel|collect)|keystroke_lab\.edit_window') -or
     (-not $_.CommandLine -and $_.Name -eq 'pythonw.exe')
 }
 $blocked = @()
@@ -22,6 +22,8 @@ Start-Sleep -Seconds 1
 # The keyboard overlay starts the edit guide itself; the stats strip is its own window.
 Start-Process -FilePath $pythonw -ArgumentList '-m', 'keystroke_lab', 'keys' -WorkingDirectory $companion
 Start-Process -FilePath $pythonw -ArgumentList '-m', 'keystroke_lab', 'stats-panel' -WorkingDirectory $companion
+# The collector feeds edit attempts and key events into data/player.db, which the stats strip reads.
+Start-Process -FilePath $pythonw -ArgumentList '-m', 'keystroke_lab', 'collect' -WorkingDirectory $companion
 $watcher = Get-CimInstance Win32_Process -Filter "name like 'python%'" | Where-Object { $_.CommandLine -match 'autostart\.pyw' }
 if (-not $watcher) { Start-Process -FilePath $pythonw -ArgumentList "`"$autostart`"" -WorkingDirectory $companion }
 Write-Host "Overlay restarted. Click into Fortnite and open an edit."
