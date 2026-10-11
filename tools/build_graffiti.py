@@ -27,8 +27,13 @@ MATERIALS = bm.MODULE + "/KT_Materials"
 PLANE = "/Engine/BasicShapes/Plane.Plane"
 SETS = ("/Hera/Sets/PicketFence/Textures/Graffiti/", "/Hermes/Sets/AlleyTown/Textures/Murals/",
         "/Hera/Foliage/Trees/Beach_Palm/Textures/Graffiti/")   # SunStroke murals fail UEFN validation (disallowed)
-WALLS = ("KT_Wall_", "KT7_Lab_Wall_", "KT14_Rebox_Wall_")
-SPACING = 1400.0           # one piece per this many cm of wall face, on average
+WALLS = ("KT_Wall_",)      # the main area: hub and wing enclosure walls (player 2026-10-11)
+WEB = bm.ROOT / "assets" / "graffiti" / "openclipart"     # CC0 pieces, imported as textures (SOURCES.md)
+TEX_FOLDER = bm.MODULE + "/KT_Graffiti"
+TT = "editor_toolset.toolsets.texture.TextureTools"
+# Never over the armory gun wall: its face on the back wall (y -66560, facing +Y), x span with a margin.
+KEEP_CLEAR = [{"normal": (0, 1), "y": -66560.0, "x0": -600.0, "x1": 1100.0}]
+SPACING = 1800.0           # one piece per this many cm of wall face, on average
 SEED = 20261011
 DONE = set()
 
@@ -42,6 +47,21 @@ def textures(m):
                     not re.search(r"_(N|M|R|ORM|MRA|AO|Mask|Normal|Rough|Spec|E)$", x.split(".")[-1]):
                 out.add(x)
     return sorted(out)
+
+
+def import_web(b):
+    """The Openclipart PNGs as textures (once), with each image's width / height for the plane's aspect."""
+    import struct
+    out = {}
+    for f in sorted(WEB.glob("*.png")):
+        name = "T_KT_Graf_" + re.sub(r"[^A-Za-z0-9_]", "_", f.stem)
+        path = f"{TEX_FOLDER}/{name}.{name}"
+        if not b.m.tool(AS, "exists", path=path):
+            b.m.tool(TT, "import_file", folder_path=TEX_FOLDER, asset_name=name, source_file=str(f))
+            b.props(path, {"powerOfTwoMode": "StretchToPowerOfTwo", "neverStream": False, "mipGenSettings": "TMGS_FromTextureGroup"})
+        w, h = struct.unpack(">II", f.read_bytes()[16:24])
+        out[path] = w / h
+    return out
 
 
 def material(b, tex):
@@ -86,6 +106,9 @@ def faces(actors):
 
 def blocked(actors, x, y, z, half, normal):
     """Anything that is not a wall, within 2.5 m in front of the face and overlapping the piece's square."""
+    for k in KEEP_CLEAR:
+        if normal == k["normal"] and abs(y - k["y"]) < 50 and x + half > k["x0"] and x - half < k["x1"]:
+            return True
     for a in actors:
         if a["label"].startswith(WALLS + (PREFIX,)) or "Floor" in a["label"] or "Ceil" in a["label"]:
             continue
@@ -118,7 +141,9 @@ def main():
     args = ap.parse_args()
     b = bm.Builder()
     m = b.m
-    texs = textures(m)
+    aspect = {t: 1.0 for t in textures(m)}
+    aspect.update(import_web(b))
+    texs = sorted(aspect)
     if args.list:
         print("\n".join(texs))
         return
@@ -147,10 +172,16 @@ def main():
                     continue
                 if any(abs(x - p[1]) + abs(y - p[2]) < (size + p[4]) / 2 + 100 and abs(z - p[3]) < (size + p[4]) / 2 for p in plan):
                     continue
-                plan.append((rng.choice(texs), x, y, z, size, normal))
+                tex = rng.choice(texs)
+                half_w = size * max(1.0, aspect[tex]) / 2
+                if blocked(actors, x, y, z, half_w, normal):
+                    continue
+                plan.append((tex, x, y, z, size, normal))
     print(f"{len(texs)} textures, {len(plan)} pieces")
     for n, (tex, x, y, z, size, normal) in enumerate(plan):
-        pose = bm.xform(x, y, z, size / 100.0, size / 100.0, 1.0, yaw=yaw_for(normal))
+        a = aspect.get(tex, 1.0)
+        w, h = (size, size / a) if a >= 1 else (size * a, size)
+        pose = bm.xform(x, y, z, w / 100.0, h / 100.0, 1.0, yaw=yaw_for(normal))
         pose["rotation"]["roll"] = 90.0
         label = f"{PREFIX}{n:03d}"
         ref = b.labelled(m.tool(bm.SCENE, "add_to_scene_from_asset", asset_path=PLANE, name=label, xform=pose)["refPath"], label)
