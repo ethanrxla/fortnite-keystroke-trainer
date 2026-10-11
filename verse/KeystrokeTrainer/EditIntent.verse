@@ -12,9 +12,9 @@ KTIntentWall<public>(Aim:vector2)<transacts>:string =
     if (Aim.X < 0.0 or Aim.X >= 3.00 or Aim.Y < 0.0 or Aim.Y >= 3.00):
         return ""
     if (Distance(Aim, vector2{X := 1.00, Y := 1.00}) <= 0.35):
-        return "half_arch_left"
+        return "corner_lower_left"
     if (Distance(Aim, vector2{X := 2.00, Y := 1.00}) <= 0.35):
-        return "half_arch_right"
+        return "corner_lower_right"
     if (Distance(Aim, vector2{X := 1.00, Y := 2.00}) <= 0.35):
         return "corner_upper_left"
     if (Distance(Aim, vector2{X := 2.00, Y := 2.00}) <= 0.35):

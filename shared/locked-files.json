@@ -2,7 +2,7 @@
   "verse/KeystrokeTrainer/EditGuide.verse": "15c974521a18681030756b191196e49992072b5f7510f5f38644f964dfc35a19",
   "verse/KeystrokeTrainer/EditPolicy.verse": "656b05d0246c6929525d898e58e0889755afffd881e82a8ca17c28be910cdbcc",
   "verse/KeystrokeTrainer/EditPolicyPieces.verse": "e44b95d4d93afdd6ab044a658fbc735520705635d99d1f1b07d2f655cb371995",
-  "verse/KeystrokeTrainer/EditIntent.verse": "42c22883dcf03f56c6c9b77a2bdcc9adff15cc711132923e0b800f6b6da09532",
+  "verse/KeystrokeTrainer/EditIntent.verse": "eb6ef0793384fc99f7b276681bfcf4db949226f32196b1e1bed1989b3e46101d",
   "verse/KeystrokeTrainer/EditCatalog.verse": "5bd2a6548ef6b9016f7a13b085d5b24a470b835d1aa533f17aeb4e032ca9a296",
   "verse/KeystrokeTrainer/EditPatterns.verse": "bd125de2c118916d331ab5856cb8ac029aa1fe25e580c60902f8cdef62feff87",
   "verse/KeystrokeTrainer/EditTargets.verse": "0fa3f2339e5f55d6673b10ad52fe5dcbe4f5510db49feb995fb0f37aa71d1ca1",
@@ -13,6 +13,12 @@
   "companion/keystroke_lab/edit_ranker.py": "5aa7bb9c0e3c5e1bd87f4f233833bcff90fe803db5134cd24d6cc66e9af6e17f",
   "companion/keystroke_lab/edit_geometry.py": "205ec42fd97c899c5153368cfec39b11b8cc0b0aae9a2a19c66f860326583251",
   "companion/keystroke_lab/piece_observation.py": "925c4c0a03982b0632b44acd916d0e057f1c5596a16b0a9968e0c586fd58cd13",
+  "companion/keystroke_lab/edit_dictionary.py": "a50d3682f3121944b910f702198425b45afcb270f7b773c985391b8fdd893030",
+  "companion/keystroke_lab/guide_visuals.py": "ca0a8a5ceec03285ef2a27f5174a14616361ab35e8169d5efc3b2e5174505051",
+  "companion/keystroke_lab/guide_layers.py": "c723791ee7eb30b116459b7b9d906dbb242028230a6eb892c34c46da447c5961",
+  "companion/keystroke_lab/autostart.py": "5e3e5767438584ae0a7663fa1a8c673793222ef0001bb5a39f0bfc368e1f1a70",
+  "companion/autostart.pyw": "c98465c0eb28cfe6f54d50e7f36e1f172f253d31c32d848226e66004fe80220d",
+  "shared/edit-policy.json": "3b9eef9e6000a76e855d627721c5e058c0bc9694552ba988e42f754f1b04f27c",
   "shared/edits.json": "f42dfd8b72fd0dc90ac7e35c54bb98572e7c4ea1e644ff849a6f19f6598dbe03",
-  "shared/edit-intent.json": "ad50d13ecc2e161ac50315a00a8ae568c1c03b217fca5db28d1c8f866cee1bec"
+  "shared/edit-intent.json": "e504d66c909f86e804ae2299a7a5e82bcc3dd794b199a9ab8b610c938d5cf7a1"
 }
