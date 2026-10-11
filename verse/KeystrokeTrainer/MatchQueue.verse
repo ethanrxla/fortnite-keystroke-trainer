@@ -5,7 +5,7 @@ kt_queue_phase := enum{Waiting, Collecting, Voting, Ready, Playing}
 
 kt_match_queue<public> := class:
     Capacity:int = 8
-    Minimum:int = 2
+    var Minimum:int = 2
     WaitSeconds:float = 35.0
     VoteSeconds:float = 15.0
     var Phase:kt_queue_phase = kt_queue_phase.Waiting
@@ -69,6 +69,12 @@ kt_match_queue<public> := class:
     ModeCount(Choice:int)<transacts>:int =
         var N:int = 0
         for (Id -> Value : ModeVotes, Members[Id]?, Value = Choice):
+            set N += 1
+        N
+
+    BuildCount(NoBuildChoice:logic)<transacts>:int =
+        var N:int = 0
+        for (Id -> Value : BuildVotes, Members[Id]?, Value = NoBuildChoice):
             set N += 1
         N
 

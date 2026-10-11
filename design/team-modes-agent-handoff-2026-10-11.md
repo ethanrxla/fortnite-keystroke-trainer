@@ -243,3 +243,25 @@ A clean floating voting UI shows three cards labeled exactly 'SKIRMISH', 'CTF',
 game-environment concept, clear architecture and routes, professional training
 layout, restrained lighting, no Fortnite logos, no characters blocking paths.
 This is a concept visualization, not a screenshot of the actual implemented game."
+
+## Update 2026-10-11 (Claude, thread "On-screen keystroke accuracy HUD")
+
+Player: "the glowing selector pads for the skirmish/ctf/zone should be located in the lobby in front of RXLA TRAINING.
+players standing in it are invincible and cant deal damage. remember we need to script the loading in, the
+animations, confirmations, voting."
+
+- `tools/move_team_pads.py --apply --enable`: KT24_Team_JoinPad0-7 / Reference0-7 now stand in the hub, two rows of
+  four in front of KT_Sign_Title (red row x=350, blue row x=800, y -61300..-60250). `KT24_Team_PadSafe` is a mutator
+  (3x3 tiles, weapon fire and building off, always on) over the apron. `--enable` set `acceptQueue`,
+  `readyForPlaytest` and `ammoPolicyVerified` true on the placed devices **for private playtests**; CTF stays gated.
+- `TeamQueueDevice.verse`: pads are sorted by position (stable index; 0-3 prefer red); the apron restores health and
+  shields to their entry values every 0.1 s (no Verse player-invulnerability API exists in 42.30); join shows a
+  sliding confirmation card; the ballot is a card UI (three mode cards, Build / No build, Leave) with live counts and
+  the player's own vote; launch shows a full-screen loading card with a progress bar for `LoadSeconds` before teams
+  are set; `Access.Visiting` is set at launch (not on join) so TeamModeAccess's staging-bounds check does not
+  "restore" players waiting in the hub; the end of a queue returns players to the hub (`Access.Hub`).
+- `MatchQueue.verse`: `BuildCount`; `Minimum` is settable. The queue device's `MinimumPlayers` is **1 on the placed
+  device** so a solo tester sees join / vote / loading; a match still needs two players and a solo launch returns
+  with "Setup not ready". Set it back to 2 before real play.
+- Compiled clean and pushed to the private session. Not yet seen in a client: the cards, the loading bar animation,
+  the apron health hold, and the mutator's tile units (zoneWidth 3 assumed to be tiles, as the arena's 16).
