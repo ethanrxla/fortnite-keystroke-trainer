@@ -249,11 +249,18 @@ kt_edit_guide_device := class(creative_device):
     OnBegin<override>()<suspends>:void =
         for (O : FindCreativeObjectsWithTag(kt_edit_guide_toggle_tag), B := button_device[O]):
             B.InteractedWithEvent.Subscribe(OnToggle)
+        # Shooting the EDIT GUIDE sign does the same (tools/build_sign_shots.py: its hit dummy fires a tagged trigger).
+        for (O : FindCreativeObjectsWithTag(kt_edit_guide_toggle_tag), T := trigger_device[O]):
+            T.TriggeredEvent.Subscribe(OnToggleShot)
         loop:
             for (P : GetPlayspace().GetPlayers(), not Guided[P]):
                 if (set Guided[P] = true) {}
                 spawn{ Guide(P) }
             Sleep(1.0)
+
+    OnToggleShot(MaybeAgent:?agent):void =
+        if (A := MaybeAgent?):
+            OnToggle(A)
 
     OnToggle(A:agent):void =
         if (P := player[A]):

@@ -120,11 +120,11 @@ kt_hud_player := class:
 kt_input_hud_device := class(creative_device):
 
     # Where the panel's top-left corner sits, as a fraction of the screen. The default puts it in the left column
-    # above the keyboard overlay.
+    # above the keyboard overlay, clear of the companion's stats strip below it (player 2026-10-11: "move up slightly").
     @editable
     AnchorX:float = 0.012
     @editable
-    AnchorY:float = 0.30
+    AnchorY:float = 0.22
     @editable
     PanelWidth:float = 380.0
     @editable

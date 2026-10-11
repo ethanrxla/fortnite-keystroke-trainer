@@ -60,9 +60,9 @@ def main():
         saved.append(label)
         trig = b.device(bm.TRIGGER, f"{PREFIX}{name}_Trigger", WALL_X, y, -400.0)
         b.tag(trig, tag)
-        dummy = b.device(bm.DUMMY, f"{PREFIX}{name}_Hit", WALL_X, y, Z - 55.0)
+        dummy = b.device(bm.DUMMY, f"{PREFIX}{name}_Hit", WALL_X, y, Z - 75.0)
         m.tool(bm.ACTOR, "set_actor_transform", actor={"refPath": dummy},
-               xform=bm.xform(WALL_X, y, Z - 55.0, 0.15, 0.55, 0.55, yaw=180.0))     # inside the plate: feet and arms hidden
+               xform=bm.xform(WALL_X, y, Z - 75.0, 0.15, 1.15, 0.27, yaw=180.0))     # play size (550 x 125 cm per unit) inside the plate
         b.props(dummy, {"infiniteHealth": True})
         b.bind(dummy, "On Hit", trig, "Trigger")
         saved += [trig, dummy]
