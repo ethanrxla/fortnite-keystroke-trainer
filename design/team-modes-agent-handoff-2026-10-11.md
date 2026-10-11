@@ -268,6 +268,8 @@ animations, confirmations, voting."
 
 ## Rules specification update 2026-10-11 (Codex)
 
+Player clarification: Elimination is **two teams, one life per player per round**. No reboots or automatic respawns in that mode. The latest source still permits teammate reboot, so disabling that path is an explicit implementation item; the historical Claude description below is not the current intended rule.
+
 The current intended contract is [Five-mode match and resource rules](five-mode-rules-2026-10-11.md), aligned with `bc884ef`. It separates current implementation from proposed balance defaults and defines voting, objective scoring, Elimination rounds, individual Rumble results, finite ammo, Build / No Build, heals, trucks, reboots and cleanup. The earlier Zone Wars/symmetry plan is historical. This update is documentation only; runtime settings, Verse and the edit guide were not changed. Start implementation with the open-items ledger and acceptance cases in that specification; do not assume the proposed inventory caps or zero-shield starts are already active.
 
 ## Update 2026-10-11, later (Claude)
