@@ -77,21 +77,13 @@ def intersect_wall(view_origin,view_direction,pose):
 
 
 def _routes(tiles,cols=3):
-    """Drag orders that move tile to neighbouring tile. A shape with no such order (the arch: bottom row + centre)
-    may also cross a tile it already selected in a straight line (0 -> 2 over 1); other shapes keep plain routes."""
     wanted=set(tiles)
-    def walk(route,sweep):
+    def walk(route):
         if len(route)==len(wanted):yield route;return
         last=route[-1]
         for tile in sorted(wanted-set(route)):
-            dc,dr=tile%cols-last%cols,tile//cols-last//cols
-            if abs(dc)+abs(dr)==1 or (sweep and abs(dc)+abs(dr)==2 and dc*dr==0 and last+(tile-last)//2 in route):
-                yield from walk(route+(tile,),sweep)
-    found=False
-    for tile in sorted(wanted):
-        for route in walk((tile,),False):found=True;yield route
-    if not found:
-        for tile in sorted(wanted):yield from walk((tile,),True)
+            if abs(last%cols-tile%cols)+abs(last//cols-tile//cols)==1:yield from walk(route+(tile,))
+    for tile in sorted(wanted):yield from walk((tile,))
 
 
 def safe_path(aim,tiles,inset=.15,cols=3):

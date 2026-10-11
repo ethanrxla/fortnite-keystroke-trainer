@@ -37,7 +37,7 @@ def default_matcher(dictionary=None, table=None):
     selections are seen in the screen grid, so they are mapped back into the piece's near/far frame first
     (edit_geometry.grid_to_tiles). Ramps are matched on drag paths, which the screen observer does not produce yet."""
     from .build_pieces import PatternTable, piece_for
-    from .edit_geometry import PieceContext, grid_to_tiles
+    from .edit_geometry import PieceContext, tiles_to_grid
     table = table or PatternTable()
 
     def match(piece, tiles, context):
@@ -46,7 +46,10 @@ def default_matcher(dictionary=None, table=None):
         ctx = PieceContext(**context) if context and piece != "wall" else None
         if piece != "wall" and ctx is None:
             return None
-        own = grid_to_tiles(ctx, tiles) if ctx else tuple(tiles)
+        # Keep the recorder compatible with the pinned working geometry module.
+        # Its forward mapping is sufficient to derive the inverse for 2x2 pieces.
+        inverse = {tiles_to_grid(ctx, (t,))[0]: t for t in range(4)} if ctx and ctx.cells != 3 else None
+        own = tuple(inverse[g] for g in tiles if g in inverse) if inverse is not None else tuple(tiles)
         outcome = table.match(piece_for(piece), own)
         return outcome.pattern.id if outcome.valid and outcome.pattern else None
     return match
