@@ -140,7 +140,7 @@ kt_input_hud_device := class(creative_device):
     @editable
     CalibrationTimeoutSeconds:float = 30.0
     @editable
-    MaxCalibrationSeconds:float = 300.0
+    MaxCalibrationSeconds:float = 20.0
 
     # Listen to Reload / Fire / Aim through Epic's RangedWeaponMapping. VERIFY it changes nothing about weapons.
     @editable
@@ -158,7 +158,7 @@ kt_input_hud_device := class(creative_device):
     var Panels:[player]text_block = map{}
     var Headers:[player]text_block = map{}
 
-    CalibrationActions:[]string = array{"jump", "crouch", "sprint", "reload"}
+    CalibrationActions:[]string = array{"jump", "crouch", "sprint"}
 
     OnBegin<override>()<suspends>:void =
         if (set KTActiveInputHud[GetSession()] = Self) {}
@@ -251,6 +251,10 @@ kt_input_hud_device := class(creative_device):
         set State.Dirty = true
         Outcome := if (Missing.Length = 0) then rep_result.Ok else rep_result.Missing
         KTLog("calibrate", "input_hud", 0, 0, 0, Outcome, "method={State.Method}|missing={Missing.Length}{Parts}")
+        # Show the result briefly, then get out of the way (player 2026-10-11: not "forever").
+        Sleep(8.0)
+        set State.CalibrationNote = ""
+        set State.Dirty = true
 
     AllHeard(State:kt_hud_player)<transacts><decides>:void =
         for (A : CalibrationActions):
