@@ -112,6 +112,7 @@ def main():
     for n in range(4):
         gx, gy = line_x + (7 + n) * bm.CELL, yc + (n - 1.5) * 2 * bm.CELL
         g = b.device(GUARD, f"{PREFIX}Guard_{n}", gx, gy, 0.0)
+        b.face(g, 180.0)              # face the shoot line (west); they were side-on at yaw -90
         b.props(g, {"guardTeamOption": "Team Index", "guard Team Index": {"teamType": "TeamIndex", "teamIndex": 2},
                     "enablePatrol": False, "showHealthBar": True, "accuracy": accuracy, "enabledAtGameStart": True,
                     "allowInfiniteSpawn": True})

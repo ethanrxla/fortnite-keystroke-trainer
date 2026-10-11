@@ -338,11 +338,13 @@ def place_aim_range(b, ai, aj):
             for dist in (5, 10, 20):
                 x, y = cc(ai + 2 + dist, lj + 1)
                 dm = b.device(DUMMY, f"KT_AimTarget_A1_{dist}", x, y, 0.0)
+                b.face(dm, 180.0)              # face the shooter (west, -X)
                 b.props(dm, {"infiniteHealth": True})
         elif k == 1:
             for n, (di, dj) in enumerate(((8, 0), (10, 2), (12, 1), (9, 2), (11, 0))):
                 x, y = cc(ai + 2 + di, lj + dj)
                 dm = b.device(DUMMY, f"KT_AimTarget_A2_{n}", x, y, 0.0)
+                b.face(dm, 180.0)              # face the shooter (west, -X)
                 b.props(dm, {"infiniteHealth": True})
         elif k == 2:
             x, y = cc(ai + 2 + 5, lj + 1)
@@ -351,6 +353,7 @@ def place_aim_range(b, ai, aj):
         else:
             x, y = cc(ai + 2 + 5, lj + 1)
             dm = b.device(DUMMY, "KT_AimTarget_A4", x, y, 0.0)
+            b.face(dm, 180.0)              # face the shooter (west, -X)
             b.props(dm, {"infiniteHealth": True})
             b.slab({"label": "KT_RecoilWall", "bounds": rect(ai + 2 + 7, ai + 2 + 7, lj, lj + 2),
                     "top": LEVEL_H * 2, "thick": LEVEL_H * 2, "mat": "Void"})
