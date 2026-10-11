@@ -78,11 +78,6 @@
       "item": "/PaprikaConsumables/Gameplay/ShieldRefresh/WID_Paprika_ShieldPot.WID_Paprika_ShieldPot"
     },
     {
-      "name": "Slurp juice",
-      "rarity": "VR",
-      "item": "/Figment_Athena_PurpleStuff/Gameplay/Figment_Athena_PurpleStuff.Figment_Athena_PurpleStuff"
-    },
-    {
       "name": "Chug splash",
       "rarity": "R",
       "item": "/ChronoConsumables/Gameplay/SlapSplash/WID_Chrono_SlapSplash.WID_Chrono_SlapSplash"
