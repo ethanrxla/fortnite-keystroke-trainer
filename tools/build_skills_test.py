@@ -151,7 +151,7 @@ def main():
 
 def grant_weapon(b, granter, item, refused, label):
     """Clear the inventory, grant one weapon and equip it (the WEAPON button swaps by granting the other one)."""
-    for name, value in {"onGrantAction": "Clear All", "grant": "All Items", "grantCondition": "Always",
+    for name, value in {"onGrantAction": "Clear Inventory", "grant": "All Items", "grantCondition": "Always",
                         "bEquipGrantedItem": True}.items():
         try:
             b.props(granter, {name: value})

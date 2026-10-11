@@ -184,7 +184,7 @@ def plan():
         p.wall(f"R4_Wall_N{-i}", i, -133, 2, "N")
     p.wall("R4_Wall_Front", -55, -133, 2, "W")
     for n, j in enumerate((-134, -133)):
-        p.bot(f"R4_Bot_{n}", -54, j, 2 * H + 20.0, "MEDIUM")
+        p.bot(f"R4_Bot_{n}", -54, j, 2 * H + 20.0, "MODERATE")
     p.stage("High ground", "L2 COMPOUND",
             "Room 4: they hold a built platform. Take height (their ramp or your own builds), then eliminate both.",
             ((PARTITIONS[2], YC0, -100.0), (PARTITIONS[3], YC1, ROOF)), (*cell(-56, DOOR_J), 0.0),
@@ -196,7 +196,7 @@ def plan():
         for e in "NSEW":
             p.wall(f"R5_Box{n}_{e}", -52, j, 0, e)
         p.flat(f"R5_Box{n}_Cone", "cone", -52, j, H)
-        p.bot(f"R5_Bot_{n}", -52, j, 0.0, "MEDIUM")
+        p.bot(f"R5_Bot_{n}", -52, j, 0.0, "MODERATE")
     p.stage("Breach", "L2 COMPOUND", "Room 5: their boxes guard the door. Edit in, eliminate both, breach into the towers.",
             ((PARTITIONS[3], YC0, -100.0), (LAB_X, YC1, ROOF)), (*cell(-51, DOOR_J), 0.0), gate=(LAB_X, gate_y))
     # Fight Lab room A's west wall, restored with the door into L3 (no ceiling: the sky stays open).
@@ -340,7 +340,7 @@ def place(b, p):
                 refused.append(f"{d['label']}: {key} ({str(exc)[-60:]})")
         if d.get("grant"):
             names = d["grant"] if isinstance(d["grant"], tuple) else (d["grant"],)
-            clear = "Clear All" if d["tag"] == "kt_op_loadout_tag" else "Keep All"
+            clear = "Clear Inventory" if d["tag"] == "kt_op_loadout_tag" else "Keep All"
             for key, value in {"onGrantAction": clear, "grant": "All Items", "grantCondition": "Always",
                                "bEquipGrantedItem": d["tag"] == "kt_op_loadout_tag"}.items():
                 try:
