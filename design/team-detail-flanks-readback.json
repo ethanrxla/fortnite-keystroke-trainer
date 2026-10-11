@@ -1,0 +1,78 @@
+{
+  "pass_name": "flanks",
+  "actors": [
+    {
+      "label": "KT26_TeamDetail_ServiceRed",
+      "state": "already_present",
+      "bounds": {
+        "min": {
+          "x": 73716,
+          "y": -58880,
+          "z": 0
+        },
+        "max": {
+          "x": 73740,
+          "y": -58368,
+          "z": 384
+        },
+        "isValid": true
+      },
+      "actorPath": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.FortStaticMeshActor_UAID_30560F202F92280A03_1574712092"
+    },
+    {
+      "label": "KT26_TeamDetail_ServiceBlue",
+      "state": "already_present",
+      "bounds": {
+        "min": {
+          "x": 77300,
+          "y": -58368,
+          "z": 0
+        },
+        "max": {
+          "x": 77324,
+          "y": -57856,
+          "z": 384
+        },
+        "isValid": true
+      },
+      "actorPath": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.FortStaticMeshActor_UAID_30560F202F92280A03_1575720093"
+    },
+    {
+      "label": "KT26_TeamDetail_LoadingRed",
+      "state": "already_present",
+      "bounds": {
+        "min": {
+          "x": 74240,
+          "y": -53260,
+          "z": 0
+        },
+        "max": {
+          "x": 74752,
+          "y": -53236,
+          "z": 384
+        },
+        "isValid": true
+      },
+      "actorPath": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.FortStaticMeshActor_UAID_30560F202F92280A03_1576352094"
+    },
+    {
+      "label": "KT26_TeamDetail_LoadingBlue",
+      "state": "already_present",
+      "bounds": {
+        "min": {
+          "x": 76800,
+          "y": -53772,
+          "z": 0
+        },
+        "max": {
+          "x": 77312,
+          "y": -53748,
+          "z": 384
+        },
+        "isValid": true
+      },
+      "actorPath": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.FortStaticMeshActor_UAID_30560F202F92280A03_1576922095"
+    }
+  ],
+  "verification": "saved actor bounds; live traversal not tested"
+}

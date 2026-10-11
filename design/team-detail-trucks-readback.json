@@ -1,0 +1,42 @@
+{
+  "pass_name": "trucks",
+  "actors": [
+    {
+      "label": "KT26_TeamDetail_LoadingTruckRed",
+      "state": "created",
+      "bounds": {
+        "min": {
+          "x": 74389.46780395508,
+          "y": -53660.5432434082,
+          "z": 0
+        },
+        "max": {
+          "x": 75114.53219604492,
+          "y": -53347.4567565918,
+          "z": 417.4097595214844
+        },
+        "isValid": true
+      },
+      "actorPath": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.Car_SemiTruck_Tractor_C_UAID_30560F202F92280A03_1811441104"
+    },
+    {
+      "label": "KT26_TeamDetail_LoadingTruckBlue",
+      "state": "created",
+      "bounds": {
+        "min": {
+          "x": 76437.46780395508,
+          "y": -53148.5432434082,
+          "z": 0
+        },
+        "max": {
+          "x": 77162.53219604492,
+          "y": -52835.4567565918,
+          "z": 417.4097595214844
+        },
+        "isValid": true
+      },
+      "actorPath": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.Car_SemiTruck_Tractor_C_UAID_30560F202F92280A03_1812250105"
+    }
+  ],
+  "verification": "saved bounds fit two by one tile pockets; live collision untested"
+}

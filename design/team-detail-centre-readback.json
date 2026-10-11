@@ -1,0 +1,78 @@
+{
+  "pass_name": "centre",
+  "actors": [
+    {
+      "label": "KT26_TeamDetail_CentreRedLeg",
+      "state": "created",
+      "bounds": {
+        "min": {
+          "x": 74740,
+          "y": -57344,
+          "z": 0
+        },
+        "max": {
+          "x": 74764,
+          "y": -56832,
+          "z": 384
+        },
+        "isValid": true
+      },
+      "actorPath": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.FortStaticMeshActor_UAID_30560F202F92280A03_1843449106"
+    },
+    {
+      "label": "KT26_TeamDetail_CentreRedReturn",
+      "state": "created",
+      "bounds": {
+        "min": {
+          "x": 74752,
+          "y": -57356,
+          "z": 0
+        },
+        "max": {
+          "x": 75264,
+          "y": -57332,
+          "z": 384
+        },
+        "isValid": true
+      },
+      "actorPath": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.FortStaticMeshActor_UAID_30560F202F92280A03_1844021107"
+    },
+    {
+      "label": "KT26_TeamDetail_CentreBlueLeg",
+      "state": "created",
+      "bounds": {
+        "min": {
+          "x": 76788,
+          "y": -54784,
+          "z": 0
+        },
+        "max": {
+          "x": 76812,
+          "y": -54272,
+          "z": 384
+        },
+        "isValid": true
+      },
+      "actorPath": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.FortStaticMeshActor_UAID_30560F202F92280A03_1844598108"
+    },
+    {
+      "label": "KT26_TeamDetail_CentreBlueReturn",
+      "state": "created",
+      "bounds": {
+        "min": {
+          "x": 76288,
+          "y": -54284,
+          "z": 0
+        },
+        "max": {
+          "x": 76800,
+          "y": -54260,
+          "z": 384
+        },
+        "isValid": true
+      },
+      "actorPath": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.FortStaticMeshActor_UAID_30560F202F92280A03_1845190109"
+    }
+  ],
+  "verification": "saved actor bounds; live traversal not tested"
+}

@@ -1,5 +1,7 @@
 # Team arena: cover, routes and high ground
 
+Construction update: [five completed geometry passes and remaining live checks](team-detail-build-handoff-2026-10-11.md). Eighteen new actors are saved in UEFN; detailed acceptance below remains subject to playtesting.
+
 Placement specification, 2026-10-11. Extends [five-mode rules](five-mode-rules-2026-10-11.md), using the existing court and compound. This is a proposed additive pass, not a claim that these additions have been placed or playtested. Preserve existing actors until an editor inventory and collision inspection confirms each change.
 
 ## Grid and design intent
