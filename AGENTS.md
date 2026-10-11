@@ -55,6 +55,9 @@ A UEFN island that teaches Fortnite building and editing at a slow tempo first
   67s; `KT23_AimRail_` is a different builder, never delete all `KT23_*`.
   `KT21_Team_` (`build_team_arena.py`): reserved team-arena greybox, separate from
   `KT21_Marker_`. Never delete all `KT21_*` actors to rebuild either one.
+  `KT24_Team_` (`build_team_modes.py`): additive hub access, staging controls,
+  tagged match helpers and validation devices. Keep runtime gates off until
+  roster/respawn/loadout/cleanup and native CTF acceptance have passed.
 - Teleporters that share a group are picked between. The Greybox template used A-D and Z (deleted); ours use E-U
   and H-K. Never reuse a group.
 - `shared/drills.json` `steps` is the reference order; `accepts` lists other orders that count. The sources for

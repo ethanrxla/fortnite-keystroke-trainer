@@ -54,7 +54,7 @@ kt_team_match<public> := class:
     # A tick describes only the elapsed interval ending in the supplied occupancy.
     # Adapter samples at 0.1 s. Long stalls must not award unobserved objective time.
     Tick<public>(Token:int, Dt:float, RedInside:int, BlueInside:int)<transacts>:void =
-        if (Token <> Epoch or Dt <= 0.0 or Dt > 0.5):
+        if (Token <> Epoch or Dt <= 0.0):
             return
         if (Phase = kt_team_phase.Countdown):
             set Remaining -= Dt
@@ -70,7 +70,12 @@ kt_team_match<public> := class:
         if (Phase <> kt_team_phase.Live):
             return
         set Remaining -= Dt
-        if (Mode = kt_team_mode.Skirmish):
+        if (Dt > 0.5):
+            # Wall-clock deadlines continue through stalls, but occupancy was
+            # not observed continuously. Break capture and award no hold time.
+            set CaptureTeam = 0
+            set CaptureSeconds = 0.0
+        if (Mode = kt_team_mode.Skirmish and Dt <= 0.5):
             Occupant := if (RedInside > 0 and BlueInside = 0) then 1 else if (BlueInside > 0 and RedInside = 0) then 2 else 0
             if (Occupant > 0 and Occupant <> Owner):
                 if (CaptureTeam <> Occupant):

@@ -43,12 +43,25 @@ uncommitted files remain untouched.
 
 ## Not playable/validated yet — keep these open
 
-1. Place exactly one team coordinator and bind its explicit device references.
-   `ReadyForPlaytest=false` and `CTFDevicesVerified=false` are intentional defaults.
-   No team-mode start button or hub route has been advertised as playable.
+1. **Access pass added:** `build_team_modes.py --apply` placed/saved 20 actors
+   under `KT24_Team_`: TEAM MODES hub button and compact sign, explicit arrival
+   and hub return endpoints, RED/BLUE selection, three named mode buttons,
+   cancel, arena/objective volumes, disabled native flags, HUD, coordinator,
+   access controller and disabled rule-test controller. Device actor references
+   were rejected by SetDeviceProperty; this now uses the island's established
+   tag discovery instead. Both controllers fail startup on a helper-count
+   mismatch. The access controller preserves a visitor's prior team and restores
+   it on return or leaving the district. Startup/live teleport behavior still
+   requires a pushed client session. `ReadyForPlaytest=false` and
+   `CTFDevicesVerified=false` remain intentional defaults; the mode controls
+   explain what is awaiting validation instead of silently doing nothing.
 2. Configure team selectors, balanced loadouts/material budgets, five-second
    team respawns in protected alcoves, return routes and between-round build
-   cleanup. Preserve and restore existing player team/class state on exit.
+   cleanup. **Implemented, compiled, not live-verified:** RED/BLUE selection and
+   team restoration, five-second roster-scoped respawn with stale epoch guards,
+   equal health/shield at spawn, protected spawn positions and cancellation on
+   a visitor exiting/changing teams. Loadout/material equality, spawn protection,
+   inventory preservation and build cleanup remain open. No class is changed.
 3. Native CTF flags: correct owning/picking/capturing teams, ten-second dropped
    return, own-flag-home capture-area gating, reset on cancellation and round end.
    The rules protect scores; they do not replace these physical device settings.
@@ -70,3 +83,20 @@ uncommitted files remain untouched.
 No public publishing, full-map rebuild, live match restart, or synthetic Fortnite
 inputs were performed. Existing edit guide, yellow paths, red ring, keyboard scale,
 loadouts, armory and other practice districts are outside this patch.
+
+### Latest debugging evidence
+
+- Match deadlines now advance during long frame stalls while capture/hold scoring
+  awards no unobserved interval. Added compiled TM10/TM11 acceptance scenarios.
+- Removed a control/cover collision: mode buttons now sit at X=72200 in the
+  clear left aisle rather than embedding Zone's button inside the spawn screen.
+- Read-back verified configured volume dimensions, button labels and flag team,
+  ten-second return, zero native score, and disabled-at-start settings. Flag item
+  lists/capture areas/reset behavior are not yet configured or certified.
+- Final BuildAll returned no errors; deprecated tag lookup warnings remain,
+  including existing warnings in concurrent range/skills code. Three layout
+  tests passed. Rule tests compile but have not run in a client session.
+- Native legacy flag item lookup (`WID_Flag`) returned no result; the installed
+  registry exposes an entity item Flag_Creative_V1_Rare. Compatibility with this
+  island's legacy capture-item lists still needs a capability probe. Do not
+  mark the flags game-verified merely because an asset name exists.

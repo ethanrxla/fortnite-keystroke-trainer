@@ -22,3 +22,5 @@ kt_transport_test_tag := class(tag){}
 
 kt_rift_node_tag := class(tag){}
 kt_rift_router_tag := class(tag){}
+kt_team_helper_tag := class(tag){}
+kt_team_match_tag := class(tag){}
