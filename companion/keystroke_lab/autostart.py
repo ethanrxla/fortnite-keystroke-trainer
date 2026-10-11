@@ -55,14 +55,14 @@ class _Group:
     """The overlay, the data collector and (first run only) the calibration window, treated as one child: alive while the
     overlay is, ended together when the game closes."""
 
-    def __init__(self, overlay, collector, calibration=None):
-        self.overlay, self.collector, self.calibration = overlay, collector, calibration
+    def __init__(self, overlay, collector, calibration=None, stats=None):
+        self.overlay, self.collector, self.calibration, self.stats = overlay, collector, calibration, stats
 
     def poll(self):
         return self.overlay.poll()
 
     def terminate(self):
-        for proc in (self.overlay, self.collector, self.calibration):
+        for proc in (self.overlay, self.collector, self.calibration, self.stats):
             if proc is not None and proc.poll() is None:
                 proc.terminate()
 
@@ -72,13 +72,18 @@ def launch_overlay():
     overlay = subprocess.Popen([pythonw(), "-m", "keystroke_lab", "keys"], cwd=str(COMPANION), creationflags=flags)
     # The collector (collector.py) refuses to start twice, so this is harmless when one is already running.
     collector = subprocess.Popen([pythonw(), "-m", "keystroke_lab", "collect"], cwd=str(COMPANION), creationflags=flags)
+    # The session-stats strip (stats_panel.py) is its own window; it refuses to start twice.
+    try:
+        stats = subprocess.Popen([pythonw(), "-m", "keystroke_lab", "stats-panel"], cwd=str(COMPANION), creationflags=flags)
+    except OSError:
+        stats = None
     # First entry into the game: if the player's binds are not confirmed yet, open the calibration window over the game.
     try:
         from . import first_run
         calibration = first_run.maybe_launch()
     except Exception:  # noqa: BLE001  calibration must never stop the overlay from starting
         calibration = None
-    return _Group(overlay, collector, calibration)
+    return _Group(overlay, collector, calibration, stats)
 
 
 OVERLAY_MUTEX = r"Local\KeystrokeTrainerOverlay"
