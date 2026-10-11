@@ -146,6 +146,22 @@ class VoiceTests(unittest.TestCase):
         stats = v.compact([]) | {'edit_observations': 5, 'guide_coverage_full': 3}
         self.assertIn('not confirmed edit success', v.fallback(stats))
 
+    def test_contextual_personality_never_repeats_immediately(self):
+        for style in v.LINES:
+            first = v.personality(style, False, '')
+            self.assertNotEqual(v.personality(style, False, first), first)
+            self.assertIn(v.personality(style, True, ''), v.POST_EDIT_LINES[style])
+
+    def test_no_paid_wording_when_tts_budget_exhausted(self):
+        worker = self.worker()
+        self.assertTrue(self.budget.reserve('tts', 1200))
+        self.now[0] += 100
+        worker.activity(('owner', 1))
+        worker.observe(('owner', 1), [{'intent': 'slip', 'confidence': .9, 'uncertainty': False}]*3)
+        self.now[0] += 6
+        with patch.object(worker, 'allowed', return_value=True), patch.object(worker, 'edit_state', return_value='unknown'), patch.object(v, 'audio', return_value=None), patch.object(v, 'llm_text') as llm:
+            worker.tick(); llm.assert_not_called()
+
     def test_unwritable_budget_cannot_break_overlay(self):
         with patch.object(v, 'VoiceWorker', side_effect=OSError('unwritable')):
             voice = v.start(lambda: True)

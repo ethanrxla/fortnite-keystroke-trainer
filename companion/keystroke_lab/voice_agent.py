@@ -35,6 +35,17 @@ LINES = {
                  'Main character training arc. Side quest: breathe.'),
     'competitive': ('New rep. Fresh focus.', 'Stay composed. Next attempt.', 'You have time. Make this rep count.'),
 }
+POST_EDIT_LINES = {
+    'funny': ('Edit break. Your cursor has requested a tiny vacation.',),
+    'brainrot': ('Edit arc paused. Aura recalibrating.',),
+    'competitive': ('Edit attempt logged. Review it, then go again.',),
+}
+
+
+def personality(style, post_edit, previous):
+    pool = POST_EDIT_LINES if post_edit else LINES
+    choices = [line for genre, lines in pool.items() if style in ('mixed', genre) for line in lines if line != previous]
+    return random.choice(choices) if choices else ''
 
 
 def setting(name):
@@ -241,6 +252,7 @@ class VoiceWorker:
         self.last_spoke = clock()
         self.last_line = ''
         self.last_stats = None
+        self.findings_at = -1e20
         self.edits = collections.deque(maxlen=20)
         self.seen_attempt = None
         self.epoch = 0
@@ -267,6 +279,8 @@ class VoiceWorker:
                 self.findings.extend({'intent': f.get('intent'), 'confidence': f.get('confidence'),
                                       'uncertainty': f.get('uncertainty', True)} for f in findings)
                 self.findings = self.findings[-40:]
+                if findings:
+                    self.findings_at = self.clock()
 
     def allowed(self):
         return config().get('enabled') is True and setting('KT_NO_AI') != '1' and bool(self.focus()) and not self.stop.is_set()
@@ -309,7 +323,7 @@ class VoiceWorker:
             if not 5 <= now-self.last_input <= 25 or now-self.last_spoke < 90:
                 return
             epoch, activity = self.epoch, self.last_input
-            stats = compact(self.findings)
+            stats = compact(self.findings if now-self.findings_at <= 300 else [])
             if self.edits:
                 stats.update(edit_observations=len(self.edits), guide_coverage_full=sum(self.edits))
         if not self.budget.reserve('speech', 1):
@@ -317,13 +331,14 @@ class VoiceWorker:
         self.last_spoke = now
         text = fallback(stats) if stats != self.last_stats else ''
         if text:
-            text = llm_text(stats, self.budget) or text
+            # Do not spend on new wording when there is no room to synthesize it.
+            if self.budget.summary()['tts']['used_today'] <= 1000:
+                text = llm_text(stats, self.budget) or text
         else:
             style = config().get('style', 'mixed')
-            choices = [line for genre, lines in LINES.items() if style in ('mixed', genre) for line in lines if line != self.last_line]
-            if not choices:
+            text = personality(style, self.seen_attempt is not None and 0 <= now-self.seen_attempt <= 30, self.last_line)
+            if not text:
                 return
-            text = random.choice(choices)
         # A changed player, resumed inputs, mute or focus loss cancels stale speech.
         if not self.allowed() or epoch != self.epoch or activity != self.last_input:
             return
