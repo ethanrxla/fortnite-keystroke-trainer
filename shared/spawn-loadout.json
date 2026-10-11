@@ -1,0 +1,21 @@
+{
+  "description": "What every player gets on joining the map and on every respawn (tools/configure_spawn_loadout.py; granted by kt_spawn_supply_service in SpawnSupplies.verse). The same consumables are removed first so stacks never pile up. Player 2026-10-10: pistol, shields, meds and slurp fish.",
+  "items": [
+    {
+      "name": "Pistol",
+      "item": "/Game/Athena/Items/Weapons/WID_Pistol_SemiAuto_Athena_R_Ore_T03.WID_Pistol_SemiAuto_Athena_R_Ore_T03",
+      "count": 1
+    },
+    {
+      "name": "Shield potion",
+      "item": "/PaprikaConsumables/Gameplay/ShieldRefresh/WID_Paprika_ShieldPot.WID_Paprika_ShieldPot",
+      "count": 3
+    },
+    {
+      "name": "Medkit",
+      "item": "/PaprikaConsumables/Gameplay/MedRefresh/WID_Paprika_MedBox.WID_Paprika_MedBox",
+      "count": 2
+    }
+  ],
+  "slurp_fish_note": "No slurp item is usable here: slurp fish exists only as an entity item (granters refuse it) and the creative slurp juice (Figment_Athena_PurpleStuff) fails UEFN validation (disallowed reference, 2026-10-10)."
+}

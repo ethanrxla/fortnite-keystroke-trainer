@@ -271,15 +271,30 @@
   },
   {
     "source": "KT14_Rebox_Rift_In",
-    "destination": "KT14_Rebox_Rift_Start",
+    "destination": "KT18_Sky_Rift_Start",
     "entry": {
       "x": 5888,
       "y": -29900,
       "z": 0
     },
     "exit": {
-      "x": 25856,
-      "y": -32000,
+      "x": 21248,
+      "y": -44288,
+      "z": 7680
+    },
+    "walk": true
+  },
+  {
+    "source": "KT18_Sky_Rift_Exit",
+    "destination": "KT14_Rebox_Rift_Home",
+    "entry": {
+      "x": 20736,
+      "y": -44288,
+      "z": 7680
+    },
+    "exit": {
+      "x": 5888,
+      "y": -29350,
       "z": 0
     },
     "walk": true

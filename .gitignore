@@ -49,3 +49,4 @@ companion/.cloud-session.json
 supabase/.temp-secrets.env
 supabase/.deploy.log
 companion/captures/
+assets/signs/
