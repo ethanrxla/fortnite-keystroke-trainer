@@ -1,5 +1,5 @@
 {
-  "description": "Armory gun wall (tools/build_armory_grid.py): the whole back wall, left to right: weapon columns (rows are rarity), then items, then heals, each item in its own rarity's row. Player 2026-10-10/11: SCAR (epic, legendary) / AR, heavy AR, pump, tactical shotgun, tactical SMG, suppressed pistol, grapple hook, heals; rarity-coloured tiles; purple guns to mod. Items UEFN does not accept leave a dark tile; weapon rarities that do not exist leave a dark tile. Colours are sRGB hex; the builder converts them to linear and scales by plate_brightness. A weapon's 'paths' overrides the pattern for a rarity found under another naming tier; an item's 'icon' overrides its own (the grappler carries only a 32 px icon).",
+  "description": "Armory gun wall (tools/build_armory_grid.py): the whole back wall, left to right: weapon columns (rows are rarity), then items, then heals, each item in its own rarity's row. Player 2026-10-10/11: SCAR (epic, legendary) / AR, heavy AR, pump, tactical shotgun, tactical SMG, suppressed pistol, grapple hook, heals; rarity-coloured tiles; purple guns to mod. Items UEFN does not accept leave a dark tile; weapon rarities that do not exist leave a dark tile. Colours are sRGB hex; the builder converts them to linear and scales by plate_brightness. A weapon's 'paths' overrides the pattern for a rarity found under another naming tier; an item's 'icon' overrides its own (the grappler carries only a 32 px icon). 2026-10-11 (player: 'make the gun wall uniform'): only guns with all five rarities as columns (Pump has no rare, Tactical shotgun's common is disallowed, Hand cannon and Suppressed pistol start above common, so they stay at the stations); items, melee and heals fill one compact block, five tiles tall, each plate in its own rarity colour.",
   "rarities": [
     {
       "code": "C",
@@ -50,19 +50,28 @@
       "name": "Suppressed AR",
       "pattern": "/Game/Athena/Items/Weapons/WID_Assault_Suppressed_Athena_{r}_Ore_T03.WID_Assault_Suppressed_Athena_{r}_Ore_T03",
       "paths": {
-        "UC": "/Game/Athena/Items/Weapons/WID_Assault_Suppressed_Athena_UC.WID_Assault_Suppressed_Athena_UC"
+        "UC": "/Game/Athena/Items/Weapons/WID_Assault_Suppressed_Athena_UC.WID_Assault_Suppressed_Athena_UC",
+        "C": "/Game/Athena/Items/Weapons/WID_Assault_Suppressed_Athena_C.WID_Assault_Suppressed_Athena_C"
       }
     },
     {
-      "name": "Pump",
-      "pattern": "/Game/Athena/Items/Weapons/WID_Shotgun_Standard_Athena_{r}_Ore_T03.WID_Shotgun_Standard_Athena_{r}_Ore_T03"
-    },
-    {
-      "name": "Tactical SG",
-      "pattern": "/Game/Athena/Items/Weapons/WID_Shotgun_SemiAuto_Athena_{r}_Ore_T03.WID_Shotgun_SemiAuto_Athena_{r}_Ore_T03",
+      "name": "Burst AR",
+      "pattern": "/Game/Athena/Items/Weapons/WID_Assault_SemiAuto_Athena_{r}_Ore_T03.WID_Assault_SemiAuto_Athena_{r}_Ore_T03",
       "paths": {
-        "SR": "/Game/Athena/Items/Weapons/WID_Shotgun_SemiAuto_Athena_SR.WID_Shotgun_SemiAuto_Athena_SR"
+        "C": "/Game/Athena/Items/Weapons/WID_Assault_SemiAuto_Athena_C_Ore_T02.WID_Assault_SemiAuto_Athena_C_Ore_T02"
       }
+    },
+    {
+      "name": "Combat SG",
+      "pattern": "/Game/Athena/Items/Weapons/WID_Shotgun_Combat_Athena_{r}_Ore_T03.WID_Shotgun_Combat_Athena_{r}_Ore_T03"
+    },
+    {
+      "name": "Charge SG",
+      "pattern": "/Game/Athena/Items/Weapons/WID_Shotgun_Charge_Athena_{r}_Ore_T03.WID_Shotgun_Charge_Athena_{r}_Ore_T03"
+    },
+    {
+      "name": "Drum SG",
+      "pattern": "/Game/Athena/Items/Weapons/WID_Shotgun_AutoDrum_Athena_{r}_Ore_T03.WID_Shotgun_AutoDrum_Athena_{r}_Ore_T03"
     },
     {
       "name": "Tactical SMG",
@@ -76,12 +85,15 @@
       }
     },
     {
-      "name": "Suppressed pistol",
-      "pattern": "/Game/Athena/Items/Weapons/WID_Pistol_SemiAuto_Suppressed_Athena_{r}_Ore_T03.WID_Pistol_SemiAuto_Suppressed_Athena_{r}_Ore_T03"
+      "name": "Rapid SMG",
+      "pattern": "/Game/Athena/Items/Weapons/WID_Pistol_RapidFireSMG_Athena_{r}_Ore_T03.WID_Pistol_RapidFireSMG_Athena_{r}_Ore_T03"
     },
     {
-      "name": "Hand cannon",
-      "pattern": "/Game/Athena/Items/Weapons/WID_Pistol_HandCannon_Athena_{r}_Ore_T03.WID_Pistol_HandCannon_Athena_{r}_Ore_T03"
+      "name": "Pistol",
+      "pattern": "/Game/Athena/Items/Weapons/WID_Pistol_SemiAuto_Athena_{r}_Ore_T03.WID_Pistol_SemiAuto_Athena_{r}_Ore_T03",
+      "paths": {
+        "C": "/Game/Athena/Items/Weapons/WID_Pistol_SemiAuto_Athena_C_Ore_T02.WID_Pistol_SemiAuto_Athena_C_Ore_T02"
+      }
     },
     {
       "name": "Bolt sniper",
@@ -92,7 +104,8 @@
     {
       "name": "Bandages",
       "rarity": "C",
-      "item": "/PaprikaConsumables/Gameplay/BandageRefresh/WID_Paprika_Bandage.WID_Paprika_Bandage"
+      "item": "/PaprikaConsumables/Gameplay/BandageRefresh/WID_Paprika_Bandage.WID_Paprika_Bandage",
+      "icon": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KT_Theme/T_KT_Theme_T_KT_Icon_Bandage_c24d86.T_KT_Theme_T_KT_Icon_Bandage_c24d86"
     },
     {
       "name": "Medkit",
@@ -102,7 +115,8 @@
     {
       "name": "Small shield",
       "rarity": "UC",
-      "item": "/PaprikaConsumables/Gameplay/ShieldSmallRefresh/WID_Paprika_ShieldSmall.WID_Paprika_ShieldSmall"
+      "item": "/PaprikaConsumables/Gameplay/ShieldSmallRefresh/WID_Paprika_ShieldSmall.WID_Paprika_ShieldSmall",
+      "icon": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KT_Theme/T_KT_Theme_T_KT_Icon_SmallShield_598128.T_KT_Theme_T_KT_Icon_SmallShield_598128"
     },
     {
       "name": "Shield potion",
@@ -124,9 +138,25 @@
       "icon": "/CorruptionGameplay/Gameplay/Icons/T-T-Icon-BR-FrozenGrappler-L.T-T-Icon-BR-FrozenGrappler-L"
     },
     {
+      "name": "Grapple glove",
+      "rarity": "SR",
+      "item": "/GrappleGloves/Items/GrappleGloves/WID_GrappleGloves.WID_GrappleGloves"
+    },
+    {
       "name": "Grenades",
       "rarity": "UC",
       "item": "/Game/Athena/Items/Consumables/Grenade/Athena_Grenade.Athena_Grenade"
+    },
+    {
+      "name": "Sword",
+      "rarity": "R",
+      "item": "/CRD_Melee/SetupAssets/WID_Creative_Melee_Sword_Ninja.WID_Creative_Melee_Sword_Ninja"
+    },
+    {
+      "name": "Hammer",
+      "rarity": "R",
+      "item": "/CRD_Melee/SetupAssets/WID_Creative_Melee_Hammer_SledgeWrapped.WID_Creative_Melee_Hammer_SledgeWrapped"
     }
-  ]
+  ],
+  "block_rows": 5
 }

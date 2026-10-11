@@ -36,11 +36,16 @@ PLANE = "/Engine/BasicShapes/Plane.Plane"
 EAST_FACE_X = 3584.0           # KT_Wall_Hub_2's inner face; pieces face -X into the room
 WEST_FACE_X = -3072.0          # KT_Wall_Hub_1's inner face; pieces face +X
 HERO_ORDER = ["nanny", "sharpe", "bogle", "gordon", "garvey", "bustamante", "manley", "selassie"]
-CARD_W, CARD_H, CARD_GAP = 250.0, 375.0, 22.0
-CARD_Z = 715.0                 # above the mod bench and server racks on that wall (they top out at 272)
+CARD_W, CARD_H, CARD_GAP = 320.0, 480.0, 30.0   # the seven National Heroes only
+CARD_Z = 730.0                 # above the mod bench and server racks on that wall (they top out at 272)
 ROW_Y = -65025.0               # centre of the usable span between the back wall and the corner
-HEADER_W, HEADER_Z = 2200.0, 1110.0
-CROSS_Y, CROSS_Z, CROSS_H = -64768.0, 1335.0, 330.0   # above the Focal panel (top 1129), below the ceiling
+HEADER_W, HEADER_Z = 2350.0, 1135.0
+# West wall, "faith and roots" (player 2026-10-11: Selassie and the Marley tribute are not National Heroes; beside them
+# a cross for Jesus, as Calvary): Selassie, Calvary, the reggae tribute and the lion of Judah, under their own header.
+# It replaces the KT7_ArmoryArt_Focal panel (import_armory_art.py --apply brings that back).
+ROOTS_Y, ROOTS_Z, ROOTS_GAP = -65025.0, 700.0, 50.0
+ROOTS_CARD_W, ROOTS_CALVARY_W = 300.0, 920.0
+ROOTS_HEADER_W, ROOTS_HEADER_Z = 2000.0, 1150.0
 
 # Build wing ("67 room").
 BUILD_RECT = (3584.0, 7168.0, -62976.0, -56320.0)
@@ -64,7 +69,10 @@ def texture(b, png):
     path = f"{TEX_FOLDER}/{name}.{name}"
     if not b.m.tool(AS, "exists", path=path):
         b.m.tool(TT, "import_file", folder_path=TEX_FOLDER, asset_name=name, source_file=str(png))
-        b.props(path, {"powerOfTwoMode": "StretchToPowerOfTwo", "neverStream": False, "mipGenSettings": "TMGS_FromTextureGroup"})
+        # Sharp up close (player 2026-10-11: "the Nanny tile is blurry"). UEFN validation requires streaming textures,
+        # so no NeverStream: full-size top mip (LOD bias 0) in the World group, as the armory icons use.
+        b.props(path, {"powerOfTwoMode": "StretchToPowerOfTwo", "neverStream": False, "lODBias": 0,
+                       "lODGroup": "TEXTUREGROUP_World", "mipGenSettings": "TMGS_FromTextureGroup"})
     return path
 
 
@@ -114,7 +122,7 @@ def heroes(b, actors):
     for a in actors:
         if a["label"] == "KT7_ArmoryArt_Gallery":
             b.m.tool(bm.SCENE, "remove_from_scene", actor={"refPath": a["actorPath"]})
-    cards = [ART / "heroes" / f"hero_{k}.png" for k in HERO_ORDER] + [ART / "heroes" / "tribute_rasta.png"]
+    cards = [ART / "heroes" / f"hero_{k}.png" for k in HERO_ORDER if k != "selassie"]
     n = len(cards)
     span = n * CARD_W + (n - 1) * CARD_GAP
     x = EAST_FACE_X - 4.0
@@ -127,11 +135,27 @@ def heroes(b, actors):
     print("heroes:", n, "cards + header")
 
 
-def cross(b):
-    png = ART / "cross.png"
-    a = png_aspect(png)
-    mount(b, f"{PREFIX}Cross", material(b, png, True), WEST_FACE_X + 4.0, CROSS_Y, CROSS_Z, CROSS_H * a, CROSS_H, (1, 0))
-    print("cross placed")
+def cross(b, actors):
+    """The west wall's faith-and-roots group (the old single cross is replaced by Calvary)."""
+    for a in actors:
+        if a["label"] == "KT7_ArmoryArt_Focal":
+            b.m.tool(bm.SCENE, "remove_from_scene", actor={"refPath": a["actorPath"]})
+    h = ART / "heroes"
+    row = [(h / "hero_selassie.png", ROOTS_CARD_W), (h / "calvary.png", ROOTS_CALVARY_W),
+           (h / "tribute_reggae.png", ROOTS_CARD_W), (h / "tribute_rasta.png", ROOTS_CARD_W)]
+    span = sum(w for _, w in row) + ROOTS_GAP * (len(row) - 1)
+    x = WEST_FACE_X + 4.0
+    # Facing this wall (towards -X) a viewer has -Y on their right, so the row runs towards -Y.
+    y = ROOTS_Y + span / 2
+    bottom = ROOTS_Z - (ROOTS_CARD_W / png_aspect(row[0][0])) / 2
+    for k, (png, w) in enumerate(row):
+        hgt = w / png_aspect(png)
+        mount(b, f"{PREFIX}Cross_{k:02d}_{png.stem}", material(b, png, False), x, y - w / 2, bottom + hgt / 2, w, hgt, (1, 0))
+        y -= w + ROOTS_GAP
+    head = h / "header_roots.png"
+    mount(b, f"{PREFIX}Cross_Header", material(b, head, False), x, ROOTS_Y, ROOTS_HEADER_Z, ROOTS_HEADER_W,
+          ROOTS_HEADER_W / png_aspect(head), (1, 0))
+    print("faith and roots group placed")
 
 
 def blocked(actors, x, y, z, half, normal, half_h=None):
@@ -323,7 +347,7 @@ def main():
     if "heroes" in want:
         heroes(b, actors)
     if "cross" in want:
-        cross(b)
+        cross(b, actors)
     if "67" in want:
         sixty_seven(b, actors)
     if "flags" in want:

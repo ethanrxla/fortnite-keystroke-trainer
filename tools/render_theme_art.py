@@ -384,6 +384,199 @@ def six_seven_character(n, body, accent):
     return img
 
 
+INK = (14, 18, 16)
+CREAM = (250, 240, 210)
+
+
+def halftone(img, box, colour, step=9, r=1.6, alpha=110):
+    d = ImageDraw.Draw(img)
+    x0, y0, x1, y1 = box
+    for yy in range(y0 + 4, y1, step):
+        for xx in range(x0 + 4 + (yy // step % 2) * step // 2, x1, step):
+            d.ellipse([xx - r, yy - r, xx + r, yy + r], fill=colour + (alpha,))
+
+
+def sketch_print(key):
+    """Drawn screenprint for a hero with no public-domain portrait: an illustrated figure in the same four inks as
+    the other cards (not a likeness of anyone), with a scene from their story behind."""
+    W, H = PRINT_BOX
+    img = Image.new("RGBA", (W, H), CREAM + (255,))
+    d = ImageDraw.Draw(img)
+    cx = W / 2
+    if key == "nanny":
+        # Blue Mountains behind, sun.
+        d.ellipse([380, 40, 520, 180], fill=GOLD)
+        d.polygon([(0, 330), (120, 190), (220, 280), (340, 150), (470, 270), (600, 200), (600, 510), (0, 510)], fill=GREEN)
+    elif key == "sharpe":
+        # Chapel window behind.
+        d.rectangle([60, 60, 220, 330], fill=GOLD)
+        d.pieslice([60, -20, 220, 140], 180, 360, fill=GOLD)
+        d.line([(140, 60), (140, 330)], fill=INK, width=8)
+        d.line([(60, 190), (220, 190)], fill=INK, width=8)
+        d.rectangle([0, 360, W, H], fill=GREEN)
+    else:  # bogle: the Morant Bay court house steps
+        d.rectangle([0, 300, W, H], fill=GREEN)
+        d.polygon([(330, 120), (600, 120), (600, 300), (330, 300)], fill=GOLD)
+        d.polygon([(310, 120), (465, 40), (620, 120)], fill=GOLD)
+        for k in range(4):
+            d.rectangle([350 + k * 65, 140, 370 + k * 65, 300], fill=INK)
+    halftone(img, (0, 0, W, H), INK, alpha=60)
+    d = ImageDraw.Draw(img)
+    # Shoulders and coat.
+    coat = GREEN if key == "nanny" else INK
+    d.chord([cx - 230, 330, cx + 230, 760], 180, 360, fill=coat, outline=INK, width=6)
+    if key == "nanny":
+        d.polygon([(cx - 70, 340), (cx + 70, 340), (cx, 440)], fill=GOLD)          # neckline
+        for k in range(7):                                                         # bead necklace
+            a = math.pi * (0.15 + 0.7 * k / 6)
+            d.ellipse([cx - 95 * math.cos(a) - 9, 345 + 60 * math.sin(a) - 9, cx - 95 * math.cos(a) + 9, 345 + 60 * math.sin(a) + 9], fill=RED)
+    elif key == "sharpe":
+        d.polygon([(cx - 60, 335), (cx + 60, 335), (cx, 420)], fill=CREAM)          # shirt
+        d.rectangle([cx - 22, 340, cx - 4, 400], fill=CREAM, outline=INK, width=3)  # preaching bands
+        d.rectangle([cx + 4, 340, cx + 22, 400], fill=CREAM, outline=INK, width=3)
+        d.rectangle([cx + 90, 400, cx + 190, 470], fill=RED, outline=INK, width=5)  # Bible
+        d.line([(cx + 140, 410), (cx + 140, 460)], fill=GOLD, width=5)
+        d.line([(cx + 120, 428), (cx + 160, 428)], fill=GOLD, width=5)
+    else:
+        d.polygon([(cx - 60, 335), (cx + 60, 335), (cx, 420)], fill=CREAM)
+        d.polygon([(cx - 20, 345), (cx + 20, 345), (cx, 380)], fill=RED)            # cravat
+    # Neck and head (round, simple features: an illustration, not a portrait).
+    skin, shade = (120, 72, 40), (82, 46, 24)
+    d.rectangle([cx - 38, 270, cx + 38, 345], fill=shade)
+    d.ellipse([cx - 92, 110, cx + 92, 310], fill=skin, outline=INK, width=6)
+    for s in (-1, 1):                                                              # ears
+        d.ellipse([cx + s * 92 - 16, 190, cx + s * 92 + 16, 240], fill=skin, outline=INK, width=5)
+    for s in (-1, 1):                                                              # eyes and brows
+        ex = cx + s * 36
+        d.ellipse([ex - 13, 192, ex + 13, 210], fill=CREAM, outline=INK, width=3)
+        d.ellipse([ex - 6, 195, ex + 6, 207], fill=INK)
+        d.line([(ex - 20, 180), (ex + 18, 178)], fill=INK, width=7)
+    d.line([(cx, 205), (cx - 8, 245), (cx + 10, 247)], fill=shade, width=6)          # nose
+    d.arc([cx - 30, 245, cx + 30, 280], 15, 165, fill=INK, width=6)                # mouth
+    if key == "nanny":
+        # Head wrap: tall folded cloth with a knot, gold hoop earrings.
+        d.chord([cx - 100, 70, cx + 100, 230], 180, 360, fill=RED, outline=INK, width=6)
+        d.ellipse([cx - 60, 20, cx + 70, 120], fill=RED, outline=INK, width=6)
+        d.line([(cx - 90, 150), (cx + 90, 130)], fill=GOLD, width=10)
+        d.line([(cx - 80, 120), (cx + 60, 95)], fill=GOLD, width=8)
+        for s in (-1, 1):
+            d.ellipse([cx + s * 92 - 18, 240, cx + s * 92 + 18, 290], outline=GOLD, width=7)
+    elif key == "sharpe":
+        d.chord([cx - 94, 100, cx + 94, 230], 180, 360, fill=INK)                  # close-cut hair
+    else:
+        d.chord([cx - 94, 100, cx + 94, 220], 180, 360, fill=INK)                  # hair
+        d.chord([cx - 88, 200, cx + 88, 345], 0, 180, fill=INK)                    # full beard
+        d.arc([cx - 30, 238, cx + 30, 272], 15, 165, fill=CREAM, width=5)
+    halftone(img, (0, 330, W, H), CREAM, step=10, r=1.4, alpha=50)
+    return img
+
+
+def tribute_reggae():
+    """A reggae tribute: a dreadlocked guitarist in silhouette on a red-gold-green sunburst. No name, no face."""
+    W, H = 600, 900
+    img = Image.new("RGBA", (W, H), (0, 0, 0, 255))
+    d = ImageDraw.Draw(img)
+    cx, cy = W / 2, 400
+    for k in range(24):
+        a0, a1 = 2 * math.pi * k / 24, 2 * math.pi * (k + 1) / 24
+        c = (RED, GOLD, GREEN)[k % 3]
+        d.polygon([(cx, cy), (cx + 900 * math.cos(a0), cy + 900 * math.sin(a0)), (cx + 900 * math.cos(a1), cy + 900 * math.sin(a1))], fill=c)
+    sil = Image.new("RGBA", (W, H), (0, 0, 0, 0))
+    q = ImageDraw.Draw(sil)
+    s = (0, 0, 0, 255)
+    hx, hy = cx, 230
+    q.ellipse([hx - 58, hy - 70, hx + 58, hy + 62], fill=s)                          # head
+    q.rectangle([hx - 26, hy + 40, hx + 26, hy + 100], fill=s)                       # neck
+    for k in range(10):                                                              # locks hanging down, gaps between
+        a = math.radians(-70 + k * 15.5)
+        x0, y0 = hx + 56 * math.sin(a), hy - 40 + 30 * (1 - math.cos(a))
+        x1, y1 = x0 + 34 * math.sin(a), hy + 175 + (k % 3) * 22
+        q.line([(x0, y0), (x1, y1)], fill=s, width=13)
+        q.ellipse([x1 - 7, y1 - 7, x1 + 7, y1 + 7], fill=s)
+    q.polygon([(hx - 120, hy + 150), (hx + 120, hy + 150), (hx + 150, hy + 430), (hx - 150, hy + 430)], fill=s)  # torso
+    q.ellipse([hx - 150, hy + 120, hx - 60, hy + 200], fill=s)                        # shoulders
+    q.ellipse([hx + 60, hy + 120, hx + 150, hy + 200], fill=s)
+    q.rectangle([hx - 150, hy + 420, hx + 150, H], fill=s)
+    gx, gy = hx - 20, hy + 330
+    rim = sil.split()[3].filter(ImageFilter.MaxFilter(9))
+    img.paste(GOLD + (255,), (0, 0), rim)
+    img.alpha_composite(sil)
+    d = ImageDraw.Draw(img)
+    wood = (150, 82, 30)
+    d.line([(gx + 10, gy - 10), (gx + 230, gy - 250)], fill=wood, width=22)           # guitar neck, in front
+    d.polygon([(gx + 220, gy - 265), (gx + 262, gy - 300), (gx + 278, gy - 284), (gx + 238, gy - 245)], fill=wood)
+    d.ellipse([gx - 140, gy - 80, gx + 40, gy + 95], fill=wood, outline=GOLD, width=5)   # body
+    d.ellipse([gx - 100, gy - 30, gx - 10, gy + 50], fill=wood)
+    d.ellipse([gx - 70, gy - 10, gx - 30, gy + 30], fill=(0, 0, 0), outline=GOLD, width=4)  # sound hole
+    for t in range(4):                                                               # strings
+        d.line([(gx - 60 + t * 6, gy + 10), (gx + 232 + t * 4, gy - 262)], fill=GOLD, width=1)
+    d.text((W / 2, 820), "REGGAE", font=font(TITLE, 70), fill=GOLD, anchor="mm", stroke_width=5, stroke_fill=(0, 0, 0))
+    d.rectangle([0, 0, W - 1, H - 1], outline=GOLD, width=6)
+    return img
+
+
+def calvary():
+    """Calvary: Jesus on the cross between the two thieves, crown of thorns and the INRI sign, drawn as silhouettes
+    against the sky (no wounds, no blood)."""
+    W, H = 1500, 900
+    img = Image.new("RGBA", (W, H), (0, 0, 0, 255))
+    d = ImageDraw.Draw(img)
+    for y in range(H):                                               # dusk sky
+        t = y / H
+        d.line([(0, y), (W, y)], fill=(int(60 + 170 * t), int(30 + 70 * t), int(90 - 40 * t)))
+    glow = Image.new("RGBA", (W, H), (0, 0, 0, 0))
+    ImageDraw.Draw(glow).ellipse([W / 2 - 330, 60, W / 2 + 330, 640], fill=GOLD + (150,))
+    img.alpha_composite(glow.filter(ImageFilter.GaussianBlur(70)))
+    d = ImageDraw.Draw(img)
+    d.chord([-300, 640, W + 300, 1500], 180, 360, fill=(20, 16, 24))   # the hill
+    s = (10, 8, 12)
+
+    def figure(cx, top, scale, centre):
+        beam_y = top + 110 * scale
+        d.rectangle([cx - 14 * scale, top, cx + 14 * scale, top + 520 * scale], fill=s)        # upright
+        d.rectangle([cx - 190 * scale, beam_y - 12 * scale, cx + 190 * scale, beam_y + 14 * scale], fill=s)  # beam
+        hy = beam_y + 10 * scale
+        d.ellipse([cx - 34 * scale, hy - 52 * scale, cx + 34 * scale, hy + 18 * scale], fill=s)    # head (bowed)
+        d.polygon([(cx - 175 * scale, beam_y + 6 * scale), (cx - 40 * scale, hy + 30 * scale), (cx - 45 * scale, hy + 60 * scale),
+                   (cx - 175 * scale, beam_y + 20 * scale)], fill=s)                               # arms
+        d.polygon([(cx + 175 * scale, beam_y + 6 * scale), (cx + 40 * scale, hy + 30 * scale), (cx + 45 * scale, hy + 60 * scale),
+                   (cx + 175 * scale, beam_y + 20 * scale)], fill=s)
+        d.polygon([(cx - 48 * scale, hy + 20 * scale), (cx + 48 * scale, hy + 20 * scale), (cx + 36 * scale, hy + 230 * scale),
+                   (cx - 36 * scale, hy + 230 * scale)], fill=s)                                   # body and cloth
+        d.polygon([(cx - 30 * scale, hy + 230 * scale), (cx + 30 * scale, hy + 230 * scale), (cx + 8 * scale, hy + 400 * scale),
+                   (cx - 8 * scale, hy + 400 * scale)], fill=s)                                    # legs
+        if centre:
+            # Crown of thorns: a gold ring of spikes on the head; the INRI sign above.
+            r0 = 40 * scale
+            pts = []
+            for k in range(28):
+                a = 2 * math.pi * k / 28
+                rr = r0 if k % 2 == 0 else r0 * 1.32
+                pts.append((cx + rr * math.cos(a), hy - 30 * scale + rr * 0.42 * math.sin(a)))
+            d.polygon(pts, outline=GOLD, width=5)
+            d.rectangle([cx - 80, top - 70, cx + 80, top - 6], fill=CREAM, outline=s, width=4)
+            d.text((cx, top - 38), "INRI", font=font(HEAVY, 44), fill=s, anchor="mm")
+
+    figure(W / 2, 190, 1.0, True)
+    figure(W / 2 - 470, 330, 0.72, False)
+    figure(W / 2 + 470, 330, 0.72, False)
+    d.rectangle([0, 0, W - 1, H - 1], outline=GOLD, width=8)
+    return img
+
+
+def header_other():
+    W, H = 2400, 200
+    img = Image.new("RGBA", (W, H), (6, 8, 7, 255))
+    d = ImageDraw.Draw(img)
+    hh = H / 3
+    for k, c in enumerate((RED, GOLD, GREEN)):
+        d.rectangle([0, k * hh, 300, (k + 1) * hh], fill=c)
+        d.rectangle([W - 300, k * hh, W, (k + 1) * hh], fill=c)
+    d.text((W / 2, H / 2), "FAITH  AND  ROOTS", font=fit(d, "FAITH  AND  ROOTS", TITLE, 120, W - 720), fill=GOLD, anchor="mm")
+    d.rectangle([0, 0, W - 1, H - 1], outline=GOLD, width=8)
+    return img
+
+
 def main():
     import sys
     (OUT / "heroes").mkdir(parents=True, exist_ok=True)
@@ -393,9 +586,14 @@ def main():
         for key in CROPS:
             if (src / f"{key}.jpg").exists():
                 screenprint(src / f"{key}.jpg", key).save(OUT / "heroes" / f"print_{key}.png")
+    for key in ("nanny", "sharpe", "bogle"):
+        sketch_print(key).save(OUT / "heroes" / f"print_{key}.png")
     for key, name, years, line in HEROES:
         hero_card(key, name, years, line).save(OUT / "heroes" / f"hero_{key}.png")
     tribute_lion().save(OUT / "heroes" / "tribute_rasta.png")
+    tribute_reggae().save(OUT / "heroes" / "tribute_reggae.png")
+    calvary().save(OUT / "heroes" / "calvary.png")
+    header_other().save(OUT / "heroes" / "header_roots.png")
     header().save(OUT / "heroes" / "header.png")
     cross().save(OUT / "cross.png")
     for n, spec in enumerate(SIXTY_SEVEN):
