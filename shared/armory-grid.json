@@ -1,5 +1,5 @@
 {
-  "description": "Armory gun wall (tools/build_armory_grid.py): columns are weapons, rows are rarity; heals shelf on the east wall. Player 2026-10-10: the SCAR, heavy ARs, pump, tactical shotgun, tactical SMG; rarity-coloured tiles; purple guns to mod; medkits and other heals including slurp juice and chug splash. An item UEFN does not accept leaves its tile dark. Colours are sRGB hex; the builder converts them to linear and scales by plate_brightness (unlit plates in the dark armory read too bright at full value).",
+  "description": "Armory gun wall (tools/build_armory_grid.py): the whole back wall, left to right: weapon columns (rows are rarity), then items, then heals, each item in its own rarity's row. Player 2026-10-10/11: SCAR (epic, legendary) / AR, heavy AR, pump, tactical shotgun, tactical SMG, suppressed pistol, grapple hook, heals; rarity-coloured tiles; purple guns to mod. Items UEFN does not accept leave a dark tile; weapon rarities that do not exist leave a dark tile. Colours are sRGB hex; the builder converts them to linear and scales by plate_brightness.",
   "rarities": [
     {
       "code": "C",
@@ -54,18 +54,30 @@
     {
       "name": "Tactical SMG",
       "pattern": "/Game/Athena/Items/Weapons/WID_Pistol_AutoHeavyPDW_Athena_{r}_Ore_T03.WID_Pistol_AutoHeavyPDW_Athena_{r}_Ore_T03"
+    },
+    {
+      "name": "Suppressed pistol",
+      "pattern": "/Game/Athena/Items/Weapons/WID_Pistol_SemiAuto_Suppressed_Athena_{r}_Ore_T03.WID_Pistol_SemiAuto_Suppressed_Athena_{r}_Ore_T03"
+    },
+    {
+      "name": "Hand cannon",
+      "pattern": "/Game/Athena/Items/Weapons/WID_Pistol_HandCannon_Athena_{r}_Ore_T03.WID_Pistol_HandCannon_Athena_{r}_Ore_T03"
+    },
+    {
+      "name": "Bolt sniper",
+      "pattern": "/Game/Athena/Items/Weapons/WID_Sniper_BoltAction_Scope_Athena_{r}_Ore_T03.WID_Sniper_BoltAction_Scope_Athena_{r}_Ore_T03"
     }
   ],
   "heals": [
     {
-      "name": "Medkit",
-      "rarity": "UC",
-      "item": "/PaprikaConsumables/Gameplay/MedRefresh/WID_Paprika_MedBox.WID_Paprika_MedBox"
-    },
-    {
       "name": "Bandages",
       "rarity": "C",
       "item": "/PaprikaConsumables/Gameplay/BandageRefresh/WID_Paprika_Bandage.WID_Paprika_Bandage"
+    },
+    {
+      "name": "Medkit",
+      "rarity": "UC",
+      "item": "/PaprikaConsumables/Gameplay/MedRefresh/WID_Paprika_MedBox.WID_Paprika_MedBox"
     },
     {
       "name": "Small shield",
@@ -83,5 +95,17 @@
       "item": "/ChronoConsumables/Gameplay/SlapSplash/WID_Chrono_SlapSplash.WID_Chrono_SlapSplash"
     }
   ],
-  "plate_brightness": 0.35
+  "plate_brightness": 0.35,
+  "items": [
+    {
+      "name": "Grappler",
+      "rarity": "VR",
+      "item": "/Game/Athena/Items/Weapons/WID_Hook_Gun_VR_Ore_T03.WID_Hook_Gun_VR_Ore_T03"
+    },
+    {
+      "name": "Grenades",
+      "rarity": "UC",
+      "item": "/Game/Athena/Items/Consumables/Grenade/Athena_Grenade.Athena_Grenade"
+    }
+  ]
 }

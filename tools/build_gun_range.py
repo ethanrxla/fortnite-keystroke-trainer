@@ -85,7 +85,7 @@ def plan():
         if kind == "popup":
             for m in POPUP_M:
                 targets.append({"label": f"{PREFIX}Target_{n}_{m}m", "pos": (FIRE_X + m * 100.0, yc + (120 if m % 2 else -120))})
-            devices.append({"label": f"{PREFIX}Lane_{n}", "asset": LANE_DEVICE, "pos": (FIRE_X, yc, 0.0), "props": {}})
+            devices.append({"label": f"{PREFIX}Lane_{n}", "asset": LANE_DEVICE, "pos": (FIRE_X, yc, -700.0), "props": {}})
             devices.append({"label": f"{PREFIX}Start_{n}", "asset": bm.BUTTON, "pos": (FIRE_X - 140, ya + 140, 0.0),
                             "props": {"interaction Text": f"Start pop-up round, lane {n + 1}", "delay": 0.0, "resetDelay": 0.5},
                             "yaw": 0.0, "tag": "kt_range_start_tag"})

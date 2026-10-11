@@ -30,7 +30,8 @@ MT = "editor_toolset.toolsets.material.MaterialTools"
 AS = "editor_toolset.toolsets.asset.AssetTools"
 TT = "editor_toolset.toolsets.texture.TextureTools"
 PLANE = "/Engine/BasicShapes/Plane.Plane"
-SKIP = ("KT9_ArmoryWall_", "KT20_", "KT19_")      # gun-wall tile labels sit inside their own plates
+SKIP = ("KT9_ArmoryWall_", "KT20_", "KT19_",       # gun-wall tile labels sit inside their own plates
+        "KT8_Range_Distance_", "KT15_Skills_Marker_")  # distance markers: plain numbers, no panel (player 2026-10-11)
 PX_PER_CM = 4.0
 MAX_PX = 2048
 dec = lambda v: json.loads(v) if isinstance(v, str) else v
@@ -162,13 +163,20 @@ def main():
             m.tool(bm.SCENE, "remove_from_scene", actor={"refPath": existing[label]})
         cx, cy, cz = (mn["x"] + mx["x"]) / 2, (mn["y"] + mx["y"]) / 2, (mn["z"] + mx["z"]) / 2
         px, py = cx + normal[0] * (depth / 2 + 2.0), cy + normal[1] * (depth / 2 + 2.0)
-        pose = bm.xform(px, py, cz, width / 100.0, dz / 100.0, 1.0, yaw=yaw)
+        # A rolled plane faces the opposite way to a billboard at the same yaw: turn it round to face the front.
+        pose = bm.xform(px, py, cz, width / 100.0, dz / 100.0, 1.0, yaw=(yaw + 180.0) % 360)
         pose["rotation"]["roll"] = 90.0
         plane = b.labelled(m.tool(bm.SCENE, "add_to_scene_from_asset", asset_path=PLANE, name=label, xform=pose)["refPath"], label)
         for c in m.tool(bm.ACTOR, "get_components", actor={"refPath": plane}) or []:
             if "StaticMeshComponent0" in c["refPath"]:
                 b.props(c["refPath"], {"overrideMaterials": [{"refPath": mat_path}], "castShadow": False,
                                        "bodyInstance": {"collisionEnabled": "NoCollision", "collisionProfileName": "NoCollision"}})
+                # Unlit panels must not light the room (Lumen indirect light from emissive surfaces).
+                for key in ("bAffectDynamicIndirectLighting", "bAffectDistanceFieldLighting"):
+                    try:
+                        b.props(c["refPath"], {key: False})
+                    except RuntimeError:
+                        pass
         m.tool(bm.SCENE, "save_actor", actor={"refPath": plane})
         made += 1
     if not args.dry_run:

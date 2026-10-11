@@ -35,6 +35,8 @@ TT = "editor_toolset.toolsets.texture.TextureTools"
 KEEP_CLEAR = [{"normal": (0, 1), "y": -66560.0, "x0": -600.0, "x1": 1100.0}]
 SPACING = 1800.0           # one piece per this many cm of wall face, on average
 SEED = 20261011
+# Textures UEFN validation rejects (disallowed references), found on push 2026-10-11.
+DISALLOWED = ("T_graffiti_003", "T_Graffiti_Fish_C")
 DONE = set()
 
 
@@ -44,7 +46,7 @@ def textures(m):
         r = m.tool(AS, "find_assets", name=q)
         for x in (json.loads(r) if isinstance(r, str) else r) or []:
             if any(s in x for s in SETS) and re.search(r"/T_[^/]*$", x.split(".")[0]) and \
-                    not re.search(r"_(N|M|R|ORM|MRA|AO|Mask|Normal|Rough|Spec|E)$", x.split(".")[-1]):
+                    not re.search(r"_(N|M|R|ORM|MRA|AO|Mask|Normal|Rough|Spec|E)$", x.split(".")[-1]) and                     x.split(".")[-1] not in DISALLOWED:
                 out.add(x)
     return sorted(out)
 

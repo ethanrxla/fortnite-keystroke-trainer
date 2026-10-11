@@ -33,15 +33,24 @@ PLANE = "/Engine/BasicShapes/Plane.Plane"
 GRANTER = "/CreativeCoreDevices/SetupAssets/PID_Device_ItemGranter.PID_Device_ItemGranter"
 WALL_Y = -66560.0          # back wall face (KT_Wall_Hub_0)
 PROUD = 60.0               # plates stand this far off the wall
-TILE, PITCH = 180.0, 200.0
+TILE = 220.0
+PITCH = 330.0              # column pitch
+ROW_PITCH = 250.0
+BLOCK_GAP = 300.0          # extra space between the weapons, items and heals blocks
 X_CENTER = 256.0
 ROW_Z0 = 150.0             # centre of the bottom (common) row
-EAST_X = 3584.0            # east wall face (KT_Wall_Hub_2), heals shelf
-HEAL_YS = [-64300.0, -64100.0, -63900.0]
-HEAL_ZS = [350.0, 150.0]
-MOVE = {"KT5_Armory_Lockers_SHOTGUN": -2650.0, "KT5_Armory_Lockers_SNIPER": 2750.0,
-        "KT5_Armory_Stack_2_a": -2900.0, "KT5_Armory_Stack_2_b": -2900.0}
-LOGO_UP = 520.0
+# The grid fills the back wall left to right (player 2026-10-11), so every locker and crate on that wall moves to the
+# entrance side, against the north wall, facing into the room; the logo moves above the entrance.
+NORTH_Y = -63150.0
+MOVE = {"KT5_Armory_Lockers_SMG": -2850.0, "KT5_Armory_Lockers_SHOTGUN": -2450.0,
+        "KT5_Armory_Lockers_SNIPER": -2050.0, "KT5_Armory_Lockers_PISTOL": -1650.0,
+        "KT5_Armory_Stack_0_a": 1350.0, "KT5_Armory_Stack_0_b": 1350.0, "KT5_Armory_Stack_1_a": 1650.0,
+        "KT5_Armory_Stack_1_b": 1650.0, "KT5_Armory_Stack_2_a": 1950.0, "KT5_Armory_Stack_2_b": 1950.0,
+        "KT5_Armory_Stack_3_a": 2250.0, "KT5_Armory_Stack_3_b": 2250.0}
+LOGO_Y, LOGO_Z = -62996.0, 1150.0
+# Glowing plates must not light the room: unlit emissive surfaces feed Lumen's indirect light, and 40 coloured plates
+# tinted the whole armory (player 2026-10-11: "did you change the color of the room?").
+NO_BOUNCE = {"bAffectDynamicIndirectLighting": False, "bAffectDistanceFieldLighting": False}
 dec = lambda v: json.loads(v) if isinstance(v, str) else v
 
 
@@ -104,6 +113,11 @@ class Grid:
             if "StaticMeshComponent0" in c["refPath"]:
                 self.b.props(c["refPath"], {"overrideMaterials": [{"refPath": material}], "castShadow": False,
                                             "bodyInstance": {"collisionEnabled": "NoCollision", "collisionProfileName": "NoCollision"}})
+                for key, value in NO_BOUNCE.items():
+                    try:
+                        self.b.props(c["refPath"], {key: value})
+                    except RuntimeError:
+                        pass
         return ref
 
     def accepted(self, granter, item):
@@ -172,42 +186,57 @@ def linear(hex_colour, scale):
 
 
 def plan(spec, test=False):
+    """Columns left to right: each weapon over the five rarity rows, then each item and heal alone in its rarity's
+    row. A weapon rarity UEFN lacks gets a dark tile; items and heals only fill their own row."""
     for r in spec["rarities"]:
         r["colour"] = linear(r["hex"], spec.get("plate_brightness", 0.35))
-    rar = {r["code"]: r for r in spec["rarities"]}
+    rar = {r["code"]: (k, r) for k, r in enumerate(spec["rarities"])}
+    cols = []
+    for w in spec["weapons"]:
+        cols.append([(r["code"], w.get("names", {}).get(r["code"], w["name"]), w["pattern"].format(r=r["code"])) for r in spec["rarities"]])
+    blocks = [len(cols)]
+    for group in ("items", "heals"):
+        for it in spec.get(group, []):
+            cols.append([(it["rarity"], it["name"], it["item"])])
+        blocks.append(len(cols))
+    width = (len(cols) - 1) * PITCH + (len(blocks) - 2) * BLOCK_GAP
+    x0 = X_CENTER - width / 2
     tiles = []
-    cols = spec["weapons"]
-    for c, w in enumerate(cols):
-        x = X_CENTER + (c - (len(cols) - 1) / 2.0) * PITCH
-        for k, r in enumerate(spec["rarities"]):
-            tiles.append(dict(tag=f"{PREFIX}{c}{k}", name=w.get("names", {}).get(r["code"], w["name"]), item=w["pattern"].format(r=r["code"]),
-                              rgb_name=r["name"], rgb=r["colour"], x=x, y=WALL_Y, z=ROW_Z0 + k * PITCH, facing="S"))
-    for n, h in enumerate(spec["heals"]):
-        r = rar[h["rarity"]]
-        tiles.append(dict(tag=f"{PREFIX}H{n}", name=h["name"], item=h["item"], rgb_name=r["name"], rgb=r["colour"],
-                          x=EAST_X, y=HEAL_YS[n % 3], z=HEAL_ZS[n // 3], facing="E"))
+    for c, col in enumerate(cols):
+        gaps = sum(1 for e in blocks[:-1] if c >= e)
+        x = x0 + c * PITCH + gaps * BLOCK_GAP
+        for code, name, item in col:
+            k, r = rar[code]
+            tiles.append(dict(tag=f"{PREFIX}{c:02d}{k}", name=name, item=item, rgb_name=r["name"], rgb=r["colour"],
+                              x=x, y=WALL_Y, z=ROW_Z0 + k * ROW_PITCH, facing="S"))
     if test:
-        tiles = [tiles[4], tiles[13], tiles[-1]]
+        tiles = tiles[:2] + tiles[-2:]
     return tiles
 
 
 def tidy(g):
-    """Move the back-wall lockers and crates out of the grid's span and lift the logo above the top row."""
+    """Lockers and crates off the back wall to the entrance side, turned to face the room; logo above the entrance."""
     acts = {a["label"]: a["actorPath"] for a in g.m.tool(bm.SCENE, "find_actors", name="KT", collision_channels=[]) or []}
     for label, nx in MOVE.items():
         if label in acts:
             t = g.m.tool(bm.ACTOR, "get_actor_transform", actor={"refPath": acts[label]})
-            l, s = t["location"], t["scale"]
-            g.m.tool(bm.ACTOR, "set_actor_transform", actor={"refPath": acts[label]},
-                     xform=bm.xform(nx, l["y"], l["z"], s["x"], s["y"], s["z"], yaw=t["rotation"]["yaw"]))
-            g.m.tool(bm.SCENE, "save_actor", actor={"refPath": acts[label]})
+            l = t["location"]
+            if l["y"] < -66000:                    # still on the back wall: move once
+                rot = dict(t["rotation"], yaw=(t["rotation"]["yaw"] + 180.0) % 360)
+                g.m.tool(bm.ACTOR, "set_actor_transform", actor={"refPath": acts[label]},
+                         xform={"location": dict(l, x=nx, y=NORTH_Y), "rotation": rot, "scale": t["scale"]})
+                g.m.tool(bm.SCENE, "save_actor", actor={"refPath": acts[label]})
     for label in ("KT3_Upgrade_Logo_Armory", "KT3_Upgrade_Logo_Armory_Frame"):
         if label in acts:
             t = g.m.tool(bm.ACTOR, "get_actor_transform", actor={"refPath": acts[label]})
             l = t["location"]
-            if l["z"] < 900:                       # move once
-                pose = {"location": dict(l, z=l["z"] + LOGO_UP), "rotation": t["rotation"], "scale": t["scale"]}
-                g.m.tool(bm.ACTOR, "set_actor_transform", actor={"refPath": acts[label]}, xform=pose)
+            if l["y"] < -66000:
+                rot = dict(t["rotation"], yaw=(t["rotation"]["yaw"] + 180.0) % 360)
+                # Mirror the logo/frame pair onto the north wall: same offsets, the room now on the -Y side.
+                ny = LOGO_Y - (l["y"] + 66380.0)
+                nz = l["z"] + (LOGO_Z - 760.0)          # its old centre was z 760
+                g.m.tool(bm.ACTOR, "set_actor_transform", actor={"refPath": acts[label]},
+                         xform={"location": dict(l, y=ny, z=nz), "rotation": rot, "scale": t["scale"]})
                 g.m.tool(bm.SCENE, "save_actor", actor={"refPath": acts[label]})
 
 
