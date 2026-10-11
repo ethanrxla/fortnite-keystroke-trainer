@@ -385,7 +385,7 @@ kt_skills_test_device<public> := class(creative_device):
         Hud.Show("{Hits}/{Reps - Skipped}", Hits, Misses, Avg)
         if (not Stopped?):
             Hud.Message.SetText(SkillsText("{if (NewBest?) then "New best!" else "Best: {Record}"}   Press START to go again"))
-        Sleep(6.0)
+        Sleep(3.0)   # done card, then START is live again (was 6 s; player 2026-10-11: keep it fast paced)
 
     PauseAimBots(Pause:logic):void =
         for (O : FindCreativeObjectsWithTag(kt_aim_bot_control_tag), Control := kt_practice_bot_control_device[O]):

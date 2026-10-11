@@ -42,12 +42,12 @@ keystroke_drill_device := class(creative_device):
     @editable PressureTrigger:trigger_device = trigger_device{}
     # Pace of the session. Defaults favour getting back to action; raise them for a calmer lane.
     # Seconds the principle briefing shows the first time a player meets a drill, and on repeats.
-    @editable BriefFirstSeconds:float = 3.0
+    @editable BriefFirstSeconds:float = 2.0
     @editable BriefRepeatSeconds:float = 0.6
     # Shortest wait before each rep (the beat itself is used when it is longer).
     @editable ReadyMinSeconds:float = 0.3
     # How long the result card stays up after a set that was not solid, and after a solid or sharp one.
-    @editable ResultSeconds:float = 3.0
+    @editable ResultSeconds:float = 2.0
     @editable ResultCleanSeconds:float = 1.2
     # Seconds on the pad before a set starts.
     @editable PadDwellSeconds:float = 0.4

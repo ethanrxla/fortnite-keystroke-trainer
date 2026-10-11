@@ -41,7 +41,7 @@ kt_sky_box_device<public> := class(creative_device):
     # Below the strip by this much counts as a fall.
     @editable FallDepth:float = 500.0
     @editable DeviceDepth:float = 700.0
-    @editable RestartSeconds:float = 5.0
+    @editable RestartSeconds:float = 2.5
     @editable WaveGapSeconds:float = 1.5
 
     var Bots:[]guard_spawner_device = array{}
