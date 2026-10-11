@@ -262,40 +262,13 @@ kt_edit_guide_device := class(creative_device):
         if (A := MaybeAgent?):
             OnToggle(A)
 
-    # Player 2026-10-11: "clicking edit guide does not enable the jev edit guide overlay". It is on for everyone from
-    # the moment they join; the button / shootable sign toggles it and now says which way it went, and where it shows.
     OnToggle(A:agent):void =
         if (P := player[A]):
             Now := if (Disabled[P]?) then false else true
             if (set Disabled[P] = Now) {}
-            KTLog("toggle", "edit_guide", 0, 0, 0, rep_result.Unchecked, "on={if (Now?) then 0 else 1}")
-            Line := if (Now?) then "EDIT GUIDE OFF  |  shoot the sign again to turn it back on" else "EDIT GUIDE ON  |  aim at a practice wall in the Edit wing or a lane"
-            spawn{ Notice(P, Line) }
 
-    Notice(P:player, Line:string)<suspends>:void =
-        Label := text_block{DefaultTextColor := color{R := 1.0, G := 0.85, B := 0.2}, DefaultTextSize := 26.0}
-        Label.SetText(GuideText(Line))
-        Back := color_block{DefaultColor := NamedColors.Black, DefaultOpacity := 0.8}
-        Root := canvas:
-            Slots := array:
-                canvas_slot:
-                    Anchors := anchors{Minimum := vector2{X := 0.5, Y := 0.2}, Maximum := vector2{X := 0.5, Y := 0.2}}
-                    Alignment := vector2{X := 0.5, Y := 0.5}
-                    Offsets := margin{Right := 900.0, Bottom := 96.0}
-                    Widget := Back
-                canvas_slot:
-                    Anchors := anchors{Minimum := vector2{X := 0.5, Y := 0.2}, Maximum := vector2{X := 0.5, Y := 0.2}}
-                    Alignment := vector2{X := 0.5, Y := 0.5}
-                    SizeToContent := true
-                    Widget := Label
-        if (UI := GetPlayerUI[P]):
-            UI.AddWidget(Root, player_ui_slot{InputMode := ui_input_mode.None})
-            Sleep(3.5)
-            UI.RemoveWidget(Root)
-
-    # Authored targets have an actual registered plane and lesson context. Anything else (player builds included) is
-    # found by a collision sweep along the crosshair (player 2026-10-11: "the edit guide says its on but no edit guide
-    # is seen" while editing his own wall): the surface actually hit is snapped to the build grid.
+    # Authored targets have an actual registered plane and lesson context.
+    # Arbitrary player builds are not guessed from mathematical grid boundaries.
     FindFace(Character:fort_character)<transacts>:kt_edit_face =
         View := Character.GetViewLocation()
         Aim := Character.GetViewRotation().GetLocalForward()
@@ -309,46 +282,7 @@ kt_edit_guide_device := class(creative_device):
             if (Candidate.Valid?, T < Nearest):
                 set Nearest = T
                 set Best = Candidate
-        if (Best.Valid?):
-            return Best
-        SweepFace(Character, View, Aim, CameraRight, Body)
-
-    # The first surface on the crosshair ray within edit range, as a 512 x 384 wall or a 512 x 512 floor on the grid.
-    SweepFace(Character:fort_character, View:vector3, Aim:vector3, CameraRight:vector3, Body:vector3)<transacts>:kt_edit_face =
-        if (E := Character.GetEntity[]):
-            # Start just past the player's own body so the third-person camera ray does not hit the character.
-            Lead := Max(0.0, DotProduct(Body - View, Aim) + 60.0)
-            Start := View + Aim * Lead
-            if (Found := KTSweepFirst(E, Start, Aim * Range)?):
-                P := Found.Position
-                N := Found.Normal
-                Cell := CellSize
-                Level := LevelHeight
-                Key := "build_{Floor[(P.X - GridOffsetX) / Cell] or 0}_{Floor[(P.Y - GridOffsetY) / Cell] or 0}_{Floor[(P.Z - GridOffsetZ) / Level] or 0}"
-                if (Abs(N.Z) < 0.35):
-                    # A wall: its plane is the nearest grid line along the dominant normal axis.
-                    AlongX := logic{Abs(N.X) >= Abs(N.Y)}
-                    BaseZ := GridOffsetZ + (Floor[(P.Z - GridOffsetZ) / Level] or 0) * 1.0 * Level
-                    if (AlongX?):
-                        LineX := GridOffsetX + (Round[(P.X - GridOffsetX) / Cell] or 0) * 1.0 * Cell
-                        MidY := GridOffsetY + ((Floor[(P.Y - GridOffsetY) / Cell] or 0) * 1.0 + 0.5) * Cell
-                        Def := kt_edit_wall_def{Id := Key, Kind := "wall", Centre := vector3{X := LineX, Y := MidY, Z := BaseZ},
-                            Right := vector3{Y := 1.0}, Normal := vector3{X := if (N.X >= 0.0) then 1.0 else -1.0}, Width := Cell, Height := Level}
-                        return KTProjectAuthoredWall(View, Aim, CameraRight, Body, Def, Range)
-                    else:
-                        LineY := GridOffsetY + (Round[(P.Y - GridOffsetY) / Cell] or 0) * 1.0 * Cell
-                        MidX := GridOffsetX + ((Floor[(P.X - GridOffsetX) / Cell] or 0) * 1.0 + 0.5) * Cell
-                        Def := kt_edit_wall_def{Id := Key, Kind := "wall", Centre := vector3{X := MidX, Y := LineY, Z := BaseZ},
-                            Right := vector3{X := 1.0}, Normal := vector3{Y := if (N.Y >= 0.0) then 1.0 else -1.0}, Width := Cell, Height := Level}
-                        return KTProjectAuthoredWall(View, Aim, CameraRight, Body, Def, Range)
-                else if (Abs(N.Z) > 0.9):
-                    # A floor or roof top seen from above (or a floor seen from below).
-                    CX := GridOffsetX + ((Floor[(P.X - GridOffsetX) / Cell] or 0) * 1.0 + 0.5) * Cell
-                    CY := GridOffsetY + ((Floor[(P.Y - GridOffsetY) / Cell] or 0) * 1.0 + 0.5) * Cell
-                    Def := kt_edit_wall_def{Id := Key, Kind := "floor", Centre := vector3{X := CX, Y := CY, Z := P.Z},
-                        Right := vector3{Y := 1.0}, Normal := vector3{X := 1.0}, Width := Cell, Height := Cell, Depth := Cell}
-                    return KTProjectAuthoredPlane(View, Aim, Body, Def, Range)
-        kt_edit_face{}
+        Best
 
     Guide(Player:player)<suspends>:void =
         Tile := TilePixels
