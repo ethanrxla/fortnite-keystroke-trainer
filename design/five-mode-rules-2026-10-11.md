@@ -53,6 +53,8 @@ Ammo boxes replenish every 60 seconds at random authored, reachable sockets. Tea
 
 ## Build / No Build
 
+Detailed placement and balance contract: [Cover, routes and high ground](team-arena-cover-and-routes-2026-10-11.md).
+
 Proposed Build stock and caps per new life: 300 wood, 200 brick, 100 metal; normal ten-material piece cost. Set stock exactly on spawn/reboot. Material pickups replenish every 60 seconds with 100 wood, 50 brick, 25 metal, bounded by caps and equal supply opportunities. No unlimited passive materials. Authored cover grants no harvest resources unless a separately balanced preset enables it.
 
 No Build disables new placement, edits, match material grants and pickups. Reapply on respawn/reboot and prevent class/boundary bypasses. Authored stairs, ramps and floor openings must reach every objective without building. Scope changes to participants/arena; never alter the rest of the island silently.
