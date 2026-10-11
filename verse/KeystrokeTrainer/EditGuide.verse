@@ -256,16 +256,49 @@ kt_edit_guide_device := class(creative_device):
             for (P : GetPlayspace().GetPlayers(), not Guided[P]):
                 if (set Guided[P] = true) {}
                 spawn{ Guide(P) }
+                # On from the start, and the player is told so (player 2026-10-11: "should be enabled when you enter").
+                spawn{ Welcome(P) }
             Sleep(1.0)
 
     OnToggleShot(MaybeAgent:?agent):void =
         if (A := MaybeAgent?):
             OnToggle(A)
 
+    # Player 2026-10-11: "clicking edit guide does not enable the jev edit guide overlay". It is on for everyone from
+    # the moment they join; the button / shootable sign toggles it and now says which way it went, and where it shows.
     OnToggle(A:agent):void =
         if (P := player[A]):
             Now := if (Disabled[P]?) then false else true
             if (set Disabled[P] = Now) {}
+            KTLog("toggle", "edit_guide", 0, 0, 0, rep_result.Unchecked, "on={if (Now?) then 0 else 1}")
+            Line := if (Now?) then "EDIT GUIDE OFF  |  shoot the sign again to turn it back on" else "EDIT GUIDE ON  |  aim at a practice wall in the Edit wing or a lane"
+            spawn{ Notice(P, Line) }
+
+    Welcome(P:player)<suspends>:void =
+        Sleep(6.0)
+        if (not Disabled[P]?):
+            Notice(P, "EDIT GUIDE ON  |  aim at a practice wall in the Edit wing or a lane  |  shoot the EDIT GUIDE sign to hide it")
+
+    Notice(P:player, Line:string)<suspends>:void =
+        Label := text_block{DefaultTextColor := color{R := 1.0, G := 0.85, B := 0.2}, DefaultTextSize := 26.0}
+        Label.SetText(GuideText(Line))
+        Back := color_block{DefaultColor := NamedColors.Black, DefaultOpacity := 0.8}
+        Root := canvas:
+            Slots := array:
+                canvas_slot:
+                    Anchors := anchors{Minimum := vector2{X := 0.5, Y := 0.2}, Maximum := vector2{X := 0.5, Y := 0.2}}
+                    Alignment := vector2{X := 0.5, Y := 0.5}
+                    Offsets := margin{Right := 900.0, Bottom := 96.0}
+                    Widget := Back
+                canvas_slot:
+                    Anchors := anchors{Minimum := vector2{X := 0.5, Y := 0.2}, Maximum := vector2{X := 0.5, Y := 0.2}}
+                    Alignment := vector2{X := 0.5, Y := 0.5}
+                    SizeToContent := true
+                    Widget := Label
+        if (UI := GetPlayerUI[P]):
+            UI.AddWidget(Root, player_ui_slot{InputMode := ui_input_mode.None})
+            Sleep(3.5)
+            UI.RemoveWidget(Root)
 
     # Authored targets have an actual registered plane and lesson context.
     # Arbitrary player builds are not guessed from mathematical grid boundaries.

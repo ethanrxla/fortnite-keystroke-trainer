@@ -25,7 +25,11 @@ WANT = {
               "/PaprikaConsumables/Gameplay/ShieldSmallRefresh/WID_Paprika_ShieldSmall.WID_Paprika_ShieldSmall",
               "/PaprikaConsumables/Gameplay/MedRefresh/WID_Paprika_MedBox.WID_Paprika_MedBox",
               "/PaprikaConsumables/Gameplay/BandageRefresh/WID_Paprika_Bandage.WID_Paprika_Bandage",
-              "/ChronoConsumables/Gameplay/SlapSplash/WID_Chrono_SlapSplash.WID_Chrono_SlapSplash"],
+              "/ChronoConsumables/Gameplay/SlapSplash/WID_Chrono_SlapSplash.WID_Chrono_SlapSplash",
+              # Player 2026-10-11: "there should be fish & heals".
+              "/Game/Athena/Items/Consumables/Flopper/WID_Athena_Flopper.WID_Athena_Flopper",
+              "/Game/Athena/Items/Consumables/Flopper/ShieldFlopper/WID_Athena_Flopper_Shield.WID_Athena_Flopper_Shield",
+              "/Game/Athena/Items/Consumables/Flopper/HopFlopper/WID_Athena_Flopper_HopFlopper.WID_Athena_Flopper_HopFlopper"],
     "GRAPPLE": ["/GrappleGloves/Items/GrappleGloves/WID_GrappleGloves.WID_GrappleGloves",
                 f"{W}WID_Hook_Gun_VR_Ore_T03.WID_Hook_Gun_VR_Ore_T03",
                 "/GrappleWeapon/Items/GrappleKnife/V2/WID_GrappleKnife_R.WID_GrappleKnife_R",
