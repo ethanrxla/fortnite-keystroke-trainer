@@ -1,0 +1,87 @@
+{
+  "description": "Armory gun wall (tools/build_armory_grid.py): columns are weapons, rows are rarity; heals shelf on the east wall. Player 2026-10-10: the SCAR, heavy ARs, pump, tactical shotgun, tactical SMG; rarity-coloured tiles; purple guns to mod; medkits and other heals including slurp juice and chug splash. An item UEFN does not accept leaves its tile dark. Colours are sRGB hex; the builder converts them to linear and scales by plate_brightness (unlit plates in the dark armory read too bright at full value).",
+  "rarities": [
+    {
+      "code": "C",
+      "name": "Common",
+      "hex": "#B9BEC5"
+    },
+    {
+      "code": "UC",
+      "name": "Uncommon",
+      "hex": "#2E8B3E"
+    },
+    {
+      "code": "R",
+      "name": "Rare",
+      "hex": "#1E64B8"
+    },
+    {
+      "code": "VR",
+      "name": "Epic",
+      "hex": "#8A3FC9"
+    },
+    {
+      "code": "SR",
+      "name": "Legendary",
+      "hex": "#E8A321"
+    }
+  ],
+  "weapons": [
+    {
+      "name": "AR / SCAR",
+      "pattern": "/Game/Athena/Items/Weapons/WID_Assault_Auto_Athena_{r}_Ore_T03.WID_Assault_Auto_Athena_{r}_Ore_T03",
+      "names": {
+        "C": "Assault rifle",
+        "UC": "Assault rifle",
+        "R": "Assault rifle",
+        "VR": "SCAR",
+        "SR": "SCAR"
+      }
+    },
+    {
+      "name": "Heavy AR",
+      "pattern": "/Game/Athena/Items/Weapons/WID_Assault_Heavy_Athena_{r}_Ore_T03.WID_Assault_Heavy_Athena_{r}_Ore_T03"
+    },
+    {
+      "name": "Pump",
+      "pattern": "/Game/Athena/Items/Weapons/WID_Shotgun_Standard_Athena_{r}_Ore_T03.WID_Shotgun_Standard_Athena_{r}_Ore_T03"
+    },
+    {
+      "name": "Tactical SG",
+      "pattern": "/Game/Athena/Items/Weapons/WID_Shotgun_SemiAuto_Athena_{r}_Ore_T03.WID_Shotgun_SemiAuto_Athena_{r}_Ore_T03"
+    },
+    {
+      "name": "Tactical SMG",
+      "pattern": "/Game/Athena/Items/Weapons/WID_Pistol_AutoHeavyPDW_Athena_{r}_Ore_T03.WID_Pistol_AutoHeavyPDW_Athena_{r}_Ore_T03"
+    }
+  ],
+  "heals": [
+    {
+      "name": "Medkit",
+      "rarity": "UC",
+      "item": "/PaprikaConsumables/Gameplay/MedRefresh/WID_Paprika_MedBox.WID_Paprika_MedBox"
+    },
+    {
+      "name": "Bandages",
+      "rarity": "C",
+      "item": "/PaprikaConsumables/Gameplay/BandageRefresh/WID_Paprika_Bandage.WID_Paprika_Bandage"
+    },
+    {
+      "name": "Small shield",
+      "rarity": "UC",
+      "item": "/PaprikaConsumables/Gameplay/ShieldSmallRefresh/WID_Paprika_ShieldSmall.WID_Paprika_ShieldSmall"
+    },
+    {
+      "name": "Shield potion",
+      "rarity": "R",
+      "item": "/PaprikaConsumables/Gameplay/ShieldRefresh/WID_Paprika_ShieldPot.WID_Paprika_ShieldPot"
+    },
+    {
+      "name": "Chug splash",
+      "rarity": "R",
+      "item": "/ChronoConsumables/Gameplay/SlapSplash/WID_Chrono_SlapSplash.WID_Chrono_SlapSplash"
+    }
+  ],
+  "plate_brightness": 0.35
+}
