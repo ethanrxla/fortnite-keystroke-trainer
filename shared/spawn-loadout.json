@@ -1,5 +1,5 @@
 {
-  "description": "What every player gets on joining the map and on every respawn (tools/configure_spawn_loadout.py; granted by kt_spawn_supply_service in SpawnSupplies.verse). The same consumables are removed first so stacks never pile up. Player 2026-10-10: pistol, shields, meds and slurp fish.",
+  "description": "What every player gets on joining the map and on every respawn (tools/configure_spawn_loadout.py; granted by kt_spawn_supply_service in SpawnSupplies.verse). The same consumables are removed first so stacks never pile up. Player 2026-10-10: pistol, shields, meds and slurp fish. Player 2026-10-11: spawn with unlimited gold so mods can be bought at the Weapon Mod Bench (10,000 bars, topped up on every respawn).",
   "items": [
     {
       "name": "Pistol",
@@ -15,6 +15,11 @@
       "name": "Medkit",
       "item": "/PaprikaConsumables/Gameplay/MedRefresh/WID_Paprika_MedBox.WID_Paprika_MedBox",
       "count": 2
+    },
+    {
+      "name": "Gold",
+      "item": "/Game/Items/ResourcePickups/Athena_WadsItemData.Athena_WadsItemData",
+      "count": 10000
     }
   ],
   "slurp_fish_note": "No slurp item is usable here: slurp fish exists only as an entity item (granters refuse it) and the creative slurp juice (Figment_Athena_PurpleStuff) fails UEFN validation (disallowed reference, 2026-10-10)."

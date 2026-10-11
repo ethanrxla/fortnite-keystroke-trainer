@@ -13,6 +13,7 @@
 # The existing pop-up target lanes (GunRange.verse) are untouched; this is a separate mode beside them.
 
 using { /Fortnite.com/Devices }
+using { /Fortnite.com/Characters }
 using { /Fortnite.com/UI }
 using { /Verse.org/Simulation }
 using { /Verse.org/Simulation/Tags }
@@ -225,6 +226,11 @@ kt_skills_test_device<public> := class(creative_device):
         Abs(Pos.Y - Centre.Y) <= HalfExtent.Y
         Abs(Pos.Z - Centre.Z) <= HalfExtent.Z
 
+    PlayerHere(A:agent)<transacts><decides>:void =
+        C := A.GetFortCharacter[]
+        C.IsActive[]
+        Inside[C.GetTransform().Translation]
+
     PickLevel<public>(L:int):void =
         if (not Running?):
             set Level = L
@@ -313,14 +319,19 @@ kt_skills_test_device<public> := class(creative_device):
         var Skipped:int = 0
         var TotalMs:int = 0
         var Last:int = -1
+        # Player 2026-10-11: a run kept popping bots (and counting misses) after they walked off to the gun range.
+        var Stopped:logic = false
         for (Rep := 1..Reps):
-            Sleep(GetRandomFloat(KTSkillsGapMin(Lvl), KTSkillsGapMax(Lvl)))
+            if (not Stopped?, not PlayerHere[A]):
+                set Stopped = true
+                Hud.Message.SetText(SkillsText("You left the Skills Test, so the run stopped."))
+            Sleep(if (Stopped?) then 0.0 else GetRandomFloat(KTSkillsGapMin(Lvl), KTSkillsGapMax(Lvl)))
             # A different spawner from the last one, so two reps never pop in the same place.
             var I:int = GetRandomInt(Lo, Hi)
             if (Hi > Lo, I = Last):
                 set I = Lo + KTSkillsNext(I - Lo, Hi - Lo + 1)
             set Last = I
-            if (S := Bots[I]):
+            if (not Stopped?, S := Bots[I]):
                 Index := I
                 S.Enable()
                 S.Spawn()
@@ -372,8 +383,9 @@ kt_skills_test_device<public> := class(creative_device):
             "difficulty={KTSkillsLevelName(Lvl)}|weapon={KTSkillsWeaponName(Weapon)}|hits={Hits}|misses={Misses}|skipped={Skipped}|avg_ms={Avg}|best={Record}|run={Run}|mode={Mode}")
         Hud.Title.SetText(SkillsText(if (Wide?) then "WIDE SKILLS TEST DONE" else "SKILLS TEST DONE"))
         Hud.Show("{Hits}/{Reps - Skipped}", Hits, Misses, Avg)
-        Hud.Message.SetText(SkillsText("{if (NewBest?) then "New best!" else "Best: {Record}"}   Press START to go again"))
-        Sleep(6.0)
+        if (not Stopped?):
+            Hud.Message.SetText(SkillsText("{if (NewBest?) then "New best!" else "Best: {Record}"}   Press START to go again"))
+        Sleep(3.0)   # done card, then START is live again (was 6 s; player 2026-10-11: keep it fast paced)
 
     PauseAimBots(Pause:logic):void =
         for (O : FindCreativeObjectsWithTag(kt_aim_bot_control_tag), Control := kt_practice_bot_control_device[O]):

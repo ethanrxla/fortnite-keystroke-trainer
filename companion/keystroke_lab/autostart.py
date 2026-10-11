@@ -20,6 +20,7 @@ import pathlib
 import subprocess
 import sys
 import time
+import uuid
 
 GAME_PROCESS = "FortniteClient-Win64-Shipping.exe"
 RUN_KEY = r"Software\Microsoft\Windows\CurrentVersion\Run"
@@ -27,6 +28,30 @@ RUN_NAME = "KeystrokeTrainerOverlay"
 POLL_SECONDS = 3.0
 COMPANION = pathlib.Path(__file__).resolve().parents[1]
 CREATE_NO_WINDOW = 0x08000000
+GUIDE_MUTEX = r"Local\KeystrokeLabEditReference"
+
+
+def mutex_running(name):
+    if os.name != "nt":
+        return False
+    handle = ctypes.windll.kernel32.OpenMutexW(0x00100000, False, name)
+    if handle:
+        ctypes.windll.kernel32.CloseHandle(handle)
+        return True
+    return False
+
+
+def spawn_component(module, args=(), env=None):
+    """Windowless children retain startup errors locally instead of failing silently."""
+    folder = COMPANION / ".runtime"
+    folder.mkdir(exist_ok=True)
+    path = folder / (module.rsplit(".", 1)[-1] + "-startup.log")
+    if path.exists() and path.stat().st_size > 2_000_000:
+        path.replace(path.with_suffix(".previous.log"))
+    with path.open("ab") as log:
+        return subprocess.Popen([pythonw(), "-m", module, *args], cwd=str(COMPANION),
+                                env=env, stdout=log, stderr=log,
+                                creationflags=CREATE_NO_WINDOW if os.name == "nt" else 0)
 
 
 def game_running(lister=None):
@@ -55,21 +80,34 @@ class _Group:
     """The overlay, the data collector and (first run only) the calibration window, treated as one child: alive while the
     overlay is, ended together when the game closes."""
 
-    def __init__(self, overlay, collector, calibration=None, stats=None):
+    def __init__(self, overlay, collector, calibration=None, stats=None, guide=None, guide_launch=None):
         self.overlay, self.collector, self.calibration, self.stats = overlay, collector, calibration, stats
+        self.guide, self.guide_launch = guide, guide_launch
+        self.guide_retry_at = 0.0
 
     def poll(self):
         return self.overlay.poll()
 
+    def maintain(self, now):
+        if self.guide_launch and (self.guide is None or self.guide.poll() is not None):
+            if now >= self.guide_retry_at and not mutex_running(GUIDE_MUTEX):
+                self.guide_retry_at = now + 3.0
+                try:
+                    self.guide = self.guide_launch()
+                except OSError:
+                    pass
+
     def terminate(self):
-        for proc in (self.overlay, self.collector, self.calibration, self.stats):
+        for proc in (self.overlay, self.collector, self.calibration, self.stats, self.guide):
             if proc is not None and proc.poll() is None:
                 proc.terminate()
 
 
 def launch_overlay():
     flags = CREATE_NO_WINDOW if os.name == "nt" else 0
-    overlay = subprocess.Popen([pythonw(), "-m", "keystroke_lab", "keys"], cwd=str(COMPANION), creationflags=flags)
+    env = dict(os.environ, KT_COACH_SESSION=uuid.uuid4().hex, KT_GUIDE_SUPERVISED="1")
+    env.setdefault("KT_NO_AI", "0")
+    overlay = spawn_component("keystroke_lab", ("keys",), env)
     # The collector (collector.py) refuses to start twice, so this is harmless when one is already running.
     collector = subprocess.Popen([pythonw(), "-m", "keystroke_lab", "collect"], cwd=str(COMPANION), creationflags=flags)
     # The session-stats strip (stats_panel.py) is its own window; it refuses to start twice.
@@ -83,7 +121,10 @@ def launch_overlay():
         calibration = first_run.maybe_launch()
     except Exception:  # noqa: BLE001  calibration must never stop the overlay from starting
         calibration = None
-    return _Group(overlay, collector, calibration, stats)
+    guide_launch = lambda: spawn_component("keystroke_lab.edit_window", env=env)
+    group = _Group(overlay, collector, calibration, stats, guide_launch=guide_launch)
+    group.maintain(time.monotonic())
+    return group
 
 
 OVERLAY_MUTEX = r"Local\KeystrokeTrainerOverlay"
@@ -91,13 +132,7 @@ OVERLAY_MUTEX = r"Local\KeystrokeTrainerOverlay"
 
 def overlay_running():
     """True if an overlay (started by anything) holds the overlay mutex right now."""
-    if os.name != "nt":
-        return False
-    handle = ctypes.windll.kernel32.OpenMutexW(0x00100000, False, OVERLAY_MUTEX)   # SYNCHRONIZE
-    if handle:
-        ctypes.windll.kernel32.CloseHandle(handle)
-        return True
-    return False
+    return mutex_running(OVERLAY_MUTEX)
 
 
 class _Adopted:
@@ -106,8 +141,23 @@ class _Adopted:
     def poll(self):
         return None if overlay_running() else 0
 
+    def __init__(self):
+        self.guide = None
+        self.retry_at = 0.0
+
+    def maintain(self, now):
+        # An externally started keyboard is not proof its guide is alive.
+        if now >= self.retry_at and not mutex_running(GUIDE_MUTEX):
+            self.retry_at = now + 3.0
+            if self.guide is None or self.guide.poll() is not None:
+                try:
+                    self.guide = spawn_component("keystroke_lab.edit_window")
+                except OSError:
+                    pass
+
     def terminate(self):
-        pass
+        if self.guide is not None and self.guide.poll() is None:
+            self.guide.terminate()
 
 
 def single_instance():
@@ -125,18 +175,25 @@ def watch(poll=POLL_SECONDS, lister=None, launch=launch_overlay, sleep=time.slee
     while not stop():
         running = game_running(lister)
         now = time.monotonic()
+        if running and child is not None and child.poll() is None:
+            maintain = getattr(child, "maintain", None)
+            if maintain:
+                maintain(now)
         if child is not None and child.poll() == 0 and declined_until <= now:
             declined_until = now + 30.0
-        if running and child is None and adopt():
+        if running and (child is None or child.poll() is not None) and adopt():
+            if child is not None:
+                child.terminate()
             child = _Adopted()          # an overlay is already up (another launcher): watch it, do not start a second
         elif running and (child is None or child.poll() is not None) and now >= declined_until:
+            if child is not None:
+                child.terminate()
             child = launch()
         elif not running and child is not None:
-            if child.poll() is None:
-                child.terminate()
+            child.terminate()
             child = None
         sleep(poll)
-    if child is not None and child.poll() is None:
+    if child is not None:
         child.terminate()
 
 

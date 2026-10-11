@@ -42,7 +42,7 @@ SIGNS = {
     "KT9_EditGuide_Sign": ("trigger", "kt_edit_guide_toggle_tag"),
 }
 H_UNIT, W_UNIT = 550.0, 125.0
-FILL = 0.8
+FILL = 1.0  # the whole sign panel is the hitbox (player 2026-10-11: easier to hit)
 HUB = (-7200.0, 7700.0, -67100.0, -52000.0)        # x0, x1, y0, y1: the hub and its four wings
 CLEAR = 200.0
 

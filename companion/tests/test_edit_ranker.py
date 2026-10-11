@@ -75,15 +75,14 @@ class IntentMapTests(unittest.TestCase):
 
     def test_junctions_give_corners_and_centre_edges_give_the_window(self):
         self.assertEqual(self.m.lookup("wall", (1.9, 1.85)), "corner_upper_right")
-        self.assertEqual(self.m.lookup("wall", (1.12, 1.15)), "half_arch_left")
+        self.assertEqual(self.m.lookup("wall", (1.12, 1.15)), "corner_lower_left")
         self.assertEqual(self.m.lookup("wall", (1.1, 1.5)), "window_center")      # left edge, mid height
         self.assertEqual(self.m.lookup("wall", (1.5, 1.9)), "window_center")      # top edge, centred
 
-    def test_half_arch_at_the_lower_junctions_of_the_centre(self):
-        # Player 2026-10-10 screenshot: the half arch (lower four tiles) is made with the crosshair where the centre,
-        # side-middle, bottom-middle and bottom-corner tiles meet; the side tiles give the triangle (lower corner).
-        self.assertEqual(self.m.lookup("wall", (2.05, 1.1)), "half_arch_right")      # the screenshot's aim
-        self.assertEqual(self.m.lookup("wall", (1.1, 0.9)), "half_arch_left")
+    def test_lower_junctions_of_the_centre_give_the_lower_corners(self):
+        # Player 2026-10-11: the half arch at these junctions was reverted; they give the lower corner on that side.
+        self.assertEqual(self.m.lookup("wall", (2.05, 1.1)), "corner_lower_right")
+        self.assertEqual(self.m.lookup("wall", (1.1, 0.9)), "corner_lower_left")
         self.assertEqual(self.m.lookup("wall", (1.5, 1.2)), "window_center")
         self.assertEqual(self.m.lookup("wall", (1.5, 0.3)), "door")
         self.assertEqual(self.m.lookup("wall", (0.3, 1.3)), "corner_lower_left")

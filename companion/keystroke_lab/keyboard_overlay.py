@@ -354,10 +354,10 @@ def run(binds, drill=None, log_base=None, use_ai=True, serve_port=True, binds_pa
             ctypes.windll.user32.SetProcessDPIAware()
     # Separate local observer process: no capture or AI work on the keyboard/display path.
     import subprocess, os, uuid
-    os.environ["KT_COACH_SESSION"]=uuid.uuid4().hex
+    os.environ.setdefault("KT_COACH_SESSION",uuid.uuid4().hex)
     os.environ["KT_NO_AI"]="0" if use_ai else "1"
     try:
-        edit_reference = subprocess.Popen([sys.executable, '-m', 'keystroke_lab.edit_window', str(binds_path or drills.BINDS_FILE)],
+        edit_reference = None if os.environ.get('KT_GUIDE_SUPERVISED') == '1' else subprocess.Popen([sys.executable, '-m', 'keystroke_lab.edit_window', str(binds_path or drills.BINDS_FILE)],
             cwd=str(pathlib.Path(__file__).resolve().parents[1]),
             creationflags=0x08000000 if sys.platform == 'win32' else 0)
     except OSError:

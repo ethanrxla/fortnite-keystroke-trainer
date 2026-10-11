@@ -33,10 +33,10 @@ PLANE = "/Engine/BasicShapes/Plane.Plane"
 GRANTER = "/CreativeCoreDevices/SetupAssets/PID_Device_ItemGranter.PID_Device_ItemGranter"
 WALL_Y = -66560.0          # back wall face (KT_Wall_Hub_0)
 PROUD = 60.0               # plates stand this far off the wall
-TILE = 220.0
-PITCH = 330.0              # column pitch
-ROW_PITCH = 250.0
-BLOCK_GAP = 300.0          # extra space between the weapons, items and heals blocks
+TILE = 270.0               # player 2026-10-11: bigger, easier to shoot
+PITCH = 300.0              # column pitch (12 gun columns + the item block fit the back wall)
+ROW_PITCH = 290.0
+BLOCK_GAP = 250.0          # extra space between the weapons, items and heals blocks
 X_CENTER = 256.0
 ROW_Z0 = 150.0             # centre of the bottom (common) row
 # The grid fills the back wall left to right (player 2026-10-11), so every locker and crate on that wall moves to the
@@ -55,8 +55,9 @@ LOGO_Y, LOGO_Z = -62996.0, 1150.0
 # tinted the whole armory (player 2026-10-11: "did you change the color of the room?").
 # A target dummy in play stands about 550 cm per unit of Z scale and 125 cm per unit of Y (twice its editor height:
 # 0.82 poked 2 m above the top row). These fill most of a 220 cm tile and stay inside it.
-HIT_SCALE = (0.15, 1.6, 0.36)
-HIT_DROP = 100.0
+# Player 2026-10-11: bigger hit boxes, "easier to shoot": now a little wider and taller than the 220 cm plate.
+HIT_SCALE = (0.15, 2.15, 0.49)      # 269 x 270 cm in play: the whole plate
+HIT_DROP = 135.0
 NO_BOUNCE = {"bAffectDynamicIndirectLighting": False, "bAffectDistanceFieldLighting": False}
 dec = lambda v: json.loads(v) if isinstance(v, str) else v
 
@@ -144,7 +145,9 @@ class Grid:
         out = (0.0, 1.0) if facing == "S" else (-1.0, 0.0)          # unit vector into the room
         at = lambda d: (x + out[0] * d, y + out[1] * d)
         saved = []
-        granter = self.b.device(GRANTER, tag + "_Granter", *at(-200.0), -300.0)
+        # Below the floor at a depth unique to the tile's row, so LoadoutPresets.verse can key a tile by its granter.
+        gz = -1000.0 - z
+        granter = self.b.device(GRANTER, tag + "_Granter", *at(-200.0), gz)
         ok = bool(item) and self.accepted(granter, item)
         if not ok:          # player 2026-10-11: a gun that can't be granted gets no tile at all
             self.m.tool(bm.SCENE, "remove_from_scene", actor={"refPath": granter})
@@ -178,7 +181,14 @@ class Grid:
                 except RuntimeError as exc:
                     print(f"  {tag}: granter {key} refused ({str(exc)[-40:]})")
             self.b.bind(dummy, "On Hit", granter, "GrantItem")
-            saved += [dummy, granter]
+            # Loadout presets (LoadoutPresets.verse): the same hit fires a trigger 30 cm above the granter, so Verse
+            # learns which tile the next item in the shooter's hotbar came from.
+            self.b.tag(granter, "kt_armory_granter_tag")
+            trig = self.b.device(bm.TRIGGER, tag + "_Track", *at(-200.0), gz + 30.0)
+            self.b.props(trig, {"visible in Game": False})
+            self.b.tag(trig, "kt_armory_tile_tag")
+            self.b.bind(dummy, "On Hit", trig, "Trigger")
+            saved += [dummy, granter, trig]
         else:
             self.m.tool(bm.SCENE, "remove_from_scene", actor={"refPath": granter})
         for ref in saved:
@@ -206,18 +216,33 @@ def plan(spec, test=False):
         cols.append([(r["code"], w.get("names", {}).get(r["code"], w["name"]),
                      w.get("paths", {}).get(r["code"]) or w["pattern"].format(r=r["code"]), None) for r in spec["rarities"]])
     blocks = [len(cols)]
-    for group in ("items", "heals"):
-        for it in spec.get(group, []):
-            cols.append([(it["rarity"], it["name"], it["item"], it.get("icon"))])
+    rows = spec.get("block_rows")
+    if rows:
+        # One compact block (player 2026-10-11, "uniform"): items, melee and heals fill columns top to bottom, each
+        # plate in its own rarity's colour, so no column has holes.
+        extra = [(it["rarity"], it["name"], it["item"], it.get("icon")) for g in ("items", "heals") for it in spec.get(g, [])]
+        for k in range(0, len(extra), rows):
+            cols.append([("@" + str(rows - 1 - n),) + e for n, e in enumerate(extra[k:k + rows])])
         blocks.append(len(cols))
+    else:
+        for group in ("items", "heals"):
+            for it in spec.get(group, []):
+                cols.append([(it["rarity"], it["name"], it["item"], it.get("icon"))])
+            blocks.append(len(cols))
     width = (len(cols) - 1) * PITCH + (len(blocks) - 2) * BLOCK_GAP
     x0 = X_CENTER - width / 2
     tiles = []
     for c, col in enumerate(cols):
         gaps = sum(1 for e in blocks[:-1] if c >= e)
         x = x0 + c * PITCH + gaps * BLOCK_GAP
-        for code, name, item, icon in col:
-            k, r = rar[code]
+        for entry in col:
+            if entry[0].startswith("@"):            # block slot: row from the slot, colour from the item's rarity
+                k = int(entry[0][1:])
+                _, r = rar[entry[1]]
+                name, item, icon = entry[2:]
+            else:
+                code, name, item, icon = entry
+                k, r = rar[code]
             tiles.append(dict(tag=f"{PREFIX}{c:02d}{k}", name=name, item=item, icon=icon, rgb_name=r["name"], rgb=r["colour"],
                               x=x, y=WALL_Y, z=ROW_Z0 + k * ROW_PITCH, facing="S"))
     if test:

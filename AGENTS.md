@@ -5,6 +5,10 @@ A UEFN island that teaches Fortnite building and editing at a slow tempo first
 (project files); read sections 1 and 5 before changing gameplay.
 
 ## Hard rules
+- **Locked: the Jev edit guide.** The files in `tools/check_locked.py` (in-map EditGuide and its policy/intent data,
+  the companion overlay's detection, ranking and drawing) are known good. Do not change them without the player's
+  explicit approval in chat (player 2026-10-11). `.githooks/pre-commit` refuses commits that change them; run
+  `git config core.hooksPath .githooks` in a fresh clone.
 - **Never send synthetic keyboard or mouse input to the Fortnite client.** EasyAntiCheat runs in
   UEFN sessions; bans are account and hardware level. Drive tests from Verse (`AutoTest.verse`).
 - Teaching text (principle, why, tip, reflect) lives only in `shared/drills.json`; the map, companion coach and voice renderer all read it. Changing wording means re-running `tools/gen_drills.py` and `tools/gen_voice.py`. AI never runs inside the map (published islands have no network); it is a companion-app and offline-authoring tool. Never commit API keys.
@@ -55,6 +59,11 @@ A UEFN island that teaches Fortnite building and editing at a slow tempo first
   67s; `KT23_AimRail_` is a different builder, never delete all `KT23_*`.
   `KT21_Team_` (`build_team_arena.py`): reserved team-arena greybox, separate from
   `KT21_Marker_`. Never delete all `KT21_*` actors to rebuild either one.
+  `KT24_Team_` (`build_team_modes.py`): additive hub access, staging controls,
+  tagged match helpers and validation devices. Keep runtime gates off until
+  roster/respawn/loadout/cleanup and native CTF acceptance have passed.
+  `KT26_TeamDetail_` (`build_team_details.py`, PR #5): arena cover, stairs, trucks. `KT27_TeamTower_`
+  (`build_team_towers.py`): the two sniper towers (Service-side corners) and two ammo rooms (Loading edge).
 - Teleporters that share a group are picked between. The Greybox template used A-D and Z (deleted); ours use E-U
   and H-K. Never reuse a group.
 - `shared/drills.json` `steps` is the reference order; `accepts` lists other orders that count. The sources for
