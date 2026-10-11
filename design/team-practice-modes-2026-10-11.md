@@ -1,5 +1,7 @@
 # Team practice modes: Skirmish, Capture the Flag and Zone Wars
 
+> Historical plan. Superseded by [Five-mode match and resource rules](five-mode-rules-2026-10-11.md). Control now means three-point territory, not moving-storm Zone Wars; Rumble and Elimination are included in the current rules. Geometry has since been placed. Do not implement the obsolete storm or symmetry requirements below.
+
 **Status:** shared-arena map and rules plan for PR 3. This is deliberately separate from `Operation`: the Operation is a solo, linear scenario with authored AI opponents, while these modes require team assignment, objective ownership, independent round state and human competition. No new team-mode geometry has been placed in the island yet.
 
 ## Goals
