@@ -1,9 +1,9 @@
-"""A small session-stats strip over the game: missed keystrokes, accidental presses (with Jev's verdict) and edit accuracy.
+"""A small session-stats strip over the game: unobserved confirms, input flags and edit-pattern results.
 
     python -m keystroke_lab stats-panel        (autostart launches it with the overlay)
 
-It sits at the top of the left column, above the highest point the edit guide panel can reach, so the keyboard overlay
-and the edit guide never move or overlap it (their code is not touched; their placement maths is mirrored here). It is
+It sits in the left column between the edit guide and keyboard. The guide reserves its scaled slot through
+overlay_layout.py; the stats panel hides when the game window is too short to fit all three without overlap. It is
 click-through, takes no input, shows only while the Fortnite window is focused, and redraws from a background worker
 that reads the session files and the player store every few seconds (never on the Tk thread). Numbers come from
 session_stats.py; nothing here writes anywhere.
@@ -14,10 +14,11 @@ import pathlib
 import sys
 
 from .keyboard_overlay import BOTTOM_MARGIN, LEFT_MARGIN, ROWS, game_rect, make_click_through, exclude_from_capture, single_instance
+from .overlay_layout import STATS_SLOT_GAP, units, edit_guide_lift, BASE_STATS_HEIGHT, BASE_UNIT
 
 REFRESH_S = 3.0
 PLACE_MS = 250
-BASE_W, BASE_H, BASE_U = 380, 150, 30          # size at 1080p (u = 30)
+BASE_W = 380
 TOP_KEEP = 0.12                                 # never above this fraction of the game window (game-mode banner)
 GAP = 8
 COLOURS = {"bg": "#121820", "edge": "#2f3b48", "text": "#e8ecf4", "muted": "#9aa7b4", "track": "#233041",
@@ -43,18 +44,19 @@ def overlay_scale(path=SETTINGS):
 
 
 def geometry(rect, scale=1.5):
-    """(x, y, w, h) for the panel in screen px, or None when the game window is too short to fit it above the others.
+    """(x, y, w, h) for the panel in screen px, or None when the game window is too short for this slot.
     Mirrors keyboard_overlay.place (unit from the scale setting) and edit_window (unit with a fixed 1.5, a 240 px panel)."""
     left, top, right, bottom = rect
     gw, gh = right - left, bottom - top
-    u_keys = max(22, min(42, int(gh / 54 * max(1.0, min(scale, 2.0)))))
-    u_edit = max(22, min(42, int(gh / 54 * 1.5)))
+    u_keys, u_edit = units(gh, scale)
     keys_top = bottom - int(gh * BOTTOM_MARGIN) - 11 * u_keys
-    edit_top = bottom - int(gh * BOTTOM_MARGIN) - (len(ROWS) + 4) * u_edit - 240 - GAP
-    f = min(u_keys, u_edit) / BASE_U
-    w, h = round(BASE_W * f), round(BASE_H * f)
-    y = min(keys_top, edit_top) - GAP - h
-    if y < top + int(gh * TOP_KEEP):
+    f = min(u_keys, u_edit) / BASE_UNIT
+    w, h = round(BASE_W * f), round(BASE_STATS_HEIGHT * f)
+    # edit_window reserves this slot by lifting its guide above the stats panel.
+    y = keys_top - STATS_SLOT_GAP - h
+    guide_top = max(top + 8, bottom - int(gh * BOTTOM_MARGIN) - 11 * u_edit - 240 - GAP
+                    - edit_guide_lift(gh, scale, len(ROWS) + 4))
+    if y < top + int(gh * TOP_KEEP) or y < guide_top + 240 + GAP:
         return None
     return left + int(gw * LEFT_MARGIN), y, w, h
 
@@ -63,24 +65,24 @@ def lines(snap):
     """The panel's text, row by row, from a session_stats.snapshot: (label, value, meter fraction or None)."""
     m, a, e = snap["missed"], snap["accidental"], snap["edits"]
     if m["steps"] and m["steps"][0].get("release"):
-        miss = ("Missed confirms", "not visible: edit on release", None)
+        miss = ("Confirm presses", "not observable: edit on release", None)
     elif m["steps"]:
         s = m["steps"][0]
         name = "confirm after editing" if (s["drill"], s["step"]) == ("edit", "confirm") else f"{s['drill']} · {s['step']}"
-        miss = (f"Missed: {name}", f"{s['missed']} / {s['graded']}", s["missed"] / s["graded"])
+        miss = (f"Not observed: {name}", f"{s['missed']} / {s['graded']}", s["missed"] / s["graded"] if s["graded"] else None)
     else:
         miss = ("Missed keystrokes", "none yet", None)
-    acc = (f"Accidental: {a['strays']} strays · {a['doubles']} doubles",
+    acc = (f"Input flags: {a['strays']} stray · {a.get('unmapped', 0)} unmapped · {a['doubles']} rapid",
            ("top " + ", ".join(a["top_keys"])) if a["top_keys"] else "none", None)
     if e["attempts"] >= 1 and e["completed_pct"] is not None:
-        bits = [f"{e['completed_pct']}% done"]
+        bits = [f"{e['completed_pct']}% selection match"]
         if e["followed_pct"] is not None:
             bits.append(f"followed {e['followed_pct']}%")
         if e["travel_vs_ideal"] is not None:
             bits.append(f"travel {e['travel_vs_ideal']}×")
-        edit = (f"Edits ({e['attempts']})", " · ".join(bits), e["completed_pct"] / 100.0)
+        edit = (f"Shape match ({e['attempts']})", " · ".join(bits), e["completed_pct"] / 100.0)
     else:
-        edit = ("Edit accuracy", "no edits yet", None)
+        edit = ("Shape match", "no observed attempts yet", None)
     return [miss, acc, edit]
 
 

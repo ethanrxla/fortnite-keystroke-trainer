@@ -1,4 +1,4 @@
-"""This session's numbers for the stats panel: missed keystrokes, accidental presses (with Jev's verdict) and edit accuracy.
+"""This session's numbers for the stats panel: observed input flags and edit-pattern results.
 
 Pure and read-only: it reads what already exists and changes nothing.
   * the newest sessions/keys-*.events.jsonl the keyboard overlay writes (presses, Jev `analysis` records, `ai_tip` lines);
@@ -50,14 +50,21 @@ def session_start(events):
 def accidental(events):
     """Strays (keys outside the bind profile), doubles (one key twice within DOUBLE_SECONDS; a held key's auto-repeat
     is reported as `repeat` and never counts) and Jev's verdicts on the strays."""
-    strays = collections.Counter(e["key"] for e in events if e.get("kind") in ("stray", "unmapped") and e.get("key"))
+    # Unmapped means the bind profile cannot explain the key; it is not evidence that
+    # the press was accidental. Keep it as a separate observation for the UI.
+    strays = collections.Counter(e["key"] for e in events if e.get("kind") == "stray" and e.get("key"))
+    unmapped = collections.Counter(e["key"] for e in events if e.get("kind") == "unmapped" and e.get("key"))
     doubles = collections.Counter(e["key"] for e in events if e.get("kind") == "double" and e.get("key"))
+    marked_doubles = {(e.get("key"), e.get("t")) for e in events if e.get("kind") == "double" and e.get("key")}
     last = {}
     for e in events:
         if e.get("kind") not in ("ok", "unmapped", "habit") or not e.get("key") or not isinstance(e.get("t"), (int, float)):
             continue
         prev = last.get(e["key"])
-        if prev is not None and 0 <= e["t"] - prev < DOUBLE_SECONDS:
+        # Some overlay versions emit both the raw press and an explicit `double`
+        # record. Do not count that same press a second time.
+        if (prev is not None and 0 <= e["t"] - prev < DOUBLE_SECONDS
+                and (e["key"], e["t"]) not in marked_doubles):
             doubles[e["key"]] += 1
         last[e["key"]] = e["t"]
     verdicts = collections.Counter({v: 0 for v in VERDICTS})
@@ -70,10 +77,11 @@ def accidental(events):
                     and not f.get("uncertainty", True) and intent in VERDICTS[:3])
             verdicts[intent if sure else "unsure"] += 1
     judged = sum(verdicts.values())
-    # Strays Jev has not looked at yet are unsure too, so the bar always covers every stray.
+    # Only known stray events are candidates for interpretation. Unmapped presses
+    # remain explicitly unresolved and are never called accidental.
     verdicts["unsure"] += max(0, sum(strays.values()) - judged)
-    return {"strays": sum(strays.values()), "doubles": sum(doubles.values()),
-            "top_keys": [k for k, _ in (strays + doubles).most_common(3)], "verdicts": dict(verdicts)}
+    return {"strays": sum(strays.values()), "unmapped": sum(unmapped.values()), "doubles": sum(doubles.values()),
+            "top_keys": [k for k, _ in (strays + unmapped + doubles).most_common(3)], "verdicts": dict(verdicts)}
 
 
 RELEASE_MIN = 8            # edits with a selection needed before deciding the player edits on release
@@ -129,9 +137,9 @@ def missed(events, store, since, binds=None, on_release=None):
 
 
 def edits(store, since):
-    """This session's edit attempts: completion, median open-to-close time, how often the guide's suggestion was
-    followed, and crosshair travel against the ranker's ideal for the edit made. Review labels count as in
-    personalize.edit_stats: rejected attempts are skipped, a relabel names the edit made."""
+    """This session's observed edit selections: pattern match, elapsed time, suggestion following and route travel.
+    A catalog match describes the observed selection only; it is not proof Fortnite accepted or applied the edit.
+    Review labels count as in personalize.edit_stats: rejected attempts are skipped, a relabel names the edit made."""
     if store is None or since is None:
         return {"attempts": 0, "per_edit": []}
     per, followed, judged, ratios, done, total, times = {}, 0, 0, [], 0, 0, []
@@ -140,6 +148,8 @@ def edits(store, since):
         if label and label["status"] == "rejected":
             continue
         r = json.loads(raw)
+        if r.get("outcome") == "reset" or (not r.get("final_tiles") and not r.get("selection_trace")):
+            continue                    # an intentional reset or no observed selection is not a pattern attempt
         made = label["edit_id"] if label and label["status"] == "relabelled" else r.get("matched_edit_id")
         edit_id = made or r.get("suggested_edit_id")
         if not edit_id:
@@ -147,7 +157,8 @@ def edits(store, since):
         completed = r.get("outcome") == "completed" and made == edit_id
         total += 1
         done += completed
-        times.append(r["t_close"] - r["t_edit_open"])
+        if isinstance(r.get("t_close"), (int, float)) and isinstance(r.get("t_edit_open"), (int, float)):
+            times.append(max(0.0, r["t_close"] - r["t_edit_open"]))
         if r.get("followed_suggestion") is not None:
             judged += 1
             followed += bool(r["followed_suggestion"])
