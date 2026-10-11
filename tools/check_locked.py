@@ -21,6 +21,9 @@ LOCKED = [
     "companion/keystroke_lab/edit_window.py", "companion/keystroke_lab/edit_observation.py",
     "companion/keystroke_lab/edit_advisor.py", "companion/keystroke_lab/edit_ranker.py",
     "companion/keystroke_lab/edit_geometry.py", "companion/keystroke_lab/piece_observation.py",
+    "companion/keystroke_lab/edit_dictionary.py", "companion/keystroke_lab/guide_visuals.py",
+    "companion/keystroke_lab/guide_layers.py", "companion/keystroke_lab/autostart.py",
+    "companion/autostart.pyw", "shared/edit-policy.json",
     "shared/edits.json", "shared/edit-intent.json",
 ]
 
