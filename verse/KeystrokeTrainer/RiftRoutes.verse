@@ -4,6 +4,7 @@ rift_route_def := struct<computes>:
     Entry:vector3 = vector3{}
     Exit:vector3 = vector3{}
     WalkIn:logic = true
+    Box:vector3 = vector3{}
 RiftRoutes:[]rift_route_def = array{
     rift_route_def{Entry := vector3{X := 768.0, Y := -59648.0, Z := 15.0}, Exit := vector3{X := 512.0, Y := -30720.0, Z := 15.0}, WalkIn := true},
     rift_route_def{Entry := vector3{X := 256.0, Y := -58624.0, Z := 15.0}, Exit := vector3{X := 7680.0, Y := -33280.0, Z := 15.0}, WalkIn := true},
@@ -25,5 +26,7 @@ RiftRoutes:[]rift_route_def = array{
     rift_route_def{Entry := vector3{X := -22784.0, Y := -68864.0, Z := 1536.0}, Exit := vector3{X := -21248.0, Y := -68864.0, Z := 1152.0}, WalkIn := true},
     rift_route_def{Entry := vector3{X := 5888.0, Y := -29900.0, Z := 0.0}, Exit := vector3{X := 21248.0, Y := -44288.0, Z := 7680.0}, WalkIn := true},
     rift_route_def{Entry := vector3{X := 20736.0, Y := -44288.0, Z := 7680.0}, Exit := vector3{X := 5888.0, Y := -29350.0, Z := 0.0}, WalkIn := true},
-    rift_route_def{Entry := vector3{X := 24832.0, Y := -29952.0, Z := 0.0}, Exit := vector3{X := 5888.0, Y := -29350.0, Z := 0.0}, WalkIn := true}
+    rift_route_def{Entry := vector3{X := 24832.0, Y := -29952.0, Z := 0.0}, Exit := vector3{X := 5888.0, Y := -29350.0, Z := 0.0}, WalkIn := true},
+    rift_route_def{Entry := vector3{X := 43896.0, Y := -59648.0, Z := 0.0}, Exit := vector3{X := -256.0, Y := -59648.0, Z := 15.0}, WalkIn := true},
+    rift_route_def{Entry := vector3{X := 41216.0, Y := -47872.0, Z := 1920.0}, Exit := vector3{X := 41066.0, Y := -52480.0, Z := 0.0}, WalkIn := true, Box := vector3{X := 1280.0, Y := 4864.0, Z := 584.0}}
 }

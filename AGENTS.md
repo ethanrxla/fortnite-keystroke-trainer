@@ -9,7 +9,11 @@ A UEFN island that teaches Fortnite building and editing at a slow tempo first
   UEFN sessions; bans are account and hardware level. Drive tests from Verse (`AutoTest.verse`).
 - Teaching text (principle, why, tip, reflect) lives only in `shared/drills.json`; the map, companion coach and voice renderer all read it. Changing wording means re-running `tools/gen_drills.py` and `tools/gen_voice.py`. AI never runs inside the map (published islands have no network); it is a companion-app and offline-authoring tool. Never commit API keys.
 - Verse cannot see keystrokes. The map grades outcomes (position, volumes, damage); the companion
-  app in `companion/` grades keys. Don't try to add key detection to Verse.
+  app in `companion/` grades keys. Don't try to add key detection to Verse. The map CAN hear Epic's prebuilt
+  actions (jump, crouch, sprint via fort_character events; reload, fire, aim via `/Verse.org/Input` player_input and
+  `/Fortnite.com/Input/Character`; creators cannot define their own). `InputHud.verse` (kt_input_hud_device,
+  `tools/build_input_hud.py`, label `KT22_InputHud`) uses them for the in-map rank / accuracy / off-plan panel and
+  join calibration; DrillDevice reports drill start, every graded step and set end to it (`KTHudDrill*`).
 - Build pieces and edits are data: `shared/edits.json` -> `python tools/gen_edits.py` (EditCatalog.verse and
   EditPatterns.verse); piece classes in `companion/keystroke_lab/build_pieces.py` and `BuildPieces.verse`
   (see `design/build-pieces-2026-10-10.md`). The aim map (which edit the guide shows for where the crosshair is) is
@@ -42,6 +46,15 @@ A UEFN island that teaches Fortnite building and editing at a slow tempo first
 - Another agent also edits this folder and the open level. Do not run a full `tools/build_map.py` rebuild without
   checking what changed first (it removes every `KT_*` actor). Prefer the additive tools (`KT3_*` labels) and the
   `--pressure-only`, `--melee-only` and `--enclose-only` flags.
+- Newer additive builders own one prefix each: `KT14_Rebox_` (`build_rebox_arena.py`), `KT15_Skills_` (`build_skills_test.py`),
+  `KT16_Op_` (`build_operation.py`, the Operation level; its room table is generated into `OperationLayout.verse`, never
+  hand-edit it). The Operation owns Fight Lab room A's west wall (`KT16_Op_LabWall_*`).
+  `KT21_Marker_` (`build_range_markers.py`): the range distance markers as floating text; rerun it after `build_gun_range.py`
+  or `build_skills_test.py`.
+  `KT23_Theme_` (`build_theme_rooms.py`, art from `render_theme_art.py`): heroes wall and cross in the armory, the build wing's
+  67s; `KT23_AimRail_` is a different builder, never delete all `KT23_*`.
+  `KT21_Team_` (`build_team_arena.py`): reserved team-arena greybox, separate from
+  `KT21_Marker_`. Never delete all `KT21_*` actors to rebuild either one.
 - Teleporters that share a group are picked between. The Greybox template used A-D and Z (deleted); ours use E-U
   and H-K. Never reuse a group.
 - `shared/drills.json` `steps` is the reference order; `accepts` lists other orders that count. The sources for

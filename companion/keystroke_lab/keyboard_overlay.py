@@ -14,7 +14,7 @@ import time
 from .analysis import Analyzer
 from . import bind_server, drills
 from .bind_profiles import BindProfile, ProfileStore
-from .habits import Habits
+from .input_gate import InputGate
 from .jev_client import JevClient
 from .input_analysis import KeystrokeAnalyzer, InputEvent
 from .overlay_stats import LiveStats, StatsWorker, overlay_layout
@@ -367,16 +367,16 @@ def run(binds, drill=None, log_base=None, use_ai=True, serve_port=True, binds_pa
     except OSError:
         edit_reference = None
     store = ProfileStore(binds_path or drills.BINDS_FILE, confirm_sprint=binds_path is None)
-    tracker = KeyTracker(store.snapshot, None, habits=Habits(path=store.path.with_suffix(".habits.json")))
+    tracker = KeyTracker(store.snapshot, None, habits=None)
     sequences=([drill.steps]+drill.accepts) if drill else []
     local_analysis=[KeystrokeAnalyzer(store.snapshot,sequences)]
     live_stats=LiveStats()
     stats_worker=StatsWorker(os.environ["KT_COACH_SESSION"],lambda:store.snapshot)
-    edit_state=[{}];capture_paused=[False];text_entry=[False];last_sequence=[{"graded":False}]
+    edit_state=[{}];gate=InputGate();last_sequence=[{"graded":False}]
     log = SessionLog(log_base, drill) if log_base else None
     recent_events = []
     habits = tracker.habits
-    server = bind_server.start(lambda: store.snapshot.primary(), lambda: habits.habits(), recent_events, binds_file=store.path, store=store) if serve_port else None
+    server = bind_server.start(lambda: store.snapshot.primary(), lambda: habits.habits() if habits else {}, recent_events, binds_file=store.path, store=store) if serve_port else None
     analyzer = Analyzer(tracker, jev=None if use_ai else JevClient(key=""), llm=None if use_ai else (lambda *a: ""))
     root = tk.Tk()
     root.overrideredirect(True)
@@ -418,9 +418,6 @@ def run(binds, drill=None, log_base=None, use_ai=True, serve_port=True, binds_pa
         ids["tip"] = canvas.create_text(4, 4 + u * 1.5, anchor="nw", width=width - 8, fill="#9fd6ff",
                                         font=("Segoe UI", max(8, int(u * 0.46))), text="")
         state["unit"] = u
-        canvas.itemconfig(ids["status"],state="hidden");canvas.itemconfig(ids["tip"],state="hidden")
-        ids["stats"]=[canvas.create_text(4,4+i*u*.6,anchor="nw",width=width-8,fill="#9fd6ff",
-                       font=("Segoe UI",max(7,int(u*.27))),text="") for i in range(5)]
         state["size"] = (width, height)
 
     def flash(key, color):
@@ -430,18 +427,10 @@ def run(binds, drill=None, log_base=None, use_ai=True, serve_port=True, binds_pa
 
     def handle(name, now):
         key=normal(name)
-        if key=="f8":
-            capture_paused[0]=not capture_paused[0]
-            if not capture_paused[0]:text_entry[0]=False
-            tracker.focus_lost();local_analysis[0].accept(InputEvent("","focus_lost",now));return
-        if key=="enter":text_entry[0]=True
-        if key=="esc":text_entry[0]=False
         title = foreground_title()
-        if not in_game(title) or "unreal editor" in title.lower():
-            tracker.focus_lost()
-            return
-        if not recording_allowed():
-            tracker.focus_lost();return
+        focused=in_game(title) and "unreal editor" not in title.lower()
+        if not gate.press(key,focused):
+            tracker.focus_lost();local_analysis[0].accept(InputEvent("","focus_lost",now));return
         evidence=local_analysis[0].accept(InputEvent(normal(name),"down",now))
         verdict, key = tracker.press(name, now)
         if verdict == "ignore":
@@ -477,22 +466,21 @@ def run(binds, drill=None, log_base=None, use_ai=True, serve_port=True, binds_pa
 
     feedback_at=[-float('inf')]
     def recording_allowed():
-        data=edit_state[0]
-        return (not capture_paused[0] and not text_entry[0] and
-                bool(game_rect()) and data.get('session_id')==os.environ["KT_COACH_SESSION"] and
-                data.get('profile_id')==store.snapshot.profile_id and data.get('revision')==store.snapshot.revision and
-                data.get("mode") in ("editing","building","editable") and
-                0<=time.monotonic()-data.get("captured_at",-100)<.6)
+        return gate.allowed(bool(game_rect()))
+    last_control=[None]
     def refresh_edit_feedback():
+        if not game_rect():gate.focus_lost()
         now=time.monotonic()
         if now-feedback_at[0]<.1:return
         feedback_at[0]=now
         try:
             control=pathlib.Path(__file__).resolve().parents[1]/'capture-control.json'
             temporary=control.with_suffix('.tmp')
-            temporary.write_text(json.dumps({'session_id':os.environ["KT_COACH_SESSION"],'utc':time.time(),
-                                            'paused':capture_paused[0] or text_entry[0]}))
-            temporary.replace(control)
+            payload={'session_id':os.environ["KT_COACH_SESSION"], 'paused':gate.paused or gate.text_entry}
+            if payload != last_control[0]:
+                temporary.write_text(json.dumps(payload))
+                temporary.replace(control)
+                last_control[0]=payload
         except OSError:pass
         try:
             data=json.loads((pathlib.Path(__file__).resolve().parents[1]/'edit-state.json').read_text())
@@ -505,6 +493,7 @@ def run(binds, drill=None, log_base=None, use_ai=True, serve_port=True, binds_pa
             canvas.itemconfig(ids['tip'],text=text+' | game result unverified')
         except (OSError,ValueError,TypeError):pass
 
+    now_stats=[-float("inf")]
     def poll_once():
         try:
             while True:
@@ -513,10 +502,11 @@ def run(binds, drill=None, log_base=None, use_ai=True, serve_port=True, binds_pa
                     handle(*payload)
                 elif kind == "release":
                     name,at=payload
+                    gate.release(normal(name))
                     if not game_rect():
                         tracker.focus_lost();local_analysis[0].accept(InputEvent("","focus_lost",at));continue
                     tracker.release(name)
-                    local_analysis[0].accept(InputEvent(normal(name),"up",at))
+                    if recording_allowed():local_analysis[0].accept(InputEvent(normal(name),"up",at))
                     if log and recording_allowed() and normal(name) in tracker.bound:
                         log.write("release",normal(name),True,at=at,profile=store.snapshot,
                                   session_id=os.environ["KT_COACH_SESSION"],edge="up")
@@ -533,10 +523,16 @@ def run(binds, drill=None, log_base=None, use_ai=True, serve_port=True, binds_pa
             if local_analysis[0].sequence.observed:
                 last_sequence[0]=local_analysis[0].sequence.finish()
                 local_analysis[0].sequence.reset()
+        # The independent stats panel owns rendering.
         lines=live_stats.lines(edit_state[0],last_sequence[0],stats_worker.snapshot)
-        for i,(item,text) in enumerate(zip(ids.get("stats",()),lines)):
-            if i==0:text=("REC · " if recording_allowed() else "PAUSED · ") + text + " | F8"
-            canvas.itemconfig(item,text=text)
+        if now_stats[0] + 2 <= time.monotonic():
+            try:
+                path=pathlib.Path(__file__).resolve().parents[1]/'live-stats.json'
+                temp=path.with_suffix('.tmp')
+                temp.write_text(json.dumps({'utc':time.time(), 'lines':lines}))
+                temp.replace(path)
+                now_stats[0]=time.monotonic()
+            except OSError:pass
 
     calibration_button = tk.Toplevel(root)
     calibration_button.overrideredirect(True)
@@ -634,7 +630,7 @@ def run(binds, drill=None, log_base=None, use_ai=True, serve_port=True, binds_pa
             edit_reference.terminate()
         for listener in listeners:
             listener.stop()
-        habits.save()
+        if habits:habits.save()
         if server:
             server.shutdown()
             server.server_close()

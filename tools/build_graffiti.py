@@ -27,13 +27,13 @@ MATERIALS = bm.MODULE + "/KT_Materials"
 PLANE = "/Engine/BasicShapes/Plane.Plane"
 SETS = ("/Hera/Sets/PicketFence/Textures/Graffiti/", "/Hermes/Sets/AlleyTown/Textures/Murals/",
         "/Hera/Foliage/Trees/Beach_Palm/Textures/Graffiti/")   # SunStroke murals fail UEFN validation (disallowed)
-WALLS = ("KT_Wall_",)      # the main area: hub and wing enclosure walls (player 2026-10-11)
+WALLS = ("KT_Wall_", "KT8_Range_Wall_")      # hub, wings, lane rooms (player 2026-10-11) and the gun range
 WEB = bm.ROOT / "assets" / "graffiti" / "openclipart"     # CC0 pieces, imported as textures (SOURCES.md)
 TEX_FOLDER = bm.MODULE + "/KT_Graffiti"
 TT = "editor_toolset.toolsets.texture.TextureTools"
 # Never over the armory gun wall: its face on the back wall (y -66560, facing +Y), x span with a margin.
 KEEP_CLEAR = [{"normal": (0, 1), "y": -66560.0, "x0": -600.0, "x1": 1100.0}]
-SPACING = 1800.0           # one piece per this many cm of wall face, on average
+SPACING = 900.0           # one piece per this many cm of wall face, on average (player: "repeat them throughout the walls")
 SEED = 20261011
 # Textures UEFN validation rejects (disallowed references), found on push 2026-10-11.
 DISALLOWED = ("T_graffiti_003", "T_Graffiti_Fish_C")
@@ -132,8 +132,24 @@ def blocked(actors, x, y, z, half, normal):
 
 
 def yaw_for(normal):
-    # A plane rolled 90 faces -Y at yaw 0; rotating by yaw turns that normal.
-    return {(0, -1): 0.0, (1, 0): 90.0, (0, 1): 180.0, (-1, 0): 270.0}[normal]
+    # A plane rolled 90 shows its front (unmirrored) towards +Y at yaw 0; rotating by yaw turns that normal. The old
+    # table was 180 out: the two-sided material hid it, but every piece read mirrored (player 2026-10-11, RXLA backwards).
+    return {(0, 1): 0.0, (-1, 0): 90.0, (0, -1): 180.0, (1, 0): 270.0}[normal]
+
+
+CEILINGS = ("KT_Ceil_",)
+CEIL_SPACING = 1400.0      # one piece per this many cm along each side of a ceiling's area, on average
+
+
+def ceilings(actors):
+    """Ceiling slabs -> (x0, x1, y0, y1, underside z)."""
+    out = []
+    for a in actors:
+        if a["label"].startswith(CEILINGS):
+            mn, mx = a["bounds"]["min"], a["bounds"]["max"]
+            if mx["x"] - mn["x"] > 1000 and mx["y"] - mn["y"] > 1000:
+                out.append((mn["x"], mx["x"], mn["y"], mx["y"], mn["z"]))
+    return out
 
 
 def main():
@@ -179,12 +195,27 @@ def main():
                 if blocked(actors, x, y, z, half_w, normal):
                     continue
                 plan.append((tex, x, y, z, size, normal))
+        # Ceilings (player 2026-10-11: "place it on the ceilings and walls"): big pieces facing down.
+        for (x0, x1, y0, y1, zc) in ceilings(actors):
+            count = int((x1 - x0) * (y1 - y0) / (CEIL_SPACING * CEIL_SPACING) + rng.random())
+            for _ in range(count):
+                size = rng.choice((500.0, 650.0, 800.0))
+                if x1 - x0 < size + 200 or y1 - y0 < size + 200:
+                    continue
+                x, y = rng.uniform(x0 + size / 2 + 100, x1 - size / 2 - 100), rng.uniform(y0 + size / 2 + 100, y1 - size / 2 - 100)
+                if any(p[5] is None and abs(x - p[1]) < (size + p[4]) / 2 + 150 and abs(y - p[2]) < (size + p[4]) / 2 + 150 for p in plan):
+                    continue
+                plan.append((rng.choice(texs), x, y, zc - 3.0, size, None))
     print(f"{len(texs)} textures, {len(plan)} pieces")
     for n, (tex, x, y, z, size, normal) in enumerate(plan):
         a = aspect.get(tex, 1.0)
         w, h = (size, size / a) if a >= 1 else (size * a, size)
-        pose = bm.xform(x, y, z, w / 100.0, h / 100.0, 1.0, yaw=yaw_for(normal))
-        pose["rotation"]["roll"] = 90.0
+        if normal is None:       # ceiling: the plane's front faces up at roll 0, so roll 180 shows it from below
+            pose = bm.xform(x, y, z, w / 100.0, h / 100.0, 1.0, yaw=0.0)
+            pose["rotation"]["roll"] = 180.0
+        else:
+            pose = bm.xform(x, y, z, w / 100.0, h / 100.0, 1.0, yaw=yaw_for(normal))
+            pose["rotation"]["roll"] = 90.0
         label = f"{PREFIX}{n:03d}"
         ref = b.labelled(m.tool(bm.SCENE, "add_to_scene_from_asset", asset_path=PLANE, name=label, xform=pose)["refPath"], label)
         for c in m.tool(bm.ACTOR, "get_components", actor={"refPath": ref}) or []:

@@ -19,9 +19,8 @@ class OverlayLayout:
 def overlay_layout(rect, rows=7, scale=1.5, guide_height=240):
     left, top, right, bottom = rect
     height, width = bottom-top, right-left
-    unit = max(14, min(42, int(height/54*max(1., min(scale, 2.)))))
+    unit = max(22, min(42, int(height/54*max(1., min(scale, 2.)))))
     # Reserve guide + stats before scaling the keyboard, so small screens do not overlap.
-    unit = min(unit, max(10, int((height-guide_height-40)/(rows+7))))
     stats_height = 3*unit
     keyboard_y = bottom-int(height*.02)-(rows+4)*unit
     stats_y = keyboard_y+4

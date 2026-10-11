@@ -10,8 +10,12 @@ try:
  from keystroke_lab.edit_telemetry import TelemetryReader
 except ImportError:cv2=None
 @unittest.skipIf(cv2 is None,'optional local vision dependencies missing')
+@unittest.skipIf(cv2 is None,'optional local vision dependencies missing')
 class EditVisionTests(unittest.TestCase):
- def fixture(self,name):return cv2.imread(str(Path(__file__).parent/'fixtures/edit-vision'/(name+'.png')))
+ def fixture(self,name):
+  image=cv2.imread(str(Path(__file__).parent/'fixtures/edit-vision'/(name+'.png')))
+  if image is None:self.skipTest('Missing Git LFS fixture: '+name)
+  return image
  def test_visible_native_modes(self):
   for name,expected in [('close-edit','editing'),('full-edit','editing'),('front-edit','editing'),('blueprint','building'),('live-blueprint','building'),('editable-prompt','editable'),('pickaxe','unknown'),('weapon','unknown')]:
    with self.subTest(name=name):self.assertEqual(observe_mode(self.fixture(name))[0],expected)
@@ -70,6 +74,7 @@ class EditVisionTests(unittest.TestCase):
    self.assertIsNone(reader.poll())
 
 @unittest.skipIf(cv2 is None,'optional local vision dependencies missing')
+@unittest.skipIf(cv2 is None,'optional local vision dependencies missing')
 class EditWindowRuntimeTests(unittest.TestCase):
  def run_window(self,fixture):
   import time,types
@@ -115,6 +120,7 @@ class EditWindowRuntimeTests(unittest.TestCase):
   self.assertTrue(any(g.startswith('420x70') for g in geometries),geometries)
   self.assertTrue(any(g.startswith('1920x1080') for g in geometries),geometries)
 
+@unittest.skipIf(cv2 is None,'optional local vision dependencies missing')
 class PresenceTests(unittest.TestCase):
  def setUp(self):
   from keystroke_lab.edit_window import Presence
@@ -128,6 +134,7 @@ class PresenceTests(unittest.TestCase):
  def test_reset_hides_immediately(self):
   self.p.update(True,0.);self.p.reset();self.assertFalse(self.p.update(False,.1))
 
+@unittest.skipIf(cv2 is None,'optional local vision dependencies missing')
 class RouteLineTests(unittest.TestCase):
  quad=((100,100),(400,100),(400,400),(100,400))
  def test_grid_to_screen_corners_and_centre(self):
@@ -144,6 +151,7 @@ class RouteLineTests(unittest.TestCase):
   from keystroke_lab.edit_window import route_lines
   self.assertEqual(route_lines({},[4]),([],[]));self.assertEqual(route_lines(None,[4]),([],[]))
 
+@unittest.skipIf(cv2 is None,'optional local vision dependencies missing')
 @unittest.skipIf(cv2 is None,'optional local vision dependencies missing')
 class GuideContinuityTests(unittest.TestCase):
  def test_slow_frames_and_one_missed_mode_do_not_restart_the_lesson(self):
@@ -212,6 +220,7 @@ class GuideContinuityTests(unittest.TestCase):
    finally:pipe.advisor.close()
 
 
+@unittest.skipIf(cv2 is None,'optional local vision dependencies missing')
 class CombinedGuideLayerTests(unittest.TestCase):
  def test_boxes_and_route_remain_independent_and_visible(self):
   from keystroke_lab.guide_layers import TraceGuideLayer,RegionGuideLayer
@@ -229,6 +238,7 @@ class CombinedGuideLayerTests(unittest.TestCase):
   self.assertEqual(len(visual.path),3)
   self.assertGreater(sum(__import__('math').dist(a,b) for a,b in zip(visual.path,visual.path[1:])),.4)
 
+@unittest.skipIf(cv2 is None,'optional local vision dependencies missing')
 @unittest.skipIf(cv2 is None,'optional local vision dependencies missing')
 class RedGridTrackingTests(unittest.TestCase):
  def test_fast_detector_acquires_red_edit_grid(self):
@@ -249,6 +259,7 @@ class RedGridTrackingTests(unittest.TestCase):
   self.assertFalse(EditAnalyzer().finish([6,7,3])['result_confirmed'])
 
 
+@unittest.skipIf(cv2 is None,'optional local vision dependencies missing')
 class DisplayLatchTests(unittest.TestCase):
  def snapshot(self):return {'mode':'editing','captured_at':0.,'projected':True,'reference_ids':['corner_upper_right'],'display_edit':{'id':'corner_upper_right'},'profile_id':'a','revision':1}
  def test_at_least_one_second_through_missed_frames(self):
@@ -270,6 +281,7 @@ class DisplayLatchTests(unittest.TestCase):
   self.assertIsNone(latch.update(dict(data,negative_mode='weapon'),.1))
 
 
+@unittest.skipIf(cv2 is None,'optional local vision dependencies missing')
 @unittest.skipIf(cv2 is None,'optional local vision dependencies missing')
 class CornerGuideRegressionTests(unittest.TestCase):
  """The guide the player asked for (IMG_9081): pointing at a wall corner shows that corner edit, three green tiles and

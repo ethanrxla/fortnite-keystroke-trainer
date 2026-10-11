@@ -90,7 +90,7 @@ def blend(policy, samples, piece, alpha=ALPHA):
     counts = defaultdict(lambda: [0.0] * len(ids))
     used = 0
     for s in samples:
-        if s["piece"] != piece or s["outcome"] not in ("completed", "result_verified") or s["edit"] not in ids:
+        if s["piece"] != piece or s["outcome"] != "result_verified" or s["edit"] not in ids:
             continue
         key = situation_key(s["aim"], s["side"], s["far"], cells(piece))
         counts[key][ids.index(s["edit"])] += 0.5
@@ -123,7 +123,7 @@ def evaluate(samples, ranker, piece=None, partition_name=None):
             bucket = followed["followed" if s["followed"] else "ignored"]
             bucket[0] += 1
             bucket[1] += s["outcome"] == "result_verified"
-        if s["outcome"] not in ("completed", "result_verified") or not s["edit"]:
+        if s["outcome"] != "result_verified" or not s["edit"]:
             continue
         if s.get("session_id"):sessions.add(s["session_id"])
         reviewed += bool(s.get("reviewed"))

@@ -73,7 +73,7 @@ def main():
  for k,v in values.items():m.tool(b.DEVICE,'SetDeviceProperty',device=ref,propertyName=k,value=json.dumps(v))
  assert decode(m.tool(b.DEVICE,'GetDeviceProperties',device=ref,propertyNames=list(values)))==values
  tag(controller,'kt10_arena_test_tag')
- status=u.f['KT3_Upgrade_Arena_Status'];m.tool(b.ACTOR,'set_actor_transform',actor={'refPath':status},xform=b.xform(ax-700,ay,320,yaw=90));u.paths.append(status)
+ status=u.f['KT3_Upgrade_Arena_Status'];m.tool(b.ACTOR,'set_actor_transform',actor={'refPath':status},xform=b.xform(ax-700,ay,380,yaw=90));u.paths.append(status)
  device('KT10_Arena_Score',b.BILLBOARD,b.xform(-35000,ay,450,2,2,2,yaw=0),{'text':'SESSION SCORE\nWins and deaths appear after your first round','textSize':18,'showBorder':False},'kt10_arena_score_tag')
  zone=device('KT10_Arena_NoBuild','/CRD_VolumetricRegion/SetupAssets/PID_Device_Mutator.PID_Device_Mutator',b.xform(-30720,ay,0),{'zoneWidth':20.0,'zoneDepth':12.0,'zoneHeight':8.0,'bAllowBuilding':False,'bAllowWeaponFire':True,'bAffectsPlayers':True,'bAffectsGuards':False,'zoneVisibleDuringGame':False,'enabledOnPhase':'None'},'kt10_arena_nobuild_tag')
  grant={'onGrantAction':'Keep All','grant':'All Items','bEquipGrantedItem':False,'dropItemsAtPlayerLocation':'Never','grantCondition':'Only If Space'}

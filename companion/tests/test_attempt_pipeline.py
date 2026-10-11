@@ -46,7 +46,7 @@ class AttemptPipelineTests(unittest.TestCase):
         self.store.add_attempt(good)                                                # re-insert is harmless
         self.assertEqual(self.store.rows("SELECT COUNT(*) FROM edit_attempts")[0][0], 1)
 
-    def test_confirm_press_is_joined_and_raises_confidence(self):
+    def test_legacy_confirm_join_does_not_upgrade_confidence(self):
         r = record()
         self.write(r)
         collector.ingest_attempts(self.store, self.folder)
@@ -56,7 +56,7 @@ class AttemptPipelineTests(unittest.TestCase):
         self.assertEqual(collector.enrich_attempts(self.store, BINDS, now=500.0), 1)
         out = self.store.attempt(r["attempt_id"])
         self.assertEqual(out["t_confirm"], 100.9)
-        self.assertGreater(out["auto_label_confidence"], 0.8)
+        self.assertEqual(out["auto_label_confidence"], 0.8)
         self.assertEqual(collector.enrich_attempts(self.store, BINDS, now=500.0), 0)   # done once
 
     def test_waits_for_key_data(self):

@@ -12,7 +12,7 @@ ROOT = Path(__file__).resolve().parents[2]
 WALL = json.loads((ROOT / "shared/edit-policy.json").read_text(encoding="utf-8"))
 
 
-def sample(edit, aim=(2.6, 2.6), side=2, far=False, outcome="completed", followed=None):
+def sample(edit, aim=(2.6, 2.6), side=2, far=False, outcome="result_verified", followed=None):
     return {"piece": "wall", "aim": aim, "side": side, "far": far, "edit": edit, "outcome": outcome,
             "followed": followed, "suggested": None, "reviewed": True}
 
@@ -53,7 +53,7 @@ class EvaluateTests(unittest.TestCase):
         m = pl.evaluate(samples, r, "wall")
         self.assertEqual(m["examples"], 6)
         self.assertGreaterEqual(m["top1"], 0.6)
-        self.assertEqual(m["completion_when_followed"], 0.0)  # legacy completion is not verified
+        self.assertEqual(m["completion_when_followed"], 0.5)
         self.assertIsNotNone(m["ece"])
 
     def test_blend_wins_when_players_disagree_with_the_prior(self):

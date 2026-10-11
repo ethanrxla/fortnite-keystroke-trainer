@@ -10,6 +10,8 @@ create function keystroke_trainer.guard_attempt_revision()
 returns trigger language plpgsql set search_path = '' as $$
 begin
   if old.player_id <> new.player_id then raise exception 'attempt owner cannot change'; end if;
+  -- Permit the first explicitly revisioned upgrade of an unrevisioned legacy row.
+  if not (old.record ? 'record_revision') and new.record ? 'record_revision' then return new; end if;
   if coalesce((new.record->>'record_revision')::bigint, 1) <= coalesce((old.record->>'record_revision')::bigint, 1)
     then return old; end if;
   return new;

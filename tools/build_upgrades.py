@@ -68,12 +68,10 @@ class Upgrade:
    self.m.tool(MT,'recompile',material_or_function=mat)
   return path
  def logo(self,name,x,y,z,size,normal,material):
-  # Normal axis sets a physical panel; source mark remains square and unchanged.
+  # The mark alone on the wall, no frame behind it (player 2026-10-11: keep the image, remove the box).
   if normal=='x':
-   self.block(name+'_Frame',x+8,y,z-size/2,16,size+32,size+32)
    pose=bm.xform(x,y,z,size/100,size/100,1,yaw=90);pose['rotation']['roll']=90
   else:
-   self.block(name+'_Frame',x,y+8,z-size/2,size+32,16,size+32)
    pose=bm.xform(x,y,z,size/100,size/100,1);pose['rotation']['roll']=90
   label=PFX+name
   if label in self.f:p=self.f[label];self.m.tool(bm.ACTOR,'set_actor_transform',actor={'refPath':p},xform=pose)

@@ -3,17 +3,22 @@ import sys
 from pathlib import Path
 import unittest
 sys.path.insert(0,str(Path(__file__).resolve().parents[1]/'.vision_packages'))
-import cv2
-import numpy as np
-from keystroke_lab.flat_grid import flat_grid
-from keystroke_lab.edit_observation import _segments,downscale
+try:
+    import cv2
+    import numpy as np
+except ImportError:
+    cv2 = None
+if cv2 is not None:
+    from keystroke_lab.flat_grid import flat_grid
+    from keystroke_lab.edit_observation import _segments,downscale
 
 FIXTURES=Path(__file__).parent/'fixtures/edit-vision'
 
+@unittest.skipIf(cv2 is None, "Install optional vision dependencies; see companion/README.md")
 class FlatGridTests(unittest.TestCase):
     def read(self,name):
         im=cv2.imread(str(FIXTURES/name))
-        self.assertIsNotNone(im,'Missing recorded fixture: '+name)
+        if im is None:self.skipTest('Missing Git LFS fixture: '+name)
         return downscale(im,640/im.shape[1])
 
     def test_oblique_floor_acquires_four_regions(self):

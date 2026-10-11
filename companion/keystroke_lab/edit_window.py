@@ -13,6 +13,7 @@ except ImportError:
     tk = None  # Geometry and capture regressions run without a desktop.
 import cv2,numpy as np
 from .keyboard_overlay import game_rect,make_click_through,exclude_from_capture,single_instance,ROWS,BOTTOM_MARGIN,LEFT_MARGIN
+from .overlay_layout import edit_guide_lift
 from .bind_profiles import ProfileStore
 from .drills import BINDS_FILE
 from .edit_observation import observe_mode,EditGridObserver,cue_scores
@@ -332,6 +333,8 @@ def run(profile_path=None,capture_edits=False,piece_hint=None):
     if not single_instance('Local\\KeystrokeLabEditReference'):return
     import mss
     cv2.setNumThreads(1)
+    try: display_scale=float(json.loads((BASE/'overlay-settings.json').read_text()).get('scale',1.5))
+    except (OSError,ValueError,TypeError): display_scale=1.5
     store=ProfileStore(profile_path or BINDS_FILE);pipeline=ContextPipeline(store,async_detect=True)
     # Explicit validation context, not automatic piece certification.
     pipeline.observer.piece_hint=piece_hint
@@ -350,7 +353,7 @@ def run(profile_path=None,capture_edits=False,piece_hint=None):
     def paused():
         try:
             control=json.loads(pause_path.read_text())
-            return control.get('session_id')==session and time.time()-control.get('utc',0)<2 and control.get('paused',False)
+            return control.get('session_id')==session and control.get('paused',False)
         except (OSError,ValueError,TypeError):return False
     def record(result,utc):
         try:recorder.feed(result,utc)
@@ -536,8 +539,10 @@ def run(profile_path=None,capture_edits=False,piece_hint=None):
             except (OSError,ValueError,TypeError):scale=1.5
             position=overlay_layout(rect,rows=len(ROWS),scale=scale)
             panel_height=240 if data['reference_ids'] else 70
-            panel_x=position.x
-            panel_y=position.guide_y
+            panel_x=l+int((r-l)*LEFT_MARGIN)
+            u=max(22,min(42,int((b-t)/54*1.5)))
+            lift=edit_guide_lift(b-t,scale,len(ROWS)+4)
+            panel_y=max(t+8,b-int((b-t)*BOTTOM_MARGIN)-(len(ROWS)+4)*u-panel_height-8-lift)
             root.geometry(f"420x{panel_height}+{panel_x}+{panel_y}")
             if not panel_shown:root.deiconify();panel_shown=True
             if data['captured_at']!=lines_key:

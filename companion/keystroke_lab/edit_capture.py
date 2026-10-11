@@ -20,7 +20,8 @@ class EditCapture:
 
     def sample(self, frame, result, attempt_id):
         if not self.enabled or not attempt_id or result.get("mode") != "editing" or not result.get("projected"):return
-        uuid.UUID(attempt_id)
+        try:uuid.UUID(attempt_id)
+        except (ValueError, TypeError, AttributeError):return
         quad = (result.get("observation") or {}).get("wall_quad") or ()
         if len(quad) != 4:return
         if attempt_id not in self.counts and len(self.counts) >= self.max_attempts:return

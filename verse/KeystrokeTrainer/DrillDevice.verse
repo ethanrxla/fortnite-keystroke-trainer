@@ -257,6 +257,7 @@ keystroke_drill_device := class(creative_device):
         EditPanel := BuildEditPanel(EditGuideOrDefault(Drill))
         HasPressure:logic = logic{(for (C : Drill.Checks, C.Kind = "exposure") { C }).Length > 0}
         KTLog("set_start", Drill.Id, Apm, 0, 0, rep_result.Ok, "verified={YesNo(ScoringEnabled)}|saved_tempo={SavedApm}")
+        KTHudDrillStart(Player, "{Drill.Code} {Drill.Name}", Drill.Steps)
         Principle := if (Found := FindPrinciple[Drill.Principle]) then Found else principle_def{}
         Cue.SetText(CueText("{Drill.Code}  {Drill.Name}\n{Principle.Name}: {Principle.Rule}\nWhy: {Drill.Why}"))
         Seen := GetDrillProgress(Player, Drill.Id)
@@ -307,6 +308,7 @@ keystroke_drill_device := class(creative_device):
                     set Latencies = Latencies + array{LastLatency}
                 DzNote := if (Result = rep_result.Missing, LastDz > -99990.0, Dz := Round[LastDz]) then "|dz={Dz}" else ""
                 KTLog("step", Drill.Id, Apm, Rep, StepIndex, Result, "action={Action}{StepLatency}{DzNote}")
+                KTHudDrillStep(Player, Action, Result)
                 if (StepIndex = LastCheck, Result = rep_result.Ok):
                     set RepDone = true
                 else if (not (WaitsForOutcome? and Result = rep_result.Ok)):
@@ -335,6 +337,7 @@ keystroke_drill_device := class(creative_device):
             if (Active := Subscription?):
                 Active.Cancel()
             KTLog("set_end", Drill.Id, Apm, Reps, 0, rep_result.Unchecked, "abandoned=1|observed={ObservedReps}")
+            KTHudDrillEnd(Player)
             if (UI := GetPlayerUI[Player]):
                 UI.RemoveWidget(Canvas)
             set ActivePlayer = false
@@ -351,6 +354,7 @@ keystroke_drill_device := class(creative_device):
         Band := DecideBand(Accuracy, AverageShare)
         ResultBand := if (Eligible?) then BandName(Band) else "practice"
         SetResult := if (Eligible?) then rep_result.Ok else rep_result.Unchecked
+        KTHudDrillEnd(Player)
         KTLog("set_end", Drill.Id, Apm, Reps, 0, SetResult,
             "clean={CleanReps}|accuracy={Accuracy}|decision={DecisionName(Decision)}|hits={HitsTaken}|lat_ms={AverageMs}|band={ResultBand}|verified={YesNo(Eligible)}|observed={ObservedReps}|unchecked={UncheckedSteps}")
         MovePlayer(Player, if (Back := ReturnPoint?) then Back else PadPosition())
@@ -487,15 +491,18 @@ keystroke_drill_device := class(creative_device):
             Up := Check.Cell[2]
             CenterX := Base.X + Forward * CellSize
             CenterY := Base.Y + Right * CellSize
-            Abs(Position.X - CenterX) <= CellSize / 2.0
             Abs(Position.Y - CenterY) <= CellSize / 2.0
             LevelZ := Base.Z + Up * LevelHeight
             if (Check.Kind = "stand_level"):
                 # Standing on a floor whose top is at this level. Gap lanes leave nothing else to
                 # stand on at this height, so only a placed floor can hold the player here.
+                Abs(Position.X - CenterX) <= CellSize / 2.0
                 Abs((Position.Z - CapsuleCenterHeight) - LevelZ) <= StandTolerance
             else:
-                # climb: at least half a level above the cell's base means a ramp carried them up.
+                # climb: at least half a level above the cell's base means a ramp carried them up. In this cell or
+                # any further forward: the top of the last ramp puts you on the cell's far edge or past it (player
+                # 2026-10-11: at the top of ramp rush the rep never finished).
+                Position.X >= CenterX - CellSize / 2.0
                 (Position.Z - CapsuleCenterHeight) >= LevelZ + LevelHeight / 2.0
 
 # The whole sequence on one line with the current step in brackets, e.g. floor  >  [wall]  >  wall  >  cone.

@@ -42,7 +42,10 @@ ROW_Z0 = 150.0             # centre of the bottom (common) row
 # The grid fills the back wall left to right (player 2026-10-11), so every locker and crate on that wall moves to the
 # entrance side, against the north wall, facing into the room; the logo moves above the entrance.
 NORTH_Y = -63150.0
-MOVE = {"KT5_Armory_Lockers_SMG": -2850.0, "KT5_Armory_Lockers_SHOTGUN": -2450.0,
+# AR and EXPLOSIVES lockers, the last stack and two crates stood in front of the bottom row (player 2026-10-11).
+MOVE = {"KT5_Armory_Lockers_AR": -1250.0, "KT5_Armory_Lockers_EXPLOSIVES": -850.0, "KT5_Armory_Stack_4_a": 2550.0,
+        "KT5_Armory_Stack_4_b": 2550.0, "KT5_Armory_Crate_2": 2850.0, "KT5_Armory_Crate_3": 3100.0,
+        "KT5_Armory_Lockers_SMG": -2850.0, "KT5_Armory_Lockers_SHOTGUN": -2450.0,
         "KT5_Armory_Lockers_SNIPER": -2050.0, "KT5_Armory_Lockers_PISTOL": -1650.0,
         "KT5_Armory_Stack_0_a": 1350.0, "KT5_Armory_Stack_0_b": 1350.0, "KT5_Armory_Stack_1_a": 1650.0,
         "KT5_Armory_Stack_1_b": 1650.0, "KT5_Armory_Stack_2_a": 1950.0, "KT5_Armory_Stack_2_b": 1950.0,
@@ -50,6 +53,10 @@ MOVE = {"KT5_Armory_Lockers_SMG": -2850.0, "KT5_Armory_Lockers_SHOTGUN": -2450.0
 LOGO_Y, LOGO_Z = -62996.0, 1150.0
 # Glowing plates must not light the room: unlit emissive surfaces feed Lumen's indirect light, and 40 coloured plates
 # tinted the whole armory (player 2026-10-11: "did you change the color of the room?").
+# A target dummy in play stands about 550 cm per unit of Z scale and 125 cm per unit of Y (twice its editor height:
+# 0.82 poked 2 m above the top row). These fill most of a 220 cm tile and stay inside it.
+HIT_SCALE = (0.15, 1.6, 0.36)
+HIT_DROP = 100.0
 NO_BOUNCE = {"bAffectDynamicIndirectLighting": False, "bAffectDistanceFieldLighting": False}
 dec = lambda v: json.loads(v) if isinstance(v, str) else v
 
@@ -131,7 +138,7 @@ class Grid:
         now = dec(self.m.tool(bm.OBJ, "get_properties", instance=lst, properties=["itemListData"]))["itemListData"]
         return any((e.get("itemDefinition") or {}).get("refPath") == item for e in now)
 
-    def tile(self, tag, name, item, rgb_name, rgb, x, y, z, facing):
+    def tile(self, tag, name, item, rgb_name, rgb, x, y, z, facing, icon_override=None):
         """facing: 'S' = on the back wall facing +Y, 'E' = on the east wall facing -X."""
         yaw = 180.0 if facing == "S" else 270.0
         out = (0.0, 1.0) if facing == "S" else (-1.0, 0.0)          # unit vector into the room
@@ -139,10 +146,13 @@ class Grid:
         saved = []
         granter = self.b.device(GRANTER, tag + "_Granter", *at(-200.0), -300.0)
         ok = bool(item) and self.accepted(granter, item)
+        if not ok:          # player 2026-10-11: a gun that can't be granted gets no tile at all
+            self.m.tool(bm.SCENE, "remove_from_scene", actor={"refPath": granter})
+            return False, False
         px, py = at(PROUD)
         plate_mat = self.colour_material(f"M_KT_Rarity2_{rgb_name}", rgb) if ok else self.colour_material("M_KT_Rarity_None", (0.04, 0.05, 0.07))
         saved.append(self.plane(tag + "_Plate", px, py, z, TILE, yaw, plate_mat))
-        icon = self.icon_of(item) if ok else None
+        icon = (icon_override or self.icon_of(item)) if ok else None
         if icon:
             ix, iy = at(PROUD + 2.0)
             saved.append(self.plane(tag + "_Icon", ix, iy, z + 12.0, TILE * 0.78, yaw, self.icon_material(icon)))
@@ -156,10 +166,10 @@ class Grid:
         saved.append(label)
         if ok:
             dx, dy = at(20.0)
-            dummy = self.b.device(bm.DUMMY, tag + "_Hit", dx, dy, z - 70.0)
+            dummy = self.b.device(bm.DUMMY, tag + "_Hit", dx, dy, z - HIT_DROP)
             # Thin along the facing axis so it stays behind the plate; a dummy at yaw 0 faces +X.
             self.m.tool(bm.ACTOR, "set_actor_transform", actor={"refPath": dummy},
-                        xform=bm.xform(dx, dy, z - 70.0, 0.15, 0.6, 0.55, yaw=90.0 if facing == "S" else 180.0))
+                        xform=bm.xform(dx, dy, z - HIT_DROP, *HIT_SCALE, yaw=90.0 if facing == "S" else 180.0))
             self.b.props(dummy, {"infiniteHealth": True})
             for key, value in {"onGrantAction": "Keep All", "grant": "Current Item", "grantCondition": "Always",
                                "bEquipGrantedItem": True}.items():
@@ -193,11 +203,12 @@ def plan(spec, test=False):
     rar = {r["code"]: (k, r) for k, r in enumerate(spec["rarities"])}
     cols = []
     for w in spec["weapons"]:
-        cols.append([(r["code"], w.get("names", {}).get(r["code"], w["name"]), w["pattern"].format(r=r["code"])) for r in spec["rarities"]])
+        cols.append([(r["code"], w.get("names", {}).get(r["code"], w["name"]),
+                     w.get("paths", {}).get(r["code"]) or w["pattern"].format(r=r["code"]), None) for r in spec["rarities"]])
     blocks = [len(cols)]
     for group in ("items", "heals"):
         for it in spec.get(group, []):
-            cols.append([(it["rarity"], it["name"], it["item"])])
+            cols.append([(it["rarity"], it["name"], it["item"], it.get("icon"))])
         blocks.append(len(cols))
     width = (len(cols) - 1) * PITCH + (len(blocks) - 2) * BLOCK_GAP
     x0 = X_CENTER - width / 2
@@ -205,9 +216,9 @@ def plan(spec, test=False):
     for c, col in enumerate(cols):
         gaps = sum(1 for e in blocks[:-1] if c >= e)
         x = x0 + c * PITCH + gaps * BLOCK_GAP
-        for code, name, item in col:
+        for code, name, item, icon in col:
             k, r = rar[code]
-            tiles.append(dict(tag=f"{PREFIX}{c:02d}{k}", name=name, item=item, rgb_name=r["name"], rgb=r["colour"],
+            tiles.append(dict(tag=f"{PREFIX}{c:02d}{k}", name=name, item=item, icon=icon, rgb_name=r["name"], rgb=r["colour"],
                               x=x, y=WALL_Y, z=ROW_Z0 + k * ROW_PITCH, facing="S"))
     if test:
         tiles = tiles[:2] + tiles[-2:]
@@ -221,7 +232,7 @@ def tidy(g):
         if label in acts:
             t = g.m.tool(bm.ACTOR, "get_actor_transform", actor={"refPath": acts[label]})
             l = t["location"]
-            if l["y"] < -66000:                    # still on the back wall: move once
+            if l["y"] < -65900:                    # still on the back wall: move once
                 rot = dict(t["rotation"], yaw=(t["rotation"]["yaw"] + 180.0) % 360)
                 g.m.tool(bm.ACTOR, "set_actor_transform", actor={"refPath": acts[label]},
                          xform={"location": dict(l, x=nx, y=NORTH_Y), "rotation": rot, "scale": t["scale"]})
@@ -238,6 +249,32 @@ def tidy(g):
                 g.m.tool(bm.ACTOR, "set_actor_transform", actor={"refPath": acts[label]},
                          xform={"location": dict(l, y=ny, z=nz), "rotation": rot, "scale": t["scale"]})
                 g.m.tool(bm.SCENE, "save_actor", actor={"refPath": acts[label]})
+
+
+def prune(g, tiles):
+    """Player 2026-10-11: keep only guns that can be granted and show their picture. A tile without a granter (the item
+    does not exist or is not allowed) or without an icon is removed; every hit dummy gets the play-size scale."""
+    acts = {a["label"]: a["actorPath"] for a in g.m.tool(bm.SCENE, "find_actors", name=PREFIX, collision_channels=[]) or []}
+    removed = resized = 0
+    for t in tiles:
+        tag = t["tag"]
+        mine = {l: p for l, p in acts.items() if l.startswith(tag + "_")}
+        if not mine:
+            continue
+        if tag + "_Granter" not in mine or tag + "_Icon" not in mine:
+            for p in mine.values():
+                g.m.tool(bm.SCENE, "remove_from_scene", actor={"refPath": p})
+            removed += 1
+            print(f"  removed {tag} {t['name']} {t['rgb_name']}")
+            continue
+        if tag + "_Hit" in mine:
+            cur = g.m.tool(bm.ACTOR, "get_actor_transform", actor={"refPath": mine[tag + "_Hit"]})
+            l = cur["location"]
+            g.m.tool(bm.ACTOR, "set_actor_transform", actor={"refPath": mine[tag + "_Hit"]},
+                     xform=bm.xform(l["x"], l["y"], t["z"] - HIT_DROP, *HIT_SCALE, yaw=cur["rotation"]["yaw"]))
+            g.m.tool(bm.SCENE, "save_actor", actor={"refPath": mine[tag + "_Hit"]})
+            resized += 1
+    print(f"pruned {removed} tiles, resized {resized} hit dummies")
 
 
 def fill_icons(g, tiles):
@@ -266,11 +303,31 @@ def main():
     ap.add_argument("--dry-run", action="store_true")
     ap.add_argument("--test", action="store_true")
     ap.add_argument("--fill-icons", action="store_true", help="only add missing icons to tiles already placed")
+    ap.add_argument("--prune", action="store_true", help="remove tiles with no item or no image; resize hit dummies")
+    ap.add_argument("--tiles", help="comma-separated tile tags (e.g. KT9_ArmoryWall_000) to rebuild alone")
     args = ap.parse_args()
     spec = json.loads(SRC.read_text(encoding="utf-8"))
     tiles = plan(spec, args.test)
     if args.fill_icons:
         fill_icons(Grid(), tiles)
+        return
+    if args.prune:
+        g = Grid()
+        prune(g, tiles)
+        tidy(g)
+        return
+    if args.tiles:
+        want = set(args.tiles.split(","))
+        g = Grid()
+        for a in g.m.tool(bm.SCENE, "find_actors", name=PREFIX, collision_channels=[]) or []:
+            if any(a["label"].startswith(w + "_") for w in want):
+                g.m.tool(bm.SCENE, "remove_from_scene", actor={"refPath": a["actorPath"]})
+        for t in tiles:
+            if t["tag"] in want:
+                ok, icon = g.tile(t["tag"], t["name"], t["item"], t["rgb_name"], t["rgb"], t["x"], t["y"], t["z"], t["facing"], t.get("icon"))
+                print(f"  {t['tag']} {t['name']:14} {t['rgb_name']:9} {'item' if ok else 'DARK'} {'icon' if icon else 'no icon'}")
+        found = (dec(g.m.tool(AS, "find_assets", name="M_ArmoryIcon_")) or []) + (dec(g.m.tool(AS, "find_assets", name="M_KT_Rarity")) or [])
+        g.m.tool(AS, "save_assets", asset_paths=[p for p in found if "M_ArmoryIcon_" in p or "M_KT_Rarity" in p])
         return
     for t in tiles:
         print(f"{t['tag']:20} {t['name']:14} {t['rgb_name']:9} x={t['x']:7.0f} y={t['y']:7.0f} z={t['z']:5.0f} {t['facing']}")
@@ -285,7 +342,7 @@ def main():
     tidy(g)
     done = []
     for t in tiles:
-        ok, icon = g.tile(t["tag"], t["name"], t["item"], t["rgb_name"], t["rgb"], t["x"], t["y"], t["z"], t["facing"])
+        ok, icon = g.tile(t["tag"], t["name"], t["item"], t["rgb_name"], t["rgb"], t["x"], t["y"], t["z"], t["facing"], t.get("icon"))
         done.append((t["name"], t["rgb_name"], ok, icon))
         print(f"  {t['name']:14} {t['rgb_name']:9} {'item' if ok else 'DARK'} {'icon' if icon else ('no icon' if ok else '')}")
     found = dec(g.m.tool(AS, "find_assets", name="M_ArmoryIcon_")) or []

@@ -72,7 +72,7 @@ Retain the existing **9 × 9 T** hub (46.08 × 46.08 m) and four wings as the de
 | Practice library | Existing north/east/south wings | Secondary choices, signed by skill and icon rather than tier number alone. |
 | Aim | Existing northeast combat portal `[3,3]` | Keep only if its current practice state is clearly labeled. |
 | Encounter | Existing southeast portal `[-3,3]` | Two-player practice or configured pressure encounter; use an accurate name for present capability. |
-| Scenarios | Existing southwest portal `[-3,-3]` | Hide/disable until there is a playable scenario. A visible destination must do something useful. |
+| Scenarios | Existing southwest portal `[-3,-3]` | Hide/disable until there is a playable scenario. A visible destination must do something useful.  **2026-10-11:** now the Operation, the island's one game level (L1 zone edge, L2 compound breach, L3 towers); see `operation-level-design.md`. |
 | Equipment | Existing west wing | Optional loadout change; core lanes grant their needed equipment. |
 
 Keep a clear two-tile corridor toward Quick Start. A single modest board faces spawn with the activity promise and three destination names. Detailed coaching belongs at the lane and in the shared catalog; the hub is not a tutorial wall. Signage always combines a word, shape and color. Preserve station codes for navigation and logs without making the codes the main explanation.

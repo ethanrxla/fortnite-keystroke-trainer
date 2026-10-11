@@ -191,7 +191,7 @@ def enrich_attempts(store, binds, now=None):
         resets = [t for t, k in keys if k in reset]
         if confirms and rec.get("t_confirm") is None:
             rec["t_confirm"] = confirms[-1]
-            if rec["outcome"] == "completed":
+            if rec["outcome"] in ("selection_matched", "confirm_observed", "result_verified"):
                 rec["auto_label_confidence"] = round(min(0.97, rec["auto_label_confidence"] * 1.15), 3)
         if resets and rec.get("t_reset") is None:
             rec["t_reset"] = resets[-1]
@@ -210,7 +210,7 @@ def summary(store):
         "edits_pressed": q("SELECT COUNT(*) FROM attempts WHERE edit_ts IS NOT NULL"),
         "edits_confirmed": q("SELECT COUNT(*) FROM attempts WHERE confirm_ts IS NOT NULL"),
         "edit_attempts": q("SELECT COUNT(*) FROM edit_attempts"),
-        "edit_attempts_completed": q("SELECT COUNT(*) FROM edit_attempts WHERE outcome='completed'"),
+        "edit_attempts_completed": q("SELECT COUNT(*) FROM edit_attempts WHERE outcome='result_verified'"),
         "edit_attempts_reviewed": q("SELECT COUNT(DISTINCT attempt_id) FROM labels"),
     }
 

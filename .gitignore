@@ -52,3 +52,7 @@ supabase/.temp-secrets.env
 supabase/.deploy.log
 companion/captures/
 assets/signs/
+assets/markers/
+
+companion/live-stats.json
+companion/live-stats.tmp
