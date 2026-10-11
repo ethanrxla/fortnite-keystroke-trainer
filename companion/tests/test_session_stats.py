@@ -48,6 +48,27 @@ class SessionStats(unittest.TestCase):
         self.assertEqual((m["steps"][0]["drill"], m["steps"][0]["missed"]), ("edit_half_wall", 1))
         self.assertEqual(ss.missed([], None, None), {"steps": [], "graded": 0, "missed": 0})
 
+    def test_missed_confirm_in_ordinary_play_without_any_drill(self):
+        store = Store(":memory:")
+        def add(n, tiles, confirmed, outcome="completed", reset=False, enriched=True):
+            rec = attempt(n, "window_center", outcome=outcome)
+            rec.update(final_tiles=tiles, selection_trace=[{"t": 1, "tiles": tiles}] if tiles else [],
+                       t_confirm=1001.0 + n if confirmed else None, t_reset=1001.0 + n if reset else None)
+            store.add_attempt(rec)
+            if enriched:
+                store.update_attempt(rec, enriched=True)
+        add(1, [4], True)
+        add(2, [4], False)                                  # selected, closed without confirming: a missed confirm
+        add(3, [1, 4], False, outcome="wrong_shape")        # likewise
+        add(4, [4], False, outcome="reset", reset=True)     # a deliberate reset: not a miss
+        add(5, [], False, outcome="abandoned")              # nothing selected: not counted
+        add(6, [4], False, enriched=False)                  # key presses not joined yet: not judged
+        events = [{"ts": 1000.0, "t": 0, "kind": "ok", "key": "w"}]
+        m = ss.missed(events, store, 1000.0, {"edit": "g", "edit_confirm": "mouse_left"})
+        self.assertEqual(m["steps"][0], {"drill": "edit", "step": "confirm", "missed": 2, "graded": 3})
+        # Edit and confirm on one key: a confirm press cannot be told apart, so no guess.
+        self.assertIsNone(ss.edit_misses(store, 1000.0, {"edit": "g", "edit_confirm": "G"}))
+
     def test_edit_accuracy_follows_labels_and_measures_travel_against_ideal(self):
         store = Store(":memory:")
         store.add_attempt(attempt(1, "window_center", followed=True, travel=1.2, ideal=1.0))
@@ -106,7 +127,7 @@ class PanelLayout(unittest.TestCase):
 
     def test_lines_show_empty_states_and_numbers(self):
         empty = ss.snapshot([], None)
-        self.assertEqual([l[1] for l in self.sp.lines(empty)], ["no graded drills yet", "none", "no edits yet"])
+        self.assertEqual([l[1] for l in self.sp.lines(empty)], ["none yet", "none", "no edits yet"])
         snap = {"missed": {"steps": [{"drill": "edit_peek", "step": 2, "missed": 4, "graded": 18}]},
                 "accidental": {"strays": 23, "doubles": 6, "top_keys": ["caps_lock", "x"],
                                "verdicts": {"slip": 11, "deliberate": 3, "noise": 0, "unsure": 9}},

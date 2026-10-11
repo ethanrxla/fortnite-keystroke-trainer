@@ -3,8 +3,9 @@
 Pure and read-only: it reads what already exists and changes nothing.
   * the newest sessions/keys-*.events.jsonl the keyboard overlay writes (presses, Jev `analysis` records, `ai_tip` lines,
     `missed` reps when a drill is selected);
-  * the player store (companion/data/player.db) the collector fills: the island's graded drill steps (`kt` table, KT|step
-    lines) and the recorded edit attempts (`edit_attempts`, with review labels).
+  * the player store (companion/data/player.db) the collector fills: the recorded edit attempts (`edit_attempts`, joined
+    with the overlay's confirm / reset presses, with review labels) and the island's graded drill steps (`kt` table).
+Missed keystrokes come from ordinary play first (an edit closed without the confirm key), drills only add to them.
 The session starts at the first wall-clock `ts` in that events file (the overlay starts a new file per launch).
 """
 
@@ -78,9 +79,32 @@ def accidental(events):
             "top_keys": [k for k, _ in (strays + doubles).most_common(3)], "verdicts": dict(verdicts)}
 
 
-def missed(events, store, since):
-    """Drill steps that went wrong this session: the island's graded KT|step results, plus reps the overlay closed with
-    steps unpressed (`missed` events, only when a drill is selected). Worst step first."""
+def edit_misses(store, since, binds=None):
+    """Missed keystrokes in ordinary play, no drill needed: edits where tiles were selected but the edit closed without
+    the confirm key (the collector joins each recorded edit with the overlay's confirm / reset presses; only joined
+    attempts count). With edit and confirm on one key (edit-on-release setups) a confirm cannot be told apart from the
+    press that opened the edit, so the measure is skipped rather than guessed."""
+    if store is None or since is None:
+        return None
+    if binds:
+        from .keyboard_overlay import normal
+        if binds.get("edit") and normal(binds.get("edit")) == normal(binds.get("edit_confirm", "")):
+            return None
+    selected, unconfirmed = 0, 0
+    for (raw,) in store.rows("SELECT record FROM edit_attempts WHERE enriched=1 AND t_open >= ?", (since,)):
+        r = json.loads(raw)
+        if not r.get("final_tiles") and not r.get("selection_trace"):
+            continue
+        if r.get("t_reset") is not None and r.get("outcome") == "reset":
+            continue                    # a reset is a deliberate cancel, not a missed confirm
+        selected += 1
+        unconfirmed += r.get("t_confirm") is None
+    return {"drill": "edit", "step": "confirm", "missed": unconfirmed, "graded": selected} if selected else None
+
+
+def missed(events, store, since, binds=None):
+    """Missed keystrokes this session, worst first: in ordinary play, edits closed without the confirm key
+    (edit_misses); in drills, the island's graded KT|step results and reps the overlay closed with steps unpressed."""
     records = []
     if store is not None and since is not None:
         for (raw,) in store.rows("SELECT data FROM kt WHERE event='step' AND ts >= ?", (since,)):
@@ -89,6 +113,9 @@ def missed(events, store, since):
             except ValueError:
                 continue
     steps = []
+    natural = edit_misses(store, since, binds)
+    if natural:
+        steps.append(natural)
     for (drill, step), entry in insights.step_failures(records).items():
         bad = sum(entry["errors"][r] for r in STEP_MISSES)
         steps.append({"drill": drill, "step": step, "missed": bad, "graded": entry["graded"]})
@@ -155,7 +182,7 @@ def tip(events):
     return ""
 
 
-def snapshot(events, store):
+def snapshot(events, store, binds=None):
     since = session_start(events)
-    return {"since": since, "accidental": accidental(events), "missed": missed(events, store, since),
+    return {"since": since, "accidental": accidental(events), "missed": missed(events, store, since, binds),
             "edits": edits(store, since), "tip": tip(events)}

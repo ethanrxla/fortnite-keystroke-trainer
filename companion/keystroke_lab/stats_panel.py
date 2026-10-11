@@ -55,9 +55,10 @@ def lines(snap):
     m, a, e = snap["missed"], snap["accidental"], snap["edits"]
     if m["steps"]:
         s = m["steps"][0]
-        miss = (f"Missed: {s['drill']} · {s['step']}", f"{s['missed']} / {s['graded']}", s["missed"] / s["graded"])
+        name = "confirm after editing" if (s["drill"], s["step"]) == ("edit", "confirm") else f"{s['drill']} · {s['step']}"
+        miss = (f"Missed: {name}", f"{s['missed']} / {s['graded']}", s["missed"] / s["graded"])
     else:
-        miss = ("Missed keystrokes", "no graded drills yet", None)
+        miss = ("Missed keystrokes", "none yet", None)
     acc = (f"Accidental: {a['strays']} strays · {a['doubles']} doubles",
            ("top " + ", ".join(a["top_keys"])) if a["top_keys"] else "none", None)
     if e["attempts"] >= 1 and e["completed_pct"] is not None:
@@ -89,7 +90,7 @@ def run(sessions=None):
     except ImportError:
         print("stats-panel needs tkinter")
         return 2
-    from . import session_stats
+    from . import drills, session_stats
     from .store import Store
     if sys.platform == "win32":
         import ctypes
@@ -105,8 +106,9 @@ def run(sessions=None):
         store = Store()           # SQLite connections stay on the thread that opened them
         while not stop.is_set():
             try:
+                binds = dict(drills.load_binds())
                 events = session_stats.read_events(session_stats.newest_events(folder))
-                latest.put(session_stats.snapshot(events, store))
+                latest.put(session_stats.snapshot(events, store, binds))
             except Exception as exc:  # noqa: BLE001  a bad read must never take the panel down; try again next tick
                 print("stats panel: read failed:", type(exc).__name__, exc)
             stop.wait(REFRESH_S)
