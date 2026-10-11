@@ -41,7 +41,6 @@ SHOOT_X = -34560.0
 LANE_Y = -87808.0
 # (metres down range, sideways offset cm): spread so consecutive reps pull the crosshair left, right, near and far.
 BOTS = [(5, 0), (8, -480), (12, 420), (15, -260), (20, 360), (25, -500), (30, 500), (40, -200), (50, 260)]
-MARKERS = (5, 10, 20, 30, 50)
 SIGN = ("A2  SKILLS TEST\n"
         "START: bots appear one at a time and vanish. DIFFICULTY sets how fast (Easy 1.2 s, Medium 0.8, Hard 0.5).\n"
         "WEAPON swaps Hand Cannon / Heavy AR. Eliminate each bot before it goes. Why: first-shot flicks under a clock.")
@@ -74,9 +73,7 @@ def plan():
                         "tag": tag, "weapon": name})
     devices.append({"label": f"{PREFIX}Device", "asset": DEVICE, "pos": (SHOOT_X + 2750.0, LANE_Y, -150.0), "props": {},
                     "tag": "kt_skills_test_tag"})
-    for m in MARKERS:
-        signs.append({"label": f"{PREFIX}Marker_{m}m", "pos": (SHOOT_X + m * 100.0, LANE_Y - 760.0, 60), "yaw": 180,
-                      "zone": "Aim", "size": 40, "text": f"{m} m"})
+    # The 5 / 10 / 20 / 30 / 50 m markers are floating text from tools/build_range_markers.py (no board behind them).
     signs.append({"label": f"{PREFIX}Sign", "pos": (bx - 200.0, LANE_Y + 650.0, 300), "yaw": 180, "zone": "Aim",
                   "size": 26, "text": SIGN})
     return devices, signs

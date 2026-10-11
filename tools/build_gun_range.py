@@ -98,8 +98,7 @@ def plan():
     for m in BAFFLES_M:
         x = FIRE_X + m * 100.0
         slab(f"Baffle_{m}m", x - 30, x + 30, Y0, Y1, HEIGHT, 260, "Armory")
-        signs.append({"label": f"{PREFIX}Distance_{m}m", "pos": (x - 40, (Y0 + Y1) / 2, HEIGHT - 300), "yaw": 180,
-                      "zone": "Hub", "size": 44, "text": f"{m} m"})
+        # The "<m> m" text on each baffle is floating text from tools/build_range_markers.py (no board behind it).
     for k, f in enumerate((0.1, 0.3, 0.5, 0.7, 0.9)):
         x = FIRE_X + (X1 - FIRE_X) * f
         for side, y in (("S", Y0 + (Y1 - Y0) * 0.3), ("N", Y0 + (Y1 - Y0) * 0.75)):
