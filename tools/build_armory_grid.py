@@ -145,7 +145,9 @@ class Grid:
         out = (0.0, 1.0) if facing == "S" else (-1.0, 0.0)          # unit vector into the room
         at = lambda d: (x + out[0] * d, y + out[1] * d)
         saved = []
-        granter = self.b.device(GRANTER, tag + "_Granter", *at(-200.0), -300.0)
+        # Below the floor at a depth unique to the tile's row, so LoadoutPresets.verse can key a tile by its granter.
+        gz = -1000.0 - z
+        granter = self.b.device(GRANTER, tag + "_Granter", *at(-200.0), gz)
         ok = bool(item) and self.accepted(granter, item)
         if not ok:          # player 2026-10-11: a gun that can't be granted gets no tile at all
             self.m.tool(bm.SCENE, "remove_from_scene", actor={"refPath": granter})
@@ -179,7 +181,14 @@ class Grid:
                 except RuntimeError as exc:
                     print(f"  {tag}: granter {key} refused ({str(exc)[-40:]})")
             self.b.bind(dummy, "On Hit", granter, "GrantItem")
-            saved += [dummy, granter]
+            # Loadout presets (LoadoutPresets.verse): the same hit fires a trigger 30 cm above the granter, so Verse
+            # learns which tile the next item in the shooter's hotbar came from.
+            self.b.tag(granter, "kt_armory_granter_tag")
+            trig = self.b.device(bm.TRIGGER, tag + "_Track", *at(-200.0), gz + 30.0)
+            self.b.props(trig, {"visible in Game": False})
+            self.b.tag(trig, "kt_armory_tile_tag")
+            self.b.bind(dummy, "On Hit", trig, "Trigger")
+            saved += [dummy, granter, trig]
         else:
             self.m.tool(bm.SCENE, "remove_from_scene", actor={"refPath": granter})
         for ref in saved:

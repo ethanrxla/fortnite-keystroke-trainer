@@ -1,5 +1,5 @@
 {
-  "description": "Armory gun wall (tools/build_armory_grid.py): the whole back wall, left to right: weapon columns (rows are rarity), then items, then heals, each item in its own rarity's row. Player 2026-10-10/11: SCAR (epic, legendary) / AR, heavy AR, pump, tactical shotgun, tactical SMG, suppressed pistol, grapple hook, heals; rarity-coloured tiles; purple guns to mod. Items UEFN does not accept leave a dark tile; weapon rarities that do not exist leave a dark tile. Colours are sRGB hex; the builder converts them to linear and scales by plate_brightness. A weapon's 'paths' overrides the pattern for a rarity found under another naming tier; an item's 'icon' overrides its own (the grappler carries only a 32 px icon). 2026-10-11 (player: 'make the gun wall uniform'): only guns with all five rarities as columns (Pump has no rare, Tactical shotgun's common is disallowed, Hand cannon and Suppressed pistol start above common, so they stay at the stations); items, melee and heals fill one compact block, five tiles tall, each plate in its own rarity colour.",
+  "description": "Armory gun wall (tools/build_armory_grid.py): the whole back wall, left to right: weapon columns (rows are rarity), then items, then heals, each item in its own rarity's row. Player 2026-10-10/11: SCAR (epic, legendary) / AR, heavy AR, pump, tactical shotgun, tactical SMG, suppressed pistol, grapple hook, heals; rarity-coloured tiles; purple guns to mod. Items UEFN does not accept leave a dark tile; weapon rarities that do not exist leave a dark tile. Colours are sRGB hex; the builder converts them to linear and scales by plate_brightness. A weapon's 'paths' overrides the pattern for a rarity found under another naming tier; an item's 'icon' overrides its own (the grappler carries only a 32 px icon). 2026-10-11 (player: 'make the gun wall uniform'): only guns with all five rarities as columns (Pump has no rare, Tactical shotgun's common is disallowed, Hand cannon and Suppressed pistol start above common, so they stay at the stations); items, melee and heals fill one compact block, five tiles tall, each plate in its own rarity colour. Player 2026-10-11: where a Chapter 5 (Paprika) version exists the column is that moddable gun, so the Weapon Mod Bench can fit scopes and other mods; the Reaper Sniper has no common tile (no moddable common exists and the unmodded one is disallowed).",
   "rarities": [
     {
       "code": "C",
@@ -29,22 +29,14 @@
   ],
   "weapons": [
     {
-      "name": "AR / SCAR",
-      "pattern": "/Game/Athena/Items/Weapons/WID_Assault_Auto_Athena_{r}_Ore_T03.WID_Assault_Auto_Athena_{r}_Ore_T03",
-      "names": {
-        "C": "Assault rifle",
-        "UC": "Assault rifle",
-        "R": "Assault rifle",
-        "VR": "SCAR",
-        "SR": "SCAR"
-      },
-      "paths": {
-        "C": "/Game/Athena/Items/Weapons/WID_Assault_Auto_Athena_C_Ore_T02.WID_Assault_Auto_Athena_C_Ore_T02"
-      }
+      "name": "Striker AR",
+      "pattern": "/PaprikaCoreWeapons/Items/Weapons/PaprikaAR_Infantry/WID_Assault_Paprika_Infantry_Athena_{r}.WID_Assault_Paprika_Infantry_Athena_{r}",
+      "moddable": true
     },
     {
-      "name": "Heavy AR",
-      "pattern": "/Game/Athena/Items/Weapons/WID_Assault_Heavy_Athena_{r}_Ore_T03.WID_Assault_Heavy_Athena_{r}_Ore_T03"
+      "name": "Enforcer AR",
+      "pattern": "/PaprikaCoreWeapons/Items/Weapons/PaprikaAR_Heavy/WID_Assault_Paprika_Heavy_Athena_{r}.WID_Assault_Paprika_Heavy_Athena_{r}",
+      "moddable": true
     },
     {
       "name": "Suppressed AR",
@@ -55,23 +47,23 @@
       }
     },
     {
-      "name": "Burst AR",
-      "pattern": "/Game/Athena/Items/Weapons/WID_Assault_SemiAuto_Athena_{r}_Ore_T03.WID_Assault_SemiAuto_Athena_{r}_Ore_T03",
-      "paths": {
-        "C": "/Game/Athena/Items/Weapons/WID_Assault_SemiAuto_Athena_C_Ore_T02.WID_Assault_SemiAuto_Athena_C_Ore_T02"
-      }
+      "name": "Nemesis AR",
+      "pattern": "/PaprikaCoreWeapons/Items/Weapons/PaprikaAR_DPS/WID_Assault_Paprika_DPS_Athena_{r}.WID_Assault_Paprika_DPS_Athena_{r}",
+      "moddable": true
     },
     {
       "name": "Combat SG",
       "pattern": "/Game/Athena/Items/Weapons/WID_Shotgun_Combat_Athena_{r}_Ore_T03.WID_Shotgun_Combat_Athena_{r}_Ore_T03"
     },
     {
-      "name": "Charge SG",
-      "pattern": "/Game/Athena/Items/Weapons/WID_Shotgun_Charge_Athena_{r}_Ore_T03.WID_Shotgun_Charge_Athena_{r}_Ore_T03"
+      "name": "Hammer Pump",
+      "pattern": "/PaprikaCoreWeapons/Items/Weapons/PaprikaShotgun_Pump/WID_Shotgun_Pump_Paprika_Athena_{r}.WID_Shotgun_Pump_Paprika_Athena_{r}",
+      "moddable": true
     },
     {
-      "name": "Drum SG",
-      "pattern": "/Game/Athena/Items/Weapons/WID_Shotgun_AutoDrum_Athena_{r}_Ore_T03.WID_Shotgun_AutoDrum_Athena_{r}_Ore_T03"
+      "name": "Frenzy Auto SG",
+      "pattern": "/PaprikaCoreWeapons/Items/Weapons/PaprikaShotgun_DPS/WID_Shotgun_Auto_Paprika_Athena_{r}.WID_Shotgun_Auto_Paprika_Athena_{r}",
+      "moddable": true
     },
     {
       "name": "Tactical SMG",
@@ -85,19 +77,19 @@
       }
     },
     {
-      "name": "Rapid SMG",
-      "pattern": "/Game/Athena/Items/Weapons/WID_Pistol_RapidFireSMG_Athena_{r}_Ore_T03.WID_Pistol_RapidFireSMG_Athena_{r}_Ore_T03"
+      "name": "Hyper SMG",
+      "pattern": "/PaprikaCoreWeapons/Items/Weapons/PaprikaSMG_DPS/WID_SMG_Paprika_DPS_Athena_{r}.WID_SMG_Paprika_DPS_Athena_{r}",
+      "moddable": true
     },
     {
-      "name": "Pistol",
-      "pattern": "/Game/Athena/Items/Weapons/WID_Pistol_SemiAuto_Athena_{r}_Ore_T03.WID_Pistol_SemiAuto_Athena_{r}_Ore_T03",
-      "paths": {
-        "C": "/Game/Athena/Items/Weapons/WID_Pistol_SemiAuto_Athena_C_Ore_T02.WID_Pistol_SemiAuto_Athena_C_Ore_T02"
-      }
+      "name": "Ranger Pistol",
+      "pattern": "/PaprikaCoreWeapons/Items/Weapons/PaprikaPistol/WID_Pistol_Paprika_Auto_Athena_{r}.WID_Pistol_Paprika_Auto_Athena_{r}",
+      "moddable": true
     },
     {
-      "name": "Bolt sniper",
-      "pattern": "/Game/Athena/Items/Weapons/WID_Sniper_BoltAction_Scope_Athena_{r}_Ore_T03.WID_Sniper_BoltAction_Scope_Athena_{r}_Ore_T03"
+      "name": "Reaper Sniper",
+      "pattern": "/PaprikaCoreWeapons/Items/Weapons/PaprikaSniper/WID_Sniper_Paprika_Athena_{r}.WID_Sniper_Paprika_Athena_{r}",
+      "moddable": true
     }
   ],
   "heals": [
@@ -105,7 +97,7 @@
       "name": "Bandages",
       "rarity": "C",
       "item": "/PaprikaConsumables/Gameplay/BandageRefresh/WID_Paprika_Bandage.WID_Paprika_Bandage",
-      "icon": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KT_Theme/T_KT_Theme_T_KT_Icon_Bandage_c24d86.T_KT_Theme_T_KT_Icon_Bandage_c24d86"
+      "icon": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KT_Theme/T_KT_Icon_Bandage_v2.T_KT_Icon_Bandage_v2"
     },
     {
       "name": "Medkit",
@@ -116,7 +108,7 @@
       "name": "Small shield",
       "rarity": "UC",
       "item": "/PaprikaConsumables/Gameplay/ShieldSmallRefresh/WID_Paprika_ShieldSmall.WID_Paprika_ShieldSmall",
-      "icon": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KT_Theme/T_KT_Theme_T_KT_Icon_SmallShield_598128.T_KT_Theme_T_KT_Icon_SmallShield_598128"
+      "icon": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KT_Theme/T_KT_Icon_SmallShield_v2.T_KT_Icon_SmallShield_v2"
     },
     {
       "name": "Shield potion",
