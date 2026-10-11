@@ -21,12 +21,13 @@ class BindProfile:
     revision: int
     bindings: tuple
     version: int = 1
+    confirm_edge: str = "down"
 
     def primary(self):
         return {b.action: b.keys[0] for b in self.bindings if b.keys}
 
     def to_dict(self):
-        return dict(version=self.version, profile_id=self.profile_id, revision=self.revision,
+        return dict(version=self.version, profile_id=self.profile_id, revision=self.revision, confirm_edge=self.confirm_edge,
                     bindings=[dict(action=b.action, keys=list(b.keys), context=b.context, verified=b.verified)
                               for b in self.bindings])
 
@@ -36,6 +37,7 @@ class BindMap(dict):
     def __init__(self, profile):
         super().__init__(profile.primary())
         self.profile = profile
+        self.confirm_edge = profile.confirm_edge
 
     def all_keys(self):
         return {key for binding in self.profile.bindings for key in binding.keys}
@@ -49,7 +51,8 @@ def parse(data, profile_id='local', confirm_sprint=False):
                                  b.get('context', 'any'), bool(b.get('verified', False))) for b in data['bindings'])
         if any(not b.keys or any(not k for k in b.keys) for b in bindings):
             raise ValueError('Bindings need nonempty key names')
-        return BindProfile(str(data['profile_id']), int(data['revision']), bindings)
+        if data.get("confirm_edge", "down") not in ("down", "up"):raise ValueError("Invalid confirmation edge")
+        return BindProfile(str(data['profile_id']), int(data['revision']), bindings, confirm_edge=data.get("confirm_edge", "down"))
     guessed = dict(DEFAULTS)
     guessed.update(data)
     bindings = [Binding(a, (str(k).lower(),), CATEGORY_OF.get(a, 'any'), False) for a, k in guessed.items()]

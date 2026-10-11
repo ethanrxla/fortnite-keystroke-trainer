@@ -64,8 +64,10 @@ class PersonalizeTests(unittest.TestCase):
         import uuid
         from tests.test_attempt_pipeline import record
         for i in range(n):
-            store.add_attempt(record(attempt_id=str(uuid.uuid4()), matched_edit_id=edit, suggested_edit_id=edit,
-                                     t_edit_open=float(i), t_close=i + 1.5))
+            r=record(attempt_id=str(uuid.uuid4()), matched_edit_id=edit, suggested_edit_id=edit,
+                     t_edit_open=float(i), t_close=i + 1.5)
+            store.add_attempt(r)
+            store.add_label(r["attempt_id"],"approved",edit,result_confirmed=True)
 
     def test_too_little_data_means_no_opinion(self):
         store = Store(":memory:")

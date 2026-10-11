@@ -7,7 +7,10 @@ VISION=Path(__file__).resolve().parents[1]/'.vision_packages'
 if VISION.exists():sys.path.insert(0,str(VISION))
 import json,time,threading
 from dataclasses import replace
-import tkinter as tk
+try:
+    import tkinter as tk
+except ImportError:
+    tk = None  # the vision pipeline and its tests do not require a desktop
 import cv2,numpy as np
 from .keyboard_overlay import game_rect,make_click_through,exclude_from_capture,single_instance,ROWS,BOTTOM_MARGIN,LEFT_MARGIN
 from .bind_profiles import ProfileStore
@@ -24,6 +27,8 @@ from .evidence import Evidence, ContextAssembler
 from .guide_layers import TraceGuideLayer, RegionGuideLayer, GuideDisplayLatch
 from .attempt_recorder import AttemptRecorder, AttemptLog, default_matcher
 from .pieces import catalog_key
+from .build_pieces import get_piece
+from .overlay_stats import overlay_layout
 import os
 BASE=Path(__file__).resolve().parents[1]
 
@@ -84,11 +89,22 @@ class ContextPipeline:
         self.ranker=Ranker();self.motion=GridMotionTracker();self.previous_display=None;self.last_attempt=None
         self.locked=None;self.profile_identity=None;self.last_target=None
         self.last_mode_seen=-float('inf')
+        self.last_detection=-float('inf')
+        self.timings={}
     def reset_tracking(self):
         self.locked=None;self.selection.reset();self.targets.last=None;self.last_target=None
         self.motion.reset();self.previous_display=None;self.last_mode_seen=-float('inf')
     def process(self,frame,captured_at=None):
-        captured=self.clock() if captured_at is None else captured_at;mode,score=observe_mode(frame);profile=self.store.refresh()
+        start=time.perf_counter()
+        self.timings={}
+        result=self._process(frame,captured_at)
+        result['timings_ms']=dict(self.timings,process=1000*(time.perf_counter()-start))
+        return result
+    def _process(self,frame,captured_at=None):
+        captured=self.clock() if captured_at is None else captured_at
+        stale=self.clock()-captured>.25 or captured>self.clock()
+        tick=time.perf_counter();mode,score=observe_mode(frame);self.timings['mode']=1000*(time.perf_counter()-tick)
+        profile=self.store.refresh()
         identity=(profile.profile_id,profile.revision)
         if identity!=self.profile_identity:
             self.reset_tracking();self.profile_identity=identity;self.metrics.reset()
@@ -103,7 +119,7 @@ class ContextPipeline:
               'reference_ids':[],'status':'Align with an editable piece','mode_score':score,
               'session_id':os.environ.get('KT_COACH_SESSION','standalone'),'profile_id':profile.profile_id,'last_attempt':self.last_attempt}
         telemetry=self.telemetry.poll()
-        if self.clock()-captured>.25 or captured>self.clock():return dict(base,mode='unknown',status='Stale observation')
+        if stale:return dict(base,mode='unknown',status='Stale observation')
         if mode=='unknown':
             # A missed HUD cue is not an observed confirm/cancel. Keep the
             # tracker and lesson available for reacquisition; the display latch
@@ -115,11 +131,20 @@ class ContextPipeline:
             base['last_attempt']=self.last_attempt
             self.reset_tracking()
             return base
-        observation=mode_track or (self.observer.observe(frame,captured) if mode=='editing' else None)
+        tick=time.perf_counter()
+        observation=mode_track
+        if mode=='editing' and observation is None:
+            if captured-self.last_detection<.35 and hasattr(self.observer,'refresh'):
+                observation=self.motion.follow(frame,captured)
+            if observation is None:
+                observation=self.observer.observe(frame,captured);self.last_detection=captured
+            elif hasattr(self.observer,'refresh'):
+                observation=self.observer.refresh(frame,observation,captured)
+        self.timings['geometry_selection']=1000*(time.perf_counter()-tick)
         if observation:base['detection_reason']=observation.reason
-        tracked=mode_track is not None
-        if observation and observation.piece!='unknown' and not tracked:self.motion.seed(frame,observation)
-        elif mode=='editing' and not tracked:
+        tracked=bool(observation and not observation.selection_available)
+        if observation and observation.piece!='unknown' and observation.source not in ('screen_roi','optical_flow'):self.motion.seed(frame,observation)
+        elif mode=='editing' and (observation is None or observation.piece=='unknown'):
             observation=self.motion.follow(frame,captured);tracked=observation is not None
         target=self.targets.update(observation) if observation else None
         if not target:
@@ -136,7 +161,9 @@ class ContextPipeline:
             Evidence(f'{target}:{captured}:screen',observation.to_dict(),captured,observation.source,'derived' if tracked else 'observed',1-observation.confidence),
             Evidence(f'{target}:{captured}:orientation',observation.orientation,captured,'screen_projection','derived',1-observation.confidence),
             Evidence(f'{target}:{captured}:ownership',None,captured,'unavailable','unknown',1.)]).to_dict()
-        candidates=self.advisor.dictionary.candidates(observation.piece,observation.selected_tiles)
+        tick=time.perf_counter()
+        selection=observation.selected_tiles if observation.selection_available else ()
+        candidates=self.advisor.dictionary.candidates(observation.piece,selection)
         ctx=PieceContext(**observation.context) if observation.context else None
         # Ranking: crosshair travel from where you aim, Jev's prior for where you stand (side, near/far) and your
         # personal factors (edit_ranker). Game-verified edits win when any fit; until the review catalog has verified
@@ -161,7 +188,8 @@ class ContextPipeline:
             # edit with its green tiles and numbered route (edit_ranker.junction_corner).
             snap=junction_corner(ctx.aim)
             if snap and any(p.id==snap for p in fitting):best=snap
-        self.locked=self.selection.update((target,observation.orientation),best,observation.selected_tiles,captured)
+        self.locked=self.selection.update((target,observation.orientation),best,
+                                         selection if observation.selection_available else None,captured)
         # Free-practice suggestions cannot establish player intent.
         if observation.selected_tiles and not tracked:
             # Mid-trace: keep guiding with an edit that contains what is already selected. Tiles are compared in the
@@ -189,10 +217,10 @@ class ContextPipeline:
         if self.locked:
             edit=dict(self.advisor.dictionary.all.get(self.locked) or {})
             pick=next((p for p in picks if p.id==self.locked),None)
-            if edit and edit.get('piece')!='ramp':
+            if edit:
                 # Draw in the observed screen grid: tiles in the ranker's drag order, remapped for 2x2 pieces.
-                edit['tiles']=list(tiles_to_grid(ctx,pick.tiles)) if (ctx and pick) else edit.get('tiles',[])
-                display=edit
+                if pick:edit['tiles']=list(pick.tiles)
+                display=get_piece(edit['piece']).display(edit,ctx)
         is_verified=bool(self.locked and self.locked in verified)
         base.update(projected=True,target_id=target,observation=observation.to_dict(),telemetry=telemetry,advice=advice.to_dict(),
                     reference_ids=[self.locked] if self.locked else [],display_edit=display,
@@ -202,6 +230,9 @@ class ContextPipeline:
                             'Suggested from your aim and position | not yet verified in game') if self.locked
                            else 'No suggested edit fits this selection')
         base['tracking']='motion' if tracked else 'detected'
+        base['piece_estimated']=observation.piece!='wall' and observation.piece_evidence not in ('observed','authored')
+        if base['piece_estimated']:base['status']='Estimated '+observation.piece+' | not graded | '+base['status']
+        self.timings['ranking']=1000*(time.perf_counter()-tick)
         self.previous_display=dict(base)
         return base
     def finish_attempt(self,now,profile):
@@ -214,10 +245,15 @@ class ContextPipeline:
         self.metrics.reset()
 
 
-def run(profile_path=None):
+def run(profile_path=None, capture_edits=False, piece_hint=None):
+    if tk is None:raise RuntimeError("The edit overlay requires tkinter")
     if not single_instance('Local\\KeystrokeLabEditReference'):return
     import mss
     cv2.setNumThreads(1)
+    from .edit_capture import EditCapture
+    from .latency import Latency
+    captures=EditCapture(BASE/'data'/'edit-captures',enabled=capture_edits)
+    latency=Latency()
     store=ProfileStore(profile_path or BINDS_FILE);pipeline=ContextPipeline(store)
     shared={'result':None,'rect':None};mutex=threading.Lock();stop=threading.Event()
     # Every edit attempt (open edit mode -> confirm / reset / leave) goes to sessions/edit-<session>.attempts.jsonl
@@ -228,6 +264,7 @@ def run(profile_path=None):
     def record(result,utc):
         try:recorder.feed(result,utc)
         except Exception:recorder.current=None
+    pipeline.observer.piece_hint=piece_hint
     def worker():
         with mss.MSS() as capture:
             while not stop.is_set():
@@ -236,14 +273,19 @@ def run(profile_path=None):
                     l,t,r,b=rect
                     try:
                         captured_at=time.monotonic();captured_utc=time.time()
-                        result=pipeline.process(np.asarray(capture.grab({'left':l,'top':t,'width':r-l,'height':b-t}))[:,:,:3],captured_at=captured_at)
+                        frame=np.asarray(capture.grab({'left':l,'top':t,'width':r-l,'height':b-t}))[:,:,:3]
+                        capture_ms=1000*(time.monotonic()-captured_at)
+                        result=pipeline.process(frame,captured_at=captured_at)
+                        result['timings_ms']['capture']=capture_ms
                         result['processing_ms']=round(1000*(time.monotonic()-captured_at),1)
                         record(result,captured_utc)
+                        result['capture_enabled']=capture_edits
+                        if capture_edits:captures.sample(frame,result,(recorder.current or {}).get('attempt_id'))
                     except Exception as exc:
                         result={'mode':'unknown','captured_at':time.monotonic(),'error':type(exc).__name__}
                 else:
                     pipeline.reset_tracking();pipeline.metrics.reset()
-                    record({'mode':'unknown'},time.time())
+                    record({'mode':'unknown','focused':False},time.time())
                 with mutex:shared.update(result=result,rect=rect)
                 # Latest snapshot only; no frame queue or network on this worker.
                 stop.wait(.025)
@@ -303,7 +345,7 @@ def run(profile_path=None):
             canvas.itemconfig(panel_approach,state='normal')
         if visual.path:
             coords=[v for u,vv in visual.path for v in (x+u*unit,y+vv*unit)]
-            canvas.coords(routes[0],*(coords if len(coords)>2 else coords+coords));canvas.itemconfig(routes[0],state='normal')
+            canvas.coords(routes[0],*(coords if len(coords)>2 else coords+coords));canvas.itemconfig(routes[0],state='normal' if visual.route_mode=='drag' else 'hidden')
             u,v=visual.path[0];canvas.coords(markers[0],x+u*unit-4,y+v*unit-4,x+u*unit+4,y+v*unit+4)
             canvas.itemconfig(markers[0],state='normal')
             for item,(label,(u,v)) in zip(numbers[0],visual.labels):
@@ -325,14 +367,15 @@ def run(profile_path=None):
         if not data.get('projected') or not ids:return False
         edit=data.get('display_edit')
         if not edit:return False
-        route=RoutePlanner(inset=.35).plan(observation['aim_uv'],edit)
-        if not route:return False
-        n=1 if edit['piece']=='ramp' else edit['cols'];quad=observation['wall_quad']
+        planned=RoutePlanner(inset=.35).route(observation['aim_uv'],edit)
+        if not planned:return False
+        route=planned.legacy()
+        n=get_piece(edit['piece']).cells;quad=observation['wall_quad']
         points=[grid_to_screen(quad,*p,n,n) for p in route[1]]
         aim=grid_to_screen(quad,*observation['aim_uv'],n,n)
         lines_canvas.coords(world_approach,*aim,*points[0]);lines_canvas.itemconfig(world_approach,state='normal')
         coords=[v for p in points for v in p]
-        trace_layer.show(coords)
+        if planned.mode=='drag':trace_layer.show(coords)
         outlines=[]
         if edit['piece']!='ramp':
             for tile in edit['tiles']:
@@ -371,8 +414,10 @@ def run(profile_path=None):
             l,t,r,b=rect
             u=max(22,min(42,int((b-t)/54*1.5)))
             panel_height=240 if data['reference_ids'] else 70
-            panel_x=l+int((r-l)*LEFT_MARGIN)
-            panel_y=max(t+8,b-int((b-t)*BOTTOM_MARGIN)-(len(ROWS)+4)*u-panel_height-8)
+            try:scale=float(json.loads((BASE/'overlay-settings.json').read_text()).get('scale',1.5))
+            except (OSError,ValueError,TypeError):scale=1.5
+            position=overlay_layout(rect,scale=scale,guide_height=240)
+            panel_x=position.x;panel_y=position.guide_y
             root.geometry(f"420x{panel_height}+{panel_x}+{panel_y}")
             if not panel_shown:root.deiconify();panel_shown=True
             if data['captured_at']!=lines_key:
@@ -385,22 +430,40 @@ def run(profile_path=None):
             if panel_shown:root.withdraw();panel_shown=False;last=None
             if lines_shown:lines.withdraw();lines_shown=False;lines_key=None
         data=raw_data
-        if data and now-last_write>1:
+        if data and now-last_write>.1:
             try:
                 temporary=BASE/'edit-state.tmp';temporary.write_text(json.dumps(data));temporary.replace(BASE/'edit-state.json')
             except OSError:pass
             last_write=now
+    last_render=[None]
     def poll():
+        began=time.perf_counter()
         try:poll_once()
         except Exception:
             import traceback
             with (BASE/'edit-display-error.log').open('a') as errors:errors.write(traceback.format_exc())
-        finally:root.after(33,poll)
+        finally:
+            with mutex:snapshot=shared.get('result')
+            if snapshot and snapshot.get('captured_at')!=last_render[0]:
+                last_render[0]=snapshot.get('captured_at')
+                for stage,ms in snapshot.get('timings_ms',{}).items():latency.add(stage,ms)
+                latency.add('render_submit',1000*(time.perf_counter()-began))
+                latency.add('capture_to_render_submit',1000*(time.monotonic()-snapshot['captured_at']))
+            root.after(16,poll)
     root.after(33,poll)
     try:root.mainloop()
     finally:
-        stop.set();pipeline.advisor.close()
+        stop.set();thread.join(timeout=3);pipeline.advisor.close();captures.close()
+        (BASE/'data').mkdir(exist_ok=True)
+        (BASE/'data'/'edit-latency.json').write_text(json.dumps({'measurement':'capture to UI submission, not physical display latency','stages':latency.report()},indent=2))
         try:recorder.close(time.time())
         except Exception:pass
 
-if __name__=='__main__':run(sys.argv[1] if len(sys.argv)>1 else None)
+if __name__=='__main__':
+    import argparse
+    parser=argparse.ArgumentParser()
+    parser.add_argument('profile',nargs='?')
+    parser.add_argument('--capture-edits',action='store_true',help='Explicit opt-in: save up to three cropped local images per attempt')
+    parser.add_argument('--piece',choices=['wall','floor','cone','ramp'],help='Declared piece hint for controlled capture; remains unverified')
+    args=parser.parse_args()
+    run(args.profile,capture_edits=args.capture_edits,piece_hint=args.piece)

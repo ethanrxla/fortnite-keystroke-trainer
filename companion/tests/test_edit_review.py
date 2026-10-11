@@ -72,7 +72,7 @@ class PromotionTests(unittest.TestCase):
     def add(self, session, status="approved", matched="window_center", edit_id=None):
         r = record(attempt_id=str(uuid.uuid4()), session_id=session, matched_edit_id=matched)
         self.store.add_attempt(r)
-        self.store.add_label(r["attempt_id"], status, edit_id, reviewer="ethan")
+        self.store.add_label(r["attempt_id"], status, edit_id, reviewer="ethan", result_confirmed=status!="rejected")
 
     def window(self, data):
         return next(e for e in data["wall_edits"] if e["id"] == "window_center")

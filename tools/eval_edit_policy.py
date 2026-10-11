@@ -13,6 +13,7 @@ import argparse
 import json
 import pathlib
 import sys
+import subprocess
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "companion"))
@@ -31,23 +32,32 @@ def main():
     args = ap.parse_args()
     samples = pl.examples(Store(), include_auto=args.include_auto)
     print(f"{len(samples)} usable attempts ({sum(s['reviewed'] for s in samples)} reviewed)")
-    base = Ranker()
+    split = pl.partition(samples)
+    print("session-separated split:", {k: len(v) for k,v in split.items()})
+    base = Ranker(personal={})
+    safe = False
+    if args.write:
+        safe = subprocess.run([sys.executable, "-m", "unittest", "discover", "-s", "tests", "-t", "."],
+                              cwd=ROOT / "companion").returncode == 0
     for kind, name in POLICY_FILES.items():
         piece = canonical(kind)
         path = ROOT / "shared" / name
         if not path.exists():
             continue
-        current = pl.evaluate(samples, base, piece)
+        current = pl.evaluate(split["test"], base, piece, partition_name="test")
         print(f"\n{piece}: current   {json.dumps(current)}")
         if not args.blend:
             continue
         policy = json.loads(path.read_text(encoding="utf-8"))
-        blended = pl.blend(policy, samples, piece, args.alpha)
-        scored = pl.evaluate(samples, Ranker(policies={piece: blended}), piece)
+        blended = pl.blend(policy, split["train"], piece, args.alpha)
+        candidate = Ranker(personal={}, policies={piece: blended})
+        print("validation", json.dumps(pl.evaluate(split["validation"], candidate, piece, partition_name="validation")))
+        scored = pl.evaluate(split["test"], candidate, piece, partition_name="test")
+        scored["safety_passed"] = safe
         verdict = "BETTER" if pl.better(scored, current) else "not better (or too few examples)"
         print(f"{piece}: blend     {json.dumps(scored)}  -> {verdict}")
         if args.write and pl.better(scored, current):
-            blended["metrics"] = {"current": current, "blend": scored}
+            blended["metrics"] = {"current": current, "blend": scored, "split_version": "edit-split-v1"}
             out = path.with_suffix(".blend.json")
             out.write_text(json.dumps(blended, indent=1) + "\n", encoding="utf-8")
             print("  wrote", out.relative_to(ROOT))

@@ -31,7 +31,11 @@ def load(name="edit_attempt.v1"):
 
 def errors(value, schema=None, path="$"):
     """List of human-readable problems; empty means valid."""
-    schema = load() if schema is None else schema
+    if schema is None:
+        name = value.get("schema", "edit_attempt.v1") if isinstance(value, dict) else "edit_attempt.v1"
+        if name not in ("edit_attempt.v1", "edit_attempt.v2"):
+            return [f"{path}: unsupported schema"]
+        schema = load(name)
     out = []
     kinds = schema.get("type")
     if kinds is not None:

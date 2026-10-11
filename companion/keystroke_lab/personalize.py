@@ -19,8 +19,9 @@ import time
 
 from .jev_client import JevClient, choice_question
 from .store import Store
+from .attempt_evidence import result_verified, piece_verified, travel_efficiency
 
-PERSONAL_JSON = pathlib.Path(__file__).resolve().parents[2] / "shared" / "edit-policy-personal.json"
+PERSONAL_JSON = pathlib.Path(__file__).resolve().parents[1] / "data" / "edit-policy-personal.json"
 MIN_ATTEMPTS = 5
 SPREAD = 0.3          # factor = 1 + SPREAD * (P(strong) - P(weak)), clipped to 1 +- SPREAD
 RATINGS = {
@@ -42,23 +43,29 @@ def edit_stats(store):
         if label and label["status"] == "rejected":
             continue
         r = json.loads(raw)
+        if not label or not piece_verified(r, label):continue
         made = (label or {}).get("edit_id") if label and label["status"] == "relabelled" else r.get("matched_edit_id")
-        edit_id = made or r.get("suggested_edit_id")
+        edit_id = r.get("intended_edit_id") or made
         if not edit_id:
             continue
         e = per.setdefault(edit_id, {"n": 0, "done": 0, "times": [], "travel": []})
         e["n"] += 1
-        e["done"] += r["outcome"] == "completed" and made == edit_id
-        e["times"].append(r["t_close"] - r["t_edit_open"])
-        if r.get("travel") is not None:
-            e["travel"].append(r["travel"])
+        if not result_verified(r, label):
+            e["n"] -= 1
+            continue
+        e["done"] += made == edit_id
+        if r.get("t_confirm") is not None and r.get("confirmation_evidence") in ("press", "release"):
+            e["times"].append(r["t_confirm"] - r["t_edit_open"])
+        efficiency = travel_efficiency(r)
+        if efficiency is not None:e["travel"].append(efficiency)
     out = {}
     for edit_id, e in per.items():
+        if not e["n"]:continue
         out[edit_id] = {
             "attempts": e["n"],
             "completed_pct": round(100.0 * e["done"] / e["n"]),
             "median_confirm_s": round(statistics.median(e["times"]), 2) if e["times"] else None,
-            "travel_efficiency_pct": round(100.0 / (1.0 + statistics.mean(e["travel"]))) if e["travel"] else None,
+            "travel_efficiency_pct": round(statistics.mean(e["travel"])) if e["travel"] else None,
         }
     return out
 
@@ -66,7 +73,7 @@ def edit_stats(store):
 def describe(edit_id, s):
     return (f"Edit '{edit_id}': {s['attempts']} attempts, {s['completed_pct']}% completed, median "
             f"{s['median_confirm_s']} s from edit to confirm, crosshair travel efficiency {s['travel_efficiency_pct']}% "
-            f"(100% = perfectly efficient).")
+            f"(estimated reference/observed travel; missing values are unknown, not failure).")
 
 
 def factors(stats, jev=None):
@@ -95,6 +102,7 @@ def run(store=None, jev=None, out=PERSONAL_JSON):
     stats = edit_stats(store)
     f = factors(stats, jev)
     out = pathlib.Path(out)
+    out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(json.dumps({"generated": int(time.time()), "min_attempts": MIN_ATTEMPTS, "factors": f,
                                "stats": stats}, indent=1), encoding="utf-8")
     return stats, f

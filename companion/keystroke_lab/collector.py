@@ -85,7 +85,9 @@ def ingest_overlay(store, folder=SESSIONS):
             except ValueError:
                 continue
             if "ts" in e and "key" in e:
-                store.add_key(e["ts"], e["key"], e["kind"], e.get("drill"), src=path.name)
+                store.add_key(e["ts"], e["key"], e["kind"], e.get("drill"), src=path.name,
+                              session_id=e.get("session_id"), profile_id=e.get("profile_id"),
+                              profile_revision=e.get("profile_revision"), edge=e.get("edge", "down"))
                 n += 1
     return n
 
@@ -156,6 +158,23 @@ def enrich_attempts(store, binds, now=None):
     done = 0
     for (attempt_id,) in store.rows("SELECT attempt_id FROM edit_attempts WHERE enriched=0 AND t_close<?", (now - ENRICH_DELAY,)):
         rec = store.attempt(attempt_id)
+        if rec.get("schema") == "edit_attempt.v2":
+            if not rec.get("profile_id") or rec.get("profile_revision") is None:continue
+            keys = store.rows("SELECT ts,key,edge FROM keys WHERE ts>? AND ts<=? AND session_id=? AND profile_id=? AND profile_revision=? AND verdict NOT IN ('repeat','unmapped') ORDER BY ts",
+                              (rec["t_edit_open"], rec["t_close"]+.15, rec["session_id"], rec["profile_id"], rec["profile_revision"]))
+            # Match the player's configured confirmation edge; a release is not assumed to confirm.
+            edge = getattr(binds, "confirm_edge", "down")
+            hits = [(t, e) for t,k,e in keys if k in confirm and e == edge and t > rec["t_edit_open"]+.15]
+            if hits:
+                rec["t_confirm"] = hits[-1][0]
+                rec["confirmation_evidence"] = "release" if hits[-1][1] == "up" else "press"
+                if rec["outcome"] == "selection_matched":rec["outcome"] = "confirm_observed"
+            resets = [t for t,k,e in keys if k in reset and e == "down"]
+            if resets:rec["t_reset"] = resets[-1]
+            if keys or now - rec["t_close"] > 120:
+                store.update_attempt(rec, enriched=True)
+                done += 1
+            continue
         keys = store.rows("SELECT ts, key FROM keys WHERE ts>? AND ts<=? ORDER BY ts",
                           (rec["t_edit_open"] + 0.15, rec["t_close"] + 0.5))
         if not keys and not store.rows("SELECT 1 FROM keys WHERE ts>? LIMIT 1", (rec["t_close"],)):

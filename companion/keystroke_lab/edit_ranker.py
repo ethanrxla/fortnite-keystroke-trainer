@@ -21,6 +21,7 @@ import math
 import pathlib
 
 from .pieces import catalog_key
+from .build_pieces import get_piece
 
 SHARED = pathlib.Path(__file__).resolve().parents[2] / "shared"
 PRIOR_WEIGHT = 0.3
@@ -107,7 +108,7 @@ class Ranker:
                 p = json.loads(pathlib.Path(p).read_text(encoding="utf-8"))
             self.policy[catalog_key(kind) or kind] = (p["edits"], p["priors"])
         if personal is None:
-            path = shared / "edit-policy-personal.json"
+            path = pathlib.Path(__file__).resolve().parents[1] / "data" / "edit-policy-personal.json"
             personal = json.loads(path.read_text(encoding="utf-8")).get("factors", {}) if path.is_file() else {}
         self.personal = dict(personal)
 
@@ -132,6 +133,15 @@ class Ranker:
         my_side = aim_side(aim, c)
         picks = []
         for e in self.library[kind]:
+            if kind != 'wall':
+                piece=get_piece(kind)
+                route=piece.route(aim,dict(e,piece=piece.kind,cols=piece.cells))
+                if route is None:continue
+                penalty=PRIOR_WEIGHT*math.log(pmax/max(weighted[e['id']],.001))
+                picks.append(Pick(e['id'],e['name'],tuple(e.get('tiles',())),round(route.distance+penalty,4),
+                                  round(route.distance,4),round(weighted[e['id']],4),self.personal.get(e['id'],1.),
+                                  {'route_mode':route.mode,'prior_penalty':round(penalty,3),'situation':key}))
+                continue
             tiles = tuple(e["tiles"])
             s = shape_side(tiles, c)
             if s != 0 and my_side != 0 and s != my_side:

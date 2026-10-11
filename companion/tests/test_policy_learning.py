@@ -53,7 +53,7 @@ class EvaluateTests(unittest.TestCase):
         m = pl.evaluate(samples, r, "wall")
         self.assertEqual(m["examples"], 6)
         self.assertGreaterEqual(m["top1"], 0.6)
-        self.assertEqual(m["completion_when_followed"], 0.5)
+        self.assertEqual(m["completion_when_followed"], 0.0)  # legacy completion is not verified
         self.assertIsNotNone(m["ece"])
 
     def test_blend_wins_when_players_disagree_with_the_prior(self):
@@ -67,7 +67,7 @@ class EvaluateTests(unittest.TestCase):
         blended = pl.blend(WALL, data, "wall", alpha=5)
         scored = pl.evaluate(data, Ranker(personal={}, policies={"wall": blended}), "wall")
         self.assertGreater(scored["top1"], current["top1"])
-        self.assertTrue(pl.better(scored, current))
+        self.assertFalse(pl.better(scored, current))  # same-data fit cannot pass a held-out gate
 
     def test_too_few_examples_never_publish(self):
         self.assertFalse(pl.better({"examples": 3, "top1": 1, "top3": 1, "log_loss": 0}, {"top1": 0, "top3": 0}))
@@ -81,10 +81,10 @@ class ExamplesTests(unittest.TestCase):
         a, b, c = (record(attempt_id=str(uuid.uuid4()), context=ctx) for _ in range(3))
         for x in (a, b, c):
             s.add_attempt(x)
-        s.add_label(a["attempt_id"], "approved")
-        s.add_label(b["attempt_id"], "relabelled", "window_high")
+        s.add_label(a["attempt_id"], "approved", result_confirmed=True)
+        s.add_label(b["attempt_id"], "relabelled", "window_high", result_confirmed=True)
         self.assertEqual(sorted(e["edit"] for e in pl.examples(s)), ["window_center", "window_high"])
-        self.assertEqual(len(pl.examples(s, include_auto=True)), 3)
+        self.assertEqual(len(pl.examples(s, include_auto=True)), 2)  # no verified result for c
         s.add_label(c["attempt_id"], "rejected")
         self.assertEqual(len(pl.examples(s, include_auto=True)), 2)
 

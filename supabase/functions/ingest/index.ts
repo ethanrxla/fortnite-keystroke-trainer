@@ -9,6 +9,7 @@
 // Records whose attempt_id already belongs to another player are rejected.
 import { createClient } from "npm:@supabase/supabase-js@2.45.4";
 import schema from "../_shared/edit_attempt.v1.json" with { type: "json" };
+import schemaV2 from "../_shared/edit_attempt.v2.json" with { type: "json" };
 import { errors } from "../_shared/validate.ts";
 
 const MAX_PER_REQUEST = 200;
@@ -45,7 +46,10 @@ Deno.serve(async (req) => {
   const rejected: { attempt_id: unknown; errors: string[] }[] = [];
   const rows: any[] = [];
   for (const a of attempts) {
-    const problems = errors(a, schema);
+    const problems = errors(a, a?.schema === "edit_attempt.v2" ? schemaV2 : schema);
+    if (Array.isArray(a?.frames) && a.frames.length) problems.push("$.frames: image upload disabled");
+    if (a?.schema === "edit_attempt.v2" && (a.aim_trace?.length || a.selection_trace?.length || a.gesture_trace?.length))
+      problems.push("$: upload summaries only, not raw traces");
     if (a?.session_id !== sessionId) problems.push("$.session_id: does not match the request");
     if (!me.consent_frames && Array.isArray(a?.frames) && a.frames.length) problems.push("$.frames: frame consent not given");
     if (problems.length) { rejected.push({ attempt_id: a?.attempt_id, errors: problems.slice(0, 10) }); continue; }

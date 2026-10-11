@@ -123,4 +123,5 @@ class EvidenceIsolationTests(unittest.TestCase):
         self.assertIsNone(c.decide({},{}));self.assertIsNone(c.decide({},{str(i):{} for i in range(9)}))
         self.assertEqual(c.calls,0)
     def test_disconnected_route_is_not_drawn_through_untouched_region(self):
-        self.assertIsNone(RoutePlanner().plan((.1,.1),{'piece':'floor','cols':2,'tiles':[0,3]}))
+        route=RoutePlanner().route((.1,.1),{'piece':'floor','cols':2,'tiles':[0,3]})
+        self.assertEqual(route.mode, 'taps')  # no continuous line through untouched cells

@@ -83,10 +83,12 @@ async function load(){const s=document.getElementById('status').value;
   const acts=document.createElement('div');acts.className='acts';
   const sel=document.createElement('select');sel.innerHTML='<option value="">relabel as...</option>'+(catalogue[a.piece]||[]).map(e=>`<option value="${e.id}">${e.name}</option>`).join('');
   const mk=(txt,cls,fn)=>{const b=document.createElement('button');b.textContent=txt;b.className=cls;b.onclick=fn;return b};
-  acts.append(mk('Approve','ok',()=>label(a,'approved',a.matched_edit_id,card)),mk('Reject','bad',()=>label(a,'rejected',null,card)),sel,
+  const proof=document.createElement('label'),check=document.createElement('input');check.type='checkbox';check.className='proof';
+  proof.append(check,document.createTextNode(' I checked the actual resulting piece in game'));card.appendChild(proof);
+  acts.append(mk('Approve label','ok',()=>label(a,'approved',a.matched_edit_id,card)),mk('Reject','bad',()=>label(a,'rejected',null,card)),sel,
    mk('Save','',()=>sel.value&&label(a,'relabelled',sel.value,card)));card.appendChild(acts);list.appendChild(card)}}
 async function label(a,status,edit,card){const r=await fetch('/api/label',{method:'POST',headers:{'Content-Type':'application/json','X-KT-Token':token},
- body:JSON.stringify({attempt_id:a.attempt_id,status,edit_id:edit})});if(r.ok)card.classList.add('done');else alert('Not saved: '+(await r.text()))}
+ body:JSON.stringify({attempt_id:a.attempt_id,status,edit_id:edit,piece:a.piece,result_confirmed:status!=='rejected'&&card.querySelector('.proof').checked})});if(r.ok)card.classList.add('done');else alert('Not saved: '+(await r.text()))}
 document.getElementById('status').onchange=load;load();
 </script></body></html>"""
 
@@ -132,7 +134,11 @@ def make_handler(store_factory, secret, catalogue):
             try:
                 if not store.attempt(attempt_id):
                     return self._send(404, {"error": "unknown attempt"})
-                store.add_label(attempt_id, status, body.get("edit_id"), reviewer="local", note=str(body.get("note", ""))[:200])
+                try:
+                    store.add_label(attempt_id, status, body.get("edit_id"), reviewer="local", note=str(body.get("note", ""))[:200],
+                                    result_confirmed=body.get("result_confirmed") is True, piece=body.get("piece"))
+                except ValueError as exc:
+                    return self._send(400, {"error":str(exc)})
                 store.commit()
             finally:
                 store.close()

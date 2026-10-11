@@ -35,11 +35,31 @@ class SequenceAnalyzer:
             if self.progress[i]<len(s) and s[self.progress[i]] in actions:self.progress[i]+=1
     def finish(self):
         if not self.sequences:return {'graded':False}
-        best=max(range(len(self.sequences)),key=lambda i:self.progress[i]/max(1,len(self.sequences[i])))
-        missing=self.sequences[best][self.progress[best]:]
+        # Align against every declared alternative; shared bindings remain alternatives, not multiple presses.
+        observed=[set(actions) for _,actions in self.observed]
+        def align(expected):
+            table={(0,0):(0,(),0,0)}
+            for i in range(len(expected)+1):
+                for j in range(len(observed)+1):
+                    if not (i or j):continue
+                    choices=[]
+                    if i:
+                        cost,missing,extra,order=table[i-1,j]
+                        choices.append((cost+1,missing+(expected[i-1],),extra,order))
+                    if j:
+                        cost,missing,extra,order=table[i,j-1]
+                        choices.append((cost+1,missing,extra+1,order))
+                    if i and j and expected[i-1] in observed[j-1]:choices.append(table[i-1,j-1])
+                    if i>1 and j>1 and expected[i-1] in observed[j-2] and expected[i-2] in observed[j-1]:
+                        cost,missing,extra,order=table[i-2,j-2]
+                        choices.append((cost+1,missing,extra,order+1))
+                    table[i,j]=min(choices,key=lambda x:(x[0],len(x[1]),x[2],x[3]))
+            return table[len(expected),len(observed)]
+        cost,missing,extra,order=min((align(s) for s in self.sequences),key=lambda x:x[0])
         return {'graded':not self.gaps,'complete_observation':not self.gaps,
                 'actions_not_observed':list(missing) if not self.gaps else [],
-                'completed':not missing and not self.gaps,'observed_count':len(self.observed)}
+                'extra_inputs':extra if not self.gaps else None,'order_errors':order if not self.gaps else None,
+                'completed':cost==0 and not self.gaps,'observed_count':len(self.observed)}
 
 class KeystrokeAnalyzer:
     IGNORED={'print_screen','esc','escape','windows','cmd','cmd_l','cmd_r'}
@@ -59,6 +79,9 @@ class KeystrokeAnalyzer:
         actions=self.resolver.resolve(event.key,event.context)
         if self.last is not None:self.intervals.append(max(0,event.at-self.last))
         self.last=event.at
-        if actions:self.sequence.observe(actions,event.at)
+        expected={a for s in self.sequence.sequences for a in s}
+        mechanics={'wall','floor','cone','ramp','edit','edit_confirm','reset','fire'}
+        if actions and (not self.sequence.sequences or actions & (expected|mechanics)):
+            self.sequence.observe(actions,event.at)
         return {'kind':'observed' if actions else 'unmapped','actions':tuple(sorted(actions)),
                 'profile_revision':self.resolver.profile.revision}
