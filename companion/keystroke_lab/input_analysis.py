@@ -30,11 +30,13 @@ class SequenceAnalyzer:
         self.sequences=tuple(tuple(s) for s in sequences);self.reset()
     def reset(self):self.progress=[0]*len(self.sequences);self.observed=deque(maxlen=4096);self.gaps=False
     def observe(self,actions,at):
+        if len(self.observed)>=256:self.gaps=True;return
         self.observed.append((at,tuple(sorted(actions))))
         for i,s in enumerate(self.sequences):
             if self.progress[i]<len(s) and s[self.progress[i]] in actions:self.progress[i]+=1
     def finish(self):
         if not self.sequences:return {'graded':False}
+        if self.gaps:return {'graded':False,'complete_observation':False,'actions_not_observed':[]}
         # Align against every declared alternative; shared bindings remain alternatives, not multiple presses.
         observed=[set(actions) for _,actions in self.observed]
         def align(expected):

@@ -10,6 +10,11 @@ A UEFN island that teaches Fortnite building and editing at a slow tempo first
 - Teaching text (principle, why, tip, reflect) lives only in `shared/drills.json`; the map, companion coach and voice renderer all read it. Changing wording means re-running `tools/gen_drills.py` and `tools/gen_voice.py`. AI never runs inside the map (published islands have no network); it is a companion-app and offline-authoring tool. Never commit API keys.
 - Verse cannot see keystrokes. The map grades outcomes (position, volumes, damage); the companion
   app in `companion/` grades keys. Don't try to add key detection to Verse.
+- Build pieces and edits are data: `shared/edits.json` -> `python tools/gen_edits.py` (EditCatalog.verse and
+  EditPatterns.verse); piece classes in `companion/keystroke_lab/build_pieces.py` and `BuildPieces.verse`
+  (see `design/build-pieces-2026-10-10.md`). The aim map (which edit the guide shows for where the crosshair is) is
+  `shared/edit-intent.json`: the companion reads it directly, the map through `python tools/gen_intent.py`
+  (EditIntent.verse). Never hand-edit the generated Verse.
 - Drills are defined once, in `shared/drills.json`, as actions (never keys). After editing it run
   `python tools/gen_drills.py`; never hand-edit `DrillCatalog.verse`.
 - The `KT|...` log line (`Scoring.verse` `KTLog`) is a contract with `companion/keystroke_lab/ktlog.py`

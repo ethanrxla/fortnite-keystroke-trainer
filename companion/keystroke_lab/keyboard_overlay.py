@@ -52,6 +52,30 @@ def normal(name):
     return ALIASES.get(name, name)
 
 
+# Windows virtual-key codes of the punctuation keys, as their unshifted US-layout names.
+OEM_VK = {0xC0: "`", 0xBD: "-", 0xBB: "=", 0xDB: "[", 0xDD: "]", 0xDC: "\\", 0xBA: ";", 0xDE: "'",
+          0xBC: ",", 0xBE: ".", 0xBF: "/"}
+
+
+def key_name(k, platform=sys.platform):
+    """The physical key a pynput event came from, in the same naming as keybinds.json.
+
+    pynput's `char` has modifiers applied, so with sprint (Shift) held '1' arrives as '!', and with crouch (Ctrl)
+    held 'w' arrives as a control character: bound keys then read as unmapped. Fortnite binds physical keys, so on
+    Windows the virtual-key code decides for letters, digits and punctuation; `char` is the fallback elsewhere.
+    """
+    vk = getattr(k, "vk", None)
+    if platform == "win32" and isinstance(vk, int):
+        if 0x30 <= vk <= 0x39 or 0x41 <= vk <= 0x5A:
+            return chr(vk).lower()
+        if vk in OEM_VK:
+            return OEM_VK[vk]
+    char = getattr(k, "char", None)
+    if char and char.isprintable():
+        return char
+    return getattr(k, "name", None) or str(k)
+
+
 class KeyTracker:
     """Classifies each press. Pure logic: feed it presses with a timestamp, read back a verdict."""
 
@@ -275,7 +299,9 @@ class SessionLog:
         self._emit({"t": t, "ts": self.utc_anchor+captured, "kind": verdict,
                     "key": key if bound else "", "drill": self.drill, "edge": edge,
                     "session_id": session_id, "profile_id": getattr(profile,"profile_id",None),
-                    "profile_revision": getattr(profile,"revision",None)})
+                    "profile_revision": getattr(profile,"revision",None),
+                    "actions": [b.action for b in getattr(profile,"bindings",()) if b.verified and bound and key in b.keys],
+                    "confirm_edge": getattr(profile,"confirm_edge","down")})
         return True
 
     def tip(self, text):
@@ -393,8 +419,8 @@ def run(binds, drill=None, log_base=None, use_ai=True, serve_port=True, binds_pa
                                         font=("Segoe UI", max(8, int(u * 0.46))), text="")
         state["unit"] = u
         canvas.itemconfig(ids["status"],state="hidden");canvas.itemconfig(ids["tip"],state="hidden")
-        ids["stats"]=[canvas.create_text(4,4+i*u*.9,anchor="nw",width=width-8,fill="#9fd6ff",
-                       font=("Segoe UI",max(8,int(u*.32))),text="") for i in range(3)]
+        ids["stats"]=[canvas.create_text(4,4+i*u*.6,anchor="nw",width=width-8,fill="#9fd6ff",
+                       font=("Segoe UI",max(7,int(u*.27))),text="") for i in range(5)]
         state["size"] = (width, height)
 
     def flash(key, color):
@@ -453,12 +479,21 @@ def run(binds, drill=None, log_base=None, use_ai=True, serve_port=True, binds_pa
     def recording_allowed():
         data=edit_state[0]
         return (not capture_paused[0] and not text_entry[0] and
+                bool(game_rect()) and data.get('session_id')==os.environ["KT_COACH_SESSION"] and
+                data.get('profile_id')==store.snapshot.profile_id and data.get('revision')==store.snapshot.revision and
                 data.get("mode") in ("editing","building","editable") and
                 0<=time.monotonic()-data.get("captured_at",-100)<.6)
     def refresh_edit_feedback():
         now=time.monotonic()
         if now-feedback_at[0]<.1:return
         feedback_at[0]=now
+        try:
+            control=pathlib.Path(__file__).resolve().parents[1]/'capture-control.json'
+            temporary=control.with_suffix('.tmp')
+            temporary.write_text(json.dumps({'session_id':os.environ["KT_COACH_SESSION"],'utc':time.time(),
+                                            'paused':capture_paused[0] or text_entry[0]}))
+            temporary.replace(control)
+        except OSError:pass
         try:
             data=json.loads((pathlib.Path(__file__).resolve().parents[1]/'edit-state.json').read_text())
             edit_state[0]=data
@@ -478,6 +513,8 @@ def run(binds, drill=None, log_base=None, use_ai=True, serve_port=True, binds_pa
                     handle(*payload)
                 elif kind == "release":
                     name,at=payload
+                    if not game_rect():
+                        tracker.focus_lost();local_analysis[0].accept(InputEvent("","focus_lost",at));continue
                     tracker.release(name)
                     local_analysis[0].accept(InputEvent(normal(name),"up",at))
                     if log and recording_allowed() and normal(name) in tracker.bound:
@@ -498,7 +535,7 @@ def run(binds, drill=None, log_base=None, use_ai=True, serve_port=True, binds_pa
                 local_analysis[0].sequence.reset()
         lines=live_stats.lines(edit_state[0],last_sequence[0],stats_worker.snapshot)
         for i,(item,text) in enumerate(zip(ids.get("stats",()),lines)):
-            if i==0:text=("REC · " if recording_allowed() else "PAUSED · ") + text + " | F8 pause"
+            if i==0:text=("REC · " if recording_allowed() else "PAUSED · ") + text + " | F8"
             canvas.itemconfig(item,text=text)
 
     calibration_button = tk.Toplevel(root)
@@ -561,10 +598,10 @@ def run(binds, drill=None, log_base=None, use_ai=True, serve_port=True, binds_pa
     def on_key(k):
         if not game_rect():
             return
-        incoming.put(("key", (getattr(k, "char", None) or getattr(k, "name", str(k)), time.perf_counter())))
+        incoming.put(("key", (key_name(k), time.perf_counter())))
 
     def on_release(k):
-        incoming.put(('release', (getattr(k, 'char', None) or getattr(k, 'name', str(k)),time.perf_counter())))
+        incoming.put(('release', (key_name(k), time.perf_counter())))
 
     def on_click(_x, _y, button, pressed):
         if pressed and not game_rect():

@@ -44,11 +44,24 @@ def _clusters(values):
     return np.abs(values[:,None]-centres).argmin(1),centres
 
 
+def _mask_hud(mask):
+    """Blank the screen regions taken by HUD and by our own overlays, whose straight edges would pose as grid lines:
+    the keyboard overlay and its text (bottom-left), the game status box (top-left), the minimap (top-right) and the
+    hotbar / build bar (bottom-right). Fractions of the frame, measured on 1920x1080 captures."""
+    h,w=mask.shape[:2]
+    mask[int(h*.58):,:int(w*.24)]=0
+    mask[:int(h*.12),:int(w*.24)]=0
+    mask[:int(h*.33),int(w*.82):]=0
+    mask[int(h*.64):,int(w*.70):]=0
+    mask[int(h*.88):]=0
+    return mask
+
+
 def _line_projection(image):
     h,w=image.shape[:2]
     bright=cv2.inRange(image,np.array([120,120,120],np.uint8),np.array([255,255,255],np.uint8))
     bright[(image.max(2).astype(int)-image.min(2))>100]=0
-    bright[int(h*.88):]=0
+    _mask_hud(bright)
     lines=cv2.HoughLinesP(cv2.Canny(bright,40,120),1,np.pi/360,35,minLineLength=max(40,w*.05),maxLineGap=10)
     if lines is None:return None
     groups={'h':[],'v':[]}
@@ -108,15 +121,51 @@ def _tile_support(image,H,n):
     return count
 
 
-def _segments(image):
+def _segments(image,dark=False):
     """Long straight light edges (the gaps between edit tiles) as (x1,y1,x2,y2,length)."""
     h,w=image.shape[:2]
     bright=cv2.inRange(image,np.array([120,120,120],np.uint8),np.array([255,255,255],np.uint8))
     bright[(image.max(2).astype(int)-image.min(2))>100]=0
-    bright[int(h*.88):]=0
+    # Dim walls (shade, night lighting): the gaps between tiles are only bright relative to the tiles around them.
+    # A white top-hat on the brightest channel keeps thin bright strokes whatever the absolute exposure.
+    value=image.max(2)
+    tophat=cv2.morphologyEx(value,cv2.MORPH_TOPHAT,cv2.getStructuringElement(cv2.MORPH_RECT,(9,9)))
+    bright[tophat>40]=255
+    if dark:
+        # Second pass (VisualObserver.observe, when the bright lines found nothing): seen at an angle in shade the gaps
+        # can be darker than the tiles (live 2026-10-10: (84,63,54) between (145,76,28) tiles), so a black top-hat
+        # keeps thin dark strokes too. Off by default: on clean walls the extra edges crowd out the real ones. Dark
+        # wood seams are dropped by _beside_tiles, which keeps only segments with edit-tile colour beside them.
+        blackhat=cv2.morphologyEx(value,cv2.MORPH_BLACKHAT,cv2.getStructuringElement(cv2.MORPH_RECT,(9,9)))
+        bright[blackhat>40]=255
+    _mask_hud(bright)
     lines=cv2.HoughLinesP(cv2.Canny(bright,40,120),1,np.pi/360,35,minLineLength=max(30,w*.04),maxLineGap=12)
     if lines is None:return []
-    return [(float(a),float(b),float(c),float(d),float(np.hypot(c-a,d-b))) for a,b,c,d in lines.reshape(-1,4)]
+    return _beside_tiles(image,[(float(a),float(b),float(c),float(d),float(np.hypot(c-a,d-b))) for a,b,c,d in lines.reshape(-1,4)])
+
+
+def _beside_tiles(image,segs,offset=4,keep=.35):
+    """Only segments with edit-tile colour beside them. A gap between edit tiles has tiles on both sides and a piece's
+    border on one; the planks of a wooden build next to the wall have none, and their many long edges otherwise crowd
+    the wall's own lines out of the detectors' shortlists (live 2026-10-10: close to a wall beside wooden builds the
+    grid was never found). Per-pixel colour classes as _tile_support with a strict grey; 9 samples per side, all vectorised."""
+    if not segs:return segs
+    img=image.astype(np.int16);b,g,r=img[:,:,0],img[:,:,1],img[:,:,2]
+    spread=img.max(2)-img.min(2);mean=img.mean(2)
+    # Strict classes: edit-tile blue is strongly blue (145,76,28); wood at night is tinted (87,70,60). Grey only when
+    # exactly grey (selected tiles: spread ~3; shaded wood 14..31).
+    tile=((b>r*2)&(b*10>g*14)&(b>80))|((spread<10)&(mean>60)&(mean<180))|((r*100>b*122)&(r>80)&(g<100))
+    h,w=tile.shape
+    s=np.asarray(segs,np.float32)
+    t=np.linspace(.1,.9,9,dtype=np.float32)
+    x=s[:,0,None]+(s[:,2]-s[:,0])[:,None]*t;y=s[:,1,None]+(s[:,3]-s[:,1])[:,None]*t
+    length=np.maximum(s[:,4],1e-6)
+    nx=(-(s[:,3]-s[:,1])/length)[:,None];ny=((s[:,2]-s[:,0])/length)[:,None]
+    def at(px,py):
+        xi=np.clip(px.round().astype(int),0,w-1);yi=np.clip(py.round().astype(int),0,h-1)
+        return tile[yi,xi]
+    beside=at(x+nx*offset,y+ny*offset)|at(x-nx*offset,y-ny*offset)
+    return [seg for seg,f in zip(segs,beside.mean(1)) if f>=keep]
 
 
 def _merge_lines(segs):
@@ -140,16 +189,17 @@ def _cross(a,b):
     return np.linalg.solve(m,np.array([a['c'],b['c']],float))
 
 
-def _general_grid(image,aim,budget=.08):
+def _general_grid(image,aim,budget=.08,segs=None,sizes=(3,2),min_area=.08):
     """Any-angle n x n edit grid (n = 3 for walls, 2 for floors / stairs / roofs).
 
     The near-horizontal / near-vertical detector (_line_projection) misses floors seen at an angle and walls with
     selected tiles. Here lines are split into the two dominant directions, n+1 lines are chosen from each, and the
     result must be a projective grid (every interior crossing where a homography of the outer quad puts it) whose
     cells look like edit tiles and which contains the crosshair. Returns (count, H, quad, n) or None."""
-    deadline=time.perf_counter()+budget
     h,w=image.shape[:2]
-    lines=sorted(_merge_lines(_segments(image)),key=lambda l:-l['length'])[:24]
+    # segs: line segments computed once per frame by the caller and shared between detectors (~26 ms each).
+    lines=sorted(_merge_lines(segs if segs is not None else _segments(image)),key=lambda l:-l['length'])[:24]
+    deadline=time.perf_counter()+budget       # the budget is for the search, after any line search done here
     if len(lines)<6:return None
     # Direction families: up to three angle peaks (selected tiles add diagonal X marks, so the strongest two are not
     # always the grid); every pair at least 25 degrees apart is tried.
@@ -170,17 +220,17 @@ def _general_grid(image,aim,budget=.08):
     overall=None
     for k in peaks:
         fam=[[l for l in lines if diff(l['angle'],k)<14],[l for l in lines if diff(l['angle'],k)>=20]]
-        found=_grid_from_families(image,aim,fam,deadline)
+        found=_grid_from_families(image,aim,fam,deadline,sizes,min_area)
         if found is not None and (overall is None or found[0]>overall[0]):overall=found
     return overall[1] if overall else None
 
 
-def _grid_from_families(image,aim,fam,deadline=None):
+def _grid_from_families(image,aim,fam,deadline=None,sizes=(3,2),min_area=.08):
     """Bounded search: the crosshair must lie between the first and last line of each family (it is on the piece), so
     only those line spans are tried, crossings are computed once, and the search stops at `deadline`."""
     h,w=image.shape[:2]
     best=None
-    for n in (3,2):
+    for n in sizes:
         if len(fam[0])<n+1 or len(fam[1])<n+1:continue
         def order(group,ref):
             # Position of each line along a line through the crosshair parallel to the other family's strongest line;
@@ -217,7 +267,7 @@ def _grid_from_families(image,aim,fam,deadline=None):
                 quad=np.array([pts[0][0],pts[0][n],pts[n][n],pts[n][0]],np.float32)
                 if not cv2.isContourConvex(quad):continue
                 area=cv2.contourArea(quad)
-                if area<.08*w*h or quad[:,0].min()<-w*(.35 if n==3 else .05) or quad[:,0].max()>w*(1.35 if n==3 else 1.05) or quad[:,1].min()<-h*(.35 if n==3 else .05) or quad[:,1].max()>h*(1.35 if n==3 else 1.05):continue
+                if area<min_area*w*h or quad[:,0].min()<-w*(.35 if n==3 else .05) or quad[:,0].max()>w*(1.35 if n==3 else 1.05) or quad[:,1].min()<-h*(.35 if n==3 else .05) or quad[:,1].max()>h*(1.35 if n==3 else 1.05):continue
                 H=cv2.getPerspectiveTransform(unit,quad)
                 actual=np.array([[pts[j][i] for j in range(n+1) for i in range(n+1)]],np.float32)
                 residual=np.linalg.norm(cv2.perspectiveTransform(actual,np.linalg.inv(H))-expected,axis=2)
@@ -246,12 +296,44 @@ def _cell_colour(image,H,c,r):
 def _tile_like(colour):
     """An edit tile's colour: blue (unselected) or neutral grey (selected), as _tile_support classifies pixels."""
     b,g,r=colour
+    # Unselected blue, selected grey, and red (the game marks the remaining tiles red while the current selection is
+    # not a valid edit). Darker blues are NOT accepted: the navy sky / background would then pass as tiles.
     blue=b>r*1.22 and b>80 and g>45
     neutral=max(colour)-min(colour)<25 and 60<np.mean(colour)<180
-    return blue or neutral
+    red=r>b*1.22 and r>80 and g<100
+    return blue or neutral or red
 
 
-def _partial_grid(image,aim,budget=.06):
+def _lattice_shift(image,H,aim,n=3):
+    """The tile lattice is periodic, so a detector can lock onto the right spacing one tile off: a wooden pillar or a
+    floor plank edge next to a close wall poses as its border (live 2026-10-10: the grid sat one column left and one row
+    low, so the crosshair read as the wrong tile). Try the lattice shifted by -1..1 tile on each axis and keep the
+    shift whose n x n cells most look like edit tiles. A shift must win by MARGIN cells: next to stacked or adjacent
+    walls every position looks like tiles, and the detected lines are then the better evidence. Selected tiles are an
+    exact grey here (shaded wood is greyish but warmer). Returns (H, quad, count)."""
+    def strict(colour):
+        return _tile_like(colour) and (max(colour)-min(colour)<10 or not 60<np.mean(colour)<180 or colour[0]>colour[2]*1.22 or colour[2]>colour[0]*1.22)
+    def score(Hs):
+        return sum(1 for c in range(n) for r in range(n) if (x:=_cell_colour(image,Hs,c,r)) is not None and strict(x))
+    base=score(H)
+    best=(base,H)
+    a=cv2.perspectiveTransform(np.float32([[aim]]),np.linalg.inv(H))[0,0]
+    for dx in (-1,0,1):
+        for dy in (-1,0,1):
+            # The crosshair is on the piece, so only shifts that keep it inside the grid are candidates.
+            if dx==dy==0 or not (0<=a[0]-dx<n and 0<=a[1]-dy<n):continue
+            Hs=H@np.array([[1.,0,dx],[0,1.,dy],[0,0,1.]])
+            s=score(Hs)
+            if s>=base+_SHIFT_MARGIN and s>best[0]:best=(s,Hs)
+    H=best[1]
+    unit=np.float32([[[0,0],[n,0],[n,n],[0,n]]])
+    return H,cv2.perspectiveTransform(unit,H)[0],best[0]
+
+
+_SHIFT_MARGIN=2
+
+
+def _partial_grid(image,aim,budget=.06,segs=None):
     """A 3x3 wall whose outer border is partly off screen (close, oblique views): rebuild it from three visible lines
     per direction.
 
@@ -260,9 +342,9 @@ def _partial_grid(image,aim,budget=.06):
     tiles when the grid continues there, and like background when that line is the wall's edge. A side that is off
     screen counts as 'continues' only if the opposite side is clearly background. Any tie abstains, so a wrong cell is
     never guessed. Returns (count, H, quad, 3) like _general_grid, with quad corners possibly off screen."""
-    deadline=time.perf_counter()+budget
     h,w=image.shape[:2]
-    lines=sorted(_merge_lines(_segments(image)),key=lambda l:-l['length'])[:20]
+    lines=sorted(_merge_lines(segs if segs is not None else _segments(image)),key=lambda l:-l['length'])[:20]
+    deadline=time.perf_counter()+budget       # the budget is for the search, after any line search done here
     if len(lines)<6:return None
     hist=np.zeros(180)
     for l in lines:hist[int(l['angle'])%180]+=l['length']
@@ -328,6 +410,7 @@ def _partial_grid(image,aim,budget=.06):
             a=cv2.perspectiveTransform(np.float32([[aim]]),np.linalg.inv(H))[0,0]
             if not (0<=a[0]<3 and 0<=a[1]<3):continue
             count=sum(1 for c in range(3) for r in range(3) if (x:=_cell_colour(image,H,c,r)) is not None and _tile_like(x))
+            if count<6:continue           # a wall needs 6 of 9 tile cells anyway (VisualObserver); a blueprint has ~4
             score=(count,-float(np.linalg.norm(back-grid9,axis=1).mean()))
             if best is None or score>best[0]:
                 quad=_ordered(quad)
@@ -335,38 +418,131 @@ def _partial_grid(image,aim,budget=.06):
     return best[1] if best else None
 
 
+_DOWNSCALE = {}
+
+
+def downscale(frame, scale):
+    """frame resized by scale, computed once per frame and size: the tracker, the re-reader and the HUD check all
+    work on the same shrunken image instead of resizing the 1920x1080 capture again each (~1-2 ms per resize)."""
+    if scale >= 1:
+        return frame[:, :, :3]
+    key = round(scale, 4)
+    hit = _DOWNSCALE.get(key)
+    if hit is not None and hit[0] is frame:
+        return hit[1]
+    small = cv2.resize(frame[:, :, :3], (round(frame.shape[1] * scale), round(frame.shape[0] * scale)))
+    _DOWNSCALE[key] = (frame, small)          # keeps a reference, so the identity check cannot alias a new frame
+    return small
+
+
 _TEMPLATE_CACHE = {}
+_CUE_SCALE = {}     # (name, roi, scale) -> template size index of a confident (>= 0.6) match: the HUD's fixed scale
+_CUE_HINT = {}      # (name, roi) -> (template index, x, y) of the last confident match: searched first next frame
+
+
+def _cue_mask(image):
+    """White, unsaturated HUD text: every channel >= 180 and channel spread <= 45. OpenCV per-channel min/max instead of
+    numpy reductions over the colour axis (~10x faster on the cue regions)."""
+    b,g,r=cv2.split(image)
+    spread=cv2.subtract(cv2.max(cv2.max(b,g),r),cv2.min(cv2.min(b,g),r))
+    mask=cv2.inRange(image,np.array([180,180,180],np.uint8),np.array([255,255,255],np.uint8))
+    return cv2.bitwise_and(mask,cv2.compare(spread,45,cv2.CMP_LE))
+
+
 def cue_scores(frame, names, roi=None):
+    """Best template-match score per HUD cue (CONFIRM, RESET, build labels...) in a region of the frame.
+
+    Fast path: the HUD does not move between frames, so each cue is first re-checked where it was last found, at the
+    same template scale, on a small patch cut from the full frame and resized on its own (~0.3 ms per cue). Only if a
+    cue is not as good as last time (< 90% of its score) is the region resized, masked and searched at all six scales,
+    so a cue that moved or disappeared is still found or correctly scored low."""
     height,width=frame.shape[:2]
     scale=min(1.,960./width)
-    image=cv2.resize(frame[:,:,:3],(round(width*scale),round(height*scale)))
-    h,w=image.shape[:2]
+    w,h=round(width*scale),round(height*scale)
     if roi is None:roi=(.20,.30,1.,.76)
     x1,y1,x2,y2=roi
-    image=image[int(h*y1):int(h*y2),int(w*x1):int(w*x2)]
-    mask=cv2.inRange(image,np.array([180,180,180],np.uint8),np.array([255,255,255],np.uint8))
-    mask[(image.max(2).astype(int)-image.min(2))>45]=0
+    ox,oy=int(w*x1),int(h*y1)
+    rw,rh=int(w*x2)-ox,int(h*y2)-oy
+    region=None
+    def full_mask():
+        nonlocal region
+        if region is None:
+            region=_cue_mask(downscale(frame,scale)[oy:oy+rh,ox:ox+rw])   # default interpolation: templates tuned on it
+        return region
     scores=[]
     for name in names:
         key=(name,round(scale,3))
         if key not in _TEMPLATE_CACHE:
             template=cv2.imread(str(Path(__file__).resolve().parents[1]/'assets/edit-observer'/(name+'.png')),0)
             _TEMPLATE_CACHE[key]=[] if template is None else [cv2.resize(template,None,fx=k*scale,fy=k*scale) for k in [.7,.85,1.,1.15,1.3,1.5]]
-        score=0.
-        for current in _TEMPLATE_CACHE[key]:
+        templates=_TEMPLATE_CACHE[key]
+        hint_key=(name,roi,round(scale,3))
+        hint=_CUE_HINT.get(hint_key)
+        if hint is not None:
+            i,x,y,last_score=hint
+            t=templates[i];pad=24
+            ya,yb=max(0,y-pad),min(rh,y+t.shape[0]+pad)
+            xa,xb=max(0,x-pad),min(rw,x+t.shape[1]+pad)
+            if yb-ya>=t.shape[0] and xb-xa>=t.shape[1]:
+                # Patch in full-resolution pixels, resized alone to the region's scale.
+                patch=frame[int((oy+ya)/scale):int((oy+yb)/scale),int((ox+xa)/scale):int((ox+xb)/scale),:3]
+                window=_cue_mask(cv2.resize(patch,(xb-xa,yb-ya)))
+                _,best,_,loc=cv2.minMaxLoc(cv2.matchTemplate(window,t,cv2.TM_CCOEFF_NORMED))
+                # As good as last time (>= 90% of that score) at the same place: the cue has not moved. Cues whose
+                # absolute score is modest (RESET ~0.55) stay on the fast path; a vanished cue drops far below.
+                if best>=max(.45,.9*last_score):
+                    _CUE_HINT[hint_key]=(i,xa+loc[0],ya+loc[1],max(last_score*.98,best))
+                    scores.append(float(best));continue
+        mask=full_mask()
+        score=0.;found=None
+        # Too few white pixels in the whole region for this cue to be there: score 0 without matching.
+        if cv2.countNonZero(mask)<int((templates[0]>0).sum()*.3) if templates else True:
+            _CUE_HINT.pop(hint_key,None);scores.append(0.);continue
+        # The HUD scale is fixed for a given resolution: once a cue was found, a miss is searched at that one learned
+        # size only (1 match instead of 6). All sizes are tried only until the size is learned.
+        learned=_CUE_SCALE.get(hint_key)
+        ui=_CUE_SCALE.get(('ui',round(scale,3)))
+        if learned is not None:sizes=[learned]
+        elif ui is not None:sizes=[i for i in (ui-1,ui,ui+1) if 0<=i<len(templates)]   # all prompts share one UI scale
+        else:sizes=range(len(templates))
+        for i in sizes:
+            current=templates[i]
             if current.shape[0]>mask.shape[0] or current.shape[1]>mask.shape[1]:continue
-            score=max(score,float(cv2.minMaxLoc(cv2.matchTemplate(mask,current,cv2.TM_CCOEFF_NORMED))[1]))
+            _,best,_,loc=cv2.minMaxLoc(cv2.matchTemplate(mask,current,cv2.TM_CCOEFF_NORMED))
+            if best>score:score=float(best);found=(i,loc[0],loc[1])
+        if found and score>=.50:
+            _CUE_HINT[hint_key]=found+(score,)
+            if score>=.60:_CUE_SCALE[hint_key]=found[0];_CUE_SCALE[('ui',round(scale,3))]=found[0]
+        else:_CUE_HINT.pop(hint_key,None)
         scores.append(score)
     return tuple(scores)
+
 
 def _native_edit_cues(frame):
     scores=cue_scores(frame,['confirm','reset'])
     return min(scores)>=.56 and sum(scores)/2>=.60
 
-def observe_mode(frame):
+_MODE_STATE = {'idle': 0, 'last': ('unknown', 0.)}
+
+
+def observe_mode(frame,throttle=False):
+    """throttle=True (live overlay only): outside edit mode, build/blueprint/editable prompts every 3rd call."""
     if frame is None or frame.ndim!=3:return 'unknown',0.
     edit=cue_scores(frame,['confirm','reset'])
-    if min(edit)>=.56 and sum(edit)/2>=.60:return 'editing',min(edit)
+    if min(edit)>=.56 and sum(edit)/2>=.60:
+        _MODE_STATE['idle']=0
+        return 'editing',min(edit)
+    # Outside edit mode the build / blueprint / editable prompts are re-checked every 3rd frame (~24 ms at the live
+    # cadence); in between the last answer stands. Edit mode itself is checked every frame, so opening an edit is
+    # never delayed.
+    _MODE_STATE['idle']+=1
+    if throttle and _MODE_STATE['last'][0]=='unknown' and _MODE_STATE['idle']%3:
+        return 'unknown',0.
+    _MODE_STATE['last']=_observe_other_modes(frame)
+    return _MODE_STATE['last']
+
+
+def _observe_other_modes(frame):
     build=cue_scores(frame,['change-material','rotate','change-material-current','rotate-current','build-label'],(0.,.35,.23,.76))
     material=max(build[0],build[2]);other=max(build[1],build[3],build[4])
     if material>=.60 and other>=.60:return 'building',min(material,other)
@@ -376,12 +552,15 @@ def observe_mode(frame):
 
 
 def _crosshair(frame):
+    """The red aim ring if visible near the centre, else the screen centre (Fortnite's crosshair is always there).
+    Only the central 24% box is searched: the ring can only be there, and the full-frame search cost ~2.6 ms."""
     h,w=frame.shape[:2]
-    red=cv2.inRange(frame,np.array([0,0,170],np.uint8),np.array([110,110,255],np.uint8))
+    x0,y0=int(w*.38),int(h*.38)
+    red=cv2.inRange(frame[y0:h-y0,x0:w-x0],np.array([0,0,170],np.uint8),np.array([110,110,255],np.uint8))
     contours,_=cv2.findContours(red,cv2.RETR_EXTERNAL,cv2.CHAIN_APPROX_SIMPLE)
     candidates=[]
     for c in contours:
-        x,y,cw,ch=cv2.boundingRect(c);area=cv2.contourArea(c)
+        x,y,cw,ch=cv2.boundingRect(c);area=cv2.contourArea(c);x+=x0;y+=y0
         if 25<cw<110 and .8<cw/max(ch,1)<1.25 and area>400:
             cx=x+cw*.5;cy=y+ch*.5
             if abs(cx-w*.5)<w*.12 and abs(cy-h*.5)<h*.12:candidates.append((np.hypot(cx-w*.5,cy-h*.5),(cx,cy)))
@@ -396,7 +575,7 @@ class EditGridObserver:
         if not _native_edit_cues(frame):return empty('native_edit_mode_unverified')
         self._aim_screen=_crosshair(frame)
         height,width=frame.shape[:2]
-        scale=min(1.,960./width);image=cv2.resize(frame[:,:,:3],(round(width*scale),round(height*scale)))
+        scale=min(1.,960./width);image=downscale(frame,scale)
         h,w=image.shape[:2];grey=cv2.cvtColor(image,cv2.COLOR_BGR2GRAY)
         projection=_line_projection(image)
         if projection is not None:
@@ -464,23 +643,25 @@ class EditGridObserver:
         if not (0<=aim[0]<n and 0<=aim[1]<n):return WallObservation(now,reason='crosshair_off_wall',cells=n)
         # Sample all reconstructed cells; selected tiles in native edit mode are neutral grey.
         projected=cv2.warpPerspective(image,np.diag([100.,100.,1.])@inverse,(100*n,100*n))
+        # Vectorised: colour fractions of every tile's centre at once (n x n x 60 x 60 view), then the X-mark line
+        # check only on tiles that already look selected (neutral grey, not blue): usually 0-3 instead of 9 Hough runs.
+        cells=projected.reshape(n,100,n,100,3)[:,20:80,:,20:80].astype(np.int16)
+        spread=cells.max(4)-cells.min(4);mean=cells.mean(4)
+        neutral=((spread<25)&(mean>60)&(mean<180)).mean(axis=(1,3))
+        blue=((cells[...,0]>cells[...,2]*1.2)&(cells[...,0]>80)).mean(axis=(1,3))
         selected=[]
-        for row in range(n):
-            for col in range(n):
-                tile=projected[row*100+20:row*100+80,col*100+20:col*100+80].astype(float)
-                neutral=((tile.max(2)-tile.min(2)<25)&(tile.mean(2)>60)&(tile.mean(2)<180)).mean()
-                blue=((tile[:,:,0]>tile[:,:,2]*1.2)&(tile[:,:,0]>80)).mean()
-                tile_u8=tile.astype(np.uint8)
-                edges=cv2.Canny(cv2.cvtColor(tile_u8,cv2.COLOR_BGR2GRAY),40,120)
-                lines=cv2.HoughLinesP(edges,1,np.pi/180,12,minLineLength=20,maxLineGap=5)
-                positive=negative=False
-                if lines is not None:
-                    for x1,y1,x2,y2 in lines.reshape(-1,4):
-                        if abs(x2-x1)<1:continue
-                        slope=(y2-y1)/(x2-x1)
-                        positive |= .55<slope<1.6
-                        negative |= -1.6<slope<-.55
-                if neutral>.25 and blue<.2 and positive and negative:selected.append((n-1-row)*n+col)
+        for row,col in zip(*np.nonzero((neutral>.25)&(blue<.2))):
+            tile_u8=projected[row*100+20:row*100+80,col*100+20:col*100+80]
+            edges=cv2.Canny(cv2.cvtColor(tile_u8,cv2.COLOR_BGR2GRAY),40,120)
+            lines=cv2.HoughLinesP(edges,1,np.pi/180,12,minLineLength=20,maxLineGap=5)
+            positive=negative=False
+            if lines is not None:
+                for x1,y1,x2,y2 in lines.reshape(-1,4):
+                    if abs(x2-x1)<1:continue
+                    slope=(y2-y1)/(x2-x1)
+                    positive |= .55<slope<1.6
+                    negative |= -1.6<slope<-.55
+            if positive and negative:selected.append(int((n-1-row)*n+col))
         # Image-grid coordinates: u left->right, v bottom->top of the quad as drawn on screen. For a wall that is
         # the wall's own frame; floors / roofs are re-oriented to near / far by edit_geometry.piece_context.
         return WallObservation(now,'editing',round(confidence,3),tuple(tuple(float(v/scale) for v in p) for p in outer),

@@ -152,3 +152,18 @@ class ContractTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class CollectorSyncTests(unittest.TestCase):
+    def test_collector_sync_never_raises_and_respects_configuration(self):
+        from keystroke_lab import collector
+        store = Store(":memory:")
+        self.assertIsNone(collector.cloud_sync(store, CloudClient("", "", session_file=None)))      # not configured
+
+        def broken(*a):
+            raise OSError("network down")
+        self.assertIsNone(collector.cloud_sync(store, CloudClient("https://x.supabase.co", "k", session_file=None, http=broken)))
+        rep = collector.cloud_sync(store, CloudClient("https://x.supabase.co", "k", session_file=None,
+                                                      http=FakeSupabase(consent=False)))
+        self.assertEqual(rep["skipped"], "no upload consent")
+        store.close()

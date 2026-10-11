@@ -127,3 +127,28 @@ class SchemaTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class PatternMatcherTests(unittest.TestCase):
+    """The recorder names the edit a selection really makes, from build_pieces.PatternTable (all real shapes)."""
+    def setUp(self):
+        self.match = default_matcher()
+
+    def test_common_and_rare_wall_shapes(self):
+        self.assertEqual(self.match("wall", [4], None), "window_center")
+        self.assertEqual(self.match("wall", [5, 8, 7], None), "corner_upper_right")
+        rare = self.match("wall", [3, 5], None)                 # double window: recognised though not suggested
+        self.assertIsNotNone(rare)
+
+    def test_shapes_that_cannot_exist_are_not_named(self):
+        self.assertIsNone(self.match("wall", list(range(9)), None))   # nothing left
+        self.assertIsNone(self.match("wall", [0, 4, 8], None))        # not a Fortnite edit
+
+    def test_floor_selection_is_mapped_from_the_screen_grid(self):
+        # Seen from the side (piece 'away' = screen -x): the screen grid is rotated relative to the piece frame.
+        ctx = {"kind": "floor", "cells": 2, "aim": [0.5, 0.5], "side": 1, "far": False, "distance_cm": 300.0,
+               "camera": [0, 0, 0], "body": [0, 0, 0], "across": [0.0, 1.0, 0.0], "away": [-1.0, 0.0, 0.0],
+               "source": "screen_pose_estimate"}
+        from keystroke_lab.edit_geometry import PieceContext, tiles_to_grid
+        screen = list(tiles_to_grid(PieceContext(**ctx), (0,)))      # where the near-left tile appears on screen
+        self.assertEqual(self.match("floor", screen, ctx), "floor_hole_near_left")

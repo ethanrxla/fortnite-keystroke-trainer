@@ -24,7 +24,8 @@ FLICK_COOLDOWN = 0.4
 
 
 def key_name(k):
-    return str(getattr(k, "char", None) or getattr(k, "name", k)).lower()
+    from .keyboard_overlay import key_name as physical
+    return str(physical(k)).lower()
 
 
 def run(out, binds, flicks=False):

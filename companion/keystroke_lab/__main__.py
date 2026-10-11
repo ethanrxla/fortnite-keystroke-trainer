@@ -55,8 +55,7 @@ def cmd_practice(args):
     presses = []
 
     def on_key(k):
-        name = getattr(k, "char", None) or getattr(k, "name", str(k))
-        name = str(name).lower()
+        name = str(keyboard_overlay.key_name(k)).lower()
         presses.append((time.perf_counter(), alternates.get(name, name)))
 
     def on_click(_x, _y, button, pressed):
@@ -164,6 +163,13 @@ def cmd_binds(args):
     return binds_cmd.run(args.out, args.only, args.category)
 
 
+def cmd_import_binds(args):
+    from . import fortnite_binds
+    from .bind_profiles import ProfileStore
+    store = ProfileStore(args.out, confirm_sprint=pathlib.Path(args.out) == drills.BINDS_FILE)
+    return fortnite_binds.run(store, args.file, write=args.write, trust=args.trust)
+
+
 def cmd_insights(args):
     records = []
     if args.uefn_log:
@@ -254,6 +260,18 @@ def cmd_review_edits(args):
     return 0
 
 
+def cmd_frames(args):
+    """Edit-frame dataset (companion/data/frames): import old screenshots with auto labels, or summarise."""
+    import collections
+    from . import frame_dataset
+    if args.action == "import":
+        print("imported", frame_dataset.import_folder(args.folder), "edit-mode frames")
+    recs = [r for _, r in frame_dataset.load_manifest()]
+    pieces = collections.Counter(r["auto"]["piece"] for r in recs)
+    print(f"{len(recs)} frames, {sum(r['label_status'] == 'reviewed' for r in recs)} reviewed; auto pieces {dict(pieces)}")
+    return 0
+
+
 def cmd_personalize(args):
     from . import personalize
     stats, factors = personalize.run()
@@ -313,6 +331,12 @@ def main(argv=None):
     b.add_argument("--only", nargs="*")
     b.add_argument("--category", nargs="*", choices=["move", "combat", "build", "edit", "ui"])
     b.set_defaults(fn=cmd_binds)
+    ib = sub.add_parser("import-binds", help="read keybinds from Fortnite's local Input.ini (dry run unless --write)")
+    ib.add_argument("--file", nargs="*", help="ini files to read (default: Fortnite's WindowsClient config folder)")
+    ib.add_argument("--out", default=str(drills.BINDS_FILE))
+    ib.add_argument("--write", action="store_true", help="save the imported keys into the profile")
+    ib.add_argument("--trust", action="store_true", help="mark imported keys verified so drills can be graded")
+    ib.set_defaults(fn=cmd_import_binds)
     au = sub.add_parser("autostart")
     au.add_argument("--install", action="store_true", help="run the watcher at every Windows login")
     au.add_argument("--uninstall", action="store_true")
@@ -329,6 +353,10 @@ def main(argv=None):
     cl.add_argument("--frames", choices=["yes", "no"], default="no")
     cl.add_argument("--raw-keys", choices=["yes", "no"], default="no")
     cl.set_defaults(fn=cmd_cloud)
+    fr_ = sub.add_parser("frames", help="edit-frame dataset: import <folder> | stats")
+    fr_.add_argument("action", choices=["import", "stats"])
+    fr_.add_argument("folder", nargs="?")
+    fr_.set_defaults(fn=cmd_frames)
     rv = sub.add_parser("review-edits", help="approve / reject recorded edit attempts in a local browser page")
     rv.add_argument("--no-browser", action="store_true")
     rv.set_defaults(fn=cmd_review_edits)

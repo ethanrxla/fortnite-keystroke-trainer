@@ -38,6 +38,14 @@ KTTileCentre<public>(T:int, Cols:int)<transacts>:vector2 =
 KTReversed<public>(Tiles:[]int)<transacts>:[]int =
     for (I := 0..Tiles.Length - 1, T := Tiles[Tiles.Length - 1 - I]) { T }
 
+# Left/right mirror of a drag order (column C -> Cols - 1 - C).
+KTMirrored<public>(Tiles:[]int, Cols:int)<transacts>:[]int =
+    for (T : Tiles) { T - 2 * (if (C := Mod[T, Cols]) then C else 0) + Cols - 1 }
+
+# True when both orders select the same tiles (a left/right symmetric shape such as the arch).
+KTSameTiles<public>(A:[]int, B:[]int)<transacts>:logic =
+    if (A.Length <> B.Length) then false else logic{(for (T : A, (for (U : B, U = T) { U }).Length = 0) { T }).Length = 0}
+
 # Crosshair travel in tiles: from the aim point to the first tile, then through each tile centre.
 KTDragLength<public>(Tiles:[]int, Cols:int)<transacts>:float =
     var L:float = 0.0
@@ -124,12 +132,17 @@ KTRankEdits<public>(Aim:vector2, Sit:int, Kind:string, Factors:[string]float)<tr
         AimSide := KTAimSide(Aim, Cols)
         # Show only edits on the side the player is aiming at; centre shapes are always allowed.
         if (not logic{ShapeSide <> 0 and AimSide <> 0 and ShapeSide <> AimSide}?):
-            Back := KTReversed(S.Tiles)
             Penalty := KTPriorWeight * Ln(PMax / Max(KTPriorFor(Kind, Sit, J) * KTFactorOf(Factors, S.Id), 0.001))
-            Fwd := KTRankCost(Aim, S.Tiles, Cols) + Penalty
-            Rev := KTRankCost(Aim, Back, Cols) + Penalty
-            Tiles := if (Rev < Fwd) then Back else S.Tiles
-            Pick := kt_edit_pick{Shape := kt_edit_shape{Id := S.Id, Name := S.Name, Tiles := Tiles}, Cost := Min(Fwd, Rev),
+            # Drag orders to try: forward, reversed and, for a left/right symmetric shape, both mirrored orders, so a
+            # symmetric shape favours neither side (Python port: edit_ranker.py).
+            Mirror := KTMirrored(S.Tiles, Cols)
+            Orders := if (KTSameTiles(Mirror, S.Tiles)?) then array{S.Tiles, KTReversed(S.Tiles), Mirror, KTReversed(Mirror)} else array{S.Tiles, KTReversed(S.Tiles)}
+            var Tiles:[]int = S.Tiles
+            var Best:float = KTRankCost(Aim, S.Tiles, Cols)
+            for (O : Orders, Cost := KTRankCost(Aim, O, Cols), Cost < Best):
+                set Best = Cost
+                set Tiles = O
+            Pick := kt_edit_pick{Shape := kt_edit_shape{Id := S.Id, Name := S.Name, Tiles := Tiles}, Cost := Best + Penalty,
                                  Travel := KTApproach(Aim, Tiles, Cols) + KTDragLength(Tiles, Cols)}
             # Insertion keeps the list sorted by cost.
             var Out:[]kt_edit_pick = array{}
@@ -142,6 +155,14 @@ KTRankEdits<public>(Aim:vector2, Sit:int, Kind:string, Factors:[string]float)<tr
             if (not Placed?):
                 set Out += array{Pick}
             set Picks = Out
+    # The player's aim map (EditIntent.verse, generated from shared/edit-intent.json, the same rules as the companion
+    # overlay) names the edit for this crosshair position: it goes first, a full tile of cost ahead, so the lock logic
+    # (keep the current edit within 0.25 of the top) switches to it. Jev's ranking orders the rest.
+    Intent := KTIntentEdit(Kind, Aim)
+    if (Intent <> "", Mapped := (for (P : Picks, P.Shape.Id = Intent) { P })[0]):
+        Low := if (First := Picks[0]) then First.Cost else 0.0
+        set Picks = array{kt_edit_pick{Shape := Mapped.Shape, Cost := Low - 1.0, Travel := Mapped.Travel}} +
+            (for (P : Picks, P.Shape.Id <> Intent) { P })
     Picks
 
 kt_edit_face := struct<computes>:

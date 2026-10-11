@@ -89,7 +89,7 @@ class PersonalizeTests(unittest.TestCase):
             available = True
 
             def decide(self, state, questions):
-                return {q: {"probabilities": {"strong": 0.9, "average": 0.1, "weak": 0.0}} for q in questions}
+                return {q: {"choice":"strong","confidence":.9,"probabilities": {"strong": 0.9, "average": 0.1, "weak": 0.0}} for q in questions}
 
         f = personalize.factors(personalize.edit_stats(store), Jev())["window_center"]
         self.assertAlmostEqual(f, 1.27, places=2)
@@ -108,7 +108,7 @@ class PersonalizeTests(unittest.TestCase):
 
             def decide(self, state, questions):
                 sizes.append(len(questions))
-                return {q: {"probabilities": {"strong": 0.0, "average": 0.0, "weak": 1.0}} for q in questions}
+                return {q: {"choice":"weak","confidence":1.,"probabilities": {"strong": 0.0, "average": 0.0, "weak": 1.0}} for q in questions}
 
         f = personalize.factors(personalize.edit_stats(store), Jev())
         self.assertEqual(sorted(sizes), [2, 8])

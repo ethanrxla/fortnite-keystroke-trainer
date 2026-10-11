@@ -20,8 +20,7 @@ import json
 import math
 import pathlib
 
-from .pieces import catalog_key
-from .build_pieces import get_piece
+from .pieces import canonical, catalog_key
 
 SHARED = pathlib.Path(__file__).resolve().parents[2] / "shared"
 PRIOR_WEIGHT = 0.3
@@ -133,26 +132,71 @@ class Ranker:
         my_side = aim_side(aim, c)
         picks = []
         for e in self.library[kind]:
-            if kind != 'wall':
-                piece=get_piece(kind)
-                route=piece.route(aim,dict(e,piece=piece.kind,cols=piece.cells))
-                if route is None:continue
-                penalty=PRIOR_WEIGHT*math.log(pmax/max(weighted[e['id']],.001))
-                picks.append(Pick(e['id'],e['name'],tuple(e.get('tiles',())),round(route.distance+penalty,4),
-                                  round(route.distance,4),round(weighted[e['id']],4),self.personal.get(e['id'],1.),
-                                  {'route_mode':route.mode,'prior_penalty':round(penalty,3),'situation':key}))
-                continue
             tiles = tuple(e["tiles"])
             s = shape_side(tiles, c)
             if s != 0 and my_side != 0 and s != my_side:
                 continue        # never offer an edit on the other side of the piece from the crosshair
             penalty = PRIOR_WEIGHT * math.log(pmax / max(weighted[e["id"]], 0.001))
             options = [tiles, tuple(reversed(tiles))]
+            mirrored = tuple(t - 2 * (t % c) + c - 1 for t in tiles)
+            if set(mirrored) == set(tiles) and mirrored != tiles:
+                # A left/right symmetric shape can be dragged in its mirror order too, so neither side is favoured.
+                options += [mirrored, tuple(reversed(mirrored))]
             costs = [approach(aim, t, c) + DRAG_WEIGHT * drag(t, c) + penalty for t in options]
-            best = options[int(costs[1] < costs[0])]
+            best = options[min(range(len(options)), key=lambda i: costs[i])]
             picks.append(Pick(e["id"], e["name"], best, round(min(costs), 4),
                               round(approach(aim, best, c) + drag(best, c), 4), round(weighted[e["id"]], 4),
                               self.personal.get(e["id"], 1.0),
                               {"approach": round(approach(aim, best, c), 3), "drag": round(drag(best, c), 3),
                                "prior_penalty": round(penalty, 3), "situation": key}))
         return sorted(picks, key=lambda p: p.cost)
+
+
+class IntentMap:
+    """Crosshair position -> the edit the player means, as one O(1) read from a precomputed 2-D array.
+
+    Built once from shared/edit-intent.json: for each piece a grid of RES x RES cells per tile (0.1 tile), each cell
+    holding an index into that piece's edit list (tile rule, then the junction override within junction_radius).
+    lookup(piece, (u, v)) = table[int(v * RES)][int(u * RES)]: no search, no ranking, constant time per frame."""
+    RES = 10
+
+    def __init__(self, path=None):
+        data = json.loads(pathlib.Path(path or SHARED / "edit-intent.json").read_text(encoding="utf-8"))
+        self.tables = {}
+        for piece, spec in data.items():
+            if piece.startswith("_"):
+                continue
+            n = 3 if piece == "wall" else 2
+            names = list(spec["tiles"])
+            junctions = {tuple(float(x) for x in k.split(",")): e for k, e in (spec.get("junctions") or {}).items()}
+            # zones: [u0, v0, u1, v1, edit] rectangles in tile units, applied over the tile rule (junctions win).
+            zones = [(*map(float, z[:4]), z[4]) for z in spec.get("zones") or []]
+            for e in [*junctions.values(), *(z[4] for z in zones)]:
+                if e not in names:
+                    names.append(e)
+            radius = float(spec.get("junction_radius", 0))
+            size = n * self.RES
+            table = [[0] * size for _ in range(size)]
+            for row in range(size):
+                for col in range(size):
+                    u, v = (col + 0.5) / self.RES, (row + 0.5) / self.RES
+                    edit = spec["tiles"][int(v) * n + int(u)]
+                    for u0, v0, u1, v1, zone in zones:
+                        if u0 <= u < u1 and v0 <= v < v1:
+                            edit = zone
+                    for point, corner in junctions.items():
+                        if math.dist(point, (u, v)) <= radius:
+                            edit = corner
+                    table[row][col] = names.index(edit)
+            self.tables[canonical(piece)] = (n, names, table)
+
+    def lookup(self, piece, aim):
+        entry = self.tables.get(canonical(piece) or piece)
+        if entry is None or len(aim) != 2:
+            return None
+        n, names, table = entry
+        size = n * self.RES
+        col, row = int(aim[0] * self.RES), int(aim[1] * self.RES)
+        if not (0 <= col < size and 0 <= row < size):
+            return None
+        return names[table[row][col]]

@@ -46,11 +46,14 @@ class EditCapture:
             item=self.pending.get()
             if item is None:break
             attempt,n,crop=item
-            cv2.imwrite(str(self.folder/f"{attempt}-{n}.png"),crop)
+            try:
+                if not cv2.imwrite(str(self.folder/f"{attempt}-{n}.png"),crop):self.dropped+=1
+            except (OSError,cv2.error):self.dropped+=1
 
     def close(self):
         if self.thread:
-            self.pending.put(None)
+            try:self.pending.put(None,timeout=1)
+            except queue.Full:return
             self.thread.join(timeout=5)
 
 

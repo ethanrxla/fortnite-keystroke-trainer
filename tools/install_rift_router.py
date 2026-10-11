@@ -5,6 +5,14 @@ from pathlib import Path
 import build_map as b
 ROOT=Path(__file__).resolve().parent.parent
 PAIRS=[('KT2_QuickStart','KT2_CourtArrival'),('KT2_FreeStart','KT2_FreeArrival'),('KT2_CourtReturn','KT2_HubArrival')]+[(f'KT3_0{i}_Src',f'KT3_0{i}_Dest') for i in range(3,7)]+[(f'KT_Portal_{n}',f'KT_Portal_{n}_Return') for n in ['Aim','Arena','Scenario']]+[(f'KT_Portal_{n}_Return',f'KT_Portal_{n}') for n in ['Aim','Arena','Scenario']]
+# Fight Lab start rifts (tools/build_fight_lab.py start_rifts): each room's doorway pad to where its exercise begins,
+# and room A's loop from the climb tower roof back to the top of the drop tower. Appended, so the button indices
+# below still name the same pairs.
+LAB_RIFTS=[(f'KT7_Lab_Rift_{r}_In',f'KT7_Lab_Rift_{r}_Start') for r in 'ABCD']+[('KT7_Lab_Rift_A_Loop','KT7_Lab_Rift_A_Start')]
+# Court bay 02's rift goes to the Sky Box (tools/build_sky_box.py; player 2026-10-10: boxing high up, not the ground
+# arena), and the Sky Box exit comes back beside it. The Rebox Arena's own way back stays.
+REBOX_RIFTS=[('KT14_Rebox_Rift_In','KT18_Sky_Rift_Start'),('KT18_Sky_Rift_Exit','KT14_Rebox_Rift_Home'),('KT14_Rebox_Rift_Back','KT14_Rebox_Rift_Home')]
+PAIRS=PAIRS+LAB_RIFTS+REBOX_RIFTS
 
 def decode(v):return json.loads(v) if isinstance(v,str) else v
 def main():

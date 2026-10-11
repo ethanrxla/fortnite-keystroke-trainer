@@ -12,6 +12,15 @@ const TYPES: Record<string, (v: any) => boolean> = {
   null: (v) => v === null,
 };
 
+export function keySummaryErrors(value:any):string[]{
+  if(value==null)return [];
+  if(!TYPES.object(value)||Object.keys(value).some(k=>k!=="verdicts")||!TYPES.object(value.verdicts))
+    return ["key_summary: anonymous verdict totals only"];
+  const allowed=new Set(["ok","order","stray","double","unmapped","repeat","release","habit"]);
+  return Object.entries(value.verdicts).some(([k,v])=>!allowed.has(k)||!Number.isSafeInteger(v)||Number(v)<0||Number(v)>1000000)
+    ?["key_summary: invalid verdict or count"]:[];
+}
+
 export function errors(value: any, schema: any, path = "$"): string[] {
   const out: string[] = [];
   if (schema.type !== undefined) {
@@ -40,6 +49,21 @@ export function errors(value: any, schema: any, path = "$"): string[] {
       for (const key of Object.keys(value)) if (!(key in props)) out.push(`${path}: unexpected field ${key}`);
     }
     for (const [key, sub] of Object.entries(props)) if (key in value) out.push(...errors(value[key], sub, `${path}.${key}`));
+  }
+  if (path === "$" && TYPES.object(value) && value.schema === "edit_attempt.v2") {
+    const opened=value.t_edit_open, closed=value.t_close;
+    if(TYPES.number(opened) && TYPES.number(closed)){
+      if(closed<opened)out.push("$: close precedes open");
+      for(const key of ["t_first_select","t_confirm","t_reset"])
+        if(TYPES.number(value[key]) && !(opened<=value[key] && value[key]<=closed+.15))out.push("$."+key+": outside attempt");
+    }
+    const bound=value.piece==="wall"?9:["floor","cone","ramp"].includes(value.piece)?4:0;
+    const trace=Array.isArray(value.selection_trace)?value.selection_trace:[];
+    const selections=[value.final_tiles??[],...trace.filter(TYPES.object).map((s:any)=>s.tiles??[])];
+    if(selections.some(s=>Array.isArray(s) && (new Set(s).size!==s.length || s.some(t=>!Number.isInteger(t)||t<0||t>=bound))))
+      out.push("$: selection outside piece topology or repeated");
+    if(value.outcome==="result_verified" && !(value.result_confirmed===true && ["authored","reviewed"].includes(value.result_evidence)))
+      out.push("$: verified outcome needs result evidence");
   }
   return out;
 }

@@ -3,7 +3,7 @@
 // Body: the Jev System One request {state, model, questions}. Reply: Jev's response, unchanged.
 //
 // Keeps JEV_API_KEY on the server (the companion repo is public), allows only the pinned model and 1-8 questions,
-// and charges each player's daily budget atomically (core.jev_take). Set the secret with:
+// and charges each player's daily budget atomically (api.svc_jev_take -> core.jev_take). Set the secret with:
 //   npx supabase secrets set JEV_API_KEY=...
 import { createClient } from "npm:@supabase/supabase-js@2.45.4";
 
@@ -19,7 +19,7 @@ Deno.serve(async (req) => {
   const key = Deno.env.get("JEV_API_KEY");
   if (!key) return json({ error: "Jev is not configured on the server" }, 503);
   const service = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
-    { auth: { persistSession: false } });
+    { auth: { persistSession: false }, db: { schema: "api" } });
   const token = (req.headers.get("authorization") ?? "").replace(/^Bearer\s+/i, "");
   const { data: who, error } = await service.auth.getUser(token);
   if (error || !who?.user) return json({ error: "not signed in" }, 401);
@@ -33,7 +33,8 @@ Deno.serve(async (req) => {
   if (!MODELS.has(body?.model) || count < 1 || count > 8 || typeof body?.state !== "object") {
     return json({ error: "expected {state, model: jev-1.13.0, questions: 1-8}" }, 400);
   }
-  const { data: allowed } = await service.schema("core").rpc("jev_take", { p_player: who.user.id, p_limit: DAILY_LIMIT });
+  // Only `api` is served by the Data API: the budget goes through the service-only api.svc_jev_take.
+  const { data: allowed } = await service.rpc("svc_jev_take", { p_player: who.user.id, p_limit: DAILY_LIMIT });
   if (!allowed) return json({ error: "daily Jev budget used" }, 429);
 
   const upstream = await fetch(JEV_URL, {

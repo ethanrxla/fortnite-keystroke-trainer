@@ -1,7 +1,7 @@
 """Personal edit factors: how well YOU execute each edit, judged by Jev from your collected attempts.
 
-    python -m keystroke_lab personalize          # writes shared/edit-policy-personal.json
-    python tools/build_edit_policy.py --regen-verse --personal      # bake the factors into the in-game table
+    python -m keystroke_lab personalize          # writes local data/edit-policy-personal.json
+    Factors stay local to this player's companion; they are not baked into the shared island.
 
 collector.py joins your key presses with the map's edit locks into `attempts`. This module summarises each edit
 (how often you pressed edit and confirmed, how long confirming took, how close the crosshair travel was to the ideal),
@@ -91,15 +91,20 @@ def factors(stats, jev=None):
             for i, e in enumerate(chunk)}
         answers = jev.decide({"task": "rate edit execution"}, questions) or {}
         for i, e in enumerate(chunk):
-            probs = (answers.get(f"e{i}") or {}).get("probabilities")
-            if probs:
+            from .evidence import validate_choice
+            answer=answers.get(f"e{i}") or {}
+            probs = answer.get("probabilities")
+            if probs and validate_choice(answer,set(RATINGS)):
                 result[e] = round(max(1 - SPREAD, min(1 + SPREAD, 1 + SPREAD * (probs.get("strong", 0.0) - probs.get("weak", 0.0)))), 3)
     return result
 
 
 def run(store=None, jev=None, out=PERSONAL_JSON):
+    owned=store is None
     store = store or Store()
-    stats = edit_stats(store)
+    try:stats = edit_stats(store)
+    finally:
+        if owned:store.close()
     f = factors(stats, jev)
     out = pathlib.Path(out)
     out.parent.mkdir(parents=True, exist_ok=True)

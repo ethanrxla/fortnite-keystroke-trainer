@@ -87,7 +87,8 @@ def ingest_overlay(store, folder=SESSIONS):
             if "ts" in e and "key" in e:
                 store.add_key(e["ts"], e["key"], e["kind"], e.get("drill"), src=path.name,
                               session_id=e.get("session_id"), profile_id=e.get("profile_id"),
-                              profile_revision=e.get("profile_revision"), edge=e.get("edge", "down"))
+                              profile_revision=e.get("profile_revision"), edge=e.get("edge", "down"),
+                              actions=e.get("actions"), confirm_edge=e.get("confirm_edge"))
                 n += 1
     return n
 
@@ -160,16 +161,23 @@ def enrich_attempts(store, binds, now=None):
         rec = store.attempt(attempt_id)
         if rec.get("schema") == "edit_attempt.v2":
             if not rec.get("profile_id") or rec.get("profile_revision") is None:continue
-            keys = store.rows("SELECT ts,key,edge FROM keys WHERE ts>? AND ts<=? AND session_id=? AND profile_id=? AND profile_revision=? AND verdict NOT IN ('repeat','unmapped') ORDER BY ts",
+            keys = store.rows("SELECT ts,key,edge,actions,confirm_edge FROM keys WHERE ts>? AND ts<=? AND session_id=? AND profile_id=? AND profile_revision=? AND verdict NOT IN ('repeat','unmapped') ORDER BY ts",
                               (rec["t_edit_open"], rec["t_close"]+.15, rec["session_id"], rec["profile_id"], rec["profile_revision"]))
             # Match the player's configured confirmation edge; a release is not assumed to confirm.
             edge = getattr(binds, "confirm_edge", "down")
-            hits = [(t, e) for t,k,e in keys if k in confirm and e == edge and t > rec["t_edit_open"]+.15]
+            hits=[]
+            for t,k,e,actions,event_edge in keys:
+                if actions is None:continue  # Historical profile mapping unavailable.
+                action_set=set(json.loads(actions))
+                if 'edit_confirm' in action_set and e==(event_edge or edge):
+                    # A shared edit/confirm press only counts after observed selection, not by an arbitrary delay.
+                    if 'edit' not in action_set or (rec.get('t_first_select') is not None and t>=rec['t_first_select']):
+                        hits.append((t,e))
             if hits:
                 rec["t_confirm"] = hits[-1][0]
                 rec["confirmation_evidence"] = "release" if hits[-1][1] == "up" else "press"
                 if rec["outcome"] == "selection_matched":rec["outcome"] = "confirm_observed"
-            resets = [t for t,k,e in keys if k in reset and e == "down"]
+            resets = [t for t,k,e,actions,_ in keys if actions is not None and "reset" in json.loads(actions) and e == "down"]
             if resets:rec["t_reset"] = resets[-1]
             if keys or now - rec["t_close"] > 120:
                 store.update_attempt(rec, enriched=True)
@@ -216,10 +224,29 @@ def cycle(store, binds, log_path=ktlog.DEFAULT_LOG, folder=SESSIONS):
     return a, b, c
 
 
-def run(store=None, interval=2.0, log_path=ktlog.DEFAULT_LOG, folder=SESSIONS, stop=lambda: False, sleep=time.sleep):
+def cloud_sync(store, client=None, now=None):
+    """Upload consented edit attempts (cloud/sync.py). Silent no-op when the cloud is not configured or the player has
+    not opted in; any network or server error is swallowed so collection never stops. Returns the report or None."""
+    try:
+        from .cloud.client import CloudClient
+        from .cloud.sync import sync_once
+        client = client or CloudClient()
+        if not client.configured:
+            return None
+        return sync_once(store, client, now=now)
+    except Exception:
+        return None
+
+
+def run(store=None, interval=2.0, log_path=ktlog.DEFAULT_LOG, folder=SESSIONS, stop=lambda: False, sleep=time.sleep,
+        sync_every=60.0):
     store = store or Store()
     binds = drills.load_binds()
+    last_sync = 0.0
     while not stop():
         cycle(store, binds, log_path, folder)
+        if time.time() - last_sync >= sync_every:
+            cloud_sync(store)
+            last_sync = time.time()
         sleep(interval)
     store.close()

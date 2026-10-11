@@ -264,10 +264,12 @@ def place_switch_targets(b, p):
             y = track_y(ln, k)
             if "gun" in hits:
                 dm = b.device(DUMMY, f"KT_GunTarget_{d['code']}_{k}", ox + 3 * CELL, y + CELL, 0.0)
+                b.face(dm, 180.0)
                 b.props(dm, {"infiniteHealth": True})
                 b.bind(dm, "On Hit", hits["gun"], "Trigger")
             if "pickaxe" in hits:
                 dm = b.device(DUMMY, f"KT_PickTarget_{d['code']}_{k}", ox + CELL / 2 + 40, y, 0.0)
+                b.face(dm, 180.0)
                 b.props(dm, {"infiniteHealth": True})
                 b.bind(dm, "On Hit", hits["pickaxe"], "Trigger")
         print(f"switch targets {d['code']}: {sorted(targets)}")
@@ -336,11 +338,13 @@ def place_aim_range(b, ai, aj):
             for dist in (5, 10, 20):
                 x, y = cc(ai + 2 + dist, lj + 1)
                 dm = b.device(DUMMY, f"KT_AimTarget_A1_{dist}", x, y, 0.0)
+                b.face(dm, 180.0)              # face the shooter (west, -X)
                 b.props(dm, {"infiniteHealth": True})
         elif k == 1:
             for n, (di, dj) in enumerate(((8, 0), (10, 2), (12, 1), (9, 2), (11, 0))):
                 x, y = cc(ai + 2 + di, lj + dj)
                 dm = b.device(DUMMY, f"KT_AimTarget_A2_{n}", x, y, 0.0)
+                b.face(dm, 180.0)              # face the shooter (west, -X)
                 b.props(dm, {"infiniteHealth": True})
         elif k == 2:
             x, y = cc(ai + 2 + 5, lj + 1)
@@ -349,6 +353,7 @@ def place_aim_range(b, ai, aj):
         else:
             x, y = cc(ai + 2 + 5, lj + 1)
             dm = b.device(DUMMY, "KT_AimTarget_A4", x, y, 0.0)
+            b.face(dm, 180.0)              # face the shooter (west, -X)
             b.props(dm, {"infiniteHealth": True})
             b.slab({"label": "KT_RecoilWall", "bounds": rect(ai + 2 + 7, ai + 2 + 7, lj, lj + 2),
                     "top": LEVEL_H * 2, "thick": LEVEL_H * 2, "mat": "Void"})
@@ -592,6 +597,14 @@ class Builder:
     def device(self, asset, label, x, y, z=0.0, yaw=0.0):
         ref = self.m.tool(DEVICE, "PlaceDevice", assetPath={"refPath": asset}, transform=xform(x, y, z, yaw=yaw))
         return self.labelled(ref["refPath"], label)
+
+    def face(self, path, yaw):
+        """Turn a placed actor to yaw (PlaceDevice ignores the rotation it is given). A target dummy at yaw 0 faces
+        +X; lanes run +X, so a dummy facing the player is yaw 180 (player 2026-10-10: dummies were side-on)."""
+        cur = self.m.tool(ACTOR, "get_actor_transform", actor={"refPath": path})
+        loc, sc = cur["location"], cur["scale"]
+        self.m.tool(ACTOR, "set_actor_transform", actor={"refPath": path},
+                    xform=xform(loc["x"], loc["y"], loc["z"], sc["x"], sc["y"], sc["z"], yaw=yaw))
 
     def tag(self, path, tag_name):
         """Add a Verse Tag Markup component carrying one of the tags declared in Tags.verse."""

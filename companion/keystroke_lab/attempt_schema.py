@@ -74,8 +74,22 @@ def errors(value, schema=None, path="$"):
         for key, sub in props.items():
             if key in value:
                 out += errors(value[key], sub, f"{path}.{key}")
+    if path=="$" and isinstance(value,dict) and value.get("schema")=="edit_attempt.v2":
+        opened,closed=value.get('t_edit_open'),value.get('t_close')
+        if _TYPES['number'](opened) and _TYPES['number'](closed):
+            if closed<opened:out.append('$: close precedes open')
+            for name in ('t_first_select','t_confirm','t_reset'):
+                at=value.get(name)
+                if _TYPES['number'](at) and not opened<=at<=closed+.15:out.append('$.'+name+': outside attempt')
+        bound=9 if value.get('piece')=='wall' else 4 if value.get('piece') in ('floor','cone','ramp') else 0
+        trace=value.get('selection_trace')
+        selections=[value.get('final_tiles',[])]+[s.get('tiles',[]) for s in (trace if isinstance(trace,list) else []) if isinstance(s,dict)]
+        if any(any(type(t) is not int or not 0<=t<bound for t in s) or len(s)!=len(set(s)) for s in selections if isinstance(s,list)):
+            out.append('$: selection outside piece topology or repeated')
+        if value.get('outcome')=='result_verified' and not (value.get('result_confirmed') is True and value.get('result_evidence') in ('authored','reviewed')):
+            out.append('$: verified outcome needs result evidence')
     return out
 
 
-def valid(value, name="edit_attempt.v1"):
-    return not errors(value, load(name))
+def valid(value, name=None):
+    return not errors(value, load(name) if name else None)

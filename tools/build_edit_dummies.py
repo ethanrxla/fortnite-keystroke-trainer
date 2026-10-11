@@ -29,6 +29,7 @@ PREFIX = "KT3_"
 LANES = {"E2": "peek", "E4": "jump", "E7": "peek"}
 AHEAD = 2 * bm.CELL            # cells in front of the lane origin, inside the room
 PEDESTAL = 120.0               # cm, for the jump-shot dummy
+FACE_PLAYER_YAW = 180.0        # a dummy at yaw 0 faces +X; the player approaches from -X
 
 
 def main():
@@ -78,12 +79,17 @@ def main():
                 dm = b.device(bm.DUMMY, f"KT3_Dummy_{code}_{k}", ox + AHEAD, y, PEDESTAL)
             else:
                 dm = b.device(bm.DUMMY, f"KT3_Dummy_{code}_{k}", ox + AHEAD, y + bm.CELL, 0.0)
+            # Face the player, who comes from -X (lanes run +X). PlaceDevice ignores rotation and left them at
+            # yaw 90, side-on (player 2026-10-10: "dummies placed sideways").
+            cur = b.m.tool(bm.ACTOR, "get_actor_transform", actor={"refPath": dm})["location"]
+            b.m.tool(bm.ACTOR, "set_actor_transform", actor={"refPath": dm},
+                     xform=bm.xform(cur["x"], cur["y"], cur["z"], yaw=FACE_PLAYER_YAW))
             b.props(dm, {"infiniteHealth": True})
             b.bind(dm, "On Hit", trig, "Trigger")
         print(f"{code}: trigger and {reps} dummies placed")
     for label, path, cur, nx in fix:
         b.m.tool(bm.ACTOR, "set_actor_transform", actor={"refPath": path},
-                 xform=bm.xform(nx, cur["y"], cur["z"]))
+                 xform=bm.xform(nx, cur["y"], cur["z"], yaw=FACE_PLAYER_YAW))
     print(f"moved {len(fix)} weapon-swap dummies out of the wall")
 
 

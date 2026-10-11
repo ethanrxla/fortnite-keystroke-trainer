@@ -6,9 +6,11 @@ the same immutable observation without changing the planner or renderer.
 """
 from dataclasses import dataclass, asdict, replace
 import math
-from .edit_observation import EditGridObserver, _line_projection, _crosshair, _general_grid, _partial_grid, _tile_support
+from .edit_observation import EditGridObserver, _line_projection, _crosshair, _general_grid, _partial_grid, _lattice_shift, _tile_support, _segments, downscale
 from .edit_geometry import piece_context
 import cv2
+
+DETECT_WIDTH=640.   # px the live detectors work at (see VisualObserver.observe)
 import numpy as np
 
 @dataclass(frozen=True)
@@ -49,21 +51,42 @@ class VisualObserver:
     def observe(self,frame,now):
         # The full exploratory detector can enumerate hundreds of thousands of
         # line intersections. Keep that offline; this live provider is bounded.
-        scale=min(1.,960./frame.shape[1])
-        image=cv2.resize(frame[:,:,:3],(round(frame.shape[1]*scale),round(frame.shape[0]*scale)))
+        # DETECT_WIDTH 640: same accuracy as 960 on 224 live frames (131 vs 126 walls), ~25% faster.
+        scale=min(1.,DETECT_WIDTH/frame.shape[1])
+        image=downscale(frame,scale)
         self.wall._aim_screen=_crosshair(frame)
         projection=_line_projection(image)
+        aim=(self.wall._aim_screen[0]*scale,self.wall._aim_screen[1]*scale)
         if projection is not None:
             count,H,quad=projection
+            H,quad,_=_lattice_shift(image,H,aim)
             wall=self.wall._from_projection(image,H,quad,now,scale,count,.93 if count==9 else .88)
-        else:
-            aim=(self.wall._aim_screen[0]*scale,self.wall._aim_screen[1]*scale)
-            # Close / oblique walls whose border runs off screen: rebuild the 3x3 from three lines per direction
-            # (bounded ~0.05 s). Then the any-angle detector (walls with selected tiles, 2x2 floors / cones).
-            found=_partial_grid(image,aim,budget=.09) or _general_grid(image,aim,budget=.05)
-            if found is None:return PieceObservation(now,reason='bounded_detector_abstained')
-            count,H,quad,n=found
-            wall=self.wall._from_projection(image,H,quad,now,scale,count,.92 if count>=n*n-1 else .88,n)
+            found=self._classify(image,frame,wall,H,now)
+            # A rejected projection is not the end: wood planks beside a wall can give it a lattice of the wrong size
+            # (live 2026-10-10), while the line detectors below still find the wall.
+            if found.piece!='unknown':return found
+        # Close / oblique walls whose border runs off screen: rebuild the 3x3 from three lines per direction
+        # (bounded ~0.05 s). Then the any-angle detector (walls with selected tiles, 2x2 floors / cones).
+        # One line search per frame, shared by both detectors; tighter budgets keep the guide responsive (the
+        # strongest line sets are tried first, so most answers come early).
+        result=None
+        for dark in (False,True):
+            # Bright tile gaps first; if nothing fits, once more with dark gaps too (walls in shade at an angle).
+            segs=_segments(image,dark)
+            for detect in (_partial_grid,_general_grid):
+                # Each detector's grid in turn; the first that passes the piece checks wins (the close-up detector can
+                # overshoot into wood beside a wall where the any-angle one fits it).
+                found=detect(image,aim,budget=.05 if detect is _partial_grid else .035,segs=segs)
+                if found is None:continue
+                count,H,quad,n=found
+                if n==3:H,quad,_=_lattice_shift(image,H,aim)
+                wall=self.wall._from_projection(image,H,quad,now,scale,count,.92 if count>=n*n-1 else .88,n)
+                result=self._classify(image,frame,wall,H,now)
+                if result.piece!='unknown':return result
+        return result or PieceObservation(now,reason='bounded_detector_abstained')
+
+    def _classify(self,image,frame,wall,H,now):
+        """Wall / floor / cone from one grid hypothesis, or an 'unknown' observation with the reason."""
         if wall.reason!='native_edit_grid_observed':return PieceObservation(now,reason=wall.reason)
         q=wall.wall_quad
         ctx=piece_context(wall,frame.shape[1],frame.shape[0])
@@ -76,10 +99,9 @@ class VisualObserver:
             # Floor below the camera / cone overhead, from the pose. A cone at floor height reads as a floor: the
             # orientation says it is an estimate and the UI labels it so.
             piece=self.piece_hint if self.piece_hint in ('floor','cone','ramp') else ('floor' if ctx.kind=='floor' else 'cone')
-            if piece=='ramp':
-                context=dict(context,kind='stairs')
+            context=dict(context,kind={'floor':'floor','cone':'roof','ramp':'stairs'}[piece])
             return PieceObservation(now,piece,q,wall.aim_uv,wall.selected_tiles,'screen_pose_estimate',wall.confidence,
-                                    wall.supported_cells,'native_edit_grid_observed',context=context)
+                                    wall.supported_cells,'native_edit_grid_observed',context=context,piece_evidence='inferred')
         if wall.supported_cells<6 or wall.confidence<.88:
             return PieceObservation(now,reason=wall.reason)
         # Require a substantial vertical axis. Ramp grids have gesture regions rather than nine equivalent wall tiles.
@@ -89,7 +111,29 @@ class VisualObserver:
         if height<.6*width or vertical<.65*height:
             return PieceObservation(now,reason='piece_topology_ambiguous')
         return PieceObservation(now,'wall',q,wall.aim_uv,wall.selected_tiles,'screen_front',wall.confidence,
-                                wall.supported_cells,'native_edit_grid_observed',context=context)
+                                wall.supported_cells,'native_edit_grid_observed',context=context,piece_evidence='observed')
+
+    def from_quad(self,frame,tracked,now):
+        """Re-read a tracked grid without searching for it: aim point, selected tiles and pose from the quad that
+        optical flow carried forward (GridMotionTracker.follow). ~5 ms instead of a full detection, so consecutive
+        frames of one edit stay fast; selection changes are still read from the pixels of this frame."""
+        scale=min(1.,DETECT_WIDTH/frame.shape[1])
+        image=downscale(frame,scale)
+        n=3 if tracked.piece=='wall' else 2
+        quad=np.float32(tracked.quad)*scale
+        H=cv2.getPerspectiveTransform(np.float32([[0,0],[n,0],[n,n],[0,n]]),quad)
+        self.wall._aim_screen=_crosshair(frame)
+        count=_tile_support(image,H,n)
+        if count<(6 if n==3 else 4):return None
+        wall=self.wall._from_projection(image,H,quad,now,scale,count,.9,n)
+        if wall.reason!='native_edit_grid_observed':return None
+        ctx=piece_context(wall,frame.shape[1],frame.shape[0])
+        if ctx and tracked.piece!='wall':
+            ctx=replace(ctx,kind={'floor':'floor','cone':'roof','ramp':'stairs'}[tracked.piece])
+        return PieceObservation(now,tracked.piece,wall.wall_quad,wall.aim_uv,wall.selected_tiles,tracked.orientation,
+                                wall.confidence,wall.supported_cells,'native_edit_grid_observed','tracked_refined',
+                                context=ctx.to_dict() if ctx else tracked.context,
+                                piece_evidence=tracked.piece_evidence or ('observed' if tracked.piece=='wall' else 'inferred'))
 
     @staticmethod
     def _continues(image,H):
@@ -127,16 +171,16 @@ class GridMotionTracker:
         self.grace=grace;self.reset()
     def reset(self):self.grey=None;self.points=None;self.observation=None;self.detected_at=-math.inf;self.scale=1.
     def seed(self,frame,observation):
-        self.scale=min(1.,960./frame.shape[1])
-        small=cv2.resize(frame[:,:,:3],(round(frame.shape[1]*self.scale),round(frame.shape[0]*self.scale)))
+        self.scale=min(1.,DETECT_WIDTH/frame.shape[1])   # same size as the detectors: one shared resize
+        small=downscale(frame,self.scale)
         grey=cv2.cvtColor(small,cv2.COLOR_BGR2GRAY)
         mask=np.zeros(grey.shape,np.uint8)
         cv2.fillConvexPoly(mask,(np.asarray(observation.quad)*self.scale).astype(np.int32),255)
-        points=cv2.goodFeaturesToTrack(grey,100,.02,10,mask=mask)
+        points=cv2.goodFeaturesToTrack(grey,60,.02,10,mask=mask)   # 60 points: enough for a robust homography, faster LK
         self.grey=grey;self.points=points;self.observation=observation;self.detected_at=observation.captured_at
-    def follow(self,frame,now):
+    def follow(self,frame,now,verify=True):
         if self.observation is None or self.points is None or now-self.detected_at>self.grace:return None
-        small=cv2.resize(frame[:,:,:3],(round(frame.shape[1]*self.scale),round(frame.shape[0]*self.scale)))
+        small=downscale(frame,self.scale)
         grey=cv2.cvtColor(small,cv2.COLOR_BGR2GRAY)
         if grey.shape!=self.grey.shape:self.reset();return None
         nxt,status,error=cv2.calcOpticalFlowPyrLK(self.grey,grey,self.points,None)
@@ -154,7 +198,8 @@ class GridMotionTracker:
         if cv2.pointPolygonTest(quad,cross,True)<-min(frame.shape[:2])*.025:return None
         n=3 if self.observation.piece=='wall' else 2
         native=cv2.getPerspectiveTransform(np.array([[0,0],[n,0],[n,n],[0,n]],np.float32),quad)
-        if _tile_support(frame[:,:,:3],native,n)<(6 if n==3 else 4):return None
+        # verify=False when the caller re-reads the grid anyway (VisualObserver.from_quad checks tile support itself).
+        if verify and _tile_support(frame[:,:,:3],native,n)<(6 if n==3 else 4):return None
         grid=np.array([[0,n],[n,n],[n,0],[0,0]],np.float32)
         projection=cv2.getPerspectiveTransform(quad,grid)
         aim=cv2.perspectiveTransform(np.array([[cross]],np.float32),projection)[0,0]

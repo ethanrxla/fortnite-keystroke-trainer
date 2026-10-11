@@ -9,6 +9,9 @@ tools/promote_edits.py (an edit is game-verified after enough approved attempts)
 import json
 import threading
 import webbrowser
+import re
+import uuid
+from pathlib import Path
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from urllib.parse import parse_qs, urlparse
 
@@ -18,7 +21,19 @@ from .pieces import canonical
 from .store import Store
 
 PORT = 8766
+CROP_ROOT=Path(__file__).resolve().parents[1]/'data'/'edit-crops'
 STATUSES = ("approved", "rejected", "relabelled")
+
+
+def capture_paths(record, root=CROP_ROOT):
+    """Resolve only this attempt's bounded local evidence, never arbitrary paths."""
+    try:attempt=str(uuid.UUID(record['attempt_id']))
+    except (ValueError,KeyError,TypeError):return []
+    session=record.get('session_id','')
+    if not isinstance(session,str) or not re.fullmatch(r'[A-Za-z0-9_-]{1,64}',session):return []
+    root=Path(root).resolve()
+    return [p for i in range(3) if (p:=root/session/f'{attempt}-{i}.png').is_file()
+            and p.resolve().is_relative_to(root)]
 
 
 def attempts_for_review(store, status="unlabelled", limit=200):
@@ -32,6 +47,7 @@ def attempts_for_review(store, status="unlabelled", limit=200):
         if status not in ("unlabelled", "all") and (not label or label["status"] != status):
             continue
         rec["label"] = label
+        rec["captures"] = [p.name for p in capture_paths(rec)]
         out.append(rec)
         if len(out) >= limit:
             break
@@ -70,7 +86,7 @@ const n=p=>p==='wall'?3:2;
 function grid(piece,tiles,want){const c=n(piece),g=document.createElement('div');g.className='grid';g.style.gridTemplateColumns=`repeat(${c},1fr)`;
  for(let r=c-1;r>=0;r--)for(let col=0;col<c;col++){const t=r*c+col,d=document.createElement('div');if(tiles.includes(t))d.className='on';if(want.includes(t))d.classList.add('want');g.appendChild(d)}return g}
 async function load(){const s=document.getElementById('status').value;
- const r=await fetch(`/api/attempts?status=${s}`);const data=await r.json();catalogue=data.catalogue;
+ const r=await fetch(`/api/attempts?status=${s}`,{headers:{'X-KT-Token':token}});const data=await r.json();catalogue=data.catalogue;
  const list=document.getElementById('list');list.innerHTML='';document.getElementById('count').textContent=`${data.attempts.length} attempts`;
  for(const a of data.attempts){const card=document.createElement('div');card.className='card';
   const opened=new Date(a.t_edit_open*1000).toLocaleString();const dur=(a.t_close-a.t_edit_open).toFixed(1);
@@ -80,9 +96,16 @@ async function load(){const s=document.getElementById('status').value;
    <div class="row"><span>suggested: ${a.suggested_edit_id||'-'}</span><span>made: ${a.matched_edit_id||'-'}</span></div>
    <div class="row"><span>confidence ${a.auto_label_confidence}</span><span>${a.label?('labelled '+a.label.status):''}</span></div>`;
   card.appendChild(grid(a.piece,a.final_tiles||[],want?want.tiles:[]));
+  for(const name of a.captures||[]){const img=document.createElement('img');
+   img.src='/api/capture?attempt='+encodeURIComponent(a.attempt_id)+'&name='+encodeURIComponent(name)+'&token='+encodeURIComponent(token);
+   img.style.maxWidth='100%';img.alt='Local masked piece evidence';card.appendChild(img)}
   const acts=document.createElement('div');acts.className='acts';
   const sel=document.createElement('select');sel.innerHTML='<option value="">relabel as...</option>'+(catalogue[a.piece]||[]).map(e=>`<option value="${e.id}">${e.name}</option>`).join('');
   const mk=(txt,cls,fn)=>{const b=document.createElement('button');b.textContent=txt;b.className=cls;b.onclick=fn;return b};
+  if(a.captures?.length)acts.append(mk('Delete local images','bad',async()=>{
+   if(!confirm('Permanently delete these local evidence images?'))return;
+   const r=await fetch('/api/delete-captures',{method:'POST',headers:{'Content-Type':'application/json','X-KT-Token':token},
+      body:JSON.stringify({attempt_id:a.attempt_id})});if(r.ok)load()}));
   const proof=document.createElement('label'),check=document.createElement('input');check.type='checkbox';check.className='proof';
   proof.append(check,document.createTextNode(' I checked the actual resulting piece in game'));card.appendChild(proof);
   acts.append(mk('Approve label','ok',()=>label(a,'approved',a.matched_edit_id,card)),mk('Reject','bad',()=>label(a,'rejected',null,card)),sel,
@@ -96,11 +119,12 @@ document.getElementById('status').onchange=load;load();
 def make_handler(store_factory, secret, catalogue):
     class Handler(BaseHTTPRequestHandler):
         def _send(self, code, payload, kind="application/json"):
-            body = payload.encode() if isinstance(payload, str) else json.dumps(payload).encode()
+            body = payload if isinstance(payload, bytes) else payload.encode() if isinstance(payload, str) else json.dumps(payload).encode()
             self.send_response(code)
             self.send_header("Content-Type", kind)
             self.send_header("Content-Length", str(len(body)))
             self.send_header("Cache-Control", "no-store")
+            self.send_header("Referrer-Policy", "no-referrer")
             self.end_headers()
             self.wfile.write(body)
 
@@ -108,6 +132,17 @@ def make_handler(store_factory, secret, catalogue):
             url = urlparse(self.path)
             if url.path == "/":
                 return self._send(200, PAGE, "text/html; charset=utf-8")
+            if (self.headers.get("X-KT-Token") or (parse_qs(url.query).get("token") or [None])[0]) != secret:
+                return self._send(403, {"error":"bad token"})
+            if url.path == "/api/capture":
+                query=parse_qs(url.query)
+                store=store_factory()
+                try:
+                    rec=store.attempt((query.get('attempt') or [''])[0])
+                    path=next((p for p in capture_paths(rec or {}) if p.name==(query.get('name') or [''])[0]),None)
+                    if path:return self._send(200,path.read_bytes(),'image/png')
+                finally:store.close()
+                return self._send(404,{"error":"no local evidence"})
             if url.path == "/api/attempts":
                 status = (parse_qs(url.query).get("status") or ["unlabelled"])[0]
                 store = store_factory()
@@ -118,15 +153,16 @@ def make_handler(store_factory, secret, catalogue):
             self._send(404, {"error": "not found"})
 
         def do_POST(self):
-            if urlparse(self.path).path != "/api/label":
+            route=urlparse(self.path).path
+            if route not in ("/api/label","/api/delete-captures"):
                 return self._send(404, {"error": "not found"})
             if self.headers.get("X-KT-Token") != secret:
                 return self._send(403, {"error": "bad token"})
             try:
                 length = int(self.headers.get("Content-Length", "0"))
                 body = json.loads(self.rfile.read(min(length, 4096)) or b"{}")
-                status, attempt_id = body["status"], str(body["attempt_id"])
-                if status not in STATUSES:
+                status, attempt_id = body.get("status"), str(body["attempt_id"])
+                if route=="/api/label" and status not in STATUSES:
                     raise ValueError(status)
             except (ValueError, KeyError):
                 return self._send(400, {"error": "need attempt_id and status"})
@@ -134,6 +170,10 @@ def make_handler(store_factory, secret, catalogue):
             try:
                 if not store.attempt(attempt_id):
                     return self._send(404, {"error": "unknown attempt"})
+                if route=="/api/delete-captures":
+                    paths=capture_paths(store.attempt(attempt_id))
+                    for path in paths:path.unlink()
+                    return self._send(200,{"removed":len(paths),"recoverable":False})
                 try:
                     store.add_label(attempt_id, status, body.get("edit_id"), reviewer="local", note=str(body.get("note", ""))[:200],
                                     result_confirmed=body.get("result_confirmed") is True, piece=body.get("piece"))

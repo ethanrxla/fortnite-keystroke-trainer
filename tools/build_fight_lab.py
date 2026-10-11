@@ -3,6 +3,14 @@ live opponents instead of empty lanes.
 
     python tools/build_fight_lab.py --dry-run   # print the plan
     python tools/build_fight_lab.py             # (re)place it; removes only KT7_Lab_* actors
+    python tools/build_fight_lab.py --open      # in place: open room A and the roof, add the start rifts (no rebuild)
+
+Player 2026-10-10: the towers should not be enclosed, and a player should start at the top of a tower to edit down,
+then edit up the tower beside it; the other rooms likewise start you where the exercise begins. So there is no
+ceiling, room A has no outer walls (the wall to room B stays, it blocks B's bots), and each room has a start rift
+beside its doorway (out of the walking line, so leaving the room never sends you back in). Room A loops: the top of
+the climb tower has a rift back to the top of the drop tower. Rifts are routed by the Verse rift router
+(tools/install_rift_router.py, LAB_RIFTS).
 
 Layout (cells of 512 cm, i = x / 512, j = y / 512): i -50..-31, j -136..-125, directly east of KT_Area_Scenario,
 so players walk in from the Scenario portal. A two-cell spine (j -131..-130) runs west to east; two rooms on
@@ -49,9 +57,9 @@ RAMP_YAW = {"S": 0.0, "E": 90.0, "N": 180.0, "W": 270.0}
 
 SIGNS = {
     "A": "A  EDIT TOWERS\n"
-         "Left: step in, wall up behind you, edit the wall in front, reset. Same tile, no aim travel.\n"
-         "Middle: edit the floor above, climb, reset. Right: ramps up the side, then edit the floor\n"
-         "under you to drop. Why: edit timing first, so speed later costs no accuracy.",
+         "Step on the rift: you start on top of the drop tower. Edit the floor under you, drop, repeat.\n"
+         "Then the climb tower beside it: edit the floor above, climb; its top sends you back to the drop.\n"
+         "Wall box: wall up behind you, edit the wall in front, reset. Why: edit timing first.",
     "B": "B  PEEK AND RESET\n"
          "Two live bots hold the far wall. Edit a window or door, hit your shot, reset before\n"
          "they answer. Swap walls each rep. Why: the reset is what keeps you alive; slow is fine.",
@@ -120,13 +128,11 @@ def plan_lab():
     for room, (a, b_, c, d) in {"A": (x0, xm, y0, ys0), "B": (xm, x1, y0, ys0),
                                 "C": (x0, xm, ys1, y1), "D": (xm, x1, ys1, y1)}.items():
         p.slab(f"Floor_{room}", a, b_, c, d, 0.0, 100.0, ROOM_ZONE[room])
-    p.slab("Ceiling", x0, x1, y0, y1, CEIL + 100, 100.0, "Scenario")
-
+    # No ceiling, and room A (the towers) has no outer walls: open sky, not a closed box (player 2026-10-10).
     # Perimeter: west wall open onto the spine (the way in from Scenarios).
-    p.wall_x("Wall_W_S", x0, y0, ys0, "Scenario")
     p.wall_x("Wall_W_N", x0, ys1, y1, "Scenario")
     p.wall_x("Wall_E", x1, y0, y1, "Scenario")
-    p.wall_y("Wall_S", y0, x0, x1, "Scenario")
+    p.wall_y("Wall_S_B", y0, xm, x1, "Scenario")
     p.wall_y("Wall_N", y1, x0, x1, "Scenario")
     p.wall_x("Wall_Mid_S", xm, y0, ys0, "Scenario")
     p.wall_x("Wall_Mid_N", xm, ys1, y1, "Scenario")
@@ -151,6 +157,7 @@ def plan_lab():
     room_b(p)
     room_c(p)
     room_d(p)
+    start_rifts(p)
 
     # Signs beside each doorway, facing into the spine; a title at the entrance facing the Scenario plate.
     for room in "ABCD":
@@ -236,6 +243,37 @@ def room_d(p):
     p.reset_cells["D"] = [(-37, -127), (-34, -127)]
 
 
+# Where each room's exercise begins: (cell i, cell j, level) of the start, as LAB_RIFTS routes them.
+STARTS = {"A": (-42, -135, 3),      # on top of the drop tower: edit down
+          "B": (-39, -134, 0),      # behind the staggered cover
+          "C": (-48, -127, 0),      # west of the enemy cone, facing their ramp
+          "D": (-38, -127, 0)}      # inside your closed box
+
+
+def start_rifts(p):
+    """A walk-in rift beside each doorway (against the spine wall, west of the doorway, so walking through the
+    doorway does not touch it) to the room's start, plus room A's loop from the top of the climb tower."""
+    ys0, ys1 = SPINE[0] * C, (SPINE[1] + 1) * C
+    p.rifts = []
+    for room, (i, j, k) in STARTS.items():
+        south = room in "AB"
+        x = DOORS[room][0] * C - 220
+        y = ys0 + 160 if south else ys1 - 160
+        p.device(f"Rift_{room}_In", bm.TELEPORTER, x, y, 0.0, rift_props(True))
+        sx, sy = cell(i, j)
+        p.device(f"Rift_{room}_Start", bm.TELEPORTER, sx, sy, k * H, rift_props(False))
+        p.rifts.append((f"{PREFIX}Rift_{room}_In", f"{PREFIX}Rift_{room}_Start"))
+    x, y = cell(-45, -135)                                  # climb tower roof (its level-4 floor)
+    p.device("Rift_A_Loop", bm.TELEPORTER, x, y, 4 * H, rift_props(True))
+    p.rifts.append((f"{PREFIX}Rift_A_Loop", f"{PREFIX}Rift_A_Start"))
+
+
+def rift_props(walk_in):
+    return {"knob_TeleporterGroup": "Group_None", "knob_TargetTeleporterGroup": "Group_None",
+            "teleporter Rift Visible": walk_in, "enabledDuringPhase": "Always", "maintain Relative Position": False,
+            "conserve Momentum": False, "play Sound Effects": walk_in}
+
+
 def bot_props(patrol):
     v = {"guardTeamOption": "Team Index", "guard Team Index": {"teamType": "TeamIndex", "teamIndex": 2},
          "enabledAtGameStart": True, "allowInfiniteSpawn": True, "spawnOnTimer": True, "spawnTimer": 5,
@@ -300,12 +338,40 @@ def place(b, p):
     print(f"signs: {len(p.signs)}")
 
 
+def open_in_place(b, p):
+    """Bring a lab built before 2026-10-10 to the open layout without rebuilding it: remove the ceiling and room A's
+    outer walls, split the south wall, add the start rifts and refresh room A's sign. Idempotent."""
+    have = {a["label"]: a["actorPath"] for a in (b.m.tool(bm.SCENE, "find_actors", name=PREFIX, collision_channels=[]) or [])}
+    for label in ("Ceiling", "Wall_W_S", "Wall_S", "Sign_A"):
+        if PREFIX + label in have:
+            b.m.tool(bm.SCENE, "remove_from_scene", actor={"refPath": have[PREFIX + label]})
+            print("removed", PREFIX + label)
+    for s in p.slabs:
+        if s["label"] == PREFIX + "Wall_S_B" and s["label"] not in have:
+            b.slab(s)
+            print("added", s["label"])
+    for d in p.devices:
+        if d["label"].startswith(PREFIX + "Rift_") and d["label"] not in have:
+            x, y, z = d["pos"]
+            path = b.device(d["asset"], d["label"], x, y, z)
+            b.props(path, d["props"])
+            print("added", d["label"], (x, y, z))
+    for s in p.signs:
+        if s["label"] == PREFIX + "Sign_A":
+            b.sign(s)
+    print("routes for tools/install_rift_router.py:", p.rifts)
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--dry-run", action="store_true")
+    ap.add_argument("--open", action="store_true", help="update an existing lab in place (see open_in_place)")
     args = ap.parse_args()
     p = plan_lab()
     print(f"plan: {len(p.slabs)} slabs, {len(p.pieces)} pieces, {len(p.devices)} devices, {len(p.signs)} signs")
+    if args.open:
+        open_in_place(bm.Builder(), p)
+        return
     if args.dry_run:
         print(json.dumps({"pieces": p.pieces[:6], "devices": [d["label"] for d in p.devices]}, indent=1))
         return

@@ -89,6 +89,10 @@ keystroke_drill_device := class(creative_device):
     @editable ClearWaitSeconds:float = 0.4
     # Wire a gun target's hit event to GunHit and a pickaxe target's hit event to PickaxeHit in the
     # editor (device event binding, not Verse). target_hit checks read these. Unlinked is fine.
+    # Leaving the lane ends the set (and a section's run): more than this far, in cm, from the current rep's start
+    # cell. A back-to-hub portal in the lane, or simply walking away, then stops the drill instead of the player being
+    # teleported back for the next rep.
+    @editable AbandonDistance:float = 5000.0
     @editable GunHit:trigger_device = trigger_device{}
     @editable PickaxeHit:trigger_device = trigger_device{}
 
@@ -105,6 +109,8 @@ keystroke_drill_device := class(creative_device):
     var Metronome:audio_player_device = audio_player_device{}
 
     var Busy:logic = false
+    # Set when the player leaves the lane mid-set (see AbandonDistance).
+    var Abandoned:logic = false
     # Practice does not write progress, so remember its briefing separately for fast repeats.
     var BriefedPlayers:[player]logic = map{}
     # Per-set measurements. Only one set runs per lane at a time, so plain class state is safe.
@@ -263,14 +269,19 @@ keystroke_drill_device := class(creative_device):
         var CleanReps:int = 0
         var ObservedReps:int = 0
         var UncheckedSteps:int = 0
-        for (Rep := 1..Reps):
+        set Abandoned = false
+        # The last step with a position check: once it is seen, the rep is finished (any later unchecked steps are
+        # skipped), so a fast player is not held by the step timers.
+        LastCheck := LastPositionCheck(Drill)
+        for (Rep := 1..Reps, not Abandoned?):
             MovePlayer(Player, TrackOrigin(Drill, Rep))
             Cue.SetText(CueText("{Drill.Code}  {Drill.Name}   {ModeLabel}   rep {Rep}/{Reps}\n{ChainText(Drill.Steps, -1)}"))
             Sleep(if (FlowMode?) then ReadyMinSeconds else Max(Interval, ReadyMinSeconds))
             if (HasPressure?):
                 Pressure.Trigger(Player)
             var RepResults:[]rep_result = array{}
-            for (StepIndex -> Action : Drill.Steps):
+            var RepDone:logic = false
+            for (StepIndex -> Action : Drill.Steps, not RepDone?, not Abandoned?):
                 Metronome.Play(Player)
                 StepChecks := ChecksForStep(Drill, StepIndex)
                 WaitsForOutcome:logic = logic{FlowMode? and StepChecks.Length = 1 and IsPositionCheck[StepChecks[0]]}
@@ -296,10 +307,12 @@ keystroke_drill_device := class(creative_device):
                     set Latencies = Latencies + array{LastLatency}
                 DzNote := if (Result = rep_result.Missing, LastDz > -99990.0, Dz := Round[LastDz]) then "|dz={Dz}" else ""
                 KTLog("step", Drill.Id, Apm, Rep, StepIndex, Result, "action={Action}{StepLatency}{DzNote}")
-                Remaining := NextClick - GetSimulationElapsedTime()
-                if (Remaining > 0.0):
-                    if (not (WaitsForOutcome? and Result = rep_result.Ok)):
-                        Sleep(Remaining)
+                if (StepIndex = LastCheck, Result = rep_result.Ok):
+                    set RepDone = true
+                else if (not (WaitsForOutcome? and Result = rep_result.Ok)):
+                    # Unchecked steps wait out their window, but end early when the player has already built ahead
+                    # (a later position check is met) or has left the lane.
+                    WaitStep(Player, Drill, Rep, StepIndex, NextClick)
             if (PanelShown?, UI := GetPlayerUI[Player]):
                 UI.RemoveWidget(EditPanel)
                 set PanelShown = false
@@ -317,6 +330,16 @@ keystroke_drill_device := class(creative_device):
                 Clearer.Trigger(Player)
                 KTLog("rep_clear", Drill.Id, Apm, Rep, Drill.Steps.Length, rep_result.Unchecked, "boundary=rep_end")
                 Sleep(ClearWaitSeconds)
+        if (Abandoned?):
+            # Left the lane: no result card, no teleport back; the section stops too (PlaySet returns false).
+            if (Active := Subscription?):
+                Active.Cancel()
+            KTLog("set_end", Drill.Id, Apm, Reps, 0, rep_result.Unchecked, "abandoned=1|observed={ObservedReps}")
+            if (UI := GetPlayerUI[Player]):
+                UI.RemoveWidget(Canvas)
+            set ActivePlayer = false
+            set Busy = false
+            return
         Accuracy := if (Reps > 0) then (CleanReps * 1.0) / (Reps * 1.0) else 0.0
         Eligible := CanRecordVerifiedSet(ScoringEnabled, UncheckedSteps, Reps)
         Decision := RecordVerifiedSet(Player, Drill.Id, Accuracy, Eligible)
@@ -342,8 +365,9 @@ keystroke_drill_device := class(creative_device):
         set ActivePlayer = false
         set Busy = false
 
-    # Runs this lane's drill once for a section device, waiting for the lane to be free first.
-    PlaySet<public>(Player:player, Back:vector3, Reps:int)<suspends>:void =
+    # Runs this lane's drill once for a section device, waiting for the lane to be free first. False when the player
+    # left the lane mid-set, so the section stops instead of moving them on to its next drill.
+    PlaySet<public>(Player:player, Back:vector3, Reps:int)<suspends>:logic =
         loop:
             if (not Busy?):
                 break
@@ -355,6 +379,7 @@ keystroke_drill_device := class(creative_device):
             RunSet(Player, Drill)
             set ReturnPoint = false
             set RepsOverride = 0
+        logic{not Abandoned?}
 
     # Position checks poll every server tick until the outcome is seen or Deadline passes and record
     # how long it took (LastLatency, seconds). Exposure checks wait out the step's window and fail
@@ -378,6 +403,9 @@ keystroke_drill_device := class(creative_device):
                     if (Character := Player.GetFortCharacter[], OutcomeMet[Character, Check, Base]):
                         set Result = rep_result.Ok
                         set LastLatency = GetSimulationElapsedTime() - Started
+                        break
+                    if (LeftLane[Player, Drill, Rep]):
+                        set Abandoned = true
                         break
                     if (GetSimulationElapsedTime() >= Deadline):
                         break
@@ -407,6 +435,38 @@ keystroke_drill_device := class(creative_device):
                 rep_result.Unchecked
         else:
             rep_result.Unchecked
+
+    # Waits until Until, or less: ends early when a later position check of this rep is already met (the player built
+    # ahead of the cue) or the player left the lane.
+    WaitStep(Player:player, Drill:drill_def, Rep:int, StepIndex:int, Until:float)<suspends>:void =
+        loop:
+            if (GetSimulationElapsedTime() >= Until):
+                break
+            if (AheadOf[Player, Drill, Rep, StepIndex]):
+                break
+            if (LeftLane[Player, Drill, Rep]):
+                set Abandoned = true
+                break
+            Sleep(0.05)
+
+    AheadOf(Player:player, Drill:drill_def, Rep:int, StepIndex:int)<decides><transacts>:void =
+        Character := Player.GetFortCharacter[]
+        Base := TrackOrigin(Drill, Rep)
+        Met := for (C : Drill.Checks, C.Step > StepIndex, IsPositionCheck[C], OutcomeMet[Character, C, Base]) { C }
+        Met.Length > 0
+
+    LeftLane(Player:player, Drill:drill_def, Rep:int)<decides><transacts>:void =
+        Character := Player.GetFortCharacter[]
+        P := Character.GetTransform().Translation
+        O := TrackOrigin(Drill, Rep)
+        Distance(vector3{X := P.X, Y := P.Y, Z := 0.0}, vector3{X := O.X, Y := O.Y, Z := 0.0}) > AbandonDistance
+
+    # Index of the last step with a position check, -1 when none.
+    LastPositionCheck(Drill:drill_def)<transacts>:int =
+        var Last:int = -1
+        for (C : Drill.Checks, IsPositionCheck[C], C.Step > Last):
+            set Last = C.Step
+        Last
 
     IsPositionCheck(Check:drill_check)<decides><transacts>:void =
         Check.Kind = "stand_level" or Check.Kind = "climb" or Check.Kind = "volume"

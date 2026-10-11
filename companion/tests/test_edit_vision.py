@@ -94,9 +94,14 @@ class EditWindowRuntimeTests(unittest.TestCase):
    def __enter__(self):return self
    def __exit__(self,*args):pass
    def grab(self,region):return frame
+  class FakeGrabber:
+   # stands in for screen_capture.Grabber (dxcam / mss): always the fixture frame, always fresh
+   backend='fake'
+   def grab(self,rect):return frame,True
+   def close(self):pass
   tk=types.SimpleNamespace(Tk=Widget,Toplevel=Widget,Canvas=Widget,LAST='last')
   with tempfile.TemporaryDirectory() as d:
-   with patch.object(edit_window,'tk',tk),patch.object(edit_window,'game_rect',lambda:(0,0,1920,1080)),patch.object(edit_window,'make_click_through',lambda _:None),patch.object(edit_window,'exclude_from_capture',lambda _:None),patch.object(edit_window,'single_instance',lambda _:True),patch.object(edit_window,'BASE',Path(d)),patch.dict('sys.modules',{'mss':types.SimpleNamespace(MSS=Capture)}):
+   with patch.object(edit_window,'tk',tk),patch.object(edit_window,'game_rect',lambda:(0,0,1920,1080)),patch.object(edit_window,'make_click_through',lambda _:None),patch.object(edit_window,'exclude_from_capture',lambda _:None),patch.object(edit_window,'single_instance',lambda _:True),patch.object(edit_window,'BASE',Path(d)),patch.dict('sys.modules',{'mss':types.SimpleNamespace(MSS=Capture)}),patch.object(edit_window,'Grabber',FakeGrabber):
     edit_window.run(Path(d)/'binds.json')
   return [g for w in windows for g in w.geometry_calls]
  def test_ring_shows_even_when_the_wall_is_not_projected(self):

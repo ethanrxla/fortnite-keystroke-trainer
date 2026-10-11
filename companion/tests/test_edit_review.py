@@ -35,7 +35,8 @@ class ReviewServerTests(unittest.TestCase):
         self.dir.cleanup()
 
     def get(self, path):
-        with urllib.request.urlopen(self.base + path, timeout=5) as r:
+        req=urllib.request.Request(self.base+path,headers={"X-KT-Token":"t0k"})
+        with urllib.request.urlopen(req, timeout=5) as r:
             return r.status, r.read().decode()
 
     def post(self, body, token="t0k"):

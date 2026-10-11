@@ -58,11 +58,13 @@ def promote(data, ledger, counts, game_version, now=None):
             entry = counts.get(e["id"])
             if not entry or not eligible(entry) or (e.get("validation") or {}).get("status") == "game_verified":
                 continue
-            if piece == "stairs" and not (e.get("gesture") or {}).get("routes"):
+            from validate_edit import ramp_gesture_recorded
+            if piece == "stairs" and not ramp_gesture_recorded(e):
                 continue                       # ramp edits need a recorded gesture first (validate_edit.py rule)
             e["suggest"] = True
             e["validation"] = {"status": "game_verified", "game_version": game_version,
                                "evidence": [f"attempt:{a}" for a, _ in entry["approved"]], "result_confirmed": True,
+                               "sessions": sorted({s for _,s in entry["approved"]}),
                                "reviewer": ",".join(sorted(r or "local" for r in entry["reviewers"])), "recorded_at": now,
                                "method": f"reviewed attempts >= {MIN_APPROVED} across >= {MIN_SESSIONS} sessions"}
             if ledger and piece in ledger.get("pieces", {}) and e.get("tiles"):

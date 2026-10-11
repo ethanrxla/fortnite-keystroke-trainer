@@ -3,12 +3,13 @@ import copy
 
 
 def result_verified(record, label=None):
-    if label and label.get("status") == "rejected":return False
-    return bool((label or {}).get("result_confirmed")) or (
+    if label:return label.get("status") != "rejected" and bool(label.get("result_confirmed"))
+    return (
         record.get("result_confirmed") is True and record.get("result_evidence") in ("authored", "reviewed"))
 
 
 def piece_verified(record, label=None):
+    if label and label.get("status") == "rejected":return False
     return record.get("piece_evidence") in ("observed", "authored") or (
         bool((label or {}).get("result_confirmed")) and (label or {}).get("piece") == record.get("piece"))
 

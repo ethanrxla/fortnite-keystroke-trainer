@@ -5,8 +5,9 @@
     python tools/eval_edit_policy.py --blend --write          # write shared/edit-policy*.blend.json for the better ones
     python tools/eval_edit_policy.py --include-auto           # early on: count confident unreviewed auto-labels too
 
-A blend is only written when it beats the current policy on the same examples (policy_learning.better: enough
-examples, higher top-1 without a worse top-3). Promote it by copying it over the shared file and regenerating Verse
+A blend fits training sessions only, reports validation separately and requires at least 30 reviewed test
+attempts across three held-out sessions, improved top-1, non-worse top-3/log-loss and passing safety tests.
+Promote it by copying it over the shared file and regenerating Verse
 (tools/build_edit_policy.py --regen-verse / tools/build_piece_policy.py); the Supabase publish step uses the same rule.
 """
 import argparse
@@ -30,7 +31,9 @@ def main():
     ap.add_argument("--include-auto", action="store_true")
     ap.add_argument("--alpha", type=float, default=pl.ALPHA)
     args = ap.parse_args()
-    samples = pl.examples(Store(), include_auto=args.include_auto)
+    store=Store()
+    try:samples = pl.examples(store, include_auto=args.include_auto)
+    finally:store.close()
     print(f"{len(samples)} usable attempts ({sum(s['reviewed'] for s in samples)} reviewed)")
     split = pl.partition(samples)
     print("session-separated split:", {k: len(v) for k,v in split.items()})

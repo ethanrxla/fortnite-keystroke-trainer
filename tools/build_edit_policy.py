@@ -1,6 +1,7 @@
 """Build the edit guide's prior table with Jev, offline, so in-game advice is consistent.
 
     python tools/build_edit_policy.py [--dry-run] [--no-audit]
+    python tools/build_edit_policy.py --extend      # offline: add placeholder columns for new library edits
 
 A published island cannot call an AI, so nothing here runs in the game. Instead Jev (calibrated probabilities, no
 free text) scores every situation the guide can be in against the edit library (shared/edits.json) and the result
@@ -111,9 +112,21 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--dry-run", action="store_true")
     ap.add_argument("--no-audit", action="store_true")
-    ap.add_argument("--personal", action="store_true", help="blend in shared/edit-policy-personal.json (from `keystroke_lab personalize`)")
+    ap.add_argument("--personal", action="store_true", help="deprecated: personal factors remain in the local companion")
     ap.add_argument("--regen-verse", action="store_true", help="rewrite EditPolicy.verse from the saved edit-policy.json, no Jev calls")
+    ap.add_argument("--extend", action="store_true",
+                    help="no Jev calls: give suggested edits missing from edit-policy.json a placeholder column, then rewrite the Verse")
     args = ap.parse_args()
+    if args.personal:
+        ap.error('Personal factors are player-local; they cannot be baked into the shared island policy.')
+    if args.extend:
+        saved = json.loads(OUT_JSON.read_text(encoding="utf-8"))
+        ids = [e["id"] for e in suggested(json.loads(EDITS.read_text(encoding="utf-8")))]
+        saved = extend(saved, ids)
+        OUT_JSON.write_text(json.dumps(saved, indent=1), encoding="utf-8")
+        write_verse(ids, {tuple(int(x) for x in k.split(",")): v for k, v in saved["priors"].items()})
+        print("unscored (placeholder = row median, rerun with Jev to score):", ", ".join(saved["unscored"]) or "none")
+        return 0
     if args.regen_verse:
         saved = json.loads(OUT_JSON.read_text(encoding="utf-8"))
         policy = {tuple(int(x) for x in k.split(",")): v for k, v in saved["priors"].items()}
@@ -172,6 +185,23 @@ def main():
     write_verse(ids, policy)
     print(f"wrote {OUT_JSON.name} and {OUT_VERSE.name}; Jev calls {jev.calls}, tokens {jev.tokens}")
     return 0
+
+
+def extend(saved, ids):
+    """Reorder the saved table to the library's suggested order. An edit Jev has not scored yet gets the median of
+    its situation's row: no opinion either way, so crosshair travel decides. Listed under "unscored"."""
+    old = saved["edits"]
+    if set(old) - set(ids):
+        raise SystemExit(f"edit-policy.json scores edits no longer suggested: {sorted(set(old) - set(ids))}; rerun with Jev")
+    new = [i for i in ids if i not in old]
+    priors = {}
+    for k, row in saved["priors"].items():
+        median = sorted(row)[len(row) // 2]
+        vec = [row[old.index(i)] if i in old else median for i in ids]
+        total = sum(vec) or 1.0
+        priors[k] = [round(v / total, 4) for v in vec]
+    unscored = [i for i in dict.fromkeys(saved.get("unscored", []) + new) if i in ids]
+    return dict(saved, edits=ids, priors=priors, unscored=unscored)
 
 
 def write_verse(ids, policy):

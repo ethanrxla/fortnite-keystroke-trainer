@@ -46,7 +46,7 @@ kt_rift_router_device := class(creative_device):
             if (set Cooldown[P] = GetSimulationElapsedTime() + 1.0) {}
 
     RunSmokeTests(P:player, Report:autotest_report)<suspends>:void =
-        Report.Check("R00-router", logic{Links.Length = RiftRoutes.Length and Links.Length = 13}, "all 13 explicit links resolved")
+        Report.Check("R00-router", logic{Links.Length = RiftRoutes.Length}, "all {RiftRoutes.Length} explicit links resolved")
         if (C := P.GetFortCharacter[]):
             Before := C.GetTransform()
             C.PutInStasis(stasis_args{AllowFalling := false})

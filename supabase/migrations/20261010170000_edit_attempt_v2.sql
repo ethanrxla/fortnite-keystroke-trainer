@@ -26,7 +26,9 @@ begin
   insert into keystroke_trainer.player_edit_stats(player_id, edit_id, attempts, completed, followed, median_confirm_s, mean_travel)
   select a.player_id, coalesce(a.record->>'reviewed_edit_id', a.matched_edit_id),
     count(*),
-    count(*) filter (where a.record->>'result_confirmed' = 'true' or a.record->>'review_result_confirmed' = 'true'),
+    count(*) filter (where case when a.record ? 'review_result_confirmed'
+      then a.record->>'review_result_confirmed' = 'true'
+      else a.record->>'result_confirmed' = 'true' and a.record->>'result_evidence' in ('authored','reviewed') end),
     count(*) filter (where a.followed_suggestion),
     percentile_cont(0.5) within group (order by
       case when a.record->>'confirmation_evidence' in ('press','release')

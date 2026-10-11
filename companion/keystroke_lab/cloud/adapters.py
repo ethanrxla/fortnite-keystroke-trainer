@@ -64,12 +64,14 @@ class KeystrokeTrainerAdapter(MapAdapter):
         return body
 
     def key_summary(self, store, records):
-        """Counts only (verdict totals and per-key totals) over the attempts' time span: no order, no timing."""
+        """Anonymous verdict totals within this session and attempt span."""
         if not records:
             return None
-        lo = min(r["t_edit_open"] for r in records) - 60
-        hi = max(r["t_close"] for r in records) + 60
-        verdicts = dict(store.rows("SELECT verdict, COUNT(*) FROM keys WHERE ts BETWEEN ? AND ? GROUP BY verdict", (lo, hi)))
+        lo = min(r["t_edit_open"] for r in records)
+        hi = max(r["t_close"] for r in records)
+        verdicts = dict(store.rows("SELECT verdict, COUNT(*) FROM keys WHERE ts BETWEEN ? AND ? AND session_id=? GROUP BY verdict",
+                                  (lo, hi, records[0]["session_id"])))
+        verdicts={k:v for k,v in verdicts.items() if k in {'ok','order','stray','double','unmapped','repeat','release','habit'}}
         if not verdicts:
             return None
         return {"verdicts": verdicts}

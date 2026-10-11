@@ -3,6 +3,7 @@ from collections import Counter
 from dataclasses import dataclass
 import json
 import threading
+import sqlite3
 
 
 @dataclass(frozen=True)
@@ -33,6 +34,7 @@ def session_stats(store, session_id, profile_id=None, revision=None):
     attempts = store.rows("SELECT record FROM edit_attempts WHERE session_id=? ORDER BY t_open DESC LIMIT 500", (session_id,))
     n, matched, verified, complete = 0, 0, 0, 0
     confirmations = []
+    per_edit = {}
     for (raw,) in attempts:
         r = json.loads(raw)
         if profile_id is not None and (r.get("profile_id"), r.get("profile_revision")) != (profile_id, revision):continue
@@ -41,6 +43,14 @@ def session_stats(store, session_id, profile_id=None, revision=None):
         n += 1
         if not piece_verified(r, label):continue
         verified += result_verified(r, label)
+        edit_id=r.get('intended_edit_id') or (label or {}).get('edit_id') or r.get('matched_edit_id')
+        if edit_id:
+            stats=per_edit.setdefault(edit_id,dict(observed=0,verified=0,target_matches=0,target_observations=0))
+            stats['observed']+=1
+            stats['verified']+=int(result_verified(r,label))
+            if r.get('complete_observation') and r.get('intended_edit_id'):
+                stats['target_observations']+=1
+                stats['target_matches']+=int(r.get('matched_edit_id')==r['intended_edit_id'])
         if r.get("complete_observation"):
             complete += 1
             # Only an explicitly chosen target defines accuracy, never an unsolicited suggestion.
@@ -48,7 +58,7 @@ def session_stats(store, session_id, profile_id=None, revision=None):
         if r.get("t_confirm") is not None and r.get("confirmation_evidence") in ("press","release"):
             confirmations.append(r["t_confirm"]-r["t_edit_open"])
     return dict(attempts=n, verified=verified, complete=complete, target_matches=matched,
-                confirm_s=round(confirmations[0],3) if confirmations else None)
+                confirm_s=round(confirmations[0],3) if confirmations else None,per_edit=per_edit)
 
 
 class StatsWorker:
@@ -67,9 +77,12 @@ class StatsWorker:
         try:
             while not self.stop.is_set():
                 try:
+                    from .collector import ingest_attempts, ingest_overlay, enrich_attempts
                     profile = self.profile()
+                    ingest_overlay(store);ingest_attempts(store)
+                    enrich_attempts(store,profile.primary());store.commit()
                     self.snapshot = session_stats(store, self.session_id, profile.profile_id, profile.revision)
-                except (ValueError, OSError):
+                except (ValueError, OSError, sqlite3.Error):
                     self.snapshot = {}
                 self.stop.wait(2.)
         finally:
@@ -98,16 +111,22 @@ class LiveStats:
         obs = state.get("observation") or {}
         piece = obs.get("piece", "unknown")
         evidence = "estimated / not graded" if state.get("piece_estimated") else "observed" if piece != "unknown" else "unavailable"
-        first = f"{piece.upper()} · {evidence} | Unmapped {self.counts['unmapped']} | Double? {self.counts['double']}"
+        confidence=obs.get('confidence')
+        first = f"{piece.upper()} · {evidence}" + (f" {round(100*confidence)}%" if isinstance(confidence,(int,float)) else "")
         if sequence.get("graded"):
             second = f"Actions not observed {len(sequence.get('actions_not_observed', []))} | Extra {sequence.get('extra_inputs', 0)} | Order {sequence.get('order_errors', 0)}"
         else:
-            second = "Freebuild / incomplete input: order and missed-action grading unavailable"
+            second = "Freebuild: missed/order grading unavailable"
         confirmed = stored.get("confirm_s")
-        third = (f"Verified results {stored.get('verified',0)}/{stored.get('attempts',0)} | "
-                 f"Complete observations {stored.get('complete',0)}/{stored.get('attempts',0)} | "
-                 f"Confirm {str(confirmed)+'s' if confirmed is not None else 'unavailable'}")
+        third = f"Verified {stored.get('verified',0)}/{stored.get('attempts',0)} · Coverage {stored.get('complete',0)}/{stored.get('attempts',0)}"
+        fourth = f"Unmapped {self.counts['unmapped']} · Double? {self.counts['double']} · Confirm {str(confirmed)+'s' if confirmed is not None else 'unavailable'}"
+        fifth = "Selection comparison unavailable"
         attempt=state.get('last_attempt') or {}
         if attempt.get('complete_observation') and not state.get('piece_estimated') and attempt.get('target_count'):
-            third += f" | Guide tiles {attempt.get('matched_tiles',0)}/{attempt['target_count']} (not game success)"
-        return first, second, third
+            fifth = f"Guide tiles {attempt.get('matched_tiles',0)}/{attempt['target_count']} · not game success"
+        selected=(state.get('reference_ids') or [None])[0]
+        per_edit=stored.get('per_edit',{}).get(selected)
+        if per_edit:
+            fifth=f"This edit: verified {per_edit['verified']}/{per_edit['observed']}"
+            if per_edit['target_observations']:fifth+=f" · selected target {per_edit['target_matches']}/{per_edit['target_observations']}"
+        return first, second, third, fourth, fifth

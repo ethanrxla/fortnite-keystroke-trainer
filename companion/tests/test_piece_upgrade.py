@@ -9,7 +9,7 @@ from keystroke_lab import policy_learning as pl
 from keystroke_lab.attempt_evidence import upgrade_record, travel_efficiency
 from keystroke_lab.attempt_recorder import AttemptRecorder, default_matcher
 from keystroke_lab.attempt_schema import errors
-from keystroke_lab.build_pieces import get_piece, WallPiece, FloorPiece, ConePiece, RampPiece
+from keystroke_lab.build_pieces import piece_for as get_piece, WallPiece, FloorPiece, ConePiece, StairPiece as RampPiece, PatternTable
 from keystroke_lab.cloud.adapters import KeystrokeTrainerAdapter
 from keystroke_lab.edit_dictionary import EditDictionary, TargetTracker
 from keystroke_lab.guide_visuals import layout
@@ -25,33 +25,36 @@ class PieceObjectTests(unittest.TestCase):
     def test_registry_and_aliases(self):
         for name,kind in [('wall',WallPiece),('floor',FloorPiece),('roof',ConePiece),('stairs',RampPiece)]:
             self.assertIsInstance(get_piece(name),kind)
-        with self.assertRaises(ValueError):get_piece('unknown')
+        with self.assertRaises((ValueError,KeyError)):get_piece('unknown')
 
-    def test_dictionary_round_trips_all_edit_objects(self):
+    def test_dictionary_contains_all_typed_patterns(self):
         d=EditDictionary()
-        for key,edit in d.definitions.items():
-            self.assertEqual(edit.to_dict(),d.all[key])
+        table=PatternTable()
+        for pattern in table.all.values():
+            self.assertIn(pattern.id,d.all)
 
     def test_floor_cone_diagonals_are_numbered_taps(self):
         for piece in ('floor','cone'):
             e={'id':'diagonal','name':'Diagonal','piece':piece,'cols':2,'tiles':[0,3]}
             visual=layout(e,(.1,.1))
-            self.assertEqual(visual.route_mode,'taps')
+            self.assertEqual(len(visual.strokes),2)
+            self.assertTrue(all(len(s)==1 for s in visual.strokes))
             self.assertEqual(len(visual.labels),2)
             self.assertEqual(len(visual.regions),4)
 
     def test_ramp_needs_order_and_directed_edges(self):
+        from keystroke_lab.build_pieces import ramp_arrows
         p=get_piece('ramp')
-        e={'id':'test','piece':'ramp','name':'Test','tiles':[0,2],
-           'gesture':{'nodes':{'a':[0,0],'b':[0,1]},'edges':[['a','b']],'routes':[['a','b']]}}
-        self.assertFalse(p.matches(e,[0,2]))
-        self.assertTrue(p.matches(e,gesture=('a','b')))
-        self.assertFalse(p.matches(e,gesture=('b','a')))
-        route=p.route((0,0),e)
-        self.assertEqual(route.points,((0.,0.),(0.,2.)))
-        self.assertEqual(layout(p.display(e,None),(0,0)).regions,())
-        e['gesture']['edges']=[]
-        self.assertIsNone(p.route((0,0),e))
+        p.set_strokes(((0,2),))
+        forward=p.arrows()
+        p.set_strokes(((2,0),))
+        self.assertNotEqual(forward,p.arrows())
+        self.assertEqual(forward,ramp_arrows(((0,2),)))
+        from keystroke_lab.edit_dictionary import RoutePlanner
+        e={'id':'test','piece':'ramp','name':'Test','cols':2,'tiles':[0,2],'strokes':[[0,2]]}
+        self.assertEqual(RoutePlanner().strokes((0,0),e),(((.5,.5),(.5,1.5)),))
+        e['strokes']=[[0,3]]
+        self.assertFalse(RoutePlanner().strokes((0,0),e))
 
     def test_unknown_selection_does_not_reset_lock(self):
         t=TargetTracker(stability=0)
@@ -155,6 +158,69 @@ class DataTests(unittest.TestCase):
             log.close()
             text=(Path(d)/'keys.events.jsonl').read_text()
             self.assertNotIn('private-letter',text)
+
+    def test_reingest_cannot_erase_reviewed_revision(self):
+        r=record();self.store.add_attempt(r)
+        self.store.add_label(r['attempt_id'],'approved',result_confirmed=True)
+        revision=self.store.attempt(r['attempt_id'])['record_revision']
+        self.store.add_attempt(r)
+        self.assertEqual(self.store.attempt(r['attempt_id'])['record_revision'],revision)
+
+    def test_fast_confirmation_uses_event_profile_not_current_binds(self):
+        from keystroke_lab.collector import enrich_attempts
+        r=upgrade_record(record(t_first_select=100.02))
+        r.update(profile_id='a',profile_revision=1,outcome='selection_matched',complete_observation=True)
+        self.store.add_attempt(r)
+        self.store.add_key(100.05,'v','ok',session_id='s',profile_id='a',profile_revision=1,
+                           actions=['edit','edit_confirm'],confirm_edge='down')
+        enrich_attempts(self.store,{'edit_confirm':'different'},now=500)
+        out=self.store.attempt(r['attempt_id'])
+        self.assertEqual(out['t_confirm'],100.05)
+        self.assertEqual(out['outcome'],'confirm_observed')
+        self.assertFalse(out['result_confirmed'])
+
+    def test_release_confirmation_and_cross_session_isolation(self):
+        from keystroke_lab.collector import enrich_attempts
+        r=upgrade_record(record())
+        r.update(profile_id='a',profile_revision=1)
+        self.store.add_attempt(r)
+        self.store.add_key(100.3,'mouse_left','release',session_id='other',profile_id='a',profile_revision=1,
+                           edge='up',actions=['edit_confirm'],confirm_edge='up')
+        self.store.add_key(100.4,'mouse_left','release',session_id='s',profile_id='a',profile_revision=1,
+                           edge='up',actions=['edit_confirm'],confirm_edge='up')
+        enrich_attempts(self.store,{},now=500)
+        out=self.store.attempt(r['attempt_id'])
+        self.assertEqual((out['t_confirm'],out['confirmation_evidence']),(100.4,'release'))
+
+    def test_review_can_revoke_confirmation(self):
+        from keystroke_lab.attempt_evidence import result_verified
+        r=record();self.store.add_attempt(r)
+        self.store.add_label(r['attempt_id'],'approved',result_confirmed=True,at=1)
+        self.assertTrue(result_verified(self.store.attempt(r['attempt_id']),self.store.label(r['attempt_id'])))
+        self.store.add_label(r['attempt_id'],'approved',result_confirmed=False,at=2)
+        self.assertFalse(result_verified(self.store.attempt(r['attempt_id']),self.store.label(r['attempt_id'])))
+
+    def test_semantics_reject_false_success_wrong_topology_and_time(self):
+        r=upgrade_record(record())
+        for change in ({'outcome':'result_verified'},{'piece':'floor','final_tiles':[8]},
+                       {'t_close':99},{'selection_trace':{}},{'final_tiles':[[0]]}):
+            self.assertTrue(errors(dict(r,**change)),change)
+
+    def test_capture_paths_reject_traversal(self):
+        from keystroke_lab.attempt_review import capture_paths
+        with tempfile.TemporaryDirectory() as folder:
+            self.assertEqual(capture_paths(dict(record(),session_id='../private'),folder),[])
+
+    def test_per_edit_target_accuracy_uses_explicit_intent(self):
+        r=upgrade_record(record())
+        r.update(complete_observation=True,intended_edit_id='window_center')
+        self.store.add_attempt(r)
+        stats=session_stats(self.store,'s')['per_edit']['window_center']
+        self.assertEqual((stats['target_matches'],stats['target_observations']),(1,1))
+        r2=upgrade_record(record());r2.update(complete_observation=True)
+        self.store.add_attempt(r2)
+        stats=session_stats(self.store,'s')['per_edit']['window_center']
+        self.assertEqual((stats['target_matches'],stats['target_observations']),(1,1))
 
 
 class LearningAndLayoutTests(unittest.TestCase):

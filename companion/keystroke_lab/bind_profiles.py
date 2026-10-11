@@ -66,6 +66,7 @@ class ProfileStore:
     def __init__(self, path, confirm_sprint=False):
         self.path = Path(path)
         self.lock = threading.RLock()
+        self.confirm_sprint = confirm_sprint
         data = json.loads(self.path.read_text()) if self.path.exists() else {}
         self.snapshot = parse(data, str(self.path.resolve()), confirm_sprint)
         self.stamp = self._file_stamp()
@@ -82,7 +83,8 @@ class ProfileStore:
             stamp = self._file_stamp()
             if stamp != self.stamp and stamp is not None:
                 try:
-                    candidate = parse(json.loads(self.path.read_text()), self.snapshot.profile_id)
+                    # Same parse as at start-up: without confirm_sprint a reload of a legacy file dropped sprint = 1.
+                    candidate = parse(json.loads(self.path.read_text()), self.snapshot.profile_id, self.confirm_sprint)
                 except (ValueError, KeyError, TypeError, OSError):
                     return self.snapshot
                 if candidate != self.snapshot:
@@ -101,6 +103,42 @@ class ProfileStore:
             os.replace(temporary, self.path)
             self.stamp = self._file_stamp()
             return self.snapshot
+
+    def merge(self, imported, overwrite_verified=False):
+        """Add bindings read from elsewhere (the game's own settings) in one revision. Actions the player already
+        confirmed keep their keys unless overwrite_verified. Returns the actions that changed."""
+        with self.lock:
+            old = self.refresh()
+            existing = {}
+            for b in old.bindings:
+                existing.setdefault(b.action, []).append(b)
+            incoming = {}
+            for b in imported:
+                had = existing.get(b.action, [])
+                if any(h.verified for h in had) and not overwrite_verified:
+                    continue
+                if [(h.keys, h.verified) for h in had] != [(b.keys, b.verified)]:
+                    incoming[b.action] = b
+            if not incoming:
+                return []
+            bindings, placed = [], set()
+            for b in old.bindings:
+                if b.action not in incoming:
+                    bindings.append(b)
+                elif b.action not in placed:
+                    bindings.append(incoming[b.action])
+                    placed.add(b.action)
+            bindings += [b for a, b in incoming.items() if a not in placed]
+            self.snapshot = replace(old, version=1, revision=old.revision + 1, bindings=tuple(bindings))
+            self._write()
+            return list(incoming)
+
+    def _write(self):
+        self.path.parent.mkdir(parents=True, exist_ok=True)
+        temporary = self.path.with_suffix(self.path.suffix + '.tmp')
+        temporary.write_text(json.dumps(self.snapshot.to_dict(), indent=2), encoding='utf-8')
+        os.replace(temporary, self.path)
+        self.stamp = self._file_stamp()
 
     def update(self, action, keys, context='any', verified=True):
         if action not in DEFAULTS and action != 'swap_weapon':

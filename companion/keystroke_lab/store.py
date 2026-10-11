@@ -46,16 +46,17 @@ class Store:
         self.db.executescript(SCHEMA)
         for table, columns in {
             "keys": {"session_id": "TEXT", "profile_id": "TEXT", "profile_revision": "INTEGER",
-                     "edge": "TEXT DEFAULT 'down'"},
+                     "edge": "TEXT DEFAULT 'down'", "actions": "TEXT", "confirm_edge": "TEXT"},
             "labels": {"result_confirmed": "INTEGER DEFAULT 0", "piece": "TEXT"},
         }.items():
             present = {row[1] for row in self.db.execute(f"PRAGMA table_info({table})")}
             for name, declaration in columns.items():
                 if name not in present:self.db.execute(f"ALTER TABLE {table} ADD COLUMN {name} {declaration}")
 
-    def add_key(self, ts, key, verdict, drill=None, src="overlay", session_id=None, profile_id=None, profile_revision=None, edge="down"):
-        self.db.execute("INSERT OR IGNORE INTO keys(ts,key,verdict,drill,src,session_id,profile_id,profile_revision,edge) VALUES(?,?,?,?,?,?,?,?,?)",
-                        (ts, key, verdict, drill, src, session_id, profile_id, profile_revision, edge))
+    def add_key(self, ts, key, verdict, drill=None, src="overlay", session_id=None, profile_id=None, profile_revision=None, edge="down", actions=None, confirm_edge=None):
+        self.db.execute("INSERT OR IGNORE INTO keys(ts,key,verdict,drill,src,session_id,profile_id,profile_revision,edge,actions,confirm_edge) VALUES(?,?,?,?,?,?,?,?,?,?,?)",
+                        (ts, key, verdict, drill, src, session_id, profile_id, profile_revision, edge,
+                         json.dumps(actions) if actions is not None else None,confirm_edge))
 
     def add_kt(self, ts, rec):
         self.db.execute("INSERT OR IGNORE INTO kt VALUES(?,?,?,?)",
@@ -63,6 +64,8 @@ class Store:
 
     def add_attempt(self, record):
         """Insert or replace one edit attempt (keyed by attempt_id, so a re-read file is harmless)."""
+        existing=self.attempt(record["attempt_id"])
+        if existing and existing.get("record_revision",1)>=record.get("record_revision",1):return
         self.db.execute("INSERT OR REPLACE INTO edit_attempts(attempt_id, session_id, t_open, t_close, piece, outcome, "
                         "suggested, matched, record, enriched, synced) VALUES(?,?,?,?,?,?,?,?,?,"
                         "COALESCE((SELECT enriched FROM edit_attempts WHERE attempt_id=?),0),"
@@ -78,7 +81,9 @@ class Store:
 
     def update_attempt(self, record, enriched=None):
         if record.get("schema") == "edit_attempt.v2":
-            record = dict(record, record_revision=record.get("record_revision", 1) + 1)
+            current=self.attempt(record["attempt_id"]) or {}
+            if current.get("record_revision",1)>record.get("record_revision",1):return
+            record = dict(record, record_revision=max(current.get("record_revision",1),record.get("record_revision",1)) + 1)
         self.db.execute("UPDATE edit_attempts SET record=?, outcome=?, matched=?, synced=0" +
                         (", enriched=?" if enriched is not None else "") + " WHERE attempt_id=?",
                         (json.dumps(record, sort_keys=True), record["outcome"], record.get("matched_edit_id")) +

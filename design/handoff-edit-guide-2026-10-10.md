@@ -86,3 +86,46 @@ Secrets are in `../.env` (outside the public repo); the companion reads only the
 
 `EditMemory.verse` keeps a persistent per-player edit record that nudges the in-map ranking and caption. It compiles;
 whether it persists across sessions still needs checking in a private version.
+
+## Codex integration audit after 6e9e680 (2026-10-10)
+- Full companion suite: 240 tests passed. Resource cleanup warnings remain in tests.
+- Replayed the real `live-oblique-edit.png` that previously failed acquisition. One initial stability frame, then 14/14 consecutive frames kept `wall:1` and `corner_upper_right`. Median processing 158.8 ms, maximum 164.9 ms. This verifies acquisition on that recorded view, not live moving-camera stability.
+- Green regions, yellow route/approach, numbered circles, start marker, red ring and reference panel remain present in the renderer. The 1.25-second display hold remains.
+- Full completion is NOT established: VisualObserver still estimates floor versus cone from camera pose and never returns ramp; ContextPipeline explicitly excludes ramps from display_edit.
+- Route order is still recomputed from current aim by both layout and draw_lines. The same upper-right corner changes order from (5,8,7) to (7,8,5) as aim moves between the route endpoints. The family lock does not lock the tracing path; this needs a small shared piece-local route lock, released on reset/target/profile changes.
+- Current dictionary contains 96 records, zero passing the game_verified evidence gate. Library matching must not be described as confirmed game success.
+- Fortnite had no open client window during this audit; no live gameplay inputs, restarts, map changes or production code changes were made. Preserve the player-confirmed wall behavior in the known-good tag.
+
+## Update 2026-10-10 afternoon
+
+- **Supabase:** deployed and verified on the hosted project (`tools/test_supabase_backend.py`: 15/15). The collector
+  uploads consented attempts every 60 s. Opt in with `python -m keystroke_lab cloud consent --upload yes`.
+- **PR #2 (build pieces):** its commits are on main, and its Verse compiles in UEFN. Its pieces are now wired into
+  the live overlay:
+  - The attempt recorder names edits through `build_pieces.PatternTable`, which knows every real shape, including
+    rare ones.
+  - Mid-trace, a rare shape is coached as its common `prefer` edit.
+  - `edit_geometry.grid_to_tiles` maps 2x2 pieces from the screen grid back to the piece frame.
+- **Live training data:** edit-mode frames sampled during play go to `companion/captures/` (gitignored). The frozen
+  set `captures/set1` has 224 frames. Measure any detector change against it.
+- **Results from the first 44 recorded attempts:** 43 ended with no selected tiles seen and 22 never found a piece.
+  Detection accuracy, not the guide, is the bottleneck.
+- **Detection rate on set1:** 38% -> 55% after HUD/overlay masking, local-contrast grid lines and red tiles. Still to fix:
+  - partial-grid row or column offset on some cropped walls (visible in contact sheets);
+  - 2x2 floors seen from above (0 detected);
+  - steep walls seen from ramps;
+  - selected tiles under warm lighting look tan, not grey;
+  - detection takes about 128 ms per frame.
+  Next idea: a small learned per-tile classifier (blue / selected / red / background) trained on set1 tiles
+  labelled through `review-edits`, plus temporal tracking (`GridMotionTracker`) seeded from the last good homography.
+
+## Codex route/build-state integration after f85e25e
+
+- Reviewed PR #2: https://github.com/ethanrxla/fortnite-keystroke-trainer/pull/2 . Continued its existing four piece types; no per-edit subclasses or native gameplay geometry changes.
+- Added validated boolean selection-grid import/export for wall/floor/cone. Invalid state updates are atomic; stairs retain ordered strokes rather than losing direction in a mask.
+- Both guide renderers now consume the same piece-local stroke snapshot. Yellow selecting lines, dashed non-selecting approaches/transfers, numbered markers, green regions and the red ring remain. Ramp strokes are separate drags; disconnected floor/cone regions are separate taps. These describe dictionary data, not newly verified Fortnite legality.
+- Route waypoints lock once selection begins and release on reset or target/profile/orientation/edit changes. Incidental ordering of an equivalent selection mask no longer resets the lock. Screen projection continues to follow the observed piece.
+- Removed the renderer's blanket ramp exclusion; this does NOT establish ramp detection. The detector work in f85e25e belongs to the other agent and was not overwritten.
+- Validation: 247 companion tests passed; `tools/gen_edits.py --check` passed. Tests emit existing resource-cleanup warnings. No live Fortnite validation or companion restart in this pass.
+- Video reference supplied by user: https://youtu.be/0Dy2FlnVids . Web access exposed its title but not demonstrations/transcript. Treat it as a reference awaiting review, never as recorded game-validation evidence.
+- Still required: reliable live floor/cone/ramp identity and orientation, controlled accepted-edit recordings, moving-camera persistence checks, and verification that the running companion uses this revision. Do not report all edits complete. Preserve map/armory/loadout fixes, keyboard scale/bindings, the 1.25-second display hold, and existing visual layers.

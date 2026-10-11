@@ -41,8 +41,14 @@ companion/.calibration-state.json
 companion/*.log
 companion/edit-state.json
 companion/edit-state.tmp
+companion/capture-control.json
+companion/capture-control.tmp
 companion/overlay-settings.json
 
 # Cross-process scheduling metadata
 companion/.runtime/
 companion/.cloud-session.json
+supabase/.temp-secrets.env
+supabase/.deploy.log
+companion/captures/
+assets/signs/
