@@ -7,12 +7,18 @@ stay inside Epic's Developer Rules), a cross, and a "67 room" (the build wing) w
 likeness are licensed by his estate, so his spot is a red-gold-green Rasta tribute panel with no name or face.
 Hero cards: Jamaica's flag colours, a drawn bust, name, years and one line of why they are a hero. Text is facts only.
 tools/build_theme_rooms.py imports and mounts these.
+
+    python tools/render_theme_art.py --portraits DIR   # also redraw DIR/<key>.jpg (public-domain sources) as prints
+
+Portraits: public-domain photos from Wikimedia Commons (SOURCES.md) are redrawn as four-ink screenprints
+(assets/theme/heroes/print_<key>.png); the source photos are never stored in the repo or the map. Nanny, Sam Sharpe and
+Paul Bogle have no public-domain portrait, so their cards keep the drawn bust.
 """
 import math
 import pathlib
 import random
 
-from PIL import Image, ImageDraw, ImageFilter, ImageFont
+from PIL import Image, ImageDraw, ImageFilter, ImageFont, ImageOps
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 OUT = ROOT / "assets" / "theme"
@@ -104,11 +110,15 @@ def hero_card(key, name, years, line):
     eth = key == "selassie"
     flag_band(d, 0, 0, W, 90, ethiopia=eth)
     # Background glow and the bust.
-    glow = Image.new("RGBA", (W, H), (0, 0, 0, 0))
-    gd = ImageDraw.Draw(glow)
-    gd.ellipse([60, 140, W - 60, 620], fill=(GOLD if not eth else RED) + (70,))
-    img.alpha_composite(glow.filter(ImageFilter.GaussianBlur(40)))
-    bust(img, (90, 130, W - 90, 600), (18, 24, 20, 255), GOLD + (255,))
+    portrait = OUT / "heroes" / f"print_{key}.png"
+    if portrait.exists():
+        img.alpha_composite(Image.open(portrait).convert("RGBA"), (0, 90))
+    else:
+        glow = Image.new("RGBA", (W, H), (0, 0, 0, 0))
+        gd = ImageDraw.Draw(glow)
+        gd.ellipse([60, 140, W - 60, 620], fill=(GOLD if not eth else RED) + (70,))
+        img.alpha_composite(glow.filter(ImageFilter.GaussianBlur(40)))
+        bust(img, (90, 130, W - 90, 600), (18, 24, 20, 255), GOLD + (255,))
     d = ImageDraw.Draw(img)
     d.rectangle([0, 600, W, H], fill=(6, 8, 7, 255))
     d.rectangle([0, 600, W, 608], fill=GOLD)
@@ -215,16 +225,185 @@ def sixty_seven(n, spec):
     return img
 
 
+PRINT_BOX = (600, 510)          # the portrait window on a hero card (under the 90 px flag band)
+# Head-and-shoulders crop of each public-domain source (fractions of width / height), chosen by eye.
+CROPS = {"gordon": (0.05, 0.0, 0.95, 0.62), "garvey": (0.17, 0.0, 0.63, 0.42), "manley": (0.0, 0.0, 1.0, 0.66),
+         "selassie": (0.1, 0.0, 0.9, 0.58), "bustamante": (0.04, 0.0, 0.96, 0.8)}
+
+
+def screenprint(src, key):
+    """A public-domain portrait redrawn as a four-ink screenprint: no photo survives, only flat tone shapes."""
+    im = Image.open(src).convert("L")
+    w, h = im.size
+    l, t, r, b = CROPS.get(key, (0, 0, 1, 1))
+    im = im.crop((int(l * w), int(t * h), int(r * w), int(b * h)))
+    # Fill the window (cover), then flatten into four inks at the image's own quartiles.
+    bw, bh = PRINT_BOX
+    scale = max(bw / im.width, bh / im.height)
+    im = im.resize((max(bw, int(im.width * scale)), max(bh, int(im.height * scale))), Image.LANCZOS)
+    x0, y0 = (im.width - bw) // 2, 0
+    im = im.crop((x0, y0, x0 + bw, y0 + bh))
+    # Gordon's source is a hatched engraving: blur the hatching into tone first, and give the light inks more room.
+    engraving = key == "gordon"
+    im = ImageOps.autocontrast(im, cutoff=2).filter(ImageFilter.GaussianBlur(5.0 if engraving else 2.2))
+    hist = sorted(im.get_flattened_data())
+    q = [hist[int(len(hist) * f)] for f in ((0.18, 0.38, 0.62) if engraving else (0.3, 0.55, 0.8))]
+    inks = [(14, 18, 16), (RED if key == "selassie" else GREEN), GOLD, (250, 240, 210)]
+    lut = []
+    for v in range(256):
+        k = 0 if v < q[0] else 1 if v < q[1] else 2 if v < q[2] else 3
+        lut.append(k)
+    idx = im.point(lut)
+    out = Image.new("RGBA", PRINT_BOX)
+    px = out.load()
+    src_px = idx.load()
+    for yy in range(bh):
+        for xx in range(bw):
+            px[xx, yy] = inks[src_px[xx, yy]] + (255,)
+    # Halftone dots over the mid inks, so it reads as print, not a filtered photo.
+    d = ImageDraw.Draw(out)
+    for yy in range(4, bh, 9):
+        for xx in range(4 + (yy // 9 % 2) * 4, bw, 9):
+            if src_px[xx, yy] in (1, 2):
+                d.ellipse([xx - 1.4, yy - 1.4, xx + 1.4, yy + 1.4], fill=(14, 18, 16, 110))
+    return out
+
+
+def lion_head(img, cx, cy, r):
+    """A drawn lion-of-Judah emblem: a rayed mane, a face, and a small crown on top."""
+    d = ImageDraw.Draw(img)
+    rays = 22
+    pts = []
+    for k in range(rays * 2):
+        a = math.pi * k / rays
+        rr = r if k % 2 == 0 else r * 0.78
+        pts.append((cx + rr * math.cos(a), cy + rr * math.sin(a)))
+    d.polygon(pts, fill=(196, 110, 18))
+    d.ellipse([cx - r * 0.8, cy - r * 0.8, cx + r * 0.8, cy + r * 0.8], fill=(226, 140, 30))
+    fr = r * 0.56
+    d.ellipse([cx - fr, cy - fr * 0.95, cx + fr, cy + fr * 1.05], fill=GOLD)
+    # Ears.
+    for s in (-1, 1):
+        ex = cx + s * fr * 0.78
+        d.ellipse([ex - fr * 0.24, cy - fr * 1.02, ex + fr * 0.24, cy - fr * 0.55], fill=GOLD, outline=(140, 80, 10), width=4)
+    # Eyes, brows, muzzle, nose, mouth.
+    for s in (-1, 1):
+        ex, ey = cx + s * fr * 0.36, cy - fr * 0.18
+        d.ellipse([ex - fr * 0.11, ey - fr * 0.08, ex + fr * 0.11, ey + fr * 0.08], fill=(20, 16, 10))
+        d.line([(ex - s * fr * 0.18, ey - fr * 0.2), (ex + s * fr * 0.16, ey - fr * 0.14)], fill=(120, 70, 10), width=6)
+    d.ellipse([cx - fr * 0.42, cy + fr * 0.12, cx + fr * 0.42, cy + fr * 0.72], fill=(255, 236, 170))
+    d.polygon([(cx - fr * 0.18, cy + fr * 0.12), (cx + fr * 0.18, cy + fr * 0.12), (cx, cy + fr * 0.34)], fill=(60, 30, 20))
+    d.line([(cx, cy + fr * 0.34), (cx, cy + fr * 0.5)], fill=(60, 30, 20), width=5)
+    d.arc([cx - fr * 0.3, cy + fr * 0.36, cx, cy + fr * 0.62], 20, 160, fill=(60, 30, 20), width=5)
+    d.arc([cx, cy + fr * 0.36, cx + fr * 0.3, cy + fr * 0.62], 20, 160, fill=(60, 30, 20), width=5)
+    # Crown.
+    by, ty = cy - r * 0.86, cy - r * 1.32
+    cw = r * 0.62
+    d.polygon([(cx - cw, by), (cx - cw, ty + 30), (cx - cw / 2, by - 40), (cx, ty), (cx + cw / 2, by - 40),
+               (cx + cw, ty + 30), (cx + cw, by)], fill=GOLD, outline=(120, 70, 10))
+    d.rectangle([cx - cw, by - 6, cx + cw, by + 18], fill=GOLD, outline=(120, 70, 10))
+    d.ellipse([cx - 10, by - 2, cx + 10, by + 16], fill=RED)
+
+
+def tribute_lion():
+    """Red-gold-green Rasta tribute with the lion of Judah. No name, no face of any person."""
+    W, H = 600, 900
+    img = Image.new("RGBA", (W, H), (0, 0, 0, 255))
+    d = ImageDraw.Draw(img)
+    hh = H / 3
+    for k, c in enumerate((RED, GOLD, GREEN)):
+        d.rectangle([0, k * hh, W, (k + 1) * hh], fill=c)
+    d.ellipse([60, 200, W - 60, 680], fill=(12, 12, 12))
+    lion_head(img, W / 2, 470, 190)
+    d = ImageDraw.Draw(img)
+    d.text((W / 2, 800), "LION OF JUDAH", font=font(TITLE, 50), fill=GOLD, anchor="mm", stroke_width=3, stroke_fill=(0, 0, 0))
+    d.rectangle([0, 0, W - 1, H - 1], outline=GOLD, width=6)
+    return img
+
+
+WORDS = [("LARP", (255, 82, 82), (255, 255, 255), -6, HEAVY), ("MOG", (124, 255, 79), (0, 0, 0), 5, IMPACT),
+         ("LARP", (0, 229, 255), (10, 20, 60), 4, TITLE), ("MOG", (255, 214, 0), (60, 0, 80), -4, HEAVY),
+         ("MOGGED", (186, 104, 255), (255, 255, 255), 3, IMPACT)]
+
+
+def word(text, fill, outline, tilt, path):
+    W, H = 768, 384
+    img = Image.new("RGBA", (W, H), (0, 0, 0, 0))
+    d = ImageDraw.Draw(img)
+    f = fit(d, text, path, 250, W - 80)
+    sh = Image.new("RGBA", (W, H), (0, 0, 0, 0))
+    ImageDraw.Draw(sh).text((W / 2 + 10, H / 2 + 12), text, font=f, fill=(0, 0, 0, 150), anchor="mm", stroke_width=14,
+                            stroke_fill=(0, 0, 0, 150))
+    img.alpha_composite(sh.filter(ImageFilter.GaussianBlur(6)))
+    d.text((W / 2, H / 2), text, font=f, fill=fill, anchor="mm", stroke_width=14, stroke_fill=outline)
+    return img.rotate(tilt, resample=Image.BICUBIC)
+
+
+CHARACTERS = [((255, 120, 60), (255, 214, 0)), ((80, 170, 255), (255, 255, 255)), ((124, 220, 90), (255, 82, 129)),
+              ((186, 104, 255), (0, 229, 255))]
+
+
+def six_seven_character(n, body, accent):
+    """An original cartoon character doing the 6-7 hands (one palm up high, one low, like weighing it up)."""
+    W, H = 512, 640
+    img = Image.new("RGBA", (W, H), (0, 0, 0, 0))
+    d = ImageDraw.Draw(img)
+    ink = (20, 20, 28)
+    cx = W / 2
+    up_left = n % 2 == 0
+    # Arms first, behind the body.
+    for s in (-1, 1):
+        high = (s == -1) == up_left
+        sx, sy = cx + s * 120, 380
+        hx, hy = cx + s * 210, 170 if high else 300
+        d.line([(sx, sy), (hx, hy + 40)], fill=ink, width=34)
+        d.line([(sx, sy), (hx, hy + 40)], fill=body, width=22)
+        # Open palm facing up, with a label above it.
+        d.ellipse([hx - 44, hy + 14, hx + 44, hy + 60], fill=accent, outline=ink, width=6)
+        for f in range(4):
+            fx = hx - 33 + f * 22
+            d.rounded_rectangle([fx - 8, hy - 18, fx + 8, hy + 30], radius=8, fill=accent, outline=ink, width=5)
+        d.text((hx, hy - 52), "6" if s == -1 else "7", font=font(HEAVY, 64), fill=accent, anchor="mm",
+               stroke_width=6, stroke_fill=ink)
+    # Body and head.
+    d.ellipse([cx - 140, 300, cx + 140, 600], fill=body, outline=ink, width=8)
+    d.ellipse([cx - 120, 120, cx + 120, 340], fill=body, outline=ink, width=8)
+    # Face: big eyes, raised brows, a grin.
+    for s in (-1, 1):
+        ex = cx + s * 46
+        d.ellipse([ex - 30, 190, ex + 30, 252], fill=(255, 255, 255), outline=ink, width=5)
+        d.ellipse([ex - 12 + s * 6, 212, ex + 12 + s * 6, 238], fill=ink)
+        d.line([(ex - 26, 176 - s * 4), (ex + 26, 176 + s * 4)], fill=ink, width=8)
+    d.chord([cx - 62, 250, cx + 62, 318], 0, 180, fill=ink)
+    d.chord([cx - 46, 262, cx + 46, 300], 0, 180, fill=(255, 255, 255))
+    # Motion marks by the hands.
+    for s in (-1, 1):
+        mx = cx + s * 285
+        for k in range(3):
+            d.line([(mx, 180 + k * 40), (mx + s * 26, 168 + k * 40)], fill=accent, width=7)
+    return img
+
+
 def main():
+    import sys
     (OUT / "heroes").mkdir(parents=True, exist_ok=True)
     (OUT / "67").mkdir(parents=True, exist_ok=True)
+    if "--portraits" in sys.argv:
+        src = pathlib.Path(sys.argv[sys.argv.index("--portraits") + 1])
+        for key in CROPS:
+            if (src / f"{key}.jpg").exists():
+                screenprint(src / f"{key}.jpg", key).save(OUT / "heroes" / f"print_{key}.png")
     for key, name, years, line in HEROES:
         hero_card(key, name, years, line).save(OUT / "heroes" / f"hero_{key}.png")
-    tribute().save(OUT / "heroes" / "tribute_rasta.png")
+    tribute_lion().save(OUT / "heroes" / "tribute_rasta.png")
     header().save(OUT / "heroes" / "header.png")
     cross().save(OUT / "cross.png")
     for n, spec in enumerate(SIXTY_SEVEN):
         sixty_seven(n, spec).save(OUT / "67" / f"sixty_seven_{n:02d}.png")
+    for n, spec in enumerate(WORDS):
+        word(*spec).save(OUT / "67" / f"word_{spec[0].lower()}_{n:02d}.png")
+    for n, (body, accent) in enumerate(CHARACTERS):
+        six_seven_character(n, body, accent).save(OUT / "67" / f"character_{n:02d}.png")
     print("rendered to", OUT)
 
 

@@ -38,3 +38,14 @@ Nothing open source does build/edit drill grading, so that part is ours.
   [KirChuvakov/uefn-mcp-server](https://github.com/KirChuvakov/uefn-mcp-server),
   [UEFN-TOOLBELT](https://github.com/undergroundrap/UEFN-TOOLBELT),
   [uefn-verse-examples](https://github.com/uefncentral/uefn-verse-examples)
+
+## Theme rooms (2026-10-11)
+- Country flags: [flag-icons](https://github.com/lipis/flag-icons) 7.2.3 by Panayiotis Lipiridis, MIT licence. Rendered
+  into `assets/theme/flags/` panels by `tools/render_flag_panels.py`; the SVG package itself is not stored here.
+- Hero portraits, redrawn as four-ink screenprints (`assets/theme/heroes/print_*.png`, `tools/render_theme_art.py`) from
+  public-domain photos on Wikimedia Commons (the photos are not stored here or in the map):
+  `File:George William Gordon.jpg`, `File:Marcus Garvey 1924-08-05 (cropped).jpg`,
+  `File:Prime Minister of Jamaica, Sir Alexander Bustamante (04) (cropped).jpg`,
+  `File:Norman Manley, The Miami Herald 1955 08 04 (cropped).jpg`, `File:Haile Selassie in full dress (cropped).jpg`.
+  Nanny of the Maroons, Samuel Sharpe and Paul Bogle have no public-domain portrait; their cards use a drawn bust.
+- Everything else in `assets/theme/` (67s, LARP / MOG words, 6-7 characters, lion of Judah, cross) is drawn in code.

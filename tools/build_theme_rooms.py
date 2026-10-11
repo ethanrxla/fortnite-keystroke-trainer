@@ -53,8 +53,14 @@ def png_aspect(path):
     return w / h
 
 
+def stem_key(png):
+    """File stem plus a content hash, so a re-rendered image becomes a new texture instead of the stale import."""
+    import hashlib
+    return re.sub(r"[^A-Za-z0-9_]", "_", png.stem) + "_" + hashlib.sha1(png.read_bytes()).hexdigest()[:6]
+
+
 def texture(b, png):
-    name = "T_KT_Theme_" + re.sub(r"[^A-Za-z0-9_]", "_", png.stem)
+    name = "T_KT_Theme_" + stem_key(png)
     path = f"{TEX_FOLDER}/{name}.{name}"
     if not b.m.tool(AS, "exists", path=path):
         b.m.tool(TT, "import_file", folder_path=TEX_FOLDER, asset_name=name, source_file=str(png))
@@ -64,7 +70,7 @@ def texture(b, png):
 
 def material(b, png, masked):
     tex = texture(b, png)
-    name = "M_KT_Theme_" + re.sub(r"[^A-Za-z0-9_]", "_", png.stem)
+    name = "M_KT_Theme_" + stem_key(png)
     path = f"{MATERIALS}/{name}.{name}"
     if b.m.tool(AS, "exists", path=path):
         return path
@@ -128,8 +134,10 @@ def cross(b):
     print("cross placed")
 
 
-def blocked(actors, x, y, z, half, normal):
-    """Like build_graffiti.blocked, but graffiti and earlier 67s count as obstacles too."""
+def blocked(actors, x, y, z, half, normal, half_h=None):
+    """Like build_graffiti.blocked, but graffiti and earlier theme pieces count as obstacles too. half is the
+    half-width along the wall, half_h the half-height (defaults to half)."""
+    half_h = half if half_h is None else half_h
     for a in actors:
         lab = a["label"]
         if lab.startswith(graf.WALLS) or "Floor" in lab or "Ceil" in lab or lab.startswith("KT_Wing_"):
@@ -137,7 +145,7 @@ def blocked(actors, x, y, z, half, normal):
         mn, mx = a["bounds"]["min"], a["bounds"]["max"]
         if mx["x"] - mn["x"] > 20000 or mx["y"] - mn["y"] > 20000:
             continue
-        if mn["z"] > z + half or mx["z"] < z - half:
+        if mn["z"] > z + half_h or mx["z"] < z - half_h:
             continue
         if normal[0]:
             front = (x - 20 * normal[0], x + 250 * normal[0])
@@ -151,20 +159,17 @@ def blocked(actors, x, y, z, half, normal):
     return False
 
 
-def sixty_seven(b, actors):
-    x0, x1, y0, y1 = BUILD_RECT
-    pngs = sorted((ART / "67").glob("*.png"))
-    mats = [material(b, p, True) for p in pngs]
-    rng = random.Random(SEED)
-    placed = 0
+def wing_faces(actors, rect):
+    """Wall faces on the border of rect (x0, x1, y0, y1) that look into it: (fx, fy, normal, along, lo, hi, top), with the
+    span [lo, hi] (along X or Y) clipped to the rect."""
+    x0, x1, y0, y1 = rect
+    out = []
     for (fx, fy, normal, along, length, top) in graf.faces(actors):
-        # Only faces on the wing's border that look into it.
         on_x = abs(fx - x0) < 5 or abs(fx - x1) < 5
         on_y = abs(fy - y0) < 5 or abs(fy - y1) < 5
         ix, iy = fx + normal[0] * 50, fy + normal[1] * 50
         if not (on_x or on_y):
             continue
-        # The slab may run past the wing: clip its span to the wing.
         if along[0]:
             lo, hi = max(fx - length / 2, x0), min(fx + length / 2, x1)
             if not (y0 <= iy <= y1):
@@ -173,50 +178,144 @@ def sixty_seven(b, actors):
             lo, hi = max(fy - length / 2, y0), min(fy + length / 2, y1)
             if not (x0 <= ix <= x1):
                 continue
-        if hi - lo < 300:
-            continue
-        count = int((hi - lo) / SPACING_67 * 3 + rng.random())      # three rows' worth along the face
-        for _ in range(count):
-            size = rng.choice((220.0, 280.0, 340.0, 420.0))
-            c = rng.uniform(lo + size / 2 + 30, hi - size / 2 - 30)
-            z = rng.uniform(size / 2 + 40, min(top, 1536.0) - size / 2 - 40)
+        if hi - lo >= 300:
+            out.append((fx, fy, normal, along, lo, hi, min(top, 1536.0)))
+    return out
+
+
+def remember(actors, label, ref, x, y, z, w, h, normal):
+    hw = w / 2
+    if normal is None:
+        mn, mx = {"x": x - hw, "y": y - hw, "z": z - 6}, {"x": x + hw, "y": y + hw, "z": z}
+    elif normal[0]:
+        mn, mx = {"x": x - 5, "y": y - hw, "z": z - h / 2}, {"x": x + 5, "y": y + hw, "z": z + h / 2}
+    else:
+        mn, mx = {"x": x - hw, "y": y - 5, "z": z - h / 2}, {"x": x + hw, "y": y + 5, "z": z + h / 2}
+    actors.append({"label": label, "actorPath": ref, "bounds": {"min": mn, "max": mx}})
+
+
+def ceiling_free(actors, x, y, size, margin=150.0, depth=None):
+    """Nothing flat on the ceiling within the piece's footprint (size along X, depth along Y) plus margin."""
+    d = size if depth is None else depth
+    return not any(a["bounds"]["max"]["z"] > 1400 and a["bounds"]["min"]["z"] < 1536
+                   and a["bounds"]["max"]["z"] - a["bounds"]["min"]["z"] < 400
+                   and not a["label"].startswith(graf.WALLS)
+                   and a["bounds"]["min"]["x"] < x + size / 2 + margin and a["bounds"]["max"]["x"] > x - size / 2 - margin
+                   and a["bounds"]["min"]["y"] < y + d / 2 + margin and a["bounds"]["max"]["y"] > y - d / 2 - margin
+                   for a in actors)
+
+
+def scatter(b, actors, rect, pieces, tag, sizes, rows, ceil_spacing, seed, weights=None):
+    """Random pieces over a room's walls (and ceiling when ceil_spacing): pieces = [(material, width / height)]."""
+    x0, x1, y0, y1 = rect
+    rng = random.Random(seed)
+    placed = 0
+
+    def pick():
+        return rng.choices(pieces, weights=weights)[0]
+
+    for (fx, fy, normal, along, lo, hi, top) in wing_faces(actors, rect):
+        for _ in range(int((hi - lo) / SPACING_67 * rows + rng.random())):
+            mat, aspect = pick()
+            size = rng.choice(sizes)                      # the longer side
+            w, h = (size, size / aspect) if aspect >= 1 else (size * aspect, size)
+            if hi - lo < w + 80 or top < h + 100:
+                continue
+            c = rng.uniform(lo + w / 2 + 30, hi - w / 2 - 30)
+            z = rng.uniform(h / 2 + 40, top - h / 2 - 40)
             x = c if along[0] else fx + normal[0] * 3.0
             y = fy + normal[1] * 3.0 if along[0] else c
-            if blocked(actors, x, y, z, size / 2, normal):
+            if blocked(actors, x, y, z, w / 2, normal, h / 2):
                 continue
-            k = rng.randrange(len(pngs))
-            label = f"{PREFIX}67_{placed:03d}"
-            ref = mount(b, label, mats[k], x, y, z, size, size, normal)
-            mn = {"x": x - size / 2, "y": y - size / 2, "z": z - size / 2}
-            mx = {"x": x + size / 2, "y": y + size / 2, "z": z + size / 2}
-            actors.append({"label": label, "actorPath": ref, "bounds": {"min": mn, "max": mx}})
+            label = f"{PREFIX}{tag}{placed:03d}"
+            remember(actors, label, mount(b, label, mat, x, y, z, w, h, normal), x, y, z, w, h, normal)
             placed += 1
-    # Ceiling: big ones looking down.
-    for _ in range(int((x1 - x0) * (y1 - y0) / (900.0 * 900.0))):
-        size = rng.choice((400.0, 520.0, 650.0))
-        x, y = rng.uniform(x0 + size / 2 + 80, x1 - size / 2 - 80), rng.uniform(y0 + size / 2 + 80, y1 - size / 2 - 80)
-        # Keep clear of other ceiling pieces (graffiti included, or the two z-fight) and of anything hanging down.
-        if any(a["bounds"]["max"]["z"] > 1400 and a["bounds"]["min"]["z"] < 1536 and a["bounds"]["max"]["z"] - a["bounds"]["min"]["z"] < 400
-               and not a["label"].startswith(graf.WALLS)
-               and a["bounds"]["min"]["x"] < x + size / 2 + 150 and a["bounds"]["max"]["x"] > x - size / 2 - 150
-               and a["bounds"]["min"]["y"] < y + size / 2 + 150 and a["bounds"]["max"]["y"] > y - size / 2 - 150 for a in actors):
-            continue
-        label = f"{PREFIX}67_C{placed:03d}"
-        ref = mount(b, label, mats[rng.randrange(len(mats))], x, y, 1536.0 - 3.0, size, size, None)
-        actors.append({"label": label, "actorPath": ref, "bounds": {"min": {"x": x - size / 2, "y": y - size / 2, "z": 1530},
-                                                                   "max": {"x": x + size / 2, "y": y + size / 2, "z": 1536}}})
-        placed += 1
-    print("67s placed:", placed)
+    if ceil_spacing:
+        for _ in range(int((x1 - x0) * (y1 - y0) / (ceil_spacing * ceil_spacing))):
+            mat, aspect = pick()
+            size = rng.choice(sizes) * 1.5
+            w, h = (size, size / aspect) if aspect >= 1 else (size * aspect, size)
+            x, y = rng.uniform(x0 + size / 2 + 80, x1 - size / 2 - 80), rng.uniform(y0 + size / 2 + 80, y1 - size / 2 - 80)
+            if not ceiling_free(actors, x, y, size):
+                continue
+            label = f"{PREFIX}{tag}C{placed:03d}"
+            remember(actors, label, mount(b, label, mat, x, y, 1533.0, w, h, None), x, y, 1536.0, max(w, h), 0, None)
+            placed += 1
+    return placed
+
+
+def sixty_seven(b, actors):
+    """67 everywhere, plus LARP, MOG and the drawn 6-7 characters (player 2026-10-11), all in assets/theme/67."""
+    pngs = sorted((ART / "67").glob("*.png"))
+    pieces = [(material(b, p, True), png_aspect(p)) for p in pngs]
+    # Plain 67s are most of the room; words and characters are rarer so they stand out.
+    weights = [3.0 if p.stem.startswith("sixty_seven") else 1.5 for p in pngs]
+    n = scatter(b, actors, BUILD_RECT, pieces, "67_", (220.0, 280.0, 340.0, 420.0), 3, 900.0, SEED, weights)
+    print("67 room pieces:", n)
+
+
+EDIT_RECT = (-6656.0, -3072.0, -62976.0, -56320.0)
+PIECE_RECT = (-3584.0, 4096.0, -56320.0, -52736.0)
+FLAG_W = 640.0
+FLAG_ROWS = (1080.0, 560.0)     # two bands of panels; slots that would cover graffiti, signs or devices are skipped
+
+
+def flags(b, actors):
+    """The edit wing is the flag room: 3 x 2 flag panels in alphabetical order, in two bands around its walls, then
+    across its ceiling. A panel never covers graffiti (it stays, player 2026-10-11), a sign or a device."""
+    pngs = sorted((ART / "flags").glob("flags_*.png"))
+    todo = list(pngs)
+    for z in FLAG_ROWS:
+        for (fx, fy, normal, along, lo, hi, top) in wing_faces(actors, EDIT_RECT):
+            c = lo + FLAG_W / 2 + 40
+            while todo and c + FLAG_W / 2 + 40 <= hi:
+                png = todo[0]
+                h = FLAG_W / png_aspect(png)
+                x = c if along[0] else fx + normal[0] * 3.0
+                y = fy + normal[1] * 3.0 if along[0] else c
+                if blocked(actors, x, y, z, FLAG_W / 2 + 20, normal, h / 2 + 20):
+                    c += 100.0
+                    continue
+                label = f"{PREFIX}Flags_{png.stem}"
+                remember(actors, label, mount(b, label, material(b, png, False), x, y, z, FLAG_W, h, normal),
+                         x, y, z, FLAG_W, h, normal)
+                todo.pop(0)
+                c += FLAG_W + 60.0
+    x0, x1, y0, y1 = EDIT_RECT
+    gx, gy = x0 + 450.0, y0 + 450.0
+    while todo and gy < y1 - 400:
+        png = todo[0]
+        if ceiling_free(actors, gx, gy, FLAG_W, 30.0, FLAG_W / png_aspect(png)):
+            label = f"{PREFIX}Flags_{png.stem}"
+            mount(b, label, material(b, png, False), gx, gy, 1533.0, FLAG_W, FLAG_W / png_aspect(png), None)
+            remember(actors, label, None, gx, gy, 1536.0, FLAG_W, 0, None)
+            todo.pop(0)
+            gx += FLAG_W + 150
+        else:
+            gx += 200.0
+        if gx > x1 - 400:
+            gx, gy = x0 + 450.0, gy + 300.0
+    print("flag panels placed:", len(pngs) - len(todo), "not placed:", [p.stem for p in todo])
+
+
+def movement(b, actors):
+    """Piece-control (movement) wing: Fortnite's own characters as graffiti. Only textures UEFN validation has accepted
+    on this map are used (the Fortnite loading-screen art is rejected as a disallowed reference)."""
+    base = "/Hera/Sets/PicketFence/Textures/Graffiti/Graffiti/"
+    names = ("Peely", "FishStick", "BobHead", "Bear", "Ghost", "Duck", "Burger", "Slurp")
+    pieces = [(graf.material(b, f"{base}T_Graffiti_{n}_A.T_Graffiti_{n}_A"), 1.0) for n in names]
+    n = scatter(b, actors, PIECE_RECT, pieces, "Move_", (300.0, 380.0, 460.0), 2, 1100.0, 7)
+    print("movement room pieces:", n)
 
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--only", choices=("heroes", "cross", "67"))
+    ap.add_argument("--only", choices=("heroes", "cross", "67", "flags", "movement"))
     args = ap.parse_args()
     b = bm.Builder()
     actors = b.m.tool(bm.SCENE, "find_actors", collision_channels=[]) or []
-    want = {args.only} if args.only else {"heroes", "cross", "67"}
-    tags = {"heroes": "Hero_", "cross": "Cross", "67": "67_"}
+    want = {args.only} if args.only else {"heroes", "cross", "67", "flags", "movement"}
+    tags = {"heroes": "Hero_", "cross": "Cross", "67": "67_", "flags": "Flags_", "movement": "Move_"}
     for a in actors:
         if a["label"].startswith(PREFIX) and any(a["label"].startswith(PREFIX + tags[w]) for w in want):
             b.m.tool(bm.SCENE, "remove_from_scene", actor={"refPath": a["actorPath"]})
@@ -227,6 +326,10 @@ def main():
         cross(b)
     if "67" in want:
         sixty_seven(b, actors)
+    if "flags" in want:
+        flags(b, actors)
+    if "movement" in want:
+        movement(b, actors)
     found = json.loads(b.m.tool(AS, "find_assets", name="_KT_Theme_") or "[]") if isinstance(b.m.tool(AS, "find_assets", name="_KT_Theme_"), str) \
         else (b.m.tool(AS, "find_assets", name="_KT_Theme_") or [])
     b.m.tool(AS, "save_assets", asset_paths=[p for p in found if "_KT_Theme_" in p])
