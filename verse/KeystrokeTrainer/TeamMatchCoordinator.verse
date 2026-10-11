@@ -14,7 +14,7 @@ kt_team_death_listener := class:
     Owner:kt_team_match_device
     Participant:agent
     Token:int
-    OnDeath(Result:elimination_result):void = Owner.OnDeath(Participant, Token)
+    OnDeath(Result:elimination_result):void = Owner.OnDeath(Participant, Token, Result)
 
 kt_team_session_score := struct:
     Wins:int = 0
@@ -61,6 +61,11 @@ kt_team_match_device<public> := class(creative_device):
     var RebootButtons:[]button_device = array{}
     var RebootReadyAt:[int]float = map{}
     var CTFBases:[int]capture_area_device = map{}
+    # Rumble: eliminations per player, and which base's spawn cells each player uses.
+    var Kills:[agent]int = map{}
+    var SpawnSide:[agent]int = map{}
+    var RumbleLeader:?agent = false
+    var RoundBusy:logic = false
 
     Text<localizes>(S:string):message = "{S}"
 
@@ -207,26 +212,39 @@ kt_team_match_device<public> := class(creative_device):
         var Red:int = 0
         var Blue:int = 0
         Teams := GetPlayspace().GetTeamCollection()
-        for (A : Players, T := Teams.GetTeam[A], C := A.GetFortCharacter[], C.IsActive[]):
-            if (T = Teams.GetTeams()[0]):
-                if (set Candidates[A] = 1) then set Red += 1
-            else if (T = Teams.GetTeams()[1]):
-                if (set Candidates[A] = 2) then set Blue += 1
+        TeamList := Teams.GetTeams()
+        set SpawnSide = map{}
+        for (I -> A : Players, T := Teams.GetTeam[A], C := A.GetFortCharacter[], C.IsActive[]):
+            Alt := 1 + (if (R := Mod[I, 2]) then R else 0)
+            if (Mode = kt_team_mode.Rumble):
+                # Free for all: each player is on a team of their own; the roster side is that team's index + 1.
+                for (K -> Team : TeamList, Team = T):
+                    if (set Candidates[A] = K + 1, set SpawnSide[A] = Alt):
+                        set Red += 1
+            else if (T = TeamList[0]):
+                if (set Candidates[A] = 1, set SpawnSide[A] = 1) then set Red += 1
+            else if (T = TeamList[1]):
+                if (set Candidates[A] = 2, set SpawnSide[A] = 2) then set Blue += 1
         Started := Match.Begin(Mode, Red, Blue)
         if (Started?, Red + Blue = Players.Length):
             set Roster = Candidates
+            set Kills = map{}
+            set RumbleLeader = false
+            set RoundBusy = false
             set BuildDisabled = NoBuild
             set PendingRespawn = map{}
             if (First := Players[0]) then set Host = option{First}
             for (A -> Side : Roster):
-                if (C := A.GetFortCharacter[], Place := SpawnPoint(Side)?, C.TeleportTo[Place, SpawnRotation(Side)]):
+                Cell := SideOf(A)
+                if (C := A.GetFortCharacter[], Place := SpawnPoint(Cell)?, C.TeleportTo[Place, SpawnRotation(Cell)]):
                     C.PutInStasis(stasis_args{AllowFalling := true})
                 else:
                     Match.Cancel()
                     Transition()
                     return false
             set PreparedSpawn = true
-            Broadcast("Loading match | balanced teams | starts in 5 seconds")
+            Kind := if (Mode = kt_team_mode.Rumble) then "free for all" else "balanced teams"
+            Broadcast("{KTModeName(Mode)} | {Kind} | starts in 5 seconds")
             return true
         if (Started?) then Match.Cancel()
         false
@@ -279,7 +297,7 @@ kt_team_match_device<public> := class(creative_device):
                 C.ReleaseFromStasis()
                 var Positioned:logic = PreparedSpawn
                 if (not PreparedSpawn?):
-                    if (Place := SpawnPoint(Side)?, C.TeleportTo[Place, SpawnRotation(Side)]):
+                    if (Place := SpawnPoint(SideOf(A))?, C.TeleportTo[Place, SpawnRotation(SideOf(A))]):
                         set Positioned = true
                 if (Positioned?):
                     C.SetHealth(100.0)
@@ -306,7 +324,12 @@ kt_team_match_device<public> := class(creative_device):
             set RebootReadyAt = map{}
             for (B : RebootButtons):
                 B.Enable()
-            Broadcast("LIVE | Play the objective")
+            if (Match.Mode = kt_team_mode.Elimination):
+                Broadcast("ROUND 1 | no respawns: reboot teammates at the vans")
+            else if (Match.Mode = kt_team_mode.Rumble):
+                Broadcast("LIVE | free for all | first to {KTRumbleKills} eliminations")
+            else:
+                Broadcast("LIVE | {KTModeName(Match.Mode)} | play the objective")
         else if (Match.Phase = kt_team_phase.Recovery):
             Supplies.Stop()
             for (A -> Side : Roster, C := A.GetFortCharacter[]):
@@ -328,7 +351,13 @@ kt_team_match_device<public> := class(creative_device):
             for (I -> Area : CTFBases):
                 Area.Disable()
             for (A -> Side : Roster):
-                Result := if (Match.Cancelled?) then "CANCELLED" else if (Match.Winner = 0) then "DRAW" else if (Match.Winner = Side) then "VICTORY" else "DEFEAT"
+                var Result:string = if (Match.Cancelled?) then "CANCELLED" else if (Match.Winner = 0) then "DRAW" else if (Match.Winner = Side) then "VICTORY" else "DEFEAT"
+                if (Match.Mode = kt_team_mode.Rumble, not Match.Cancelled?):
+                    Mine := if (K := Kills[A]) then K else 0
+                    if (Leader := RumbleLeader?, Leader = A):
+                        set Result = "VICTORY | {Mine} eliminations"
+                    else:
+                        set Result = "DEFEAT | {Mine} eliminations"
                 if (P := player[A], not Match.Cancelled?, RecordedEpoch <> Match.Epoch):
                     Old := if (S := SessionScores[P]) then S else kt_team_session_score{}
                     if (set SessionScores[P] = kt_team_session_score{
@@ -362,12 +391,77 @@ kt_team_match_device<public> := class(creative_device):
         Listener := kt_team_death_listener{Owner := Self, Participant := A, Token := Match.Epoch}
         set DeathSubscriptions += array{C.EliminatedEvent().Subscribe(Listener.OnDeath)}
 
-    OnDeath(A:agent, Token:int):void =
+    SideOf(A:agent)<transacts>:int =
+        if (S := SpawnSide[A]) then S else if (R := Roster[A]) then R else 1
+
+    OnDeath(A:agent, Token:int, Result:elimination_result):void =
         if (PendingRespawn[A]?):
             return
         if (Token = Match.Epoch, Match.Phase = kt_team_phase.Live, Side := Roster[A]):
+            if (Match.Mode = kt_team_mode.Rumble):
+                if (Killer := Result.EliminatingCharacter?, KA := Killer.GetAgent[], KA <> A, Roster[KA]):
+                    N := (if (Old := Kills[KA]) then Old else 0) + 1
+                    if (set Kills[KA] = N) {}
+                    if (N >= KTRumbleKills):
+                        set RumbleLeader = option{KA}
+                        Match.Finish(0)
+                        Transition()
+                        return
             if (set PendingRespawn[A] = true):
-                spawn{RespawnParticipant(A, Side, Token)}
+                if (Match.Mode = kt_team_mode.Elimination):
+                    # No respawn: wait for a teammate's reboot or the next round. A wiped team loses the round.
+                    CheckWipe(Token)
+                else:
+                    spawn{RespawnParticipant(A, Side, Token)}
+
+    CheckWipe(Token:int):void =
+        if (RoundBusy?):
+            return
+        for (Side := 1..2):
+            var Alive:int = 0
+            var Total:int = 0
+            for (A -> S : Roster, S = Side):
+                set Total += 1
+                if (not PendingRespawn[A]?, C := A.GetFortCharacter[], C.IsActive[]):
+                    set Alive += 1
+            if (Total > 0 and Alive = 0):
+                Winner := if (Side = 1) then 2 else 1
+                Continues := Match.RoundWon(Token, Winner)
+                WinnerName := if (Winner = 1) then "RED" else "BLUE"
+                Broadcast("Round to {WinnerName} | RED {Match.RedScore} - {Match.BlueScore} BLUE")
+                if (Continues?):
+                    set RoundBusy = true
+                    spawn{NextRound(Token)}
+                else:
+                    Transition()
+                return
+
+    NextRound(Token:int)<suspends>:void =
+        Sleep(3.0)
+        if (Token <> Match.Epoch or Match.Phase <> kt_team_phase.Live):
+            set RoundBusy = false
+            return
+        # Everyone back to their base, full health, a short freeze, then fight.
+        for (A -> Side : Roster):
+            Cell := SideOf(A)
+            if (Place := SpawnPoint(Cell)?):
+                if (C := A.GetFortCharacter[], C.IsActive[]):
+                    if (C.TeleportTo[Place, SpawnRotation(Cell)]) {}
+                else:
+                    A.Respawn(Place, SpawnRotation(Cell))
+        Sleep(0.2)
+        for (A -> Side : Roster, C := A.GetFortCharacter[], C.IsActive[]):
+            C.SetHealth(100.0)
+            C.SetShield(100.0)
+            Supplies.Grant(A)
+            WatchDeath(A, C)
+            C.PutInStasis(stasis_args{AllowFalling := true})
+            if (set PendingRespawn[A] = false) {}
+        Broadcast("ROUND {Match.RedScore + Match.BlueScore + 1} | starts in 3")
+        Sleep(3.0)
+        for (A -> Side : Roster, C := A.GetFortCharacter[]):
+            C.ReleaseFromStasis()
+        set RoundBusy = false
 
     RespawnParticipant(A:agent, Side:int, Token:int)<suspends>:void =
         Sleep(Max(1.0, RespawnDelaySeconds))
@@ -383,8 +477,8 @@ kt_team_match_device<public> := class(creative_device):
                 if (set PendingRespawn[A] = false) {}
                 WatchDeath(A, Current)
                 return
-            if (Place := SpawnPoint(Side)?):
-                A.Respawn(Place, SpawnRotation(Side))
+            if (Place := SpawnPoint(SideOf(A))?):
+                A.Respawn(Place, SpawnRotation(SideOf(A)))
             else:
                 Match.Cancel()
                 Transition()

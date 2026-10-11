@@ -3,7 +3,21 @@
 # roster-verified teams and accepted device events, never inferred capture outcomes.
 using { /Verse.org/Simulation }
 
-kt_team_mode<public> := enum{Skirmish, CTF, Zone}
+# Player 2026-10-11 names: CTF is "Rift", Zone (three-point territory) is "Control"; Elimination is rounds with no
+# respawn except a teammate's reboot; Rumble is free for all.
+kt_team_mode<public> := enum{Skirmish, CTF, Zone, Elimination, Rumble}
+
+KTModeName<public>(M:kt_team_mode)<computes>:string =
+    case (M):
+        kt_team_mode.Skirmish => "SKIRMISH"
+        kt_team_mode.CTF => "RIFT"
+        kt_team_mode.Zone => "CONTROL"
+        kt_team_mode.Elimination => "ELIMINATION"
+        kt_team_mode.Rumble => "RUMBLE"
+
+# Elimination: first team to this many rounds wins. Rumble: first player to this many eliminations wins.
+KTRoundsToWin<public>:int = 3
+KTRumbleKills<public>:int = 15
 kt_team_phase<public> := enum{Waiting, Countdown, Live, Recovery}
 
 kt_team_match<public> := class:
@@ -26,7 +40,13 @@ kt_team_match<public> := class:
     var Points:[]kt_capture_point = array{}
 
     Begin<public>(Requested:kt_team_mode, RedCount:int, BlueCount:int)<transacts>:logic =
-        if (Phase <> kt_team_phase.Waiting or RedCount < 1 or RedCount <> BlueCount or RedCount > 4):
+        if (Phase <> kt_team_phase.Waiting):
+            return false
+        # Rumble is every player for themselves: RedCount carries the whole roster, BlueCount is 0.
+        if (Requested = kt_team_mode.Rumble):
+            if (RedCount + BlueCount < 2 or RedCount + BlueCount > 8):
+                return false
+        else if (RedCount < 1 or RedCount <> BlueCount or RedCount > 4):
             return false
         set Epoch += 1
         set Mode = Requested
@@ -69,7 +89,7 @@ kt_team_match<public> := class:
             set Remaining -= Dt
             if (Remaining <= 0.0):
                 set Phase = kt_team_phase.Live
-                set Remaining = if (Mode = kt_team_mode.CTF) then 720.0 else 480.0
+                set Remaining = if (Mode = kt_team_mode.CTF) then 720.0 else if (Mode = kt_team_mode.Elimination) then 600.0 else 480.0
             return
         if (Phase = kt_team_phase.Recovery):
             set Remaining -= Dt
@@ -127,6 +147,19 @@ kt_team_match<public> := class:
                 Finish(2)
             else:
                 Finish(0)
+
+    # Elimination: the coordinator reports a wiped team; scores count rounds. Returns true while the match goes on.
+    RoundWon<public>(Token:int, Team:int)<transacts>:logic =
+        if (Token <> Epoch or Phase <> kt_team_phase.Live or Mode <> kt_team_mode.Elimination):
+            return false
+        if (Team = 1) then set RedScore += 1 else if (Team = 2) then set BlueScore += 1
+        if (RedScore >= KTRoundsToWin):
+            Finish(1)
+            return false
+        if (BlueScore >= KTRoundsToWin):
+            Finish(2)
+            return false
+        true
 
     FlagHome<public>(Token:int, Team:int, Home:logic)<transacts>:void =
         if (Token = Epoch and Phase = kt_team_phase.Live and Mode = kt_team_mode.CTF):

@@ -59,7 +59,7 @@ kt_team_queue_device<public> := class(creative_device):
     var MyBuild:[player]string = map{}
     var NextId:int = 0
     var ActivePlayers:[]agent = array{}
-    var Available:[]int = array{0, 2}
+    var Available:[]int = array{0, 2, 3, 4}
     var WasMatch:logic = false
     var DisplayAt:float = 0.0
     var Priority:[]player = array{}
@@ -107,7 +107,7 @@ kt_team_queue_device<public> := class(creative_device):
             Rules.Tick(Dt)
             if (Before <> Rules.Phase):
                 if (Rules.Phase = kt_queue_phase.Voting):
-                    set Available = if (MatchDevice.CTFDevicesVerified?) then array{0, 1, 2} else array{0, 2}
+                    set Available = if (MatchDevice.CTFDevicesVerified?) then array{0, 1, 2, 3, 4} else array{0, 2, 3, 4}
                     for (Id -> Active : Rules.Members, Active?, P := Players[Id]):
                         ShowBallot(P)
                 else if (Rules.Phase = kt_queue_phase.Ready):
@@ -253,20 +253,20 @@ kt_team_queue_device<public> := class(creative_device):
         Mine := text_block{DefaultTextColor := KTQueueGold, DefaultTextSize := 18.0}
         Inner.AddWidget(MakeCanvasSlot(Summary, vector2{X := 24.0, Y := 20.0}))
         Inner.AddWidget(MakeCanvasSlot(Mine, vector2{X := 24.0, Y := 380.0}))
-        # Row 1: the three modes as wide cards. Row 2: build / no build. Row 3: leave.
-        for (Choice := 0..5):
-            Label := if (Choice = 0) then "SKIRMISH" else if (Choice = 1) then "CTF" else if (Choice = 2) then "TERRITORY" else if (Choice = 3) then "BUILD" else if (Choice = 4) then "NO BUILD" else "LEAVE QUEUE"
+        # Row 1: the five modes. Row 2: Build / No build. Row 3: Leave.
+        for (Choice := 0..7):
+            Label := ChoiceLabel(Choice)
             var Pos:vector2 = vector2{X := 24.0, Y := 310.0}
             var Size:vector2 = vector2{X := 732.0, Y := 50.0}
-            if (Choice < 3):
-                set Pos = vector2{X := 24.0 + Choice * 248.0, Y := 110.0}
-                set Size = vector2{X := 236.0, Y := 100.0}
-            else if (Choice < 5):
-                set Pos = vector2{X := 24.0 + (Choice - 3) * 372.0, Y := 230.0}
+            if (Choice < 5):
+                set Pos = vector2{X := 24.0 + Choice * 148.0, Y := 110.0}
+                set Size = vector2{X := 140.0, Y := 100.0}
+            else if (Choice < 7):
+                set Pos = vector2{X := 24.0 + (Choice - 5) * 372.0, Y := 230.0}
                 set Size = vector2{X := 360.0, Y := 60.0}
-            Button:text_button_base = if (Choice = 5) then button_quiet{DefaultText := Text(Label)} else button_loud{DefaultText := Text(Label)}
+            Button:text_button_base = if (Choice = 7) then button_quiet{DefaultText := Text(Label)} else button_loud{DefaultText := Text(Label)}
             if (Choice = 1 and not MatchDevice.CTFDevicesVerified?):
-                Button.SetText(Text("CTF (soon)"))
+                Button.SetText(Text("RIFT (soon)"))
                 Button.SetEnabled(false)
             Listener := kt_vote_click{Owner := Self, Token := Rules.Epoch, Choice := Choice}
             Button.OnClick().Subscribe(Listener.OnClick)
@@ -276,19 +276,24 @@ kt_team_queue_device<public> := class(creative_device):
             UI.AddWidget(Root, player_ui_slot{InputMode := ui_input_mode.All})
             Display()
 
+    ChoiceLabel(Choice:int):string =
+        if (Choice = 0) then "SKIRMISH" else if (Choice = 1) then "RIFT" else if (Choice = 2) then "CONTROL"
+        else if (Choice = 3) then "ELIMINATION" else if (Choice = 4) then "RUMBLE" else if (Choice = 5) then "BUILD"
+        else if (Choice = 6) then "NO BUILD" else "LEAVE QUEUE"
+
     Vote(P:player, Token:int, Choice:int):void =
         if (Token <> Rules.Epoch or Rules.Phase <> kt_queue_phase.Voting):
             return
-        if (Choice = 5):
+        if (Choice = 7):
             Leave(P)
             return
-        if (Choice < 3 and not Available.Find[Choice]):
+        if (Choice < 5 and not Available.Find[Choice]):
             return
         if (Id := Ids[P]):
             Accepted := Rules.Vote(Id, Token, Choice)
             if (Accepted?):
-                Name := if (Choice = 0) then "Skirmish" else if (Choice = 1) then "CTF" else if (Choice = 2) then "Territory" else if (Choice = 3) then "Build" else "No build"
-                if (Choice < 3):
+                Name := ChoiceLabel(Choice)
+                if (Choice < 5):
                     if (set MyMode[P] = Name) {}
                 else:
                     if (set MyBuild[P] = Name) {}
@@ -303,7 +308,7 @@ kt_team_queue_device<public> := class(creative_device):
         for (Id -> Active : Rules.Members, Active?, P := Players[Id]):
             if (Rules.Phase = kt_queue_phase.Voting, V := Views[P]):
                 Remaining := if (R := Ceil[Rules.Remaining]) then R else 0
-                V.Summary.SetText(Text("VOTE  {Remaining}s   |   {Rules.Count()} players\nSkirmish {Rules.ModeCount(0)}   CTF {Rules.ModeCount(1)}   Territory {Rules.ModeCount(2)}     Build {Rules.BuildCount(false)}   No build {Rules.BuildCount(true)}"))
+                V.Summary.SetText(Text("VOTE  {Remaining}s   |   {Rules.Count()} players\nSkirmish {Rules.ModeCount(0)}  Rift {Rules.ModeCount(1)}  Control {Rules.ModeCount(2)}  Elimination {Rules.ModeCount(3)}  Rumble {Rules.ModeCount(4)}   |   Build {Rules.BuildCount(false)}  No build {Rules.BuildCount(true)}"))
                 V.Mine.SetText(Text(VoteLine(P)))
             else if (Rules.Phase = kt_queue_phase.Collecting):
                 Remaining := if (R := Ceil[Rules.Remaining]) then R else 0
@@ -368,7 +373,7 @@ kt_team_queue_device<public> := class(creative_device):
     LaunchSequence()<suspends>:void =
         Joined := for (Id -> Active : Rules.Members, Active?, P := Players[Id]) { P }
         ModeId := Rules.Winner(Available, Rules.Epoch)
-        Title := if (ModeId = 0) then "SKIRMISH" else if (ModeId = 1) then "CAPTURE THE FLAG" else "TERRITORY"
+        Title := ChoiceLabel(ModeId)
         BuildText := if (Rules.NoBuild()?) then "NO BUILD" else "BUILD ON"
         for (P : Joined):
             RemoveView(P)
@@ -381,14 +386,23 @@ kt_team_queue_device<public> := class(creative_device):
     Launch(ModeId:int):void =
         Joined := for (Id -> Active : Rules.Members, Active?, P := Players[Id]) { P }
         Shuffled := Shuffle(Joined)
-        # Keep teams equal: one unmatched player remains for the next queue.
+        Mode := if (ModeId = 0) then kt_team_mode.Skirmish else if (ModeId = 1) then kt_team_mode.CTF else if (ModeId = 2) then kt_team_mode.Zone
+                else if (ModeId = 3) then kt_team_mode.Elimination else kt_team_mode.Rumble
+        Rumble := logic{Mode = kt_team_mode.Rumble}
+        # Team modes keep teams equal (one unmatched player waits for the next queue); Rumble takes everyone.
         var Chosen:[]agent = array{}
-        Count := Shuffled.Length - (if (R := Mod[Shuffled.Length, 2]) then R else 0)
+        Count := if (Rumble?) then Shuffled.Length else Shuffled.Length - (if (R := Mod[Shuffled.Length, 2]) then R else 0)
         if (Count < 2):
+            for (P : Shuffled):
+                Access.Status.Show(P, Text("A match needs 2 or more players | back to the lobby"), ?DisplayTime := 5.0)
             FinishQueue()
             return
-        Mode := if (ModeId = 0) then kt_team_mode.Skirmish else if (ModeId = 1) then kt_team_mode.CTF else kt_team_mode.Zone
         Teams := GetPlayspace().GetTeamCollection()
+        if (Rumble? and Teams.GetTeams().Length < Count):
+            for (P : Shuffled):
+                Access.Status.Show(P, Text("Rumble needs {Count} island teams; this island has {Teams.GetTeams().Length}"), ?DisplayTime := 5.0)
+            FinishQueue()
+            return
         var Failed:logic = false
         var Red:int = 0
         var Blue:int = 0
@@ -396,7 +410,8 @@ kt_team_queue_device<public> := class(creative_device):
             RemoveView(P)
             if (I < Count):
                 Preferred := if (Value := Preferences[P]) then Value else 1
-                Side := if (Preferred = 1 and Red * 2 < Count) then 0 else if (Preferred = 2 and Blue * 2 < Count) then 1 else if (Red * 2 < Count) then 0 else 1
+                # Rumble: every player on a team of their own (free for all).
+                Side := if (Rumble?) then I else if (Preferred = 1 and Red * 2 < Count) then 0 else if (Preferred = 2 and Blue * 2 < Count) then 1 else if (Red * 2 < Count) then 0 else 1
                 if (set Access.Visiting[P] = true, T := Teams.GetTeams()[Side], Teams.AddToTeam[P, T]):
                     if (Side = 0) then set Red += 1 else set Blue += 1
                     Access.Arrival.Teleport(P)

@@ -265,3 +265,26 @@ animations, confirmations, voting."
   with "Setup not ready". Set it back to 2 before real play.
 - Compiled clean and pushed to the private session. Not yet seen in a client: the cards, the loading bar animation,
   the apron health hold, and the mutator's tile units (zoneWidth 3 assumed to be tiles, as the arena's 16).
+
+## Update 2026-10-11, later (Claude)
+
+Player names (use these everywhere): **Rift** = CTF (later: the flag is delivered by carrying it into a rift that drops the
+carrier from the sky back into the map; not built yet, still gated by `CTFDevicesVerified`), **Control** = three-point
+territory (`kt_team_mode.Zone`), **Skirmish**, **Elimination** (rounds, no respawn until the next round or a teammate's
+reboot at a van), **Rumble** (free for all). `KTModeName` maps the enum to these names.
+
+- `TeamMatchRules.verse`: `Elimination` and `Rumble` modes; `RoundWon` (first to `KTRoundsToWin` = 3); Rumble
+  begins with any 2-8 players (RedCount carries the roster); Elimination runs 600 s.
+- `TeamMatchCoordinator.verse`: death listener passes the elimination result; Rumble counts eliminations per player
+  and ends at `KTRumbleKills` = 15 (VICTORY for the leader, kills shown to all); Elimination marks the dead as pending
+  (no auto-respawn), `CheckWipe` awards the round when a side has nobody alive, `NextRound` respawns / teleports all to
+  their bases, re-grants supplies, 3 s freeze. Reboot buttons still revive pending teammates. `SpawnSide` decides which
+  base's cells a player uses (Rumble alternates).
+- `MatchQueue.verse` / `TeamQueueDevice.verse`: ballot has five modes (0 Skirmish, 1 Rift, 2 Control, 3 Elimination,
+  4 Rumble), then Build / No build / Leave. Rumble puts every player on their own island team and needs as many island
+  teams as players (checked; the queue explains when it can't start).
+- `tools/build_team_pickups.py`: a slurp-container "shield truck" with a tanker prop at each base, and two mirrored
+  pairs of tiered ammo boxes (two more spots were blocked by cover and skipped). Behaviour not yet seen in play.
+- Still open: two-player test of every mode; Rift's rift delivery; build-mode economy (300 wood / 200 brick / 100
+  metal, periodic mat drops, death drops that despawn) needs the island's infinite-materials and drop settings, which
+  are island-wide, so it waits for the player's decision.

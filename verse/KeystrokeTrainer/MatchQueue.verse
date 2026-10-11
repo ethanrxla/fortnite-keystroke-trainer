@@ -59,10 +59,11 @@ kt_match_queue<public> := class:
     Vote(Id:int, Token:int, Choice:int)<transacts>:logic =
         if (Token <> Epoch or Phase <> kt_queue_phase.Voting or not Members[Id]?):
             return false
-        if (Choice >= 0 and Choice <= 2):
+        # Choices 0-4 are modes (Skirmish, Rift, Control, Elimination, Rumble); 5 Build; 6 No build.
+        if (Choice >= 0 and Choice <= 4):
             if (set ModeVotes[Id] = Choice) then true else false
-        else if (Choice = 3 or Choice = 4):
-            if (set BuildVotes[Id] = logic{Choice = 4}) then true else false
+        else if (Choice = 5 or Choice = 6):
+            if (set BuildVotes[Id] = logic{Choice = 6}) then true else false
         else:
             false
 
@@ -83,8 +84,8 @@ kt_match_queue<public> := class:
     Winner(Available:[]int, TieStart:int)<transacts>:int =
         var Pick:int = 0
         var Best:int = -1
-        for (Offset := 0..2):
-            if (Choice := Mod[TieStart + Offset, 3], Available.Find[Choice]):
+        for (Offset := 0..4):
+            if (Choice := Mod[TieStart + Offset, 5], Available.Find[Choice]):
                 N := ModeCount(Choice)
                 if (N > Best):
                     set Best = N
