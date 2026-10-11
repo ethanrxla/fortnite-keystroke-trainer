@@ -1,5 +1,5 @@
 {
-  "description": "Armory gun wall (tools/build_armory_grid.py): the whole back wall, left to right: weapon columns (rows are rarity), then items, then heals, each item in its own rarity's row. Player 2026-10-10/11: SCAR (epic, legendary) / AR, heavy AR, pump, tactical shotgun, tactical SMG, suppressed pistol, grapple hook, heals; rarity-coloured tiles; purple guns to mod. Items UEFN does not accept leave a dark tile; weapon rarities that do not exist leave a dark tile. Colours are sRGB hex; the builder converts them to linear and scales by plate_brightness.",
+  "description": "Armory gun wall (tools/build_armory_grid.py): the whole back wall, left to right: weapon columns (rows are rarity), then items, then heals, each item in its own rarity's row. Player 2026-10-10/11: SCAR (epic, legendary) / AR, heavy AR, pump, tactical shotgun, tactical SMG, suppressed pistol, grapple hook, heals; rarity-coloured tiles; purple guns to mod. Items UEFN does not accept leave a dark tile; weapon rarities that do not exist leave a dark tile. Colours are sRGB hex; the builder converts them to linear and scales by plate_brightness. A weapon's 'paths' overrides the pattern for a rarity found under another naming tier; an item's 'icon' overrides its own (the grappler carries only a 32 px icon).",
   "rarities": [
     {
       "code": "C",
@@ -37,6 +37,9 @@
         "R": "Assault rifle",
         "VR": "SCAR",
         "SR": "SCAR"
+      },
+      "paths": {
+        "C": "/Game/Athena/Items/Weapons/WID_Assault_Auto_Athena_C_Ore_T02.WID_Assault_Auto_Athena_C_Ore_T02"
       }
     },
     {
@@ -49,7 +52,10 @@
     },
     {
       "name": "Tactical SG",
-      "pattern": "/Game/Athena/Items/Weapons/WID_Shotgun_SemiAuto_Athena_{r}_Ore_T03.WID_Shotgun_SemiAuto_Athena_{r}_Ore_T03"
+      "pattern": "/Game/Athena/Items/Weapons/WID_Shotgun_SemiAuto_Athena_{r}_Ore_T03.WID_Shotgun_SemiAuto_Athena_{r}_Ore_T03",
+      "paths": {
+        "SR": "/Game/Athena/Items/Weapons/WID_Shotgun_SemiAuto_Athena_SR.WID_Shotgun_SemiAuto_Athena_SR"
+      }
     },
     {
       "name": "Tactical SMG",
@@ -100,7 +106,8 @@
     {
       "name": "Grappler",
       "rarity": "VR",
-      "item": "/Game/Athena/Items/Weapons/WID_Hook_Gun_VR_Ore_T03.WID_Hook_Gun_VR_Ore_T03"
+      "item": "/Game/Athena/Items/Weapons/WID_Hook_Gun_VR_Ore_T03.WID_Hook_Gun_VR_Ore_T03",
+      "icon": "/CorruptionGameplay/Gameplay/Icons/T-T-Icon-BR-FrozenGrappler-L.T-T-Icon-BR-FrozenGrappler-L"
     },
     {
       "name": "Grenades",

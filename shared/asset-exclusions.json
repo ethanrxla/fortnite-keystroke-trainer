@@ -26,7 +26,8 @@
     "/Game/Athena/Items/Weapons/WID_Sniper_Suppressed_ThermalScope_SpyTech_Athena_SR_Ore_T03.WID_Sniper_Suppressed_ThermalScope_SpyTech_Athena_SR_Ore_T03",
     "/Game/Athena/Items/Weapons/WID_Spytech_DualPistol_SemiAuto_Athena_SR_Ore_T03.WID_Spytech_DualPistol_SemiAuto_Athena_SR_Ore_T03",
     "/Game/Athena/Items/Weapons/WID_Spytech_Pistol_SemiAuto_Suppressed_Athena_VR_Ore_T03.WID_Spytech_Pistol_SemiAuto_Suppressed_Athena_VR_Ore_T03",
-    "/Figment_Athena_PurpleStuff/Gameplay/Figment_Athena_PurpleStuff.Figment_Athena_PurpleStuff"
+    "/Figment_Athena_PurpleStuff/Gameplay/Figment_Athena_PurpleStuff.Figment_Athena_PurpleStuff",
+    "/Game/Athena/Items/Weapons/WID_Shotgun_SemiAuto_Athena_C.WID_Shotgun_SemiAuto_Athena_C"
   ],
   "note_2026_10_07_late": "Six /Game/Athena/Items/Weapons items disallowed by UEFNValidation (AssetValidator_AssetReferenceRestrictions): the SpyTech and Tech variants and Pistol_AutoHeavy_R. Other base-game WIDs in the same folder were not yet validated."
 }

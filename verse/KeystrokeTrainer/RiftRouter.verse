@@ -8,6 +8,7 @@ kt_rift_link := class:
     Source:teleporter_device
     Destination:teleporter_device
     WalkIn:logic
+    Box:vector3
 
 kt_rift_router_device := class(creative_device):
     var Links:[]kt_rift_link = array{}
@@ -20,7 +21,7 @@ kt_rift_router_device := class(creative_device):
             Sources := for (T : Nodes, Distance(T.GetTransform().Translation, Def.Entry) < 20.0) { T }
             Targets := for (T : Nodes, Distance(T.GetTransform().Translation, Def.Exit) < 20.0) { T }
             if (S := Sources[0], D := Targets[0], Sources.Length = 1, Targets.Length = 1):
-                set Links += array{kt_rift_link{Source := S, Destination := D, WalkIn := Def.WalkIn}}
+                set Links += array{kt_rift_link{Source := S, Destination := D, WalkIn := Def.WalkIn, Box := Def.Box}}
                 D.TeleportedEvent.Subscribe(OnArrive)
             else:
                 Print("KTRift: missing or ambiguous endpoint at {Def.Entry}")
@@ -30,7 +31,7 @@ kt_rift_router_device := class(creative_device):
                 var Inside:logic = false
                 for (Link : Links, Link.WalkIn?):
                     Delta := C.GetTransform().Translation - Link.Source.GetTransform().Translation
-                    if (Delta.X * Delta.X + Delta.Y * Delta.Y <= 12100.0, Delta.Z >= -25.0, Delta.Z <= 240.0):
+                    if (InEntry(Link, Delta)?):
                         set Inside = true
                         CanEnter := if (Value := Armed[P]) then Value else true
                         ReadyAt := if (Value := Cooldown[P]) then Value else 0.0
@@ -39,6 +40,14 @@ kt_rift_router_device := class(creative_device):
                             Link.Destination.Teleport(P)
                 if (not Inside?):
                     if (set Armed[P] = true) {}
+
+    # A portal is a 110 cm cylinder at the source; a box route (Box.X > 0) is everywhere within Box half
+    # extents across and from the source up to Box.Z above it (tools/build_returns.py).
+    InEntry(Link:kt_rift_link, Delta:vector3)<transacts>:logic =
+        if (Link.Box.X > 0.0):
+            logic{Abs(Delta.X) <= Link.Box.X and Abs(Delta.Y) <= Link.Box.Y and Delta.Z >= 0.0 and Delta.Z <= Link.Box.Z}
+        else:
+            logic{Delta.X * Delta.X + Delta.Y * Delta.Y <= 12100.0 and Delta.Z >= -25.0 and Delta.Z <= 240.0}
 
     OnArrive(A:agent):void =
         if (P := player[A]):

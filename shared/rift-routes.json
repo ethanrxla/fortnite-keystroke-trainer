@@ -313,5 +313,40 @@
       "z": 0
     },
     "walk": true
+  },
+  {
+    "source": "KT22_Return_TunnelHub",
+    "destination": "KT2_HubArrival",
+    "entry": {
+      "x": 43896,
+      "y": -59648,
+      "z": 0
+    },
+    "exit": {
+      "x": -256,
+      "y": -59648,
+      "z": 15
+    },
+    "walk": true
+  },
+  {
+    "source": "KT22_Return_NinetiesTop",
+    "destination": "KT22_Return_NinetiesStart",
+    "entry": {
+      "x": 41216,
+      "y": -47872,
+      "z": 1920
+    },
+    "exit": {
+      "x": 41066,
+      "y": -52480,
+      "z": 0
+    },
+    "walk": true,
+    "box": {
+      "x": 1280.0,
+      "y": 4864.0,
+      "z": 584.0
+    }
   }
 ]

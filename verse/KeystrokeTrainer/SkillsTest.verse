@@ -31,6 +31,23 @@ kt_skills_heavy_ar_tag<public> := class(tag){}
 # On the aim plate's practice-bot controller (KT12_Aim_Bots_Controller): its bots roam these lanes and shoot back, so
 # a Skills Test run pauses them and resumes them after, as the 1v1 arena does for a duel.
 kt_aim_bot_control_tag<public> := class(tag){}
+# Shootable wall tiles (player 2026-10-11: buttons on the wall you shoot, lit for the mode that is on): a hidden
+# trigger per tile, fired by the hit dummy behind it; a customizable light per difficulty shows the one selected.
+kt_skills_easy_tag<public> := class(tag){}
+kt_skills_medium_tag<public> := class(tag){}
+kt_skills_hard_tag<public> := class(tag){}
+kt_skills_start_shot_tag<public> := class(tag){}
+kt_skills_light_easy_tag<public> := class(tag){}
+kt_skills_light_medium_tag<public> := class(tag){}
+kt_skills_light_hard_tag<public> := class(tag){}
+
+kt_skills_tile_listener := class:
+    Level:int
+    Owner:kt_skills_test_device
+    # Level -1 is the START tile.
+    OnShot(MaybeAgent:?agent):void =
+        if (A := MaybeAgent?):
+            if (Level < 0) then Owner.OnStart(A) else Owner.PickLevel(Level)
 
 # Difficulty 0 Easy, 1 Medium, 2 Hard: how long a bot stays, the pause before the next one and how many reps.
 KTSkillsLevels<public>:int = 3
@@ -141,6 +158,7 @@ kt_skills_test_device<public> := class(creative_device):
     var HandCannon:?item_granter_device = false
     var HeavyAR:?item_granter_device = false
     var Level:int = 1
+    var Lights:[]?customizable_light_device = array{false, false, false}
     var Weapon:int = 0
     var Running:logic = false
     var Best:[int]int = map{}
@@ -172,6 +190,14 @@ kt_skills_test_device<public> := class(creative_device):
             B.InteractedWithEvent.Subscribe(OnLevel)
         if (B := WeaponButton?):
             B.InteractedWithEvent.Subscribe(OnWeapon)
+        TileTags:[]tag = array{kt_skills_easy_tag{}, kt_skills_medium_tag{}, kt_skills_hard_tag{}}
+        LightTags:[]tag = array{kt_skills_light_easy_tag{}, kt_skills_light_medium_tag{}, kt_skills_light_hard_tag{}}
+        for (L -> T : TileTags, O : FindCreativeObjectsWithTag(T), Tr := trigger_device[O], Inside[Tr.GetTransform().Translation]):
+            Tr.TriggeredEvent.Subscribe(kt_skills_tile_listener{Level := L, Owner := Self}.OnShot)
+        for (L -> T : LightTags, O : FindCreativeObjectsWithTag(T), Li := customizable_light_device[O], Inside[Li.GetTransform().Translation]):
+            if (set Lights[L] = option{Li}) {}
+        for (O : FindCreativeObjectsWithTag(kt_skills_start_shot_tag), Tr := trigger_device[O], Inside[Tr.GetTransform().Translation]):
+            Tr.TriggeredEvent.Subscribe(kt_skills_tile_listener{Level := -1, Owner := Self}.OnShot)
         UpdateButtons()
         KTLog("setup", "skills_test", 0, 0, 0, rep_result.Unchecked,
             "bots={Bots.Length}|start={if (StartButton?) then 1 else 0}|granters={(if (HandCannon?) then 1 else 0) + (if (HeavyAR?) then 1 else 0)}")
@@ -181,7 +207,14 @@ kt_skills_test_device<public> := class(creative_device):
         Abs(Pos.Y - Centre.Y) <= HalfExtent.Y
         Abs(Pos.Z - Centre.Z) <= HalfExtent.Z
 
+    PickLevel<public>(L:int):void =
+        if (not Running?):
+            set Level = L
+            UpdateButtons()
+
     UpdateButtons():void =
+        for (L -> MaybeLight : Lights, Li := MaybeLight?):
+            if (L = Level) then Li.TurnOn() else Li.TurnOff()
         if (B := StartButton?):
             B.SetInteractionText(SkillsText(if (Running?) then "Skills Test running" else "START Skills Test ({KTSkillsLevelName(Level)}, {KTSkillsWeaponName(Weapon)})"))
         if (B := LevelButton?):
@@ -189,7 +222,7 @@ kt_skills_test_device<public> := class(creative_device):
         if (B := WeaponButton?):
             B.SetInteractionText(SkillsText("Weapon: {KTSkillsWeaponName(Weapon)} - swap"))
 
-    OnStart(A:agent):void =
+    OnStart<public>(A:agent):void =
         if (not Running?, Bots.Length > 0):
             set Running = true
             UpdateButtons()
