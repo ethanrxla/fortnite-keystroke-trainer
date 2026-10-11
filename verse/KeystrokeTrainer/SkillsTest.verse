@@ -56,6 +56,78 @@ kt_skills_bot_listener := class:
     OnSpawned(A:agent):void = Owner.SpawnedSignal.Signal(Index)
     OnEliminated(R:device_ai_interaction_result):void = Owner.DownSignal.Signal(Index)
 
+# The run's HUD card (design canvas, "Skills Test HUD"): title, difficulty and weapon chips, four stat columns, a
+# "bot stays" bar that shrinks while the bot is up, and a message line. 720 x 210, top centre at 16% of the screen.
+kt_skills_hud := class:
+    Card:canvas = canvas{}
+    Title:text_block = text_block{DefaultTextColor := KTHudInk, DefaultTextSize := 26.0}
+    LevelText:text_block = text_block{DefaultTextColor := KTHudInk, DefaultTextSize := 15.0}
+    WeaponText:text_block = text_block{DefaultTextColor := KTHudInk, DefaultTextSize := 15.0}
+    RepLabel:text_block = text_block{DefaultTextColor := KTHudMuted, DefaultTextSize := 12.0}
+    HitsLabel:text_block = text_block{DefaultTextColor := KTHudMuted, DefaultTextSize := 12.0}
+    MissLabel:text_block = text_block{DefaultTextColor := KTHudMuted, DefaultTextSize := 12.0}
+    AvgLabel:text_block = text_block{DefaultTextColor := KTHudMuted, DefaultTextSize := 12.0}
+    RepValue:text_block = text_block{DefaultTextColor := KTHudInk, DefaultTextSize := 30.0}
+    HitsValue:text_block = text_block{DefaultTextColor := KTHudHit, DefaultTextSize := 30.0}
+    MissValue:text_block = text_block{DefaultTextColor := KTHudMiss, DefaultTextSize := 30.0}
+    AvgValue:text_block = text_block{DefaultTextColor := KTHudInk, DefaultTextSize := 30.0}
+    StayLabel:text_block = text_block{DefaultTextColor := KTHudMuted, DefaultTextSize := 12.0}
+    Fill:color_block = color_block{DefaultColor := KTHudAmber, DefaultOpacity := 1.0}
+    Message<public>:text_block = text_block{DefaultTextColor := KTHudInk, DefaultTextSize := 16.0}
+    var Token:int = 0
+
+    Build<public>(Level:string, Weapon:string, Window:float):void =
+        KTHudPlace(Card, color_block{DefaultColor := KTHudCard, DefaultOpacity := 0.9}, 0.0, 0.0, 720.0, 210.0)
+        KTHudPlace(Card, Title, 24.0, 14.0, 400.0, 34.0)
+        KTHudPlace(Card, color_block{DefaultColor := KTHudDanger, DefaultOpacity := 1.0}, 460.0, 18.0, 100.0, 28.0)
+        KTHudPlace(Card, LevelText, 472.0, 21.0, 88.0, 24.0)
+        KTHudPlace(Card, color_block{DefaultColor := KTHudTrack, DefaultOpacity := 1.0}, 570.0, 18.0, 126.0, 28.0)
+        KTHudPlace(Card, WeaponText, 580.0, 21.0, 116.0, 24.0)
+        for (I -> L : array{RepLabel, HitsLabel, MissLabel, AvgLabel}, V := array{RepValue, HitsValue, MissValue, AvgValue}[I]):
+            KTHudPlace(Card, L, 24.0 + 174.0 * (I * 1.0), 60.0, 170.0, 18.0)
+            KTHudPlace(Card, V, 24.0 + 174.0 * (I * 1.0), 78.0, 170.0, 40.0)
+        KTHudPlace(Card, StayLabel, 24.0, 128.0, 672.0, 18.0)
+        KTHudPlace(Card, color_block{DefaultColor := KTHudTrack, DefaultOpacity := 1.0}, 24.0, 150.0, 672.0, 8.0)
+        KTHudPlace(Card, Fill, 24.0, 150.0, 672.0, 8.0)
+        KTHudPlace(Card, Message, 24.0, 168.0, 672.0, 34.0)
+        Title.SetText(SkillsText("SKILLS TEST"))
+        LevelText.SetText(SkillsText(Level))
+        WeaponText.SetText(SkillsText(Weapon))
+        RepLabel.SetText(SkillsText("REP"))
+        HitsLabel.SetText(SkillsText("HITS"))
+        MissLabel.SetText(SkillsText("MISSES"))
+        AvgLabel.SetText(SkillsText("AVG REACTION"))
+        StayLabel.SetText(SkillsText("BOT STAYS {Window} s"))
+
+    Show<public>(Rep:string, Hits:int, Misses:int, Avg:int):void =
+        RepValue.SetText(SkillsText(Rep))
+        HitsValue.SetText(SkillsText("{Hits}"))
+        MissValue.SetText(SkillsText("{Misses}"))
+        AvgValue.SetText(SkillsText(if (Avg > 0) then "{Avg} ms" else "-"))
+
+    SetBar(F:float):void =
+        Card.RemoveWidget(Fill)
+        if (F > 0.0):
+            KTHudPlace(Card, Fill, 24.0, 150.0, 672.0 * F, 8.0)
+
+    # Shrinks the bar over the bot's window; a newer Animate or StopBar ends it.
+    Animate<public>(Window:float)<suspends>:void =
+        set Token += 1
+        Mine := Token
+        Start := GetSimulationElapsedTime()
+        loop:
+            if (Token <> Mine):
+                break
+            F := KTSkillsBarFraction(GetSimulationElapsedTime() - Start, Window)
+            SetBar(F)
+            if (F <= 0.0):
+                break
+            Sleep(0.05)
+
+    StopBar<public>():void =
+        set Token += 1
+        SetBar(1.0)
+
 kt_skills_test_device<public> := class(creative_device):
     var Centre:vector3 = vector3{}
     @editable HalfExtent:vector3 = vector3{X := 4000.0, Y := 2600.0, Z := 1500.0}
@@ -147,14 +219,10 @@ kt_skills_test_device<public> := class(creative_device):
         Window := KTSkillsWindow(Lvl)
         set Runs += 1
         Run := Runs
-        Hud := text_block{DefaultTextColor := NamedColors.White, DefaultTextSize := 26.0}
-        Panel := canvas:
-            Slots := array:
-                canvas_slot:
-                    Anchors := anchors{Minimum := vector2{X := 0.5, Y := 0.16}, Maximum := vector2{X := 0.5, Y := 0.16}}
-                    Alignment := vector2{X := 0.5, Y := 0.0}
-                    SizeToContent := true
-                    Widget := Hud
+        Hud := kt_skills_hud{}
+        Hud.Build(KTSkillsLevelName(Lvl), KTSkillsWeaponName(Weapon), Window)
+        Hud.Show("0/{Reps}", 0, 0, 0)
+        Panel := KTHudPanel(Hud.Card, 0.16, 720.0, 210.0)
         MaybeUI:?player_ui = if (P := player[A], UI := GetPlayerUI[P]) then option{UI} else false
         if (UI := MaybeUI?):
             UI.AddWidget(Panel, player_ui_slot{InputMode := ui_input_mode.None})
@@ -169,8 +237,9 @@ kt_skills_test_device<public> := class(creative_device):
             set Running = false
             UpdateButtons()
         for (N := 0..2):
-            Hud.SetText(SkillsText("SKILLS TEST  {KTSkillsLevelName(Lvl)}  {KTSkillsWeaponName(Weapon)}\nBots stay {Window} s. Starting in {3 - N}"))
+            Hud.Message.SetText(SkillsText("Bots stay {Window} s. Starting in {3 - N}"))
             Sleep(1.0)
+        Hud.Message.SetText(SkillsText("Eliminate each bot before it vanishes."))
         var Hits:int = 0
         var Misses:int = 0
         var Skipped:int = 0
@@ -199,6 +268,7 @@ kt_skills_test_device<public> := class(creative_device):
                         false
                 if (Appeared?):
                     T0 := GetSimulationElapsedTime()
+                    spawn{ Hud.Animate(Window) }
                     Hit := race:
                         block:
                             loop:
@@ -210,6 +280,7 @@ kt_skills_test_device<public> := class(creative_device):
                             Sleep(Window)
                             false
                     Ms := if (V := Round[(GetSimulationElapsedTime() - T0) * 1000.0]) then V else 0
+                    Hud.StopBar()
                     if (Hit?):
                         set Hits += 1
                         set TotalMs += Ms
@@ -223,7 +294,7 @@ kt_skills_test_device<public> := class(creative_device):
                 S.Despawn()
                 S.Disable()
             RunningAvg := if (Hits > 0, V := Quotient[TotalMs, Hits]) then V else 0
-            Hud.SetText(SkillsText("SKILLS TEST  {KTSkillsLevelName(Lvl)}  {Rep}/{Reps}\nHits {Hits}   Misses {Misses}   Avg {RunningAvg} ms"))
+            Hud.Show("{Rep}/{Reps}", Hits, Misses, RunningAvg)
         Avg := if (Hits > 0, V := Quotient[TotalMs, Hits]) then V else 0
         Previous := if (B := Best[Lvl]) then B else 0
         NewBest := logic{Hits > Previous}
@@ -231,7 +302,9 @@ kt_skills_test_device<public> := class(creative_device):
         Record := if (B := Best[Lvl]) then B else Hits
         KTLog("summary", "skills_test", 0, Reps, 0, rep_result.Unchecked,
             "difficulty={KTSkillsLevelName(Lvl)}|weapon={KTSkillsWeaponName(Weapon)}|hits={Hits}|misses={Misses}|skipped={Skipped}|avg_ms={Avg}|best={Record}|run={Run}")
-        Hud.SetText(SkillsText("SKILLS TEST DONE  {KTSkillsLevelName(Lvl)}\n{Hits} / {Reps - Skipped} eliminated   avg {Avg} ms\n{if (NewBest?) then "New best!" else "Best: {Record}"}   Press START to go again"))
+        Hud.Title.SetText(SkillsText("SKILLS TEST DONE"))
+        Hud.Show("{Hits}/{Reps - Skipped}", Hits, Misses, Avg)
+        Hud.Message.SetText(SkillsText("{if (NewBest?) then "New best!" else "Best: {Record}"}   Press START to go again"))
         Sleep(6.0)
 
     PauseAimBots(Pause:logic):void =

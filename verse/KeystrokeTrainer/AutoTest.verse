@@ -60,6 +60,7 @@ RunLogicTests(Report:autotest_report):void =
     Report.Check("SK-T1-windows", logic{KTSkillsWindow(0) > KTSkillsWindow(1) and KTSkillsWindow(1) > KTSkillsWindow(2) and KTSkillsWindow(2) >= 0.4}, "skills bots stay shorter as difficulty rises")
     Report.Check("SK-T2-cycle", logic{KTSkillsNext(0, KTSkillsLevels) = 1 and KTSkillsNext(2, KTSkillsLevels) = 0 and KTSkillsNext(1, 2) = 0}, "difficulty and weapon buttons cycle")
     Report.Check("SK-T3-reps", logic{KTSkillsReps(0) < KTSkillsReps(2) and KTSkillsGapMin(2) < KTSkillsGapMax(2)}, "harder runs are longer with shorter gaps")
+    Report.Check("SK-T4-bar", logic{KTSkillsBarFraction(0.0, 0.5) = 1.0 and KTSkillsBarFraction(0.25, 0.5) = 0.5 and KTSkillsBarFraction(2.0, 0.5) = 0.0}, "bot-stays bar is full on appear, half at mid-window, empty after")
     var BadCheckpoints:int = 0
     for (I -> St : KTOpStages):
         if (KTOpStageAt(St.Checkpoint) <> I):

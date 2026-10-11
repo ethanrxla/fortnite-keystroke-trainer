@@ -73,7 +73,18 @@ kt_operation_device<public> := class(creative_device):
     var StormStart:float = 0.0
     var Best:float = 0.0
     var Runs:int = 0
-    Hud:text_block = text_block{DefaultTextColor := NamedColors.White, DefaultTextSize := 24.0}
+    # HUD card (design canvas, "Operation HUD"): 900 x 100 plus a storm row that only shows in the storm.
+    Card:canvas = canvas{}
+    Title:text_block = text_block{DefaultTextColor := KTHudInk, DefaultTextSize := 24.0}
+    ClockText:text_block = text_block{DefaultTextColor := KTHudInk, DefaultTextSize := 22.0}
+    LevelText:text_block = text_block{DefaultTextColor := KTHudInk, DefaultTextSize := 14.0}
+    RoomText:text_block = text_block{DefaultTextColor := KTHudMuted, DefaultTextSize := 15.0}
+    ClearChip:color_block = color_block{DefaultColor := KTHudClear, DefaultOpacity := 0.0}
+    ClearText:text_block = text_block{DefaultTextColor := KTHudInk, DefaultTextSize := 14.0}
+    LeftText:text_block = text_block{DefaultTextColor := KTHudInk, DefaultTextSize := 15.0}
+    Instruction:text_block = text_block{DefaultTextColor := KTHudInk, DefaultTextSize := 16.0}
+    StormBlock:color_block = color_block{DefaultColor := KTHudStormBg, DefaultOpacity := 0.0}
+    StormText:text_block = text_block{DefaultTextColor := KTHudStormText, DefaultTextSize := 16.0}
     var Panel:?canvas = false
     var Outside:float = 0.0
 
@@ -104,6 +115,7 @@ kt_operation_device<public> := class(creative_device):
             set Loadout = option{G}
         for (O : FindCreativeObjectsWithTag(kt_op_grenade_tag), G := item_granter_device[O]):
             set Grenades = option{G}
+        BuildHud()
         FreePlay()
         KTLog("setup", "operation", 0, 0, 0, rep_result.Unchecked,
             "stages={KTOpStages.Length}|bots={Bots.Length}|gates={Gates.Length}|start={if (StartButton?) then 1 else 0}")
@@ -141,15 +153,25 @@ kt_operation_device<public> := class(creative_device):
             if (B := StartButton?):
                 B.SetInteractionText(OpText("Operation in progress"))
 
+    BuildHud():void =
+        KTHudPlace(Card, color_block{DefaultColor := KTHudCard, DefaultOpacity := 0.9}, 0.0, 0.0, 900.0, 100.0)
+        KTHudPlace(Card, Title, 22.0, 12.0, 300.0, 32.0)
+        KTHudPlace(Card, ClockText, 330.0, 14.0, 90.0, 30.0)
+        KTHudPlace(Card, color_block{DefaultColor := KTHudLevelChip, DefaultOpacity := 1.0}, 430.0, 16.0, 150.0, 28.0)
+        KTHudPlace(Card, LevelText, 440.0, 19.0, 140.0, 24.0)
+        KTHudPlace(Card, RoomText, 594.0, 18.0, 100.0, 26.0)
+        KTHudPlace(Card, ClearChip, 700.0, 16.0, 76.0, 28.0)
+        KTHudPlace(Card, ClearText, 710.0, 19.0, 66.0, 24.0)
+        KTHudPlace(Card, LeftText, 790.0, 18.0, 100.0, 26.0)
+        KTHudPlace(Card, Instruction, 22.0, 56.0, 860.0, 40.0)
+        KTHudPlace(Card, StormBlock, 0.0, 108.0, 900.0, 40.0)
+        KTHudPlace(Card, StormText, 22.0, 116.0, 860.0, 26.0)
+        Title.SetText(OpText("OPERATION"))
+
     ShowHud(P:player):void =
         if (UI := GetPlayerUI[P]):
-            NewPanel := canvas:
-                Slots := array:
-                    canvas_slot:
-                        Anchors := anchors{Minimum := vector2{X := 0.5, Y := 0.08}, Maximum := vector2{X := 0.5, Y := 0.08}}
-                        Alignment := vector2{X := 0.5, Y := 0.0}
-                        SizeToContent := true
-                        Widget := Hud
+            Title.SetText(OpText("OPERATION"))
+            NewPanel := KTHudPanel(Card, 0.08, 900.0, 150.0)
             UI.AddWidget(NewPanel, player_ui_slot{InputMode := ui_input_mode.None})
             set Panel = option{NewPanel}
 
@@ -256,9 +278,15 @@ kt_operation_device<public> := class(creative_device):
         if (S := KTOpStages[Stage]):
             Clock := KTOpClock(GetSimulationElapsedTime() - RunStart)
             Left := StageBots(Stage).Length - Down
-            Status := if (Cleared?) then "CLEAR - next door is open" else if (Left > 0) then "{Left} left" else ""
-            Storm := if (InStorm?) then "\nIN THE STORM - move west!" else ""
-            Hud.SetText(OpText("OPERATION  {Clock}   {S.Level}  room {Stage + 1}/{KTOpStages.Length}   {Status}\n{S.Instruction}{Storm}"))
+            ClockText.SetText(OpText(Clock))
+            LevelText.SetText(OpText(S.Level))
+            RoomText.SetText(OpText("room {Stage + 1}/{KTOpStages.Length}"))
+            ClearChip.SetOpacity(if (Cleared?) then 1.0 else 0.0)
+            ClearText.SetText(OpText(if (Cleared?) then "CLEAR" else ""))
+            LeftText.SetText(OpText(if (not Cleared? and Left > 0) then "{Left} left" else ""))
+            Instruction.SetText(OpText(if (Cleared?) then "Next door is open. {S.Instruction}" else S.Instruction))
+            StormBlock.SetOpacity(if (InStorm?) then 0.95 else 0.0)
+            StormText.SetText(OpText(if (InStorm?) then "IN THE STORM: move west!" else ""))
 
     Finish():void =
         Total := GetSimulationElapsedTime() - RunStart
@@ -268,7 +296,16 @@ kt_operation_device<public> := class(creative_device):
         Ms := if (V := Round[Total * 1000.0]) then V else 0
         KTLog("op_summary", "operation", 0, Runs, KTOpStages.Length, rep_result.Ok,
             "ms={Ms}|deaths={Deaths}|best_ms={if (V := Round[Best * 1000.0]) then V else 0}")
-        Hud.SetText(OpText("OPERATION COMPLETE  {KTOpClock(Total)}   deaths {Deaths}\n{if (NewBest?) then "New best time!" else "Best: {KTOpClock(Best)}"}   START OPERATION to run it again"))
+        Title.SetText(OpText("OPERATION COMPLETE"))
+        ClockText.SetText(OpText(KTOpClock(Total)))
+        LevelText.SetText(OpText("deaths {Deaths}"))
+        RoomText.SetText(OpText(""))
+        LeftText.SetText(OpText(""))
+        ClearChip.SetOpacity(1.0)
+        ClearText.SetText(OpText("DONE"))
+        StormBlock.SetOpacity(0.0)
+        StormText.SetText(OpText(""))
+        Instruction.SetText(OpText("{if (NewBest?) then "New best time!" else "Best: {KTOpClock(Best)}"}   START OPERATION to run it again"))
         set Running = false
         spawn{ EndAfter(8.0) }
 
