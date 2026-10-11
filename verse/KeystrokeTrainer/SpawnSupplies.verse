@@ -29,4 +29,4 @@ kt_spawn_supply_service := class(creative_device):
             R.Remove(A)
         if (G := Supplies?):
             G.GrantItem(A)
-            Print("KT|spawn_supplies|slap_splash=6|medkit=1", ?Duration := 0.0)
+            Print("KT|spawn_supplies|granted=1", ?Duration := 0.0)    # items: shared/spawn-loadout.json
