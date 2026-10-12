@@ -717,3 +717,188 @@ class EditGridObserver:
         # the wall's own frame; floors / roofs are re-oriented to near / far by edit_geometry.piece_context.
         return WallObservation(now,'editing',round(confidence,3),tuple(tuple(float(v/scale) for v in p) for p in outer),
                                (float(aim[0]),float(n-aim[1])),tuple(sorted(selected)),count,'native_edit_grid_observed',cells=n)
+
+
+# ---- Vanishing-point grid finder (player approved 2026-10-12) -------------------------------------------------------
+# A wall's grid lines meet at two vanishing points. Group the line segments by them (RANSAC on homogeneous cross
+# products), send both points to infinity (affine rectification) so the grid lines become equally spaced parallels,
+# read the tile spacing as a 1-D problem, and pick the 3x3 window round the crosshair by tile colour and by how many of
+# its 24 cell edges are seen as lines. No combinatorial search: ~16 ms. On 600 recorded frames, run before the line
+# search detectors (which stay as the fallback): 329 walls vs 298 (none lost), detection median ~4 ms slower because
+# frames with no wall now pay for both finders.
+def _hlines(segs):
+    s = np.asarray(segs, np.float64)
+    p1 = np.c_[s[:, 0], s[:, 1], np.ones(len(s))]
+    p2 = np.c_[s[:, 2], s[:, 3], np.ones(len(s))]
+    L = np.cross(p1, p2)
+    L /= np.linalg.norm(L[:, :2], axis=1, keepdims=True) + 1e-12
+    mid = (s[:, :2] + s[:, 2:4]) / 2
+    d = s[:, 2:4] - s[:, :2]
+    d /= np.linalg.norm(d, axis=1, keepdims=True) + 1e-12
+    return L, mid, d, s[:, 4]
+
+
+def _consistent(v, mid, d, tol_deg):
+    """Segments whose direction points at vanishing point v (homogeneous), within tol degrees."""
+    if abs(v[2]) < 1e-9:
+        to = np.broadcast_to(v[:2], mid.shape)
+    else:
+        to = v[:2] / v[2] - mid
+    to = to / (np.linalg.norm(to, axis=1, keepdims=True) + 1e-12)
+    return np.abs(np.sum(to * d, axis=1)) > np.cos(np.radians(tol_deg))
+
+
+def _vanishing_point(L, mid, d, w, rng, tries=120, tol=1.5):
+    n = len(L)
+    if n < 2:
+        return None, None
+    best, best_score = None, -1.0
+    order = np.argsort(-w)[:min(n, 24)]          # sample among the longest segments
+    for _ in range(tries):
+        i, j = rng.choice(order, 2, replace=False)
+        v = np.cross(L[i], L[j])
+        if not np.isfinite(v).all() or np.linalg.norm(v) < 1e-12:
+            continue
+        v = v / np.linalg.norm(v)
+        inl = _consistent(v, mid, d, tol)
+        score = w[inl].sum()
+        if score > best_score:
+            best, best_score = v, score
+    if best is None:
+        return None, None
+    inl = _consistent(best, mid, d, tol)
+    A = L[inl] * w[inl, None]
+    if len(A) >= 2:
+        _, _, vt = np.linalg.svd(A)
+        v = vt[-1]
+        if np.linalg.norm(v) > 0:
+            best = v / np.linalg.norm(v)
+            inl = _consistent(best, mid, d, tol)
+    return best, inl
+
+
+def _lattice(pos, w, lo, hi):
+    """Spacing and phase of an equally spaced line set, from 1-D line positions weighted by length. Only positions in
+    [lo, hi] (around the crosshair) vote. Returns (spacing, phase, support) or None."""
+    keep = (pos >= lo) & (pos <= hi)
+    pos, w = pos[keep], w[keep]
+    if len(pos) < 3:
+        return None
+    best = None
+    idx = np.argsort(-w)[:12]
+    for a in idx:
+        for b in idx:
+            if pos[b] <= pos[a]:
+                continue
+            for k in (1, 2, 3):
+                s = (pos[b] - pos[a]) / k
+                if s < (hi - lo) * .06:
+                    continue
+                r = (pos - pos[a]) / s
+                near = np.abs(r - np.round(r)) < .07
+                score = w[near].sum()
+                if best is None or score > best[2]:
+                    best = (s, pos[a], score)
+    return best
+
+
+def _vp_grid(image, aim, segs, rng=None):
+    if not segs or len(segs) < 6:
+        return None
+    rng = rng or np.random.default_rng(0)
+    h, w = image.shape[:2]
+    L, mid, d, length = _hlines(segs)
+    vertical = np.abs(d[:, 1]) > np.cos(np.radians(30))
+    fams = [vertical, ~vertical]
+    vps, inls = [], []
+    for f in fams:
+        idx = np.nonzero(f)[0]
+        if len(idx) < 3:
+            return None
+        v, inl = _vanishing_point(L[idx], mid[idx], d[idx], length[idx], rng)
+        if v is None:
+            return None
+        sel = np.zeros(len(L), bool); sel[idx[inl]] = True
+        vps.append(v); inls.append(sel)
+    # Affine rectification: the line through both vanishing points goes to infinity.
+    l = np.cross(vps[0], vps[1])
+    if np.linalg.norm(l[:2]) < 1e-12 and abs(l[2]) < 1e-12:
+        return None
+    l = l / (np.abs(l[2]) if abs(l[2]) > 1e-9 else np.linalg.norm(l))
+    # Scale so a typical image point has w ~ 1 and positive.
+    c = np.array([w / 2, h / 2, 1.0])
+    wc = l @ c
+    if abs(wc) < 1e-9:
+        return None
+    l = l / wc
+    Hr = np.array([[1, 0, 0], [0, 1, 0], l], np.float64)
+    def rect(p):
+        q = Hr @ np.array([p[0], p[1], 1.0]); return q[:2] / q[2]
+    if (np.c_[mid, np.ones(len(mid))] @ l <= 0).any():
+        pass  # segments across the vanishing line would be nonsense; they are rare for a wall in front of the camera
+    rmid = np.c_[mid, np.ones(len(mid))] @ Hr.T
+    rmid = rmid[:, :2] / rmid[:, 2:3]
+    ra = rect(aim)
+    out_lines = []
+    for fam, v in zip(inls, vps):
+        rv = Hr @ v                                       # now a direction (at infinity)
+        dirv = rv[:2] / (np.linalg.norm(rv[:2]) + 1e-12)
+        normal = np.array([-dirv[1], dirv[0]])
+        pos = rmid[fam] @ normal
+        pa = ra @ normal
+        span = np.ptp(rmid @ normal) + 1e-6
+        lat = _lattice(pos, length[fam], pa - span, pa + span)
+        if lat is None:
+            return None
+        s, ph, sup = lat
+        out_lines.append((normal, s, ph, pa))
+    Hinv = np.linalg.inv(Hr)
+    # Line evidence: the observed segments rasterised once; a window's 24 cell edges are checked against it, so a
+    # window that runs onto a floor or the sky below / beside the wall (same colour, same vanishing points, but no
+    # grid lines of this wall there) loses to the one whose edges are all seen.
+    seen = np.zeros((h, w), np.uint8)
+    for x1, y1, x2, y2, _ in segs:
+        cv2.line(seen, (int(x1), int(y1)), (int(x2), int(y2)), 255, 5)
+    def coverage(H):
+        t = np.linspace(.15, .85, 7)
+        pts = []
+        for i in range(4):
+            for j in range(3):
+                pts += [(i, j + u) for u in t] + [(j + u, i) for u in t]
+        p = cv2.perspectiveTransform(np.float32([pts]), H)[0]
+        x = p[:, 0].astype(int); y = p[:, 1].astype(int)
+        ok = (x >= 0) & (x < w) & (y >= 0) & (y < h)
+        hit = np.zeros(len(p), bool); hit[ok] = seen[y[ok], x[ok]] > 0
+        return int(hit.reshape(24, 7).mean(1).__ge__(.5).sum())
+    unit = np.float32([[0, 0], [3, 0], [3, 3], [0, 3]])
+    best = None
+    (na, sa, pha, paa), (nb, sb, phb, pab) = out_lines
+    ka0 = np.floor((paa - pha) / sa); kb0 = np.floor((pab - phb) / sb)
+    for da in (0, 1, 2):
+        for db in (0, 1, 2):
+            a0 = pha + (ka0 - da) * sa; b0 = phb + (kb0 - db) * sb
+            corners = []
+            for i, j in ((0, 0), (3, 0), (3, 3), (0, 3)):
+                M = np.array([na, nb]); rhs = np.array([a0 + i * sa, b0 + j * sb])
+                try:
+                    x = np.linalg.solve(M, rhs)
+                except np.linalg.LinAlgError:
+                    return None
+                q = Hinv @ np.array([x[0], x[1], 1.0]); corners.append(q[:2] / q[2])
+            quad = _ordered(np.float32(corners))
+            if not cv2.isContourConvex(quad) or cv2.contourArea(quad) < .02 * w * h:
+                continue
+            if quad[:, 0].min() < -w * .6 or quad[:, 0].max() > w * 1.6 or quad[:, 1].min() < -h * .6 or quad[:, 1].max() > h * 1.6:
+                continue
+            H = cv2.getPerspectiveTransform(unit, quad)
+            count = _tile_support(image, H, 3)
+            on, off = _wall_fit(image, H)
+            cov = coverage(H)
+            score = (count - 2 * off + cov / 3, count, cov)
+            if best is None or score > best[0]:
+                best = (score, (count, H, quad, 3))
+    # 7 of 9 tile cells, or 6 with at least 18 of the 24 cell edges seen as lines: a clipped close-up wall whose grid
+    # continues off screen can line up with a window frame or glass beside it; those go to the fallback detectors.
+    if best is None or best[1][0] < 6 or (best[1][0] == 6 and best[0][2] < 18):
+        return None
+    return best[1]

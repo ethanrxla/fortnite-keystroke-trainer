@@ -6,7 +6,7 @@ the same immutable observation without changing the planner or renderer.
 """
 from dataclasses import dataclass, asdict, replace
 import math
-from .edit_observation import EditGridObserver, _line_projection, _crosshair, _general_grid, _partial_grid, _lattice_shift, _tile_support, _segments, downscale, _wall_fit
+from .edit_observation import EditGridObserver, _line_projection, _crosshair, _general_grid, _partial_grid, _lattice_shift, _tile_support, _segments, downscale, _wall_fit, _vp_grid
 from .edit_geometry import piece_context
 import cv2
 
@@ -40,8 +40,17 @@ class VisualObserver:
         scale=min(1.,DETECT_WIDTH/frame.shape[1])
         image=downscale(frame,scale)
         self.wall._aim_screen=_crosshair(frame)
-        projection=_line_projection(image)
         aim=(self.wall._aim_screen[0]*scale,self.wall._aim_screen[1]*scale)
+        # Vanishing-point finder first (edit_observation._vp_grid, ~16 ms after the shared line search); the detectors
+        # below are the fallback when it finds no wall.
+        bright=_segments(image)
+        found=_vp_grid(image,aim,bright)
+        if found is not None:
+            count,H,quad,n=found
+            wall=self.wall._from_projection(image,H,quad,now,scale,count,.92 if count>=8 else .88,n)
+            result=self._classify(image,frame,wall,H,now)
+            if result.piece!='unknown':return result
+        projection=_line_projection(image)
         if projection is not None:
             count,H,quad=projection
             H,quad,_=_lattice_shift(image,H,aim)
@@ -57,7 +66,7 @@ class VisualObserver:
         result=None
         for dark in (False,True):
             # Bright tile gaps first; if nothing fits, once more with dark gaps too (walls in shade at an angle).
-            segs=_segments(image,dark)
+            segs=bright if not dark else _segments(image,dark)
             for detect in (_partial_grid,_general_grid):
                 # Each detector's grid in turn; the first that passes the piece checks wins (the close-up detector can
                 # overshoot into wood beside a wall where the any-angle one fits it).
