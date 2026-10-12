@@ -6,7 +6,7 @@ the same immutable observation without changing the planner or renderer.
 """
 from dataclasses import dataclass, asdict, replace
 import math
-from .edit_observation import EditGridObserver, _line_projection, _crosshair, _general_grid, _partial_grid, _lattice_shift, _tile_support, _segments, downscale
+from .edit_observation import EditGridObserver, _line_projection, _crosshair, _general_grid, _partial_grid, _lattice_shift, _tile_support, _segments, downscale, _wall_fit
 from .edit_geometry import piece_context
 import cv2
 
@@ -88,6 +88,8 @@ class VisualObserver:
                                     wall.supported_cells,'native_edit_grid_observed',context=context)
         if wall.supported_cells<6 or wall.confidence<.88:
             return PieceObservation(now,reason=wall.reason)
+        # Never draw boxes outside the wall: a grid with 3+ cells that are not this wall's tiles is not the wall.
+        if _wall_fit(image,H,selected=wall.selected_tiles)[1]>=3:return PieceObservation(now,reason='grid_off_wall')
         # Require a substantial vertical axis. Ramp grids have gesture regions rather than nine equivalent wall tiles.
         width=(math.dist(q[0],q[1])+math.dist(q[2],q[3]))/2
         height=(math.dist(q[0],q[3])+math.dist(q[1],q[2]))/2
@@ -111,6 +113,10 @@ class VisualObserver:
         if count<(6 if n==3 else 4):return None
         wall=self.wall._from_projection(image,H,quad,now,scale,count,.9,n)
         if wall.reason!='native_edit_grid_observed':return None
+        # Walls: a grid optical flow slid off the wall (2+ cells that are not this wall's tiles) is dropped and the next
+        # full detection replaces it; a wrongly dropped grid only costs that detection. Together with the 6-tile minimum
+        # this drops 61% of grids slid by a tile on 143 recorded walls, and 6% of correct ones.
+        if n==3 and _wall_fit(image,H,selected=wall.selected_tiles)[1]>=2:return None
         ctx=piece_context(wall,frame.shape[1],frame.shape[0])
         return PieceObservation(now,tracked.piece,wall.wall_quad,wall.aim_uv,wall.selected_tiles,tracked.orientation,
                                 wall.confidence,wall.supported_cells,'native_edit_grid_observed','tracked_refined',

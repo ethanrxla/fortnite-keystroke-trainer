@@ -306,6 +306,53 @@ def _tile_like(colour):
     return blue or neutral or red
 
 
+# The player's own character and the CONFIRM / RESET prompts sit just left of and below the crosshair (over-the-
+# shoulder camera); cells there are unseen, not off the wall. Fractions of the frame (x0, y0, x1, y1).
+CHARACTER_BOX=(.29,.45,.48,1.)
+_VISIBLE={}
+
+
+def _visible(h,w):
+    """Pixels where the wall can be judged: not the HUD, our overlays (_mask_hud) or the player's character."""
+    key=(h,w)
+    if key not in _VISIBLE:
+        m=np.full((h,w),255,np.uint8);_mask_hud(m)
+        x0,y0,x1,y1=CHARACTER_BOX;m[int(h*y0):int(h*y1),int(w*x0):int(w*x1)]=0
+        _VISIBLE[key]=m>0
+    return _VISIBLE[key]
+
+
+def _wall_fit(image,H,n=3,selected=()):
+    """(on, off): visible cells of the n x n grid that are / are not this wall's own tiles. On = blue within 45 of the
+    other blue cells' median colour, exactly grey (a selected tile), or the red of an invalid selection. Night lighting
+    tints wood and sky blue, so 'looks blue' alone is not enough (player 2026-10-12: boxes drawn a column past the wall's
+    edge). On 143 recorded walls, slid one tile sideways / up / down: 2+ off cells or under 7 tile cells catches 81% of
+    the slid grids and 6% of the correct ones; 3+ off cells catches 18% and under 1%. `selected`: tile numbers the
+    projection already read as selected (their grey X tiles count as on the wall whatever the lighting)."""
+    h,w=image.shape[:2];vis=_visible(h,w)
+    grid=np.float32([[[c+u,r+v] for u in (.2,.35,.5,.65,.8) for v in (.2,.35,.5,.65,.8)] for c in range(n) for r in range(n)])
+    pts=cv2.perspectiveTransform(grid.reshape(1,-1,2),H)[0].reshape(n*n,25,2)
+    blues,others=[],[]
+    for i,cell in enumerate(pts):
+        c,r=divmod(i,n)
+        if (n-1-r)*n+c in selected:others.append(True);continue
+        xs=cell[:,0].astype(int);ys=cell[:,1].astype(int)
+        ok=(xs>=0)&(xs<w)&(ys>=0)&(ys<h)
+        ok[ok]&=vis[ys[ok],xs[ok]]
+        if ok.sum()<10:continue
+        b,g,r=np.median(image[ys[ok],xs[ok]].astype(float),axis=0)
+        if b>r*1.22 and b>80 and g>45:blues.append((b,g,r))
+        elif max(b,g,r)-min(b,g,r)<12 and 60<(b+g+r)/3<200:others.append(True)
+        elif r>b*1.22 and r>80 and g<100:others.append(True)
+        else:others.append(False)
+    near=[]
+    if blues:
+        model=np.median(np.asarray(blues),axis=0)
+        near=[np.linalg.norm(np.asarray(x)-model)<45 for x in blues]
+    on=sum(near)+sum(others)
+    return on,len(near)+len(others)-on
+
+
 def _lattice_shift(image,H,aim,n=3):
     """The tile lattice is periodic, so a detector can lock onto the right spacing one tile off: a wooden pillar or a
     floor plank edge next to a close wall poses as its border (live 2026-10-10: the grid sat one column left and one row
