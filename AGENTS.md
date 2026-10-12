@@ -64,6 +64,8 @@ A UEFN island that teaches Fortnite building and editing at a slow tempo first
   roster/respawn/loadout/cleanup and native CTF acceptance have passed.
   `KT26_TeamDetail_` (`build_team_details.py`, PR #5): arena cover, stairs, trucks. `KT27_TeamTower_`
   (`build_team_towers.py`): the two sniper towers (Service-side corners) and two ammo rooms (Loading edge).
+  `KT28_CourtRead_` (`build_team_readability.py`): noncolliding team-arena accents. The builder may repair the existing
+  `KT24_Team_Arena` volume only after validating its exact bounds and saving its original transform.
 - Teleporters that share a group are picked between. The Greybox template used A-D and Z (deleted); ours use E-U
   and H-K. Never reuse a group.
 - `shared/drills.json` `steps` is the reference order; `accepts` lists other orders that count. The sources for
