@@ -86,6 +86,7 @@ kt_team_access_device<public> := class(creative_device):
 
     Restore(A:agent):void =
         if (Visiting[A]?, T := Original[A]):
+            MatchDevice.Withdraw(A)
             if (GetPlayspace().GetTeamCollection().AddToTeam[A, T]):
                 if (set Visiting[A] = false) {}
 

@@ -1,5 +1,7 @@
 # Rift CTF / timed modes implementation checkpoint
 
+Updated adapter implementation and actual validation results: [PR 8 native adapter checkpoint](rift-native-adapters-2026-10-12.md). The unconditional ports described below have since been implemented. Native acceptance/configuration remains explicit; teammate jail rescue now uses a five-second reboot hold.
+
 ## Confirmed player decisions
 
 - CTF setup: 60 seconds to build and place a flag and return rift in own territory, outside safe zones. Central wall blocks crossing until live start.

@@ -1,0 +1,244 @@
+{
+  "actors": [
+    {
+      "label": "KT29_Rift_SetupWall",
+      "refPath": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.Device_Barrier_V2_Placed_C_UAID_30560F202F92500A03_1294378272",
+      "settings": {
+        "barrierWidth": 16,
+        "barrierDepth": 0.05,
+        "barrierHeight": 4,
+        "blockWeaponFire": true,
+        "zoneShape": "Box",
+        "enabledOnPhase": "None"
+      }
+    },
+    {
+      "label": "KT29_Rift_RedSafe",
+      "refPath": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.Device_MutatorVolume_V2_C_UAID_30560F202F92500A03_1415606273",
+      "settings": {
+        "zoneWidth": 2,
+        "zoneDepth": 16,
+        "zoneHeight": 4,
+        "bAllowBuilding": false,
+        "bAllowEditing": false,
+        "bAllowWeaponFire": false,
+        "enabledOnPhase": "None"
+      }
+    },
+    {
+      "label": "KT29_Rift_RedSafeWall",
+      "refPath": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.Device_Barrier_V2_Placed_C_UAID_30560F202F92500A03_1416603274",
+      "settings": {
+        "barrierWidth": 16,
+        "barrierDepth": 2,
+        "barrierHeight": 4,
+        "blockWeaponFire": true,
+        "zoneShape": "Box",
+        "enabledOnPhase": "None"
+      }
+    },
+    {
+      "label": "KT29_Rift_RedJail",
+      "refPath": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.Device_Teleporter_V2_C_UAID_30560F202F92500A03_1417450275",
+      "settings": {}
+    },
+    {
+      "label": "KT29_Rift_RedSkyReturn",
+      "refPath": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.Device_Teleporter_V2_C_UAID_30560F202F92500A03_1418386276",
+      "settings": {}
+    },
+    {
+      "label": "KT29_Rift_RedReturnRift",
+      "refPath": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.Device_Teleporter_V2_C_UAID_30560F202F92500A03_1419404277",
+      "settings": {}
+    },
+    {
+      "label": "KT29_Rift_RedVendor",
+      "refPath": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.Device_VendingMachine_V2_C_UAID_30560F202F92500A03_1423109278",
+      "settings": {}
+    },
+    {
+      "label": "KT29_Rift_RedCaptureEffect",
+      "refPath": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.Device_VFXSpawner_V2_C_UAID_30560F202F92500A03_1424849279",
+      "settings": {}
+    },
+    {
+      "label": "KT29_Rift_BlueSafe",
+      "refPath": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.Device_MutatorVolume_V2_C_UAID_30560F202F92500A03_1426198280",
+      "settings": {
+        "zoneWidth": 2,
+        "zoneDepth": 16,
+        "zoneHeight": 4,
+        "bAllowBuilding": false,
+        "bAllowEditing": false,
+        "bAllowWeaponFire": false,
+        "enabledOnPhase": "None"
+      }
+    },
+    {
+      "label": "KT29_Rift_BlueSafeWall",
+      "refPath": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.Device_Barrier_V2_Placed_C_UAID_30560F202F92500A03_1426944281",
+      "settings": {
+        "barrierWidth": 16,
+        "barrierDepth": 2,
+        "barrierHeight": 4,
+        "blockWeaponFire": true,
+        "zoneShape": "Box",
+        "enabledOnPhase": "None"
+      }
+    },
+    {
+      "label": "KT29_Rift_BlueJail",
+      "refPath": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.Device_Teleporter_V2_C_UAID_30560F202F92500A03_1427702282",
+      "settings": {}
+    },
+    {
+      "label": "KT29_Rift_BlueSkyReturn",
+      "refPath": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.Device_Teleporter_V2_C_UAID_30560F202F92500A03_1428703283",
+      "settings": {}
+    },
+    {
+      "label": "KT29_Rift_BlueReturnRift",
+      "refPath": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.Device_Teleporter_V2_C_UAID_30560F202F92500A03_1429462284",
+      "settings": {}
+    },
+    {
+      "label": "KT29_Rift_BlueVendor",
+      "refPath": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.Device_VendingMachine_V2_C_UAID_30560F202F92500A03_1430338285",
+      "settings": {}
+    },
+    {
+      "label": "KT29_Rift_BlueCaptureEffect",
+      "refPath": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.Device_VFXSpawner_V2_C_UAID_30560F202F92500A03_1431180286",
+      "settings": {}
+    },
+    {
+      "label": "KT29_Rift_FlagChoice0",
+      "refPath": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.Device_Button_V2_C_UAID_30560F202F92500A03_1431982287",
+      "settings": {}
+    },
+    {
+      "label": "KT29_Rift_ReturnChoice0",
+      "refPath": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.Device_Button_V2_C_UAID_30560F202F92500A03_1432657288",
+      "settings": {}
+    },
+    {
+      "label": "KT29_Rift_FlagChoice1",
+      "refPath": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.Device_Button_V2_C_UAID_30560F202F92500A03_1433280289",
+      "settings": {}
+    },
+    {
+      "label": "KT29_Rift_ReturnChoice1",
+      "refPath": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.Device_Button_V2_C_UAID_30560F202F92500A03_1433977290",
+      "settings": {}
+    },
+    {
+      "label": "KT29_Rift_FlagChoice2",
+      "refPath": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.Device_Button_V2_C_UAID_30560F202F92500A03_1434874291",
+      "settings": {}
+    },
+    {
+      "label": "KT29_Rift_ReturnChoice2",
+      "refPath": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.Device_Button_V2_C_UAID_30560F202F92500A03_1435607292",
+      "settings": {}
+    },
+    {
+      "label": "KT29_Rift_FlagChoice3",
+      "refPath": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.Device_Button_V2_C_UAID_30560F202F92500A03_1436295293",
+      "settings": {}
+    },
+    {
+      "label": "KT29_Rift_ReturnChoice3",
+      "refPath": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.Device_Button_V2_C_UAID_30560F202F92500A03_1436966294",
+      "settings": {}
+    },
+    {
+      "label": "KT29_Rift_CaptureGold",
+      "refPath": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.Device_ItemGranter_V2_C_UAID_30560F202F92500A03_1437895295",
+      "settings": {}
+    },
+    {
+      "label": "KT29_Rift_SetupMaterials",
+      "refPath": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.Device_ItemGranter_V2_C_UAID_30560F202F92500A03_1438666296",
+      "settings": {}
+    },
+    {
+      "label": "KT29_Rift_OptionalShoes",
+      "refPath": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.Device_ItemSpawner_V3_C_UAID_30560F202F92500A03_1439378297",
+      "settings": {}
+    },
+    {
+      "label": "KT29_Rift_StartAlarm",
+      "refPath": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.Device_CRD_AudioPlayer_C_UAID_30560F202F92500A03_1440066298",
+      "settings": {}
+    },
+    {
+      "label": "KT29_Rift_StartVoice",
+      "refPath": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.Device_CRD_AudioPlayer_C_UAID_30560F202F92500A03_1440838299",
+      "settings": {}
+    },
+    {
+      "label": "KT29_Rift_CaptureAudio",
+      "refPath": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.Device_CRD_AudioPlayer_C_UAID_30560F202F92500A03_1441494300",
+      "settings": {}
+    }
+  ],
+  "controller_readback": "{\r\n\t\"RiftSetupVerified\": false\r\n}",
+  "reboot_hold_readback": [
+    {
+      "label": "KT24_Team_RebootNorthUse",
+      "settings": "{\"interactTime\":5,\"interactTimeOverride\":-1}"
+    },
+    {
+      "label": "KT24_Team_RebootCentreUse",
+      "settings": "{\"interactTime\":5,\"interactTimeOverride\":-1}"
+    },
+    {
+      "label": "KT24_Team_RebootSouthUse",
+      "settings": "{\"interactTime\":5,\"interactTimeOverride\":-1}"
+    }
+  ],
+  "registered_items": [
+    {
+      "granter": {
+        "refPath": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.Device_ItemGranter_V2_C_UAID_30560F202F92500A03_1437895295"
+      },
+      "items": [
+        {
+          "itemDefinition": {
+            "refPath": "/Game/Items/ResourcePickups/GoldItemData.GoldItemData"
+          },
+          "itemQuantity": 1
+        }
+      ],
+      "onGrantAction": "Keep All"
+    },
+    {
+      "granter": {
+        "refPath": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.Device_ItemGranter_V2_C_UAID_30560F202F92500A03_1438666296"
+      },
+      "items": [
+        {
+          "itemDefinition": {
+            "refPath": "/Game/Items/ResourcePickups/WoodItemData.WoodItemData"
+          },
+          "itemQuantity": 300
+        },
+        {
+          "itemDefinition": {
+            "refPath": "/Game/Items/ResourcePickups/StoneItemData.StoneItemData"
+          },
+          "itemQuantity": 200
+        },
+        {
+          "itemDefinition": {
+            "refPath": "/Game/Items/ResourcePickups/MetalItemData.MetalItemData"
+          },
+          "itemQuantity": 100
+        }
+      ],
+      "onGrantAction": "Clear Resources"
+    }
+  ],
+  "acceptance": "disabled; creative resources registered; upload/gameplay validation, audio, socket collision and multiplayer tests required"
+}

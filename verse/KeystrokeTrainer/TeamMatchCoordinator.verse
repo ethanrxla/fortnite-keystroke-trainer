@@ -10,6 +10,14 @@ using { /Verse.org/Verse }
 using { /Verse.org/Random }
 using { /UnrealEngine.com/Temporary/SpatialMath }
 
+# Suppress the lobby's unlimited gold/consumable packet during match-owned lives.
+var KTTeamInventoryOwners:weak_map(session, [agent]logic) = map{}
+KTTeamOwnsInventory(A:agent)<transacts>:logic =
+    if (Owners := KTTeamInventoryOwners[GetSession()], Owners[A]?) then true else false
+KTSetTeamInventoryOwner(A:agent, Active:logic)<transacts>:void =
+    var Owners:[agent]logic = if (Current := KTTeamInventoryOwners[GetSession()]) then Current else map{}
+    if (set Owners[A] = Active, set KTTeamInventoryOwners[GetSession()] = Owners) {}
+
 kt_team_death_listener := class:
     Owner:kt_team_match_device
     Participant:agent
@@ -27,6 +35,15 @@ kt_team_reboot_listener := class:
     Index:int
     OnUse(A:agent):void = Owner.FastReboot(A, Button, Index)
 
+kt_rift_place_listener := class:
+    Owner:kt_team_match_device
+    Kind:kt_rift_objective
+    Position:vector3
+    OnUse(A:agent):void =
+        Result := Owner.PlaceRiftObjective(A, Owner.Match.Epoch, Kind, Position)
+        Label := if (Result = kt_rift_request_result.Accepted) then "Objective placed" else if (Result = kt_rift_request_result.OutsideSetup) then "Placement is only available during setup" else "Choose a verified socket in your territory"
+        Owner.Status.Show(A, Owner.Text(Label), ?DisplayTime := 3.0)
+
 kt_team_match_device<public> := class(creative_device):
     @editable ReadyForPlaytest:logic = false
     var Arena:volume_device = volume_device{}
@@ -42,16 +59,19 @@ kt_team_match_device<public> := class(creative_device):
     # Separate acceptance gate: old native flag verification does not certify the
     # new setup wall, movable objectives, jail, protected shops or rift delivery.
     @editable RiftSetupVerified:logic = false
-    @editable RiftSetupWall:?barrier_device = false
+    @editable var RiftSetupWall:?barrier_device = false
     # Ordered red, blue. Native configuration must block weapon fire/building
     # in these zones and bullets across each safe-zone wall, including ignored players.
-    @editable RiftSafeZones:[]mutator_zone_device = array{}
-    @editable RiftSafeWalls:[]barrier_device = array{}
-    @editable RiftJailAnchors:[]teleporter_device = array{}
-    @editable RiftSkyReturns:[]teleporter_device = array{}
-    @editable RiftStartAlarm:?audio_player_device = false
-    @editable RiftStartVoice:?audio_player_device = false
-    @editable RiftCaptureAlarm:?audio_player_device = false
+    @editable var RiftSafeZones:[]mutator_zone_device = array{}
+    @editable var RiftSafeWalls:[]barrier_device = array{}
+    @editable var RiftJailAnchors:[]teleporter_device = array{}
+    @editable var RiftSkyReturns:[]teleporter_device = array{}
+    @editable var RiftReturnRifts:[]teleporter_device = array{}
+    @editable var RiftFlagPlacementButtons:[]button_device = array{}
+    @editable var RiftReturnPlacementButtons:[]button_device = array{}
+    @editable var RiftStartAlarm:?audio_player_device = false
+    @editable var RiftStartVoice:?audio_player_device = false
+    @editable var RiftCaptureAlarm:?audio_player_device = false
     @editable RespawnDelaySeconds:float = 15.0
     @editable AmmoPolicyVerified:logic = false
     @editable HealsVerified:logic = false
@@ -82,12 +102,14 @@ kt_team_match_device<public> := class(creative_device):
     var RumbleLeader:?agent = false
     var RoundBusy:logic = false
     var Jailed:[agent]logic = map{}
+    var DeathSerial:[agent]int = map{}
 
     RiftReady()<transacts>:logic =
         logic{CTFDevicesVerified? and RiftSetupVerified? and RiftIntegration.ReadyForMatch()? and RiftSetupWall? and
             RiftSafeZones.Length = 2 and RiftSafeWalls.Length = 2 and
             RiftJailAnchors.Length = 2 and RiftSkyReturns.Length = 2 and
-            RiftStartAlarm? and RiftStartVoice? and RiftCaptureAlarm? and CTFBases.Length = 2}
+            RiftStartAlarm? and RiftStartVoice? and RiftCaptureAlarm? and CTFBases.Length = 2 and
+            RiftFlagPlacementButtons.Length = RiftIntegration.PlacementSockets.Length and RiftReturnPlacementButtons.Length = RiftIntegration.PlacementSockets.Length}
 
     Text<localizes>(S:string):message = "{S}"
 
@@ -144,11 +166,24 @@ kt_team_match_device<public> := class(creative_device):
             set RebootButtons += array{B}
             Listener := kt_team_reboot_listener{Owner := Self, Button := B, Index := Index}
             B.InteractedWithEvent.Subscribe(Listener.OnUse)
+            B.SetInteractionTime(KTTeamRebootSeconds)
             B.Disable()
         for (O : FindCreativeObjectsWithTag(kt_team_ctf_base_tag{}), D := capture_area_device[O]):
             Side := if (D.GetTransform().Translation.X < 75000.0) then 1 else 2
             if (set CTFBases[Side] = D) {}
             D.Disable()
+        LoadRiftPorts()
+        if (RedBase := CTFBases[1], BlueBase := CTFBases[2]):
+            RiftIntegration.Bind(array{RedFlag, BlueFlag}, array{RedBase, BlueBase}, RiftReturnRifts)
+        for (I -> Position : RiftIntegration.PlacementSockets):
+            if (B := RiftFlagPlacementButtons[I]):
+                Listener := kt_rift_place_listener{Owner := Self, Kind := kt_rift_objective.Flag, Position := Position}
+                B.InteractedWithEvent.Subscribe(Listener.OnUse)
+                B.Disable()
+            if (B := RiftReturnPlacementButtons[I]):
+                Listener := kt_rift_place_listener{Owner := Self, Kind := kt_rift_objective.ReturnRift, Position := Position}
+                B.InteractedWithEvent.Subscribe(Listener.OnUse)
+                B.Disable()
         RedFlag.Disable()
         BlueFlag.Disable()
         StartSkirmish.InteractedWithEvent.Subscribe(OnSkirmish)
@@ -227,10 +262,7 @@ kt_team_match_device<public> := class(creative_device):
                     Match.Cancel()
 
     OnZone(A:agent):void =
-        if (ReadyForPlaytest?):
-            Begin(A, kt_team_mode.Zone)
-        else:
-            Status.Show(A, Text("TERRITORY: three capture points; match setup awaiting playtest"), ?DisplayTime := 4.0)
+        Status.Show(A, Text("Join a glowing lobby pad to vote for CONTROL"), ?DisplayTime := 4.0)
 
     StartQueued(Players:[]agent, Mode:kt_team_mode, NoBuild:logic):logic =
         if (not ReadyForPlaytest? or not AmmoPolicyVerified? or not Pressure.Ready? or Match.Phase <> kt_team_phase.Waiting or Players.Length < 2 or Players.Length > 8):
@@ -261,6 +293,8 @@ kt_team_match_device<public> := class(creative_device):
         Started := Match.Begin(Mode, Red, Blue)
         if (Started?, Red + Blue = Players.Length):
             set Roster = Candidates
+            for (A -> Side : Roster):
+                KTSetTeamInventoryOwner(A, true)
             set Kills = map{}
             for (Player -> Id : Candidates):
                 if (set Match.FFAScores[Id] = 0) {}
@@ -288,15 +322,9 @@ kt_team_match_device<public> := class(creative_device):
         false
 
     OnSkirmish(A:agent):void =
-        if (ReadyForPlaytest?):
-            Begin(A, kt_team_mode.Skirmish)
-        else:
-            Status.Show(A, Text("SKIRMISH: loadout, respawn and cleanup setup awaiting playtest"), ?DisplayTime := 4.0)
+        Status.Show(A, Text("Join a glowing lobby pad to vote for SKIRMISH"), ?DisplayTime := 4.0)
     OnCTF(A:agent):void =
-        if (ReadyForPlaytest? and RiftReady()?):
-            Begin(A, kt_team_mode.CTF)
-        else:
-            Status.Show(A, Text("CTF setup is awaiting validation"), ?DisplayTime := 3.0)
+        Status.Show(A, Text("Join a glowing lobby pad to vote for RIFT when setup is ready"), ?DisplayTime := 4.0)
 
     Begin(A:agent, Mode:kt_team_mode):void =
         if (Mode = kt_team_mode.CTF and not RiftReady()?):
@@ -323,6 +351,8 @@ kt_team_match_device<public> := class(creative_device):
             Started := Match.Begin(Mode, Red, Blue)
             if (Started?):
                 set Roster = Candidates
+                for (P -> Side : Roster):
+                    KTSetTeamInventoryOwner(P, true)
                 set Host = option{A}
                 set PendingRespawn = map{}
                 set PreparedSpawn = false
@@ -346,6 +376,11 @@ kt_team_match_device<public> := class(creative_device):
             Status.Show(A, Text(S), ?DisplayTime := 4.0)
 
     PrepareRift():void =
+        RiftIntegration.Begin(Match.Epoch)
+        for (B : RiftFlagPlacementButtons):
+            B.Enable()
+        for (B : RiftReturnPlacementButtons):
+            B.Enable()
         if (Wall := RiftSetupWall?) then Wall.Enable()
         set Pressure.SafeZones = RiftSafeZones
         for (Zone : RiftSafeZones):
@@ -360,6 +395,66 @@ kt_team_match_device<public> := class(creative_device):
             Supplies.Grant(A)
             MaterialsGranted := RiftIntegration.GrantSetupMaterials(A)
         Broadcast("RIFT | 60 seconds: build your base; place flag and rift outside the safe zone")
+
+    # Native classic actors cannot be assigned as Verse wrappers through editor
+    # SetDeviceProperty. Tags provide typed runtime references without fake refs.
+    LoadRiftPorts():void =
+        var Zones:[int]mutator_zone_device = map{}
+        var Walls:[int]barrier_device = map{}
+        var Jails:[int]teleporter_device = map{}
+        var Sky:[int]teleporter_device = map{}
+        var Returns:[int]teleporter_device = map{}
+        var Effects:[int]vfx_spawner_device = map{}
+        var Vendors:[int]vending_machine_device = map{}
+        var Flags:[int]button_device = map{}
+        var RiftButtons:[int]button_device = map{}
+        set RiftIntegration.PlacementSockets = array{vector3{X := 73728.0, Y := -58112.0}, vector3{X := 74240.0, Y := -53504.0}, vector3{X := 77824.0, Y := -58112.0}, vector3{X := 77312.0, Y := -53000.0}}
+        for (O : FindCreativeObjectsWithTag(kt_rift_port_tag{})):
+            P := O.GetTransform().Translation
+            Side := if (P.X < 75776.0) then 0 else 1
+            if (B := barrier_device[O]):
+                if (Abs(P.X - 75776.0) < 10.0) then set RiftSetupWall = option{B}
+                else if (set Walls[Side] = B) {}
+            else if (Z := mutator_zone_device[O]):
+                if (set Zones[Side] = Z) {}
+            else if (T := teleporter_device[O]):
+                if (P.Z > 1000.0):
+                    if (set Sky[Side] = T) {}
+                else if (Abs(P.Y + 58880.0) < 10.0):
+                    if (set Jails[Side] = T) {}
+                else if (set Returns[Side] = T) {}
+            else if (B := button_device[O]):
+                for (I -> Socket : RiftIntegration.PlacementSockets, Abs(P.X - Socket.X) < 10.0):
+                    if (Abs(P.Y - Socket.Y + 100.0) < 10.0):
+                        if (set Flags[I] = B) {}
+                    else if (Abs(P.Y - Socket.Y - 100.0) < 10.0):
+                        if (set RiftButtons[I] = B) {}
+            else if (G := item_granter_device[O]):
+                if (Abs(P.Z + 600.0) < 10.0) then set RiftIntegration.GoldUnit = option{G}
+                else if (Abs(P.Z + 800.0) < 10.0) then set RiftIntegration.SetupMaterials = option{G}
+            else if (S := item_spawner_device[O]):
+                set RiftIntegration.OptionalShoes = option{S}
+            else if (E := vfx_spawner_device[O]):
+                if (set Effects[Side] = E) {}
+            else if (V := vending_machine_device[O]):
+                if (set Vendors[Side] = V) {}
+            else if (A := audio_player_device[O]):
+                if (Abs(P.Z + 1200.0) < 10.0) then set RiftStartAlarm = option{A}
+                else if (Abs(P.Z + 1400.0) < 10.0) then set RiftStartVoice = option{A}
+                else:
+                    set RiftCaptureAlarm = option{A}
+                    set RiftIntegration.CaptureSound = option{A}
+        if (Zones.Length = 2) then set RiftSafeZones = for (I := 0..1, D := Zones[I]) { D }
+        if (Walls.Length = 2) then set RiftSafeWalls = for (I := 0..1, D := Walls[I]) { D }
+        if (Jails.Length = 2) then set RiftJailAnchors = for (I := 0..1, D := Jails[I]) { D }
+        if (Sky.Length = 2) then set RiftSkyReturns = for (I := 0..1, D := Sky[I]) { D }
+        if (Returns.Length = 2) then set RiftReturnRifts = for (I := 0..1, D := Returns[I]) { D }
+        set RiftFlagPlacementButtons = for (I := 0..3, D := Flags[I]) { D }
+        set RiftReturnPlacementButtons = for (I := 0..3, D := RiftButtons[I]) { D }
+        set RiftIntegration.SafeZones = RiftSafeZones
+        set RiftIntegration.SafeWalls = RiftSafeWalls
+        set RiftIntegration.BaseVendors = for (I := 0..1, D := Vendors[I]) { D }
+        set RiftIntegration.CaptureEffects = for (I := 0..1, D := Effects[I]) { D }
 
     Transition():void =
         if (Match.Phase = kt_team_phase.Live):
@@ -381,6 +476,10 @@ kt_team_match_device<public> := class(creative_device):
                 Transition()
                 return
             if (Match.Mode = kt_team_mode.CTF):
+                for (B : RiftFlagPlacementButtons):
+                    B.Disable()
+                for (B : RiftReturnPlacementButtons):
+                    B.Disable()
                 if (Wall := RiftSetupWall?) then Wall.Disable()
                 RedFlag.Enable()
                 BlueFlag.Enable()
@@ -397,7 +496,7 @@ kt_team_match_device<public> := class(creative_device):
                 if (BuildDisabled?) then D.Enable() else D.Disable()
             set RebootReadyAt = map{}
             for (B : RebootButtons):
-                B.Enable()
+                if (Match.Mode = kt_team_mode.Elimination or Match.Mode = kt_team_mode.Rumble) then B.Disable() else B.Enable()
             if (Match.Mode = kt_team_mode.Elimination):
                 Broadcast("ROUND 1 | 90s rounds, storm in final 30s | most rounds won at 5:00")
             else if (Match.Mode = kt_team_mode.Rumble):
@@ -405,6 +504,11 @@ kt_team_match_device<public> := class(creative_device):
             else:
                 Broadcast("LIVE | {KTModeName(Match.Mode)} | play the objective")
         else if (Match.Phase = kt_team_phase.Recovery):
+            RiftIntegration.Stop()
+            for (B : RiftFlagPlacementButtons):
+                B.Disable()
+            for (B : RiftReturnPlacementButtons):
+                B.Disable()
             Supplies.Stop()
             Pressure.Stop()
             set Pressure.SafeZones = array{}
@@ -418,6 +522,8 @@ kt_team_match_device<public> := class(creative_device):
                 C.ReleaseFromStasis()
                 if (Jailed[A]?) then C.SetVulnerability(true)
             set Jailed = map{}
+            for (A -> Side : Roster):
+                KTSetTeamInventoryOwner(A, false)
             set PreparedSpawn = false
             if (D := NoBuildZone?) then D.Disable()
             for (Subscription : DeathSubscriptions):
@@ -484,13 +590,15 @@ kt_team_match_device<public> := class(creative_device):
                 if (Match.Mode = kt_team_mode.Rumble):
                     if (set Kills[KA] = (if (N := Match.FFAScores[KillerId]) then N else 0)) {}
             if (set PendingRespawn[A] = true):
+                Serial := (if (Old := DeathSerial[A]) then Old else 0) + 1
+                if (set DeathSerial[A] = Serial) {}
                 if (Match.Mode = kt_team_mode.Elimination):
                     # No respawn: wait for a teammate's reboot or the next round. A wiped team loses the round.
                     return # resolve both sides together after damage this tick
                 else:
                     P := Result.EliminatedCharacter.GetTransform().Translation
                     Invader := logic{Match.Mode = kt_team_mode.CTF and KTRiftTerritoryAt(P.X, P.Y) = 3 - Side}
-                    spawn{RespawnParticipant(A, Side, Token, Invader, GetSimulationElapsedTime())}
+                    spawn{RespawnParticipant(A, Side, Token, Invader, GetSimulationElapsedTime(), Serial)}
 
     CheckWipe(Token:int):void =
         if (RoundBusy?):
@@ -544,14 +652,14 @@ kt_team_match_device<public> := class(creative_device):
             C.ReleaseFromStasis()
         set RoundBusy = false
 
-    RespawnParticipant(A:agent, Side:int, Token:int, Invader:logic, DiedAt:float)<suspends>:void =
+    RespawnParticipant(A:agent, Side:int, Token:int, Invader:logic, DiedAt:float, Serial:int)<suspends>:void =
         if (Invader?, Anchor := RiftJailAnchors[2 - Side]):
             # The anchor is inside a native no-fire safe volume. PendingRespawn
             # remains true throughout jail; being alive there is not a reboot.
-            if (Token <> Match.Epoch or Match.Phase <> kt_team_phase.Live) then return
+            if (Token <> Match.Epoch or Match.Phase <> kt_team_phase.Live or DeathSerial[A] <> Serial) then return
             A.Respawn(Anchor.GetTransform().Translation, SpawnRotation(Side))
             Sleep(0.1)
-            if (Token <> Match.Epoch or Match.Phase <> kt_team_phase.Live) then return
+            if (Token <> Match.Epoch or Match.Phase <> kt_team_phase.Live or DeathSerial[A] <> Serial) then return
             if (C := A.GetFortCharacter[], C.IsActive[]):
                 if (set Jailed[A] = true) {}
                 C.SetVulnerability(false)
@@ -562,7 +670,7 @@ kt_team_match_device<public> := class(creative_device):
             Sleep(Max(1.0, RespawnDelaySeconds))
         if (Token <> Match.Epoch or Match.Phase <> kt_team_phase.Live):
             return
-        if (not PendingRespawn[A]?):
+        if (not PendingRespawn[A]? or DeathSerial[A] <> Serial):
             return
         # Refuse stale work after a team change or a player leaving the playspace.
         Teams := GetPlayspace().GetTeamCollection()
@@ -588,7 +696,7 @@ kt_team_match_device<public> := class(creative_device):
                 Transition()
                 return
             Sleep(0.1)
-            if (Token = Match.Epoch, C := A.GetFortCharacter[], C.IsActive[]):
+            if (Token = Match.Epoch, DeathSerial[A] = Serial, C := A.GetFortCharacter[], C.IsActive[]):
                 C.SetHealth(100.0)
                 C.SetShield(100.0)
                 Supplies.Grant(A)
@@ -601,31 +709,45 @@ kt_team_match_device<public> := class(creative_device):
         if (Match.Phase = kt_team_phase.Recovery):
             Transition()
 
-    # The van's dedicated native button requires a continuous four-second hold.
+    # The van's native button requires a continuous five-second hold.
     # Validate the user and proximity after that hold; enemies cannot revive this team.
     FastReboot(A:agent, B:button_device, Index:int):void =
-        if (Match.Phase <> kt_team_phase.Live or RoundBusy?):
+        if (Match.Phase <> kt_team_phase.Live or RoundBusy? or Match.Mode = kt_team_mode.Elimination or Match.Mode = kt_team_mode.Rumble):
             return
         Ready := if (At := RebootReadyAt[Index]) then At else 0.0
         if (GetSimulationElapsedTime() < Ready):
             return
-        if (Side := Roster[A], C := A.GetFortCharacter[], C.IsActive[], Distance(C.GetTransform().Translation, B.GetTransform().Translation) <= 450.0):
+        if (Side := Roster[A], not PendingRespawn[A]?, C := A.GetFortCharacter[], C.IsActive[], Distance(C.GetTransform().Translation, B.GetTransform().Translation) <= 450.0):
             var Rebooted:logic = false
             for (Other -> OtherSide : Roster, OtherSide = Side, PendingRespawn[Other]?):
-                if (Dead := Other.GetFortCharacter[], not Dead.IsActive[]):
+                if (Dead := Other.GetFortCharacter[], Jailed[Other]? or not Dead.IsActive[]):
                     if (set PendingRespawn[Other] = false):
                         set Rebooted = true
-                        spawn{ReviveAtBase(Other, Side, Match.Epoch)}
+                        Serial := if (Value := DeathSerial[Other]) then Value else 0
+                        spawn{ReviveAtBase(Other, Side, Match.Epoch, Serial)}
             if (Rebooted?, set RebootReadyAt[Index] = GetSimulationElapsedTime() + 30.0):
                 Broadcast("Team {Side} rebooted | van recharges for 30 seconds")
 
-    ReviveAtBase(A:agent, Side:int, Token:int)<suspends>:void =
-        if (Token <> Match.Epoch or Match.Phase <> kt_team_phase.Live):
+    ReviveAtBase(A:agent, Side:int, Token:int, Serial:int)<suspends>:void =
+        if (Token <> Match.Epoch or Match.Phase <> kt_team_phase.Live or Match.Mode = kt_team_mode.Elimination or Match.Mode = kt_team_mode.Rumble):
+            return
+        if (DeathSerial[A] <> Serial):
             return
         if (Place := SpawnPoint(Side)?):
-            A.Respawn(Place, SpawnRotation(Side))
+            if (Jailed[A]?, C := A.GetFortCharacter[], C.IsActive[]):
+                if (not C.TeleportTo[Place, SpawnRotation(Side)]):
+                    Match.Cancel()
+                    Transition()
+                    return
+                C.ReleaseFromStasis()
+                WatchDeath(A, C)
+                C.SetVulnerability(true)
+                if (set Jailed[A] = false) {}
+                Status.Show(A, Text("Teammate rebooted you out of jail"), ?DisplayTime := 4.0)
+            else:
+                A.Respawn(Place, SpawnRotation(Side))
             Sleep(0.1)
-            if (Token = Match.Epoch, C := A.GetFortCharacter[], C.IsActive[]):
+            if (Token = Match.Epoch, DeathSerial[A] = Serial, C := A.GetFortCharacter[], C.IsActive[]):
                 C.SetHealth(100.0)
                 C.SetShield(100.0)
                 Supplies.Grant(A)
@@ -641,6 +763,11 @@ kt_team_match_device<public> := class(creative_device):
 
     OnDeparture(P:player):void =
         if (Roster[P]):
+            Match.Cancel()
+            Transition()
+
+    Withdraw(A:agent):void =
+        if (Roster[A], Match.Phase = kt_team_phase.Countdown or Match.Phase = kt_team_phase.Live):
             Match.Cancel()
             Transition()
 
@@ -674,14 +801,27 @@ kt_team_match_device<public> := class(creative_device):
 
     Capture(A:agent, Team:int):void =
         if (Roster[A] = Team):
+            Token := Match.Epoch
             Accepted := Match.Capture(Match.Epoch, Team)
             if (Accepted?):
                 RefreshCTFBases()
                 Members := for (P -> Side : Roster, Side = Team) { P }
-                GoldGranted := RiftIntegration.AwardTeamCaptureGold(Team, Members)
+                CaptureNumber := if (Team = 1) then Match.RedScore else Match.BlueScore
+                GoldGranted := RiftIntegration.AwardTeamCaptureGold(Token, Team, CaptureNumber, Members)
                 EffectPlayed := RiftIntegration.PlayCaptureRiftEffect(A)
                 if (Alarm := RiftCaptureAlarm?) then Alarm.Play()
                 if (Sky := RiftSkyReturns[Team - 1]) then Sky.Teleport(A)
                 Broadcast("Capture | {Match.RedScore} - {Match.BlueScore}")
                 if (Match.Phase = kt_team_phase.Recovery):
                     Transition()
+
+    PlaceRiftObjective(A:agent, Token:int, Kind:kt_rift_objective, Position:vector3):kt_rift_request_result =
+        if (Token <> Match.Epoch or Match.Mode <> kt_team_mode.CTF or Match.Phase <> kt_team_phase.Countdown):
+            return kt_rift_request_result.OutsideSetup
+        if (Side := Roster[A], C := A.GetFortCharacter[], C.IsActive[], P := player[A], GetPlayspace().GetPlayers().Find[P]):
+            Result := RiftIntegration.RequestPlacement(Match, Side, Kind, Position)
+            if (Result = kt_rift_request_result.MoveFailed):
+                Match.Cancel()
+                Transition()
+            return Result
+        kt_rift_request_result.InvalidTeam

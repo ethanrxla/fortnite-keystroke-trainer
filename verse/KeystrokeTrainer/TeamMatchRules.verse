@@ -20,6 +20,7 @@ KTMatchSeconds<public>:float = 300.0
 KTRoundSeconds<public>:float = 90.0
 KTCTFPrepSeconds<public>:float = 60.0
 KTCTFJailSeconds<public>:float = 15.0
+KTTeamRebootSeconds<public>:float = 5.0
 
 # Court geometry: west/east territory, one-tile neutral strip either side of
 # centre. Safe strips are inside territory but forbidden for objective placement.
