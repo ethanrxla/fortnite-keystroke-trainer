@@ -2,7 +2,7 @@
   "verse/KeystrokeTrainer/EditGuide.verse": "15c974521a18681030756b191196e49992072b5f7510f5f38644f964dfc35a19",
   "verse/KeystrokeTrainer/EditPolicy.verse": "656b05d0246c6929525d898e58e0889755afffd881e82a8ca17c28be910cdbcc",
   "verse/KeystrokeTrainer/EditPolicyPieces.verse": "e44b95d4d93afdd6ab044a658fbc735520705635d99d1f1b07d2f655cb371995",
-  "verse/KeystrokeTrainer/EditIntent.verse": "eb6ef0793384fc99f7b276681bfcf4db949226f32196b1e1bed1989b3e46101d",
+  "verse/KeystrokeTrainer/EditIntent.verse": "42c22883dcf03f56c6c9b77a2bdcc9adff15cc711132923e0b800f6b6da09532",
   "verse/KeystrokeTrainer/EditCatalog.verse": "5bd2a6548ef6b9016f7a13b085d5b24a470b835d1aa533f17aeb4e032ca9a296",
   "verse/KeystrokeTrainer/EditPatterns.verse": "bd125de2c118916d331ab5856cb8ac029aa1fe25e580c60902f8cdef62feff87",
   "verse/KeystrokeTrainer/EditTargets.verse": "0fa3f2339e5f55d6673b10ad52fe5dcbe4f5510db49feb995fb0f37aa71d1ca1",
@@ -20,5 +20,5 @@
   "companion/autostart.pyw": "c98465c0eb28cfe6f54d50e7f36e1f172f253d31c32d848226e66004fe80220d",
   "shared/edit-policy.json": "3b9eef9e6000a76e855d627721c5e058c0bc9694552ba988e42f754f1b04f27c",
   "shared/edits.json": "f42dfd8b72fd0dc90ac7e35c54bb98572e7c4ea1e644ff849a6f19f6598dbe03",
-  "shared/edit-intent.json": "e504d66c909f86e804ae2299a7a5e82bcc3dd794b199a9ab8b610c938d5cf7a1"
+  "shared/edit-intent.json": "9080c5062b46420ac6402fa5b35f515acca9c6e2ac3fef2cc6d5401b70463ae2"
 }

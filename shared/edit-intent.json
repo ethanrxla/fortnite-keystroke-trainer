@@ -1,5 +1,5 @@
 {
-  "_doc": "Where the crosshair is on the piece -> which edit the guide shows. Precomputed into a 2-D lookup array (edit_ranker.IntentMap, 0.1-tile cells) so each frame is one O(1) array read. 'tiles' lists the edit for each tile in tile order (walls 0..8 row-major from the bottom-left as seen; 2x2 pieces 0 near-left, 1 near-right, 2 far-left, 3 far-right). 'junctions' override within 'junction_radius' tiles of an inner tile corner (walls: the four corners of the centre tile). Optional 'zones' are [u0, v0, u1, v1, edit] rectangles over the tile rule; junctions win over both. Player preferences: corners at all four centre-tile junctions (2026-10-11: the half arch there was reverted), triangles (lower corners) on the bottom corner tiles and on the middle side tiles by half (upper half -> upper corner), half wall on the top row centre, door on the bottom row centre, window in the centre. Jev's ranking is the fallback when the mapped edit does not contain what is already selected.",
+  "_doc": "Where the crosshair is on the piece -> which edit the guide shows. Precomputed into a 2-D lookup array (edit_ranker.IntentMap, 0.1-tile cells) so each frame is one O(1) array read. 'tiles' lists the edit for each tile in tile order (walls 0..8 row-major from the bottom-left as seen; 2x2 pieces 0 near-left, 1 near-right, 2 far-left, 3 far-right). 'junctions' override within 'junction_radius' tiles of an inner tile corner (walls: the four corners of the centre tile). Optional 'zones' are [u0, v0, u1, v1, edit] rectangles over the tile rule; junctions win over both. Player preferences: half arch at the centre tile's lower junctions on that side (2026-10-12, restored), upper corners at its upper junctions, triangles (lower corners) on the bottom corner tiles and on the middle side tiles by half (upper half -> upper corner), half wall on the top row centre, door on the bottom row centre, window in the centre. Jev's ranking is the fallback when the mapped edit does not contain what is already selected.",
   "wall": {
     "tiles": ["corner_lower_left", "door", "corner_lower_right",
               "corner_lower_left", "window_center", "corner_lower_right",
@@ -8,7 +8,7 @@
     "zones": [[0.0, 1.5, 1.0, 2.0, "corner_upper_left"], [2.0, 1.5, 3.0, 2.0, "corner_upper_right"]],
     "_junctions": "Player 2026-10-10 screenshot: the half arch (the lower four tiles) is made from the lower junctions of the centre tile, on that side.",
     "junction_radius": 0.35,
-    "junctions": {"1,1": "corner_lower_left", "2,1": "corner_lower_right", "1,2": "corner_upper_left", "2,2": "corner_upper_right"}
+    "junctions": {"1,1": "half_arch_left", "2,1": "half_arch_right", "1,2": "corner_upper_left", "2,2": "corner_upper_right"}
   },
   "floor": {
     "tiles": ["floor_hole_near_left", "floor_hole_near_right", "floor_hole_far_left", "floor_hole_far_right"]
