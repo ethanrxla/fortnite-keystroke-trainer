@@ -35,7 +35,8 @@ class ReviewServerTests(unittest.TestCase):
         self.dir.cleanup()
 
     def get(self, path):
-        with urllib.request.urlopen(self.base + path, timeout=5) as r:
+        req=urllib.request.Request(self.base+path,headers={"X-KT-Token":"t0k"})
+        with urllib.request.urlopen(req, timeout=5) as r:
             return r.status, r.read().decode()
 
     def post(self, body, token="t0k"):
@@ -72,7 +73,7 @@ class PromotionTests(unittest.TestCase):
     def add(self, session, status="approved", matched="window_center", edit_id=None):
         r = record(attempt_id=str(uuid.uuid4()), session_id=session, matched_edit_id=matched)
         self.store.add_attempt(r)
-        self.store.add_label(r["attempt_id"], status, edit_id, reviewer="ethan")
+        self.store.add_label(r["attempt_id"], status, edit_id, reviewer="ethan", result_confirmed=status!="rejected")
 
     def window(self, data):
         return next(e for e in data["wall_edits"] if e["id"] == "window_center")

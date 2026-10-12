@@ -44,9 +44,19 @@ class Store:
         self.db = sqlite3.connect(str(path), timeout=10)
         self.db.execute("PRAGMA journal_mode=WAL")
         self.db.executescript(SCHEMA)
+        for table, columns in {
+            "keys": {"session_id": "TEXT", "profile_id": "TEXT", "profile_revision": "INTEGER",
+                     "edge": "TEXT DEFAULT 'down'", "actions": "TEXT", "confirm_edge": "TEXT"},
+            "labels": {"result_confirmed": "INTEGER DEFAULT 0", "piece": "TEXT"},
+        }.items():
+            present = {row[1] for row in self.db.execute(f"PRAGMA table_info({table})")}
+            for name, declaration in columns.items():
+                if name not in present:self.db.execute(f"ALTER TABLE {table} ADD COLUMN {name} {declaration}")
 
-    def add_key(self, ts, key, verdict, drill=None, src="overlay"):
-        self.db.execute("INSERT OR IGNORE INTO keys VALUES(?,?,?,?,?)", (ts, key, verdict, drill, src))
+    def add_key(self, ts, key, verdict, drill=None, src="overlay", session_id=None, profile_id=None, profile_revision=None, edge="down", actions=None, confirm_edge=None):
+        self.db.execute("INSERT OR IGNORE INTO keys(ts,key,verdict,drill,src,session_id,profile_id,profile_revision,edge,actions,confirm_edge) VALUES(?,?,?,?,?,?,?,?,?,?,?)",
+                        (ts, key, verdict, drill, src, session_id, profile_id, profile_revision, edge,
+                         json.dumps(actions) if actions is not None else None,confirm_edge))
 
     def add_kt(self, ts, rec):
         self.db.execute("INSERT OR IGNORE INTO kt VALUES(?,?,?,?)",
@@ -54,6 +64,8 @@ class Store:
 
     def add_attempt(self, record):
         """Insert or replace one edit attempt (keyed by attempt_id, so a re-read file is harmless)."""
+        existing=self.attempt(record["attempt_id"])
+        if existing and existing.get("record_revision",1)>=record.get("record_revision",1):return
         self.db.execute("INSERT OR REPLACE INTO edit_attempts(attempt_id, session_id, t_open, t_close, piece, outcome, "
                         "suggested, matched, record, enriched, synced) VALUES(?,?,?,?,?,?,?,?,?,"
                         "COALESCE((SELECT enriched FROM edit_attempts WHERE attempt_id=?),0),"
@@ -68,20 +80,36 @@ class Store:
         return json.loads(row[0]) if row else None
 
     def update_attempt(self, record, enriched=None):
+        if record.get("schema") == "edit_attempt.v2":
+            current=self.attempt(record["attempt_id"]) or {}
+            if current.get("record_revision",1)>record.get("record_revision",1):return
+            record = dict(record, record_revision=max(current.get("record_revision",1),record.get("record_revision",1)) + 1)
         self.db.execute("UPDATE edit_attempts SET record=?, outcome=?, matched=?, synced=0" +
                         (", enriched=?" if enriched is not None else "") + " WHERE attempt_id=?",
                         (json.dumps(record, sort_keys=True), record["outcome"], record.get("matched_edit_id")) +
                         ((int(enriched),) if enriched is not None else ()) + (record["attempt_id"],))
 
-    def add_label(self, attempt_id, status, edit_id=None, reviewer="local", note="", at=None):
+    def add_label(self, attempt_id, status, edit_id=None, reviewer="local", note="", at=None, result_confirmed=False, piece=None):
         import time
-        self.db.execute("INSERT OR REPLACE INTO labels VALUES(?,?,?,?,?,?,0)",
-                        (attempt_id, at if at is not None else time.time(), status, edit_id, reviewer, note))
+        from .edit_dictionary import EditDictionary
+        r = self.attempt(attempt_id)
+        if not r or status not in ("approved", "rejected", "relabelled"):raise ValueError("Invalid attempt or review status")
+        piece = piece or r["piece"]
+        edit_id = edit_id or (r.get("matched_edit_id") if status == "approved" else None)
+        edit = EditDictionary().all.get(edit_id) if edit_id else None
+        if status == "relabelled" and not edit:raise ValueError("Relabel needs a known edit")
+        if edit_id and (not edit or edit["piece"] != piece):raise ValueError("Edit does not belong to reviewed piece")
+        if result_confirmed and (status == "rejected" or not edit):raise ValueError("Confirmed result needs a reviewed edit")
+        self.db.execute("INSERT OR REPLACE INTO labels(attempt_id,at,status,edit_id,reviewer,note,synced,result_confirmed,piece) VALUES(?,?,?,?,?,?,0,?,?)",
+                        (attempt_id, at if at is not None else time.time(), status, edit_id, reviewer, note, int(result_confirmed), piece))
+        from .attempt_evidence import upgrade_record
+        updated = upgrade_record(r)
+        self.update_attempt(updated)  # a post-upload correction becomes pending again
 
     def label(self, attempt_id):
-        row = self.db.execute("SELECT status, edit_id, reviewer, at FROM labels WHERE attempt_id=? ORDER BY at DESC LIMIT 1",
+        row = self.db.execute("SELECT status, edit_id, reviewer, at, result_confirmed, piece FROM labels WHERE attempt_id=? ORDER BY at DESC LIMIT 1",
                               (attempt_id,)).fetchone()
-        return dict(zip(("status", "edit_id", "reviewer", "at"), row)) if row else None
+        return dict(zip(("status", "edit_id", "reviewer", "at", "result_confirmed", "piece"), row)) if row else None
 
     def offset(self, path):
         row = self.db.execute("SELECT offset FROM ingest WHERE path=?", (str(path),)).fetchone()

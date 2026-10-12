@@ -85,7 +85,10 @@ def ingest_overlay(store, folder=SESSIONS):
             except ValueError:
                 continue
             if "ts" in e and "key" in e:
-                store.add_key(e["ts"], e["key"], e["kind"], e.get("drill"), src=path.name)
+                store.add_key(e["ts"], e["key"], e["kind"], e.get("drill"), src=path.name,
+                              session_id=e.get("session_id"), profile_id=e.get("profile_id"),
+                              profile_revision=e.get("profile_revision"), edge=e.get("edge", "down"),
+                              actions=e.get("actions"), confirm_edge=e.get("confirm_edge"))
                 n += 1
     return n
 
@@ -156,6 +159,30 @@ def enrich_attempts(store, binds, now=None):
     done = 0
     for (attempt_id,) in store.rows("SELECT attempt_id FROM edit_attempts WHERE enriched=0 AND t_close<?", (now - ENRICH_DELAY,)):
         rec = store.attempt(attempt_id)
+        if rec.get("schema") == "edit_attempt.v2":
+            if not rec.get("profile_id") or rec.get("profile_revision") is None:continue
+            keys = store.rows("SELECT ts,key,edge,actions,confirm_edge FROM keys WHERE ts>? AND ts<=? AND session_id=? AND profile_id=? AND profile_revision=? AND verdict NOT IN ('repeat','unmapped') ORDER BY ts",
+                              (rec["t_edit_open"], rec["t_close"]+.15, rec["session_id"], rec["profile_id"], rec["profile_revision"]))
+            # Match the player's configured confirmation edge; a release is not assumed to confirm.
+            edge = getattr(binds, "confirm_edge", "down")
+            hits=[]
+            for t,k,e,actions,event_edge in keys:
+                if actions is None:continue  # Historical profile mapping unavailable.
+                action_set=set(json.loads(actions))
+                if 'edit_confirm' in action_set and e==(event_edge or edge):
+                    # A shared edit/confirm press only counts after observed selection, not by an arbitrary delay.
+                    if 'edit' not in action_set or (rec.get('t_first_select') is not None and t>=rec['t_first_select']):
+                        hits.append((t,e))
+            if hits:
+                rec["t_confirm"] = hits[-1][0]
+                rec["confirmation_evidence"] = "release" if hits[-1][1] == "up" else "press"
+                if rec["outcome"] == "selection_matched":rec["outcome"] = "confirm_observed"
+            resets = [t for t,k,e,actions,_ in keys if actions is not None and "reset" in json.loads(actions) and e == "down"]
+            if resets:rec["t_reset"] = resets[-1]
+            if keys or now - rec["t_close"] > 120:
+                store.update_attempt(rec, enriched=True)
+                done += 1
+            continue
         keys = store.rows("SELECT ts, key FROM keys WHERE ts>? AND ts<=? ORDER BY ts",
                           (rec["t_edit_open"] + 0.15, rec["t_close"] + 0.5))
         if not keys and not store.rows("SELECT 1 FROM keys WHERE ts>? LIMIT 1", (rec["t_close"],)):
@@ -164,7 +191,7 @@ def enrich_attempts(store, binds, now=None):
         resets = [t for t, k in keys if k in reset]
         if confirms and rec.get("t_confirm") is None:
             rec["t_confirm"] = confirms[-1]
-            if rec["outcome"] == "completed":
+            if rec["outcome"] in ("selection_matched", "confirm_observed", "result_verified"):
                 rec["auto_label_confidence"] = round(min(0.97, rec["auto_label_confidence"] * 1.15), 3)
         if resets and rec.get("t_reset") is None:
             rec["t_reset"] = resets[-1]
@@ -183,7 +210,7 @@ def summary(store):
         "edits_pressed": q("SELECT COUNT(*) FROM attempts WHERE edit_ts IS NOT NULL"),
         "edits_confirmed": q("SELECT COUNT(*) FROM attempts WHERE confirm_ts IS NOT NULL"),
         "edit_attempts": q("SELECT COUNT(*) FROM edit_attempts"),
-        "edit_attempts_completed": q("SELECT COUNT(*) FROM edit_attempts WHERE outcome='completed'"),
+        "edit_attempts_completed": q("SELECT COUNT(*) FROM edit_attempts WHERE outcome='result_verified'"),
         "edit_attempts_reviewed": q("SELECT COUNT(DISTINCT attempt_id) FROM labels"),
     }
 

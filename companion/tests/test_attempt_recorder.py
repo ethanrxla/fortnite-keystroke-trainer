@@ -48,7 +48,8 @@ class AttemptRecorderTests(unittest.TestCase):
                    frame("unknown")])
         self.assertEqual(len(self.out), 1)
         a = self.out[0]
-        self.assertEqual(a["outcome"], "completed")
+        self.assertEqual(a["outcome"], "selection_matched")
+        self.assertFalse(a["result_confirmed"])
         self.assertEqual(a["matched_edit_id"], "window_center")
         self.assertTrue(a["followed_suggestion"])
         self.assertEqual(a["piece"], "wall")
@@ -71,7 +72,7 @@ class AttemptRecorderTests(unittest.TestCase):
     def test_unknown_shape_is_wrong_shape_and_not_followed(self):
         self.play([frame(), frame(tiles=(0, 4, 8))] + [frame("unknown")] * 5)
         a = self.out[0]
-        self.assertEqual(a["outcome"], "wrong_shape")
+        self.assertEqual(a["outcome"], "unknown")
         self.assertIsNone(a["matched_edit_id"])
 
     def test_different_edit_than_suggested(self):
@@ -83,7 +84,7 @@ class AttemptRecorderTests(unittest.TestCase):
     def test_nothing_selected_is_abandoned_and_gaps_lower_confidence(self):
         self.play([frame(), frame(projected=False), frame(projected=False)] + [frame("unknown")] * 5)
         a = self.out[0]
-        self.assertEqual(a["outcome"], "abandoned")
+        self.assertEqual(a["outcome"], "unknown")
         self.assertEqual(a["observation_gaps"], 2)
         self.assertLess(a["auto_label_confidence"], 0.5)
 

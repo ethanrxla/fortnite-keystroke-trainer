@@ -14,9 +14,10 @@ import time
 from .analysis import Analyzer
 from . import bind_server, drills
 from .bind_profiles import BindProfile, ProfileStore
-from .habits import Habits
+from .input_gate import InputGate
 from .jev_client import JevClient
 from .input_analysis import KeystrokeAnalyzer, InputEvent
+from .overlay_stats import LiveStats, StatsWorker, overlay_layout
 
 NEWLINE = chr(10)
 DOUBLE_SECONDS = 0.07   # two presses of one key this close are a bounce or an accident
@@ -133,10 +134,6 @@ class KeyTracker:
         if not key.startswith('wheel_'):
             self.held.add(key)
         if key not in self.bound:
-            if self.habits is not None:
-                self.habits.record(key, int(now // 60))
-                if self.habits.is_habit(key):
-                    return 'habit', key
             return 'unmapped', key
         if not self.grade:
             return 'ok', key
@@ -272,6 +269,7 @@ class SessionLog:
         self.focus = focus
         self.clock = clock
         self.start = clock()
+        self.utc_anchor = time.time()-self.start
         import queue, threading
         self.pending = queue.Queue()
         self.writer = threading.Thread(target=self._writer, daemon=True)
@@ -279,7 +277,7 @@ class SessionLog:
 
     def _emit(self, record):
         # Wall-clock UTC seconds, so collector.py can line these up with the map's KT| log lines.
-        self.pending.put(('event', dict(record, ts=round(time.time(), 3))))
+        self.pending.put(('event', dict(record, ts=record.get("ts", round(time.time(), 6)))))
 
     def _writer(self):
         while True:
@@ -291,13 +289,19 @@ class SessionLog:
             target.flush()
 
 
-    def write(self, verdict, key, bound):
+    def write(self, verdict, key, bound, at=None, profile=None, session_id=None, edge="down"):
         if not in_game(self.focus()):
             return False
-        t = round(self.clock() - self.start, 4)
-        if bound and verdict in ("ok", "order"):
+        captured = self.clock() if at is None else at
+        t = round(captured - self.start, 6)
+        if bound and verdict in ("ok", "order") and edge == "down":
             self.pending.put(("key", {"t": t, "kind": "key", "name": key}))
-        self._emit({"t": t, "kind": verdict, "key": key, "drill": self.drill})
+        self._emit({"t": t, "ts": self.utc_anchor+captured, "kind": verdict,
+                    "key": key if bound else "", "drill": self.drill, "edge": edge,
+                    "session_id": session_id, "profile_id": getattr(profile,"profile_id",None),
+                    "profile_revision": getattr(profile,"revision",None),
+                    "actions": [b.action for b in getattr(profile,"bindings",()) if b.verified and bound and key in b.keys],
+                    "confirm_edge": getattr(profile,"confirm_edge","down")})
         return True
 
     def tip(self, text):
@@ -363,13 +367,16 @@ def run(binds, drill=None, log_base=None, use_ai=True, serve_port=True, binds_pa
     except OSError:
         edit_reference = None
     store = ProfileStore(binds_path or drills.BINDS_FILE, confirm_sprint=binds_path is None)
-    tracker = KeyTracker(store.snapshot, None, habits=Habits(path=store.path.with_suffix(".habits.json")))
+    tracker = KeyTracker(store.snapshot, None, habits=None)
     sequences=([drill.steps]+drill.accepts) if drill else []
     local_analysis=[KeystrokeAnalyzer(store.snapshot,sequences)]
+    live_stats=LiveStats()
+    stats_worker=StatsWorker(os.environ["KT_COACH_SESSION"],lambda:store.snapshot)
+    edit_state=[{}];gate=InputGate();last_sequence=[{"graded":False}]
     log = SessionLog(log_base, drill) if log_base else None
     recent_events = []
     habits = tracker.habits
-    server = bind_server.start(lambda: store.snapshot.primary(), lambda: habits.habits(), recent_events, binds_file=store.path, store=store) if serve_port else None
+    server = bind_server.start(lambda: store.snapshot.primary(), lambda: habits.habits() if habits else {}, recent_events, binds_file=store.path, store=store) if serve_port else None
     analyzer = Analyzer(tracker, jev=None if use_ai else JevClient(key=""), llm=None if use_ai else (lambda *a: ""))
     root = tk.Tk()
     root.overrideredirect(True)
@@ -419,26 +426,26 @@ def run(binds, drill=None, log_base=None, use_ai=True, serve_port=True, binds_pa
             root.after(FLASH_MS, lambda: canvas.itemconfig(rects[key][0], fill=rects[key][1]))
 
     def handle(name, now):
+        key=normal(name)
         title = foreground_title()
-        if not in_game(title) or "unreal editor" in title.lower():
-            tracker.focus_lost()
-            return
+        focused=in_game(title) and "unreal editor" not in title.lower()
+        if not gate.press(key,focused):
+            tracker.focus_lost();local_analysis[0].accept(InputEvent("","focus_lost",now));return
         evidence=local_analysis[0].accept(InputEvent(normal(name),"down",now))
         verdict, key = tracker.press(name, now)
         if verdict == "ignore":
             return
         if log:
-            log.write(verdict, key, key in tracker.bound)
+            log.write(verdict,key,key in tracker.bound,at=now,profile=store.snapshot,session_id=os.environ["KT_COACH_SESSION"])
+        live_stats.observe(verdict,now,key if key in tracker.bound else None)
         flash(key, COLORS["ok" if verdict == "ok" else verdict])
         text = explain(verdict, key, tracker, state["last_stray"], now)
         if verdict == "unmapped":
             state["last_stray"] = (key, now)
-        analyzer.note(key, now)
-        recent_events.append({"kind": verdict, "key": key})
+        if key in tracker.bound:analyzer.note(key, now)
+        recent_events.append({"kind": verdict, "key": key if key in tracker.bound else ""})
         del recent_events[:-50]
-        if verdict == "unmapped":
-            near = [(k, tracker.names[k]) for k in neighbours(key) if k in tracker.names]
-            analyzer.add_stray(key, now, near, evidence)
+        # Unknown printable key identities are neither persisted nor sent to AI.
         if text:
             canvas.itemconfig(ids["status"], text=text)
             root.after(2200, lambda expected=text: canvas.itemconfig(ids["status"], text="") if canvas.itemcget(ids["status"], "text") == expected else None)
@@ -458,12 +465,26 @@ def run(binds, drill=None, log_base=None, use_ai=True, serve_port=True, binds_pa
             threading.Thread(target=work, daemon=True).start()
 
     feedback_at=[-float('inf')]
+    def recording_allowed():
+        return gate.allowed(bool(game_rect()))
+    last_control=[None]
     def refresh_edit_feedback():
+        if not game_rect():gate.focus_lost()
         now=time.monotonic()
-        if now-feedback_at[0]<.5:return
+        if now-feedback_at[0]<.1:return
         feedback_at[0]=now
         try:
+            control=pathlib.Path(__file__).resolve().parents[1]/'capture-control.json'
+            temporary=control.with_suffix('.tmp')
+            payload={'session_id':os.environ["KT_COACH_SESSION"], 'paused':gate.paused or gate.text_entry}
+            if payload != last_control[0]:
+                temporary.write_text(json.dumps(payload))
+                temporary.replace(control)
+                last_control[0]=payload
+        except OSError:pass
+        try:
             data=json.loads((pathlib.Path(__file__).resolve().parents[1]/'edit-state.json').read_text())
+            edit_state[0]=data
             attempt=data.get('last_attempt') or {}
             if attempt.get('profile_id')!=tracker.profile_id or attempt.get('profile_revision')!=tracker.profile_revision:return
             if time.monotonic()-attempt.get('ended_at',0)>30:return
@@ -472,6 +493,7 @@ def run(binds, drill=None, log_base=None, use_ai=True, serve_port=True, binds_pa
             canvas.itemconfig(ids['tip'],text=text+' | game result unverified')
         except (OSError,ValueError,TypeError):pass
 
+    now_stats=[-float("inf")]
     def poll_once():
         try:
             while True:
@@ -480,8 +502,14 @@ def run(binds, drill=None, log_base=None, use_ai=True, serve_port=True, binds_pa
                     handle(*payload)
                 elif kind == "release":
                     name,at=payload
+                    gate.release(normal(name))
+                    if not game_rect():
+                        tracker.focus_lost();local_analysis[0].accept(InputEvent("","focus_lost",at));continue
                     tracker.release(name)
-                    local_analysis[0].accept(InputEvent(normal(name),"up",at))
+                    if recording_allowed():local_analysis[0].accept(InputEvent(normal(name),"up",at))
+                    if log and recording_allowed() and normal(name) in tracker.bound:
+                        log.write("release",normal(name),True,at=at,profile=store.snapshot,
+                                  session_id=os.environ["KT_COACH_SESSION"],edge="up")
                 elif kind == "tip" and payload:
                     revision, text = payload
                     if revision == analyzer.profile_revision and text:
@@ -491,6 +519,20 @@ def run(binds, drill=None, log_base=None, use_ai=True, serve_port=True, binds_pa
         except queue.Empty:
             pass
         refresh_edit_feedback()
+        if live_stats.last_input is not None and time.perf_counter()-live_stats.last_input>REP_IDLE_SECONDS:
+            if local_analysis[0].sequence.observed:
+                last_sequence[0]=local_analysis[0].sequence.finish()
+                local_analysis[0].sequence.reset()
+        # The independent stats panel owns rendering.
+        lines=live_stats.lines(edit_state[0],last_sequence[0],stats_worker.snapshot)
+        if now_stats[0] + 2 <= time.monotonic():
+            try:
+                path=pathlib.Path(__file__).resolve().parents[1]/'live-stats.json'
+                temp=path.with_suffix('.tmp')
+                temp.write_text(json.dumps({'utc':time.time(), 'lines':lines}))
+                temp.replace(path)
+                now_stats[0]=time.monotonic()
+            except OSError:pass
 
     calibration_button = tk.Toplevel(root)
     calibration_button.overrideredirect(True)
@@ -535,11 +577,12 @@ def run(binds, drill=None, log_base=None, use_ai=True, serve_port=True, binds_pa
                 display_scale = float(json.loads((pathlib.Path(__file__).resolve().parents[1] / "overlay-settings.json").read_text()).get("scale", 1.5))
             except (OSError, ValueError, TypeError):
                 display_scale = 1.5
-            u = max(22, min(42, int(gh / 54 * max(1.0, min(display_scale, 2.0)))))
+            position=overlay_layout(rect,scale=display_scale)
+            u = position.unit
             if u != state["unit"]:
                 build(u)
             width, height = state["size"]
-            root.geometry(f"{width}x{height}+{left + int(gw * LEFT_MARGIN)}+{bottom - height - int(gh * BOTTOM_MARGIN)}")
+            root.geometry(f"{width}x{height}+{position.x}+{position.keyboard_y}")
             calibration_button.geometry(f"140x28+{left + int(gw * LEFT_MARGIN)}+{bottom - height - int(gh * BOTTOM_MARGIN) - 30}")
             if not state["shown"]:
                 calibration_button.withdraw()
@@ -582,11 +625,12 @@ def run(binds, drill=None, log_base=None, use_ai=True, serve_port=True, binds_pa
     except KeyboardInterrupt:
         pass
     finally:
+        stats_worker.close()
         if edit_reference is not None and edit_reference.poll() is None:
             edit_reference.terminate()
         for listener in listeners:
             listener.stop()
-        habits.save()
+        if habits:habits.save()
         if server:
             server.shutdown()
             server.server_close()

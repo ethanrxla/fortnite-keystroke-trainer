@@ -64,8 +64,10 @@ class PersonalizeTests(unittest.TestCase):
         import uuid
         from tests.test_attempt_pipeline import record
         for i in range(n):
-            store.add_attempt(record(attempt_id=str(uuid.uuid4()), matched_edit_id=edit, suggested_edit_id=edit,
-                                     t_edit_open=float(i), t_close=i + 1.5))
+            r=record(attempt_id=str(uuid.uuid4()), matched_edit_id=edit, suggested_edit_id=edit,
+                     t_edit_open=float(i), t_close=i + 1.5)
+            store.add_attempt(r)
+            store.add_label(r["attempt_id"],"approved",edit,result_confirmed=True)
 
     def test_too_little_data_means_no_opinion(self):
         store = Store(":memory:")
@@ -87,7 +89,7 @@ class PersonalizeTests(unittest.TestCase):
             available = True
 
             def decide(self, state, questions):
-                return {q: {"probabilities": {"strong": 0.9, "average": 0.1, "weak": 0.0}} for q in questions}
+                return {q: {"choice":"strong","confidence":.9,"probabilities": {"strong": 0.9, "average": 0.1, "weak": 0.0}} for q in questions}
 
         f = personalize.factors(personalize.edit_stats(store), Jev())["window_center"]
         self.assertAlmostEqual(f, 1.27, places=2)
@@ -106,7 +108,7 @@ class PersonalizeTests(unittest.TestCase):
 
             def decide(self, state, questions):
                 sizes.append(len(questions))
-                return {q: {"probabilities": {"strong": 0.0, "average": 0.0, "weak": 1.0}} for q in questions}
+                return {q: {"choice":"weak","confidence":1.,"probabilities": {"strong": 0.0, "average": 0.0, "weak": 1.0}} for q in questions}
 
         f = personalize.factors(personalize.edit_stats(store), Jev())
         self.assertEqual(sorted(sizes), [2, 8])

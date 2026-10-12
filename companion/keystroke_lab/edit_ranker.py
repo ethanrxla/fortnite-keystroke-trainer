@@ -107,7 +107,7 @@ class Ranker:
                 p = json.loads(pathlib.Path(p).read_text(encoding="utf-8"))
             self.policy[catalog_key(kind) or kind] = (p["edits"], p["priors"])
         if personal is None:
-            path = shared / "edit-policy-personal.json"
+            path = pathlib.Path(__file__).resolve().parents[1] / "data" / "edit-policy-personal.json"
             personal = json.loads(path.read_text(encoding="utf-8")).get("factors", {}) if path.is_file() else {}
         self.personal = dict(personal)
 

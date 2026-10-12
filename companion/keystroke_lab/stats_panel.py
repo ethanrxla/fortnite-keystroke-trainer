@@ -149,6 +149,16 @@ def run(sessions=None):
         canvas.create_text(10 * f, 8 * f, anchor="nw", text="SESSION STATS", fill=COLOURS["text"],
                            font=("Segoe UI", fs(11), "bold"))
         y = 30 * f
+        try:
+            live=json.loads((SETTINGS.parent/'live-stats.json').read_text())
+            import time
+            if 0 <= time.time()-live.get('utc',0) < 5:
+                for text in live['lines'][:5]:
+                    canvas.create_text(10*f,y,anchor='nw',width=w-20*f,text=text,
+                                       fill=COLOURS['text'],font=('Segoe UI',fs(9)))
+                    y+=22*f
+                return
+        except (OSError,ValueError,TypeError,KeyError):pass
         for n, (label, value, frac) in enumerate(lines(snap)):
             canvas.create_text(10 * f, y, anchor="nw", text=label, fill=COLOURS["text"], font=("Segoe UI", fs(10)))
             canvas.create_text(w - 10 * f, y, anchor="ne", text=value, fill=COLOURS["muted"], font=("Segoe UI", fs(9)))

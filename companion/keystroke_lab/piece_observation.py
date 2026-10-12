@@ -27,12 +27,27 @@ class PieceObservation:
     source: str = 'screen'
     # Pose-derived context (edit_geometry.PieceContext as a dict): kind, aim in the ranker frame, side, far.
     context: dict | None = None
+    selection_available: bool = True
+    piece_evidence: str = ""
+    gesture_nodes: tuple = ()
     def to_dict(self):
         data=asdict(self);data['wall_quad']=self.quad;data['cells']=3 if self.piece=='wall' else 2
         return data
 
 class VisualObserver:
-    def __init__(self):self.wall=EditGridObserver()
+    def __init__(self,piece_hint=None):self.wall=EditGridObserver();self.piece_hint=piece_hint
+    def refresh(self, frame, observation, now):
+        """Fresh selection sampling on a motion-tracked quad, without rerunning line detection."""
+        n = 3 if observation.piece == "wall" else 2
+        scale = min(1., 640./frame.shape[1])
+        image = cv2.resize(frame[:,:,:3], (round(frame.shape[1]*scale), round(frame.shape[0]*scale)))
+        quad = np.asarray(observation.quad, np.float32)*scale
+        H = cv2.getPerspectiveTransform(np.float32([[0,0],[n,0],[n,n],[0,n]]), quad)
+        self.wall._aim_screen = _crosshair(frame)
+        fresh = self.wall._from_projection(image,H,quad,now,scale,observation.supported_cells,observation.confidence,n)
+        if fresh.reason != "native_edit_grid_observed":return observation
+        return replace(observation, selected_tiles=fresh.selected_tiles, selection_available=True,
+                       source="screen_roi", reason="tracked_geometry_fresh_selection")
     def observe(self,frame,now):
         # The full exploratory detector can enumerate hundreds of thousands of
         # line intersections. Keep that offline; this live provider is bounded.
@@ -83,9 +98,10 @@ class VisualObserver:
             if wall.supported_cells<4 or ctx is None:return PieceObservation(now,reason='piece_topology_ambiguous')
             # Floor below the camera / cone overhead, from the pose. A cone at floor height reads as a floor: the
             # orientation says it is an estimate and the UI labels it so.
-            piece='floor' if ctx.kind=='floor' else 'cone'
+            piece=self.piece_hint if self.piece_hint in ('floor','cone','ramp') else ('floor' if ctx.kind=='floor' else 'cone')
+            context=dict(context,kind={'floor':'floor','cone':'roof','ramp':'stairs'}[piece])
             return PieceObservation(now,piece,q,wall.aim_uv,wall.selected_tiles,'screen_pose_estimate',wall.confidence,
-                                    wall.supported_cells,'native_edit_grid_observed',context=context)
+                                    wall.supported_cells,'native_edit_grid_observed',context=context,piece_evidence='inferred')
         if wall.supported_cells<6 or wall.confidence<.88:
             return PieceObservation(now,reason=wall.reason)
         # Never draw boxes outside the wall: a grid with 3+ cells that are not this wall's tiles is not the wall.
@@ -97,7 +113,7 @@ class VisualObserver:
         if height<.6*width or vertical<.65*height:
             return PieceObservation(now,reason='piece_topology_ambiguous')
         return PieceObservation(now,'wall',q,wall.aim_uv,wall.selected_tiles,'screen_front',wall.confidence,
-                                wall.supported_cells,'native_edit_grid_observed',context=context)
+                                wall.supported_cells,'native_edit_grid_observed',context=context,piece_evidence='observed')
 
     def from_quad(self,frame,tracked,now):
         """Re-read a tracked grid without searching for it: aim point, selected tiles and pose from the quad that
@@ -118,9 +134,12 @@ class VisualObserver:
         # this drops 61% of grids slid by a tile on 143 recorded walls, and 6% of correct ones.
         if n==3 and _wall_fit(image,H,selected=wall.selected_tiles)[1]>=2:return None
         ctx=piece_context(wall,frame.shape[1],frame.shape[0])
+        if ctx and tracked.piece!='wall':
+            ctx=replace(ctx,kind={'floor':'floor','cone':'roof','ramp':'stairs'}[tracked.piece])
         return PieceObservation(now,tracked.piece,wall.wall_quad,wall.aim_uv,wall.selected_tiles,tracked.orientation,
                                 wall.confidence,wall.supported_cells,'native_edit_grid_observed','tracked_refined',
-                                context=ctx.to_dict() if ctx else tracked.context)
+                                context=ctx.to_dict() if ctx else tracked.context,
+                                piece_evidence=tracked.piece_evidence or ('observed' if tracked.piece=='wall' else 'inferred'))
 
     @staticmethod
     def _continues(image,H):
@@ -191,7 +210,8 @@ class GridMotionTracker:
         projection=cv2.getPerspectiveTransform(quad,grid)
         aim=cv2.perspectiveTransform(np.array([[cross]],np.float32),projection)[0,0]
         obs=replace(self.observation,captured_at=now,quad=tuple(map(tuple,quad.tolist())),
-                    aim_uv=tuple(float(min(max(v,0.),n-1e-4)) for v in aim),source='optical_flow',reason='target_motion_tracked')
+                    aim_uv=tuple(float(min(max(v,0.),n-1e-4)) for v in aim),source='optical_flow',reason='target_motion_tracked',
+                    selected_tiles=(), selection_available=False, gesture_nodes=())
         ctx=piece_context(obs.to_dict(),frame.shape[1],frame.shape[0])
         if ctx:obs=replace(obs,context=ctx.to_dict())
         self.grey=grey;self.points=nxt[good].reshape(-1,1,2);self.observation=obs

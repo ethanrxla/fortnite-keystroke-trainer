@@ -30,6 +30,7 @@ class KeystrokeTrainerAdapter(MapAdapter):
 
     def __init__(self, client_version="companion"):
         self.client_version = client_version
+        self.sent_revisions = {}
 
     def pending(self, store, limit, now):
         rows = store.rows("SELECT session_id, record FROM edit_attempts WHERE synced=0 AND (enriched=1 OR t_close<?) "
@@ -40,11 +41,21 @@ class KeystrokeTrainerAdapter(MapAdapter):
         out = []
         for r in records:
             r = dict(r, map_id=self.map_id)
-            if not consent.get("consent_frames"):
-                r["frames"] = []
+            self.sent_revisions[r["attempt_id"]] = r.get("record_revision", 1)
+            # A compact summary is the upload boundary, not the local replay.
+            r["frames"] = []
+            r.pop("aim_trace", None)
+            r.pop("selection_trace", None)
+            r.pop("gesture_trace", None)
+            r.pop("profile_id", None)
+            if r.get("context"):
+                r["context"] = {k:v for k,v in r["context"].items() if k not in ("camera","body")}
             label = store.label(r["attempt_id"])
             if label:
                 r["label_status"] = {"approved": "approved", "rejected": "rejected"}.get(label["status"], "relabelled")
+                if r.get("schema") == "edit_attempt.v2":
+                    r.update(reviewed_edit_id=label.get("edit_id"), review_result_confirmed=bool(label.get("result_confirmed")),
+                             reviewed_piece=label.get("piece") or r["piece"], review_revision=label["at"])
             out.append(r)
         body = {"session_id": session_id, "client_version": self.client_version, "attempts": out}
         summary = self.key_summary(store, out)
@@ -53,22 +64,25 @@ class KeystrokeTrainerAdapter(MapAdapter):
         return body
 
     def key_summary(self, store, records):
-        """Counts only (verdict totals and per-key totals) over the attempts' time span: no order, no timing."""
+        """Anonymous verdict totals within this session and attempt span."""
         if not records:
             return None
-        lo = min(r["t_edit_open"] for r in records) - 60
-        hi = max(r["t_close"] for r in records) + 60
-        verdicts = dict(store.rows("SELECT verdict, COUNT(*) FROM keys WHERE ts BETWEEN ? AND ? GROUP BY verdict", (lo, hi)))
+        lo = min(r["t_edit_open"] for r in records)
+        hi = max(r["t_close"] for r in records)
+        verdicts = dict(store.rows("SELECT verdict, COUNT(*) FROM keys WHERE ts BETWEEN ? AND ? AND session_id=? GROUP BY verdict",
+                                  (lo, hi, records[0]["session_id"])))
+        verdicts={k:v for k,v in verdicts.items() if k in {'ok','order','stray','double','unmapped','repeat','release','habit'}}
         if not verdicts:
             return None
-        keys = dict(store.rows("SELECT key, COUNT(*) FROM keys WHERE ts BETWEEN ? AND ? GROUP BY key", (lo, hi)))
-        return {"verdicts": verdicts, "keys": keys}
+        return {"verdicts": verdicts}
 
     def mark(self, store, accepted, rejected):
         for attempt_id in accepted:
-            store.db.execute("UPDATE edit_attempts SET synced=1 WHERE attempt_id=?", (attempt_id,))
+            store.db.execute("UPDATE edit_attempts SET synced=1 WHERE attempt_id=? AND COALESCE(json_extract(record,'$.record_revision'),1)=?",
+                             (attempt_id,self.sent_revisions.get(attempt_id,1)))
         for attempt_id in rejected:
-            store.db.execute("UPDATE edit_attempts SET synced=-1 WHERE attempt_id=?", (attempt_id,))
+            store.db.execute("UPDATE edit_attempts SET synced=-1 WHERE attempt_id=? AND COALESCE(json_extract(record,'$.record_revision'),1)=?",
+                             (attempt_id,self.sent_revisions.get(attempt_id,1)))
         store.commit()
 
 

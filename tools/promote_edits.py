@@ -19,6 +19,7 @@ from datetime import datetime, timezone
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "companion"))
 from keystroke_lab.store import Store  # noqa: E402
+from keystroke_lab.attempt_evidence import result_verified, piece_verified
 
 MIN_APPROVED = 3
 MIN_SESSIONS = 2
@@ -31,6 +32,8 @@ def tally(store):
         label = store.label(attempt_id)
         if not label:
             continue
+        record = store.attempt(attempt_id)
+        if label["status"] != "rejected" and (not result_verified(record, label) or not piece_verified(record, label)):continue
         if label["status"] == "approved" and matched:
             out[matched]["approved"].append((attempt_id, session))
             out[matched]["reviewers"].add(label["reviewer"])
@@ -55,10 +58,13 @@ def promote(data, ledger, counts, game_version, now=None):
             entry = counts.get(e["id"])
             if not entry or not eligible(entry) or (e.get("validation") or {}).get("status") == "game_verified":
                 continue
-            if piece == "stairs" and not (e.get("gesture") or {}).get("routes"):
+            from validate_edit import ramp_gesture_recorded
+            if piece == "stairs" and not ramp_gesture_recorded(e):
                 continue                       # ramp edits need a recorded gesture first (validate_edit.py rule)
+            e["suggest"] = True
             e["validation"] = {"status": "game_verified", "game_version": game_version,
                                "evidence": [f"attempt:{a}" for a, _ in entry["approved"]], "result_confirmed": True,
+                               "sessions": sorted({s for _,s in entry["approved"]}),
                                "reviewer": ",".join(sorted(r or "local" for r in entry["reviewers"])), "recorded_at": now,
                                "method": f"reviewed attempts >= {MIN_APPROVED} across >= {MIN_SESSIONS} sessions"}
             if ledger and piece in ledger.get("pieces", {}) and e.get("tiles"):

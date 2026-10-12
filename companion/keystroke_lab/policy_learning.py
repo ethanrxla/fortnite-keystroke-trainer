@@ -12,10 +12,12 @@ policy's prior_floor and sum to 1, so EditGuide.verse and edit_ranker read the r
 import json
 import math
 import pathlib
+import hashlib
 from collections import defaultdict
 
 from .edit_ranker import situation_key
 from .pieces import canonical, catalog_key, cells
+from .attempt_evidence import result_verified, piece_verified
 
 ROOT = pathlib.Path(__file__).resolve().parents[2]
 ALPHA = 20.0
@@ -31,6 +33,8 @@ def examples(store, include_auto=False, min_confidence=0.75):
         if not ctx.get("aim_uv") or r["piece"] == "unknown":
             continue
         label = store.label(r["attempt_id"])
+        if not piece_verified(r, label) or not result_verified(r, label):
+            continue
         if label and label["status"] == "rejected":
             continue
         if label and label["status"] == "relabelled":
@@ -41,10 +45,27 @@ def examples(store, include_auto=False, min_confidence=0.75):
             edit = r.get("matched_edit_id")
         else:
             continue
-        out.append({"piece": canonical(r["piece"]), "aim": tuple(ctx["aim_uv"]), "side": int(ctx.get("side", 1)),
-                    "far": bool(ctx.get("far")), "edit": edit, "outcome": r["outcome"],
+        if not edit:continue
+        out.append({"attempt_id": r["attempt_id"], "session_id": r["session_id"],
+                    "policy_version": r.get("policy_version"), "catalog_version": r.get("catalog_version"),
+                    "piece": canonical(r["piece"]), "aim": tuple(ctx["aim_uv"]), "side": int(ctx.get("side", 1)),
+                    "far": bool(ctx.get("far")), "edit": edit, "outcome": "result_verified",
                     "followed": r.get("followed_suggestion"), "suggested": r.get("suggested_edit_id"),
                     "reviewed": bool(label)})
+    return out
+
+
+def partition(samples):
+    """Stable 70/15/15 session split, performed BEFORE fitting or mirror augmentation."""
+    out = {"train": [], "validation": [], "test": []}
+    seen = set()
+    for sample in samples:
+        session, attempt = sample.get("session_id"), sample.get("attempt_id")
+        if not session or not attempt or attempt in seen:continue
+        seen.add(attempt)
+        bucket = int(hashlib.sha256(("edit-split-v1:"+session).encode()).hexdigest()[:8], 16) % 100
+        split = "train" if bucket < 70 else "validation" if bucket < 85 else "test"
+        out[split].append(sample)
     return out
 
 
@@ -69,7 +90,7 @@ def blend(policy, samples, piece, alpha=ALPHA):
     counts = defaultdict(lambda: [0.0] * len(ids))
     used = 0
     for s in samples:
-        if s["piece"] != piece or s["outcome"] != "completed" or s["edit"] not in ids:
+        if s["piece"] != piece or s["outcome"] != "result_verified" or s["edit"] not in ids:
             continue
         key = situation_key(s["aim"], s["side"], s["far"], cells(piece))
         counts[key][ids.index(s["edit"])] += 0.5
@@ -90,19 +111,22 @@ def blend(policy, samples, piece, alpha=ALPHA):
     return out
 
 
-def evaluate(samples, ranker, piece=None):
+def evaluate(samples, ranker, piece=None, partition_name=None):
     """Scores of a ranker (its policy tables + travel cost) against what reviewed players actually did."""
     ranks, logloss, bins = [], [], defaultdict(lambda: [0, 0.0, 0])
     followed = {"followed": [0, 0], "ignored": [0, 0]}
+    sessions, reviewed = set(), 0
     for s in samples:
         if piece and s["piece"] != canonical(piece):
             continue
         if s["followed"] is not None:
             bucket = followed["followed" if s["followed"] else "ignored"]
             bucket[0] += 1
-            bucket[1] += s["outcome"] == "completed"
-        if s["outcome"] != "completed" or not s["edit"]:
+            bucket[1] += s["outcome"] == "result_verified"
+        if s["outcome"] != "result_verified" or not s["edit"]:
             continue
+        if s.get("session_id"):sessions.add(s["session_id"])
+        reviewed += bool(s.get("reviewed"))
         picks = ranker.rank(s["piece"], s["aim"], s["side"], s["far"])
         ids = [p.id for p in picks]
         ranks.append(ids.index(s["edit"]) + 1 if s["edit"] in ids else None)
@@ -117,12 +141,16 @@ def evaluate(samples, ranker, piece=None):
             bins[b][0] += 1
             bins[b][1] += probs[top]
             bins[b][2] += top == s["edit"]
+        else:
+            logloss.append(-math.log(1e-6))
     n = len(ranks)
     found = [r for r in ranks if r]
     ece = sum(abs(conf / cnt - hit / cnt) * cnt for cnt, conf, hit in bins.values() if cnt) / n if n else None
     rate = lambda b: round(b[1] / b[0], 3) if b[0] else None
     return {
         "examples": n,
+        "metric": "choice_agreement_not_gameplay_accuracy",
+        "partition": partition_name, "reviewed_examples": reviewed, "sessions": len(sessions),
         "top1": round(sum(r == 1 for r in found) / n, 3) if n else None,
         "top3": round(sum(r <= 3 for r in found) / n, 3) if n else None,
         "mrr": round(sum(1 / r for r in found) / n, 3) if n else None,
@@ -138,8 +166,8 @@ def evaluate(samples, ranker, piece=None):
 
 def better(candidate, baseline, min_examples=30):
     """Publish rule: enough examples, and higher top-1 without worse top-3 (ties broken by log loss)."""
-    if (candidate.get("examples") or 0) < min_examples:
+    if (candidate.get("reviewed_examples") or 0) < min_examples or candidate.get("sessions", 0) < 3:
         return False
-    if candidate["top1"] != baseline["top1"]:
-        return candidate["top1"] > baseline["top1"] and candidate["top3"] >= baseline["top3"]
-    return (candidate["log_loss"] or 9) < (baseline["log_loss"] or 9)
+    if candidate.get("partition") != "test" or not candidate.get("safety_passed"):return False
+    if any(x.get(k) is None for x in (candidate, baseline) for k in ("top1", "top3", "log_loss")):return False
+    return candidate["top1"] > baseline["top1"] and candidate["top3"] >= baseline["top3"] and candidate["log_loss"] <= baseline["log_loss"]

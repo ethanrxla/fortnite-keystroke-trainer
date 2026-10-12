@@ -39,6 +39,10 @@ def sync_once(store, client, adapter=None, now=None, batch=BATCH, max_batches=20
         for session_id, record in pending:
             by_session.setdefault(session_id, []).append(record)
         for session_id, records in by_session.items():
+            me = consent(client)
+            if not me.get("consent_upload"):
+                report["skipped"] = "upload consent withdrawn"
+                return report
             body = adapter.payload(session_id, records, me, store)
             report["sent"] += len(records)
             try:

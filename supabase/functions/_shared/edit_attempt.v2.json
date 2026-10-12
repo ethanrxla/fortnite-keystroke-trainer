@@ -1,0 +1,421 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/ethanrxla/fortnite-keystroke-trainer/shared/schemas/edit_attempt.v2.json",
+  "title": "Edit attempt v2",
+  "description": "One edit attempt: from opening edit mode on a piece to confirming, resetting or leaving. Written by the companion (attempt_recorder.py), enriched with key presses by collector.py, uploaded by cloud/sync.py, validated again server-side by the ingest function. All times are wall-clock UTC seconds (acquisition time, not processing time). Values marked inferred came from pose estimation, not from what the game showed.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema",
+    "attempt_id",
+    "session_id",
+    "map_id",
+    "piece",
+    "piece_evidence",
+    "source",
+    "t_edit_open",
+    "t_close",
+    "outcome",
+    "label_status",
+    "result_confirmed",
+    "result_evidence",
+    "complete_observation",
+    "selection_available",
+    "record_revision"
+  ],
+  "properties": {
+    "schema": {
+      "const": "edit_attempt.v2"
+    },
+    "attempt_id": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "session_id": {
+      "type": "string",
+      "maxLength": 64
+    },
+    "map_id": {
+      "type": "string",
+      "maxLength": 64
+    },
+    "catalog_version": {
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "policy_version": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "maxLength": 64
+    },
+    "piece": {
+      "enum": [
+        "wall",
+        "floor",
+        "cone",
+        "ramp",
+        "unknown"
+      ]
+    },
+    "piece_evidence": {
+      "enum": [
+        "observed",
+        "inferred",
+        "authored"
+      ]
+    },
+    "source": {
+      "enum": [
+        "screen",
+        "authored"
+      ]
+    },
+    "suggested_edit_id": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "maxLength": 64
+    },
+    "suggestion_verified": {
+      "type": "boolean"
+    },
+    "picks": {
+      "type": "array",
+      "maxItems": 5,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "cost"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "cost": {
+            "type": "number"
+          },
+          "travel": {
+            "type": "number"
+          },
+          "prior": {
+            "type": "number"
+          }
+        }
+      }
+    },
+    "context": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "aim_uv": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          },
+          "minItems": 2,
+          "maxItems": 2
+        },
+        "side": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 2
+        },
+        "far": {
+          "type": "boolean"
+        },
+        "distance_cm": {
+          "type": "number"
+        },
+        "camera": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          },
+          "minItems": 3,
+          "maxItems": 3
+        },
+        "body": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          },
+          "minItems": 3,
+          "maxItems": 3
+        },
+        "inferred": {
+          "type": "boolean"
+        }
+      }
+    },
+    "t_edit_open": {
+      "type": "number"
+    },
+    "t_first_select": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "t_confirm": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "t_reset": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "t_close": {
+      "type": "number"
+    },
+    "selection_trace": {
+      "type": "array",
+      "maxItems": 400,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "t",
+          "tiles"
+        ],
+        "properties": {
+          "t": {
+            "type": "number"
+          },
+          "tiles": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 8
+            }
+          }
+        }
+      }
+    },
+    "aim_trace": {
+      "type": "array",
+      "maxItems": 2000,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "t",
+          "u",
+          "v"
+        ],
+        "properties": {
+          "t": {
+            "type": "number"
+          },
+          "u": {
+            "type": "number"
+          },
+          "v": {
+            "type": "number"
+          }
+        }
+      }
+    },
+    "final_tiles": {
+      "type": "array",
+      "items": {
+        "type": "integer",
+        "minimum": 0,
+        "maximum": 8
+      }
+    },
+    "matched_edit_id": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "maxLength": 64
+    },
+    "followed_suggestion": {
+      "type": [
+        "boolean",
+        "null"
+      ]
+    },
+    "travel": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "observation_gaps": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "outcome": {
+      "enum": [
+        "selection_matched",
+        "confirm_observed",
+        "result_verified",
+        "reset",
+        "unknown"
+      ]
+    },
+    "auto_label_confidence": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1
+    },
+    "label_status": {
+      "enum": [
+        "auto",
+        "approved",
+        "rejected",
+        "relabelled"
+      ]
+    },
+    "frames": {
+      "type": "array",
+      "maxItems": 3,
+      "items": {
+        "type": "string",
+        "maxLength": 200
+      }
+    },
+    "target_id": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "maxLength": 128
+    },
+    "profile_id": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "maxLength": 128
+    },
+    "profile_revision": {
+      "type": [
+        "integer",
+        "null"
+      ],
+      "minimum": 0
+    },
+    "record_revision": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "intended_edit_id": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "maxLength": 128
+    },
+    "selection_available": {
+      "type": "boolean"
+    },
+    "complete_observation": {
+      "type": "boolean"
+    },
+    "confirmation_evidence": {
+      "enum": [
+        "unknown",
+        "press",
+        "release"
+      ]
+    },
+    "result_evidence": {
+      "enum": [
+        "unknown",
+        "authored",
+        "reviewed"
+      ]
+    },
+    "result_confirmed": {
+      "type": "boolean"
+    },
+    "close_reason": {
+      "enum": [
+        "mode_exit",
+        "focus_lost",
+        "target_change",
+        "profile_change",
+        "shutdown"
+      ]
+    },
+    "reference_travel": {
+      "type": [
+        "number",
+        "null"
+      ],
+      "minimum": 0
+    },
+    "capture_monotonic": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "gesture_trace": {
+      "type": "array",
+      "maxItems": 400,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "t",
+          "node"
+        ],
+        "properties": {
+          "t": {
+            "type": "number"
+          },
+          "node": {
+            "type": "string",
+            "maxLength": 64
+          }
+        }
+      }
+    },
+    "reviewed_edit_id": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "maxLength": 128
+    },
+    "review_result_confirmed": {
+      "type": "boolean"
+    },
+    "reviewed_piece": {
+      "enum": [
+        "wall",
+        "floor",
+        "cone",
+        "ramp",
+        "unknown"
+      ]
+    },
+    "review_revision": {
+      "type": "number",
+      "minimum": 0
+    },
+    "observation_coverage": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1
+    }
+  }
+}

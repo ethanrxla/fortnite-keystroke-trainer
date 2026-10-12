@@ -5,14 +5,16 @@
     python tools/eval_edit_policy.py --blend --write          # write shared/edit-policy*.blend.json for the better ones
     python tools/eval_edit_policy.py --include-auto           # early on: count confident unreviewed auto-labels too
 
-A blend is only written when it beats the current policy on the same examples (policy_learning.better: enough
-examples, higher top-1 without a worse top-3). Promote it by copying it over the shared file and regenerating Verse
+A blend fits training sessions only, reports validation separately and requires at least 30 reviewed test
+attempts across three held-out sessions, improved top-1, non-worse top-3/log-loss and passing safety tests.
+Promote it by copying it over the shared file and regenerating Verse
 (tools/build_edit_policy.py --regen-verse / tools/build_piece_policy.py); the Supabase publish step uses the same rule.
 """
 import argparse
 import json
 import pathlib
 import sys
+import subprocess
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "companion"))
@@ -29,25 +31,36 @@ def main():
     ap.add_argument("--include-auto", action="store_true")
     ap.add_argument("--alpha", type=float, default=pl.ALPHA)
     args = ap.parse_args()
-    samples = pl.examples(Store(), include_auto=args.include_auto)
+    store=Store()
+    try:samples = pl.examples(store, include_auto=args.include_auto)
+    finally:store.close()
     print(f"{len(samples)} usable attempts ({sum(s['reviewed'] for s in samples)} reviewed)")
-    base = Ranker()
+    split = pl.partition(samples)
+    print("session-separated split:", {k: len(v) for k,v in split.items()})
+    base = Ranker(personal={})
+    safe = False
+    if args.write:
+        safe = subprocess.run([sys.executable, "-m", "unittest", "discover", "-s", "tests", "-t", "."],
+                              cwd=ROOT / "companion").returncode == 0
     for kind, name in POLICY_FILES.items():
         piece = canonical(kind)
         path = ROOT / "shared" / name
         if not path.exists():
             continue
-        current = pl.evaluate(samples, base, piece)
+        current = pl.evaluate(split["test"], base, piece, partition_name="test")
         print(f"\n{piece}: current   {json.dumps(current)}")
         if not args.blend:
             continue
         policy = json.loads(path.read_text(encoding="utf-8"))
-        blended = pl.blend(policy, samples, piece, args.alpha)
-        scored = pl.evaluate(samples, Ranker(policies={piece: blended}), piece)
+        blended = pl.blend(policy, split["train"], piece, args.alpha)
+        candidate = Ranker(personal={}, policies={piece: blended})
+        print("validation", json.dumps(pl.evaluate(split["validation"], candidate, piece, partition_name="validation")))
+        scored = pl.evaluate(split["test"], candidate, piece, partition_name="test")
+        scored["safety_passed"] = safe
         verdict = "BETTER" if pl.better(scored, current) else "not better (or too few examples)"
         print(f"{piece}: blend     {json.dumps(scored)}  -> {verdict}")
         if args.write and pl.better(scored, current):
-            blended["metrics"] = {"current": current, "blend": scored}
+            blended["metrics"] = {"current": current, "blend": scored, "split_version": "edit-split-v1"}
             out = path.with_suffix(".blend.json")
             out.write_text(json.dumps(blended, indent=1) + "\n", encoding="utf-8")
             print("  wrote", out.relative_to(ROOT))

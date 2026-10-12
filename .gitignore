@@ -41,6 +41,8 @@ companion/.calibration-state.json
 companion/*.log
 companion/edit-state.json
 companion/edit-state.tmp
+companion/capture-control.json
+companion/capture-control.tmp
 companion/overlay-settings.json
 
 # Cross-process scheduling metadata
@@ -51,3 +53,6 @@ supabase/.deploy.log
 companion/captures/
 assets/signs/
 assets/markers/
+
+companion/live-stats.json
+companion/live-stats.tmp

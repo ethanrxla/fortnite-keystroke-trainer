@@ -112,11 +112,13 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--dry-run", action="store_true")
     ap.add_argument("--no-audit", action="store_true")
-    ap.add_argument("--personal", action="store_true", help="blend in shared/edit-policy-personal.json (from `keystroke_lab personalize`)")
+    ap.add_argument("--personal", action="store_true", help="deprecated: personal factors remain in the local companion")
     ap.add_argument("--regen-verse", action="store_true", help="rewrite EditPolicy.verse from the saved edit-policy.json, no Jev calls")
     ap.add_argument("--extend", action="store_true",
                     help="no Jev calls: give suggested edits missing from edit-policy.json a placeholder column, then rewrite the Verse")
     args = ap.parse_args()
+    if args.personal:
+        ap.error('Personal factors are player-local; they cannot be baked into the shared island policy.')
     if args.extend:
         saved = json.loads(OUT_JSON.read_text(encoding="utf-8"))
         ids = [e["id"] for e in suggested(json.loads(EDITS.read_text(encoding="utf-8")))]

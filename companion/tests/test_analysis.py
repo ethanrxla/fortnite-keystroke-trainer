@@ -42,7 +42,8 @@ class FullProfileTests(unittest.TestCase):
         t.release("x")
         self.assertEqual(t.press("x", 1.0)[0], "unmapped")
         t.release("x")
-        self.assertEqual(t.press("x", 61.0)[0], "habit")
+        self.assertEqual(t.press("x", 61.0)[0], "unmapped")
+        self.assertFalse(h.is_habit("x"))  # unknown key identities are not persisted
 
     def test_catalogue_defaults_cover_every_action(self):
         self.assertTrue(set(actions.DEFAULTS) <= set(drills.DEFAULT_BINDS))

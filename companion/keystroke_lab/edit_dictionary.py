@@ -8,7 +8,8 @@ ALIASES={'roof':'cone','stairs':'ramp'}
 def game_verified(edit):
     record=edit.get('validation',{})
     return (record.get('status')=='game_verified' and bool(record.get('game_version'))
-            and bool(record.get('evidence')) and record.get('result_confirmed') is True)
+            and len(set(record.get('evidence',[])))>=3 and len(set(record.get('sessions',[])))>=2
+            and record.get('result_confirmed') is True)
 
 class EditDictionary:
     def __init__(self,path=None):
@@ -24,7 +25,7 @@ class EditDictionary:
                 if len(set(tiles))!=len(tiles):raise ValueError('Repeated selection tile')
                 self.all[e['id']]=e
                 if game_verified(e) and e.get('suggest') and e['piece']!='ramp':self.edits[e['id']]=e
-                if game_verified(e) and e.get('suggest') and e['piece']=='ramp' and e.get('gesture'):self.edits[e['id']]=e
+                if game_verified(e) and e.get('suggest') and e['piece']=='ramp' and (e.get('strokes') or e.get('gesture')):self.edits[e['id']]=e
     def matching(self,mask,piece='wall'):
         return [e for e in self.edits.values() if e['piece']==piece and set(e.get('tiles',[]))==set(mask)]
     def candidates(self,piece,selected=(),objective=None):
@@ -124,9 +125,10 @@ class TargetTracker:
     def __init__(self,stability=.15):self.stability=stability;self.reset()
     def reset(self):self.target=None;self.pending=None;self.since=0.;self.active=None;self.tracing=False;self.selection=()
     def update(self,target,candidate,selection,now,ended=False):
-        selection=tuple(selection)
         if ended or target!=self.target:
             self.reset();self.target=target
+        if selection is None:return self.active
+        selection=tuple(selection)
         if self.selection and not selection: # visible reset or a new empty edit
             self.active=None;self.tracing=False;self.pending=None
         if selection and not self.tracing:
