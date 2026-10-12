@@ -319,6 +319,9 @@ def run(profile_path=None):
     try: display_scale=float(json.loads((BASE/'overlay-settings.json').read_text()).get('scale',1.5))
     except (OSError,ValueError,TypeError): display_scale=1.5
     store=ProfileStore(profile_path or BINDS_FILE);pipeline=ContextPipeline(store,async_detect=True)
+    # A* route tables for every edit, planned off the frame path (or loaded from data/route-table.json).
+    from .edit_dictionary import warm_route_tables
+    threading.Thread(target=warm_route_tables,args=(list(pipeline.advisor.dictionary.all.values()),),daemon=True,name='route-tables').start()
     shared={'result':None,'rect':None};mutex=threading.Lock();stop=threading.Event()
     # Every edit attempt (open edit mode -> confirm / reset / leave) goes to sessions/edit-<session>.attempts.jsonl
     # for the collector, the review page and the cloud sync. Recording never blocks or fails the guide.

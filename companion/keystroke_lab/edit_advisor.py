@@ -145,7 +145,7 @@ class EditAdvisor:
     def _make(self,c,edit,reason,source,answer=None):
         route=RoutePlanner().plan(c.aim_uv,edit)
         if route is None:return self._abstain(c,'no_safe_connected_path')
-        length,points,_=route
+        length,points=route[0],route[1]   # table routes also carry per-drag strokes (route[3])
         return EditAdvice('suggested',c.revision,reason,edit['id'],points,(c.aim_uv,points[0]),round(length,3),
                           probabilities=(answer or {}).get('probabilities',{}),confidence=(answer or {}).get('confidence'),
                           uncertain=source=='jev',source=source,evidence={'aim_uv':c.aim_uv,'selected_tiles':c.selected_tiles,'domain':'edit','profile_id':c.player_id,'profile_revision':c.revision,'dictionary_version':self.dictionary.version,'model_version':getattr(self.jev,'model_version','local'),'evidence_ids':[f'{c.session_id}:{c.target_id}:{c.observed_at}'],'target_id':c.target_id,'objective':c.objective,'source':c.source})
