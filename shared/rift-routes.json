@@ -300,46 +300,11 @@
     "walk": true
   },
   {
-    "source": "KT22_Return_NinetiesTop",
-    "destination": "KT22_Return_NinetiesStart",
-    "entry": {
-      "x": 41216,
-      "y": -47872,
-      "z": 1920
-    },
-    "exit": {
-      "x": 41066,
-      "y": -52480,
-      "z": 0
-    },
-    "walk": true,
-    "box": {
-      "x": 1280.0,
-      "y": 4864.0,
-      "z": 584.0
-    }
-  },
-  {
     "source": "KT30_Drill_B5_Exit",
     "destination": "KT3_03_Dest",
     "entry": {
       "x": 29896,
       "y": -73471.81902694702,
-      "z": 0
-    },
-    "exit": {
-      "x": 4352,
-      "y": -59648,
-      "z": 0
-    },
-    "walk": true
-  },
-  {
-    "source": "KT30_Drill_W2_Exit",
-    "destination": "KT3_03_Dest",
-    "entry": {
-      "x": 60616,
-      "y": -94975.81902694702,
       "z": 0
     },
     "exit": {

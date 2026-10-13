@@ -93,6 +93,9 @@ keystroke_drill_device := class(creative_device):
     # slightly different spot each time"). Needs ClearEachRep so the last rep's builds are gone; the player waits on
     # the ledge behind the start while the clear runs.
     @editable SameTrack:logic = false
+    # Reaching this many levels above the start ends the rep and moves the player to the next one (0 = off). Player
+    # 2026-10-13: at the top of ramp rush and 90s, "teleport to next rep".
+    @editable TopLevels:int = 0
     # Wire a gun target's hit event to GunHit and a pickaxe target's hit event to PickaxeHit in the
     # editor (device event binding, not Verse). target_hit checks read these. Unlinked is fine.
     # Leaving the lane ends the set (and a section's run): more than this far, in cm, from the current rep's start
@@ -112,6 +115,7 @@ keystroke_drill_device := class(creative_device):
     # how many reps to play; both are cleared when the set ends.
     var ReturnPoint:?vector3 = false
     var RepsOverride:int = 0
+    var CurrentRep:int = 1
     var Metronome:audio_player_device = audio_player_device{}
 
     var Busy:logic = false
@@ -290,7 +294,9 @@ keystroke_drill_device := class(creative_device):
         # The last step with a position check: once it is seen, the rep is finished (any later unchecked steps are
         # skipped), so a fast player is not held by the step timers.
         LastCheck := LastPositionCheck(Drill)
+        spawn{ WatchLeave(Player, Drill) }
         for (Rep := 1..Reps, not Abandoned?):
+            set CurrentRep = Rep
             MovePlayer(Player, TrackOrigin(Drill, Rep))
             Cue.SetText(CueText("{Drill.Code}  {Drill.Name}   {ModeLabel}   rep {Rep}/{Reps}\n{ChainText(Drill.Steps, -1)}"))
             Sleep(if (FlowMode?) then ReadyMinSeconds else Max(Interval, ReadyMinSeconds))
@@ -325,12 +331,16 @@ keystroke_drill_device := class(creative_device):
                 DzNote := if (Result = rep_result.Missing, LastDz > -99990.0, Dz := Round[LastDz]) then "|dz={Dz}" else ""
                 KTLog("step", Drill.Id, Apm, Rep, StepIndex, Result, "action={Action}{StepLatency}{DzNote}")
                 KTHudDrillStep(Player, Action, Result)
-                if (StepIndex = LastCheck, Result = rep_result.Ok):
+                if (TopReached[Player, Drill, Rep]):
+                    set RepDone = true
+                else if (StepIndex = LastCheck, Result = rep_result.Ok):
                     set RepDone = true
                 else if (not (WaitsForOutcome? and Result = rep_result.Ok)):
                     # Unchecked steps wait out their window, but end early when the player has already built ahead
                     # (a later position check is met) or has left the lane.
                     WaitStep(Player, Drill, Rep, StepIndex, NextClick)
+                    if (TopReached[Player, Drill, Rep]):
+                        set RepDone = true
             if (PanelShown?, UI := GetPlayerUI[Player]):
                 UI.RemoveWidget(EditPanel)
                 set PanelShown = false
@@ -344,12 +354,14 @@ keystroke_drill_device := class(creative_device):
             if (ScoringEnabled?, AllStepsObserved(RepResults)?):
                 set CleanReps += 1
             if (ClearEachRep?, not Abandoned?):
-                # Every action and the final landing grace complete before any reset. Off the track first, so the
-                # clear never goes off around the player.
-                MovePlayer(Player, TrackOrigin(Drill, 1) - vector3{X := 600.0, Y := 0.0, Z := 0.0})
+                # Every action and the final landing grace complete before any reset. The player waits 60 m above the
+                # lane while it clears, out of the blast (player 2026-10-13: explosions "flying us across the map"),
+                # then stands behind the start for the rest.
+                MovePlayer(Player, TrackOrigin(Drill, 1) + vector3{X := 0.0, Y := 0.0, Z := 6000.0})
                 Clearer.Trigger(Player)
                 KTLog("rep_clear", Drill.Id, Apm, Rep, Drill.Steps.Length, rep_result.Unchecked, "boundary=rep_end")
                 Sleep(ClearWaitSeconds)
+                MovePlayer(Player, TrackOrigin(Drill, 1) - vector3{X := 600.0, Y := 0.0, Z := 0.0})
             if (Rep < Reps, not Abandoned?):
                 Cue.SetText(CueText("{Drill.Code}  {Drill.Name}   rep {Rep}/{Reps} done\nNext rep in a moment"))
                 Sleep(RepRestSeconds)
@@ -435,6 +447,8 @@ keystroke_drill_device := class(creative_device):
                     if (LeftLane[Player, Drill, Rep]):
                         set Abandoned = true
                         break
+                    if (Abandoned? or TopReached[Player, Drill, Rep]):
+                        break
                     if (GetSimulationElapsedTime() >= Deadline):
                         break
                     Sleep(0.0)
@@ -449,6 +463,8 @@ keystroke_drill_device := class(creative_device):
                     if (FirstTargetHit <> "", TargetHitAt <= Deadline):
                         set LastLatency = TargetHitAt - Started
                         set Result = if (FirstTargetHit = Check.Target) then rep_result.Ok else rep_result.WrongOutcome
+                        break
+                    if (Abandoned?):
                         break
                     if (GetSimulationElapsedTime() >= Deadline):
                         break
@@ -470,12 +486,29 @@ keystroke_drill_device := class(creative_device):
         loop:
             if (GetSimulationElapsedTime() >= Until):
                 break
-            if (AheadOf[Player, Drill, Rep, StepIndex]):
+            if (AheadOf[Player, Drill, Rep, StepIndex] or TopReached[Player, Drill, Rep] or Abandoned?):
                 break
             if (LeftLane[Player, Drill, Rep]):
                 set Abandoned = true
                 break
             Sleep(0.05)
+
+    # Ends a set as soon as the player is away from the lane, whatever step it is on: an exit rift or any teleport
+    # (player 2026-10-13: "going into the rift doesnt stop the game").
+    WatchLeave(Player:player, Drill:drill_def)<suspends>:void =
+        loop:
+            Sleep(0.25)
+            if (not Busy? or Abandoned?):
+                break
+            if (LeftLane[Player, Drill, CurrentRep]):
+                set Abandoned = true
+                break
+
+    TopReached(Player:player, Drill:drill_def, Rep:int)<decides><transacts>:void =
+        TopLevels > 0
+        Character := Player.GetFortCharacter[]
+        Feet := Character.GetTransform().Translation.Z - CapsuleCenterHeight
+        Feet >= TrackOrigin(Drill, Rep).Z + TopLevels * LevelHeight - StandTolerance
 
     AheadOf(Player:player, Drill:drill_def, Rep:int, StepIndex:int)<decides><transacts>:void =
         Character := Player.GetFortCharacter[]

@@ -139,10 +139,9 @@
     {
       "id": "weapons",
       "name": "WEAPONS",
-      "blurb": "Pickaxe swap, build to gun",
+      "blurb": "Build to gun",
       "zone": "Armory",
       "drills": [
-        "pickaxe_swap",
         "build_swap_shoot"
       ]
     }
@@ -289,8 +288,8 @@
       "tier": 1,
       "name": "Piece switching",
       "steps": [
-        "wall",
         "floor",
+        "wall",
         "ramp",
         "cone"
       ],
@@ -305,10 +304,10 @@
         "forward": 2,
         "up": 2
       },
-      "tip": "For this exercise, switch wall, floor, ramp, cone while keeping each preview in its intended cell.",
+      "tip": "For this exercise, switch floor, wall, ramp, cone while keeping each preview in its intended cell.",
       "checks": [
         {
-          "step": 1,
+          "step": 0,
           "kind": "stand_level",
           "cell": [
             0,
@@ -698,7 +697,7 @@
         "edit",
         "reset"
       ],
-      "reps": 10,
+      "reps": 1,
       "advance": [
         2,
         0,
@@ -1169,7 +1168,8 @@
           "kind": "target_hit",
           "target": "gun"
         }
-      ]
+      ],
+      "retired": true
     },
     {
       "id": "build_swap_shoot",

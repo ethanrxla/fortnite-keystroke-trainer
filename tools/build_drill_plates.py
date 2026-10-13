@@ -65,7 +65,6 @@ PLATES = [
     ("E4", "HALF WALL", (0.04, 0.24, 0.10), ["edit_south"], "lane"),
     ("E7", "EDIT PEEK", (0.04, 0.24, 0.10), ["edit_south"], "lane"),
     ("LAB", "PIECE LAB", (0.10, 0.20, 0.04), ["edit_south"], "KT12_Gate_LabIn"),
-    ("W2", "PICKAXE SWAP", (0.28, 0.20, 0.02), ["build_north"], "lane"),
     ("W3", "BUILD SWAP", (0.28, 0.20, 0.02), ["build_north"], "lane"),
 ]
 SECTION_SIGNS = ["build", "movement", "editing"]
