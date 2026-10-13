@@ -1,0 +1,876 @@
+[
+  {
+    "code": "P2",
+    "lane": {
+      "refPath": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.VerseDevice_C_UAID_30560F202F92E60803_1802184309"
+    },
+    "trigger": {
+      "refPath": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.Device_Trigger_V2_C_UAID_30560F202F92F50803_1113793727"
+    },
+    "before": {
+      "sameTrack": false,
+      "clearEachRep": true,
+      "repRestSeconds": 1.5
+    },
+    "barrel_label": "KT31_Clear_P2_Track1",
+    "barrel_transform": {
+      "location": {
+        "x": 41216,
+        "y": -94976,
+        "z": 0
+      },
+      "rotation": {
+        "pitch": 0,
+        "yaw": 0.0,
+        "roll": 0
+      },
+      "scale": {
+        "x": 1.0,
+        "y": 1.0,
+        "z": 1.0
+      }
+    },
+    "barrel_settings": {
+      "blast Radius": 8,
+      "player Damage": 0,
+      "structure Damage": 100000,
+      "visible During Game": false,
+      "knockbackPlayer": 0
+    },
+    "bindings": [
+      {
+        "sourceDevicePath": {
+          "refPath": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.Device_Trigger_V2_C_UAID_30560F202F92F50803_1113793727"
+        },
+        "sourceEvent": "OnTriggered",
+        "targetDevicePath": {
+          "refPath": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.Device_ExplosiveBarrel_V2_C_UAID_30560F202F92BF0A03_1628847405"
+        },
+        "targetFunction": "Explode"
+      },
+      {
+        "sourceDevicePath": {
+          "refPath": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.Device_ExplosiveBarrel_V2_C_UAID_30560F202F92BF0A03_1628847405"
+        },
+        "sourceEvent": "On Exploded",
+        "targetDevicePath": {
+          "refPath": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.Device_ExplosiveBarrel_V2_C_UAID_30560F202F92BF0A03_1628847405"
+        },
+        "targetFunction": "Reset"
+      }
+    ],
+    "after": {
+      "sameTrack": true,
+      "clearEachRep": true,
+      "repRestSeconds": 1.5
+    }
+  },
+  {
+    "code": "P6",
+    "lane": {
+      "refPath": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.VerseDevice_C_UAID_30560F202F92E60803_1804275331"
+    },
+    "trigger": {
+      "refPath": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.Device_Trigger_V2_C_UAID_30560F202F92F50803_1114541731"
+    },
+    "before": {
+      "sameTrack": false,
+      "clearEachRep": false,
+      "repRestSeconds": 1.5
+    },
+    "barrel_label": "KT31_Clear_P6_Track1",
+    "barrel_transform": {
+      "location": {
+        "x": 41216,
+        "y": -52480,
+        "z": 0
+      },
+      "rotation": {
+        "pitch": 0,
+        "yaw": 0.0,
+        "roll": 0
+      },
+      "scale": {
+        "x": 1.0,
+        "y": 1.0,
+        "z": 1.0
+      }
+    },
+    "barrel_settings": {
+      "blast Radius": 8,
+      "player Damage": 0,
+      "structure Damage": 100000,
+      "visible During Game": false,
+      "knockbackPlayer": 0
+    },
+    "bindings": [
+      {
+        "sourceDevicePath": {
+          "refPath": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.Device_Trigger_V2_C_UAID_30560F202F92F50803_1114541731"
+        },
+        "sourceEvent": "OnTriggered",
+        "targetDevicePath": {
+          "refPath": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.Device_ExplosiveBarrel_V2_C_UAID_30560F202F92BF0A03_1631854408"
+        },
+        "targetFunction": "Explode"
+      },
+      {
+        "sourceDevicePath": {
+          "refPath": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.Device_ExplosiveBarrel_V2_C_UAID_30560F202F92BF0A03_1631854408"
+        },
+        "sourceEvent": "On Exploded",
+        "targetDevicePath": {
+          "refPath": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.Device_ExplosiveBarrel_V2_C_UAID_30560F202F92BF0A03_1631854408"
+        },
+        "targetFunction": "Reset"
+      }
+    ],
+    "after": {
+      "sameTrack": true,
+      "clearEachRep": true,
+      "repRestSeconds": 1.5
+    }
+  },
+  {
+    "code": "P7",
+    "lane": {
+      "refPath": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.VerseDevice_C_UAID_30560F202F92E60803_1804847337"
+    },
+    "trigger": {
+      "refPath": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.Device_Trigger_V2_C_UAID_30560F202F92F50803_1114762732"
+    },
+    "before": {
+      "sameTrack": false,
+      "clearEachRep": false,
+      "repRestSeconds": 1.5
+    },
+    "barrel_label": "KT31_Clear_P7_Track1",
+    "barrel_transform": {
+      "location": {
+        "x": 41216,
+        "y": -40704,
+        "z": 0
+      },
+      "rotation": {
+        "pitch": 0,
+        "yaw": 0.0,
+        "roll": 0
+      },
+      "scale": {
+        "x": 1.0,
+        "y": 1.0,
+        "z": 1.0
+      }
+    },
+    "barrel_settings": {
+      "blast Radius": 8,
+      "player Damage": 0,
+      "structure Damage": 100000,
+      "visible During Game": false,
+      "knockbackPlayer": 0
+    },
+    "bindings": [
+      {
+        "sourceDevicePath": {
+          "refPath": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.Device_Trigger_V2_C_UAID_30560F202F92F50803_1114762732"
+        },
+        "sourceEvent": "OnTriggered",
+        "targetDevicePath": {
+          "refPath": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.Device_ExplosiveBarrel_V2_C_UAID_30560F202F92BF0A03_1634432412"
+        },
+        "targetFunction": "Explode"
+      },
+      {
+        "sourceDevicePath": {
+          "refPath": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.Device_ExplosiveBarrel_V2_C_UAID_30560F202F92BF0A03_1634432412"
+        },
+        "sourceEvent": "On Exploded",
+        "targetDevicePath": {
+          "refPath": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.Device_ExplosiveBarrel_V2_C_UAID_30560F202F92BF0A03_1634432412"
+        },
+        "targetFunction": "Reset"
+      }
+    ],
+    "after": {
+      "sameTrack": true,
+      "clearEachRep": true,
+      "repRestSeconds": 1.5
+    }
+  },
+  {
+    "code": "B2",
+    "lane": {
+      "refPath": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.VerseDevice_C_UAID_30560F202F92E60803_1800360289"
+    },
+    "trigger": {
+      "refPath": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.Device_Trigger_V2_C_UAID_30560F202F92F50803_1112056715"
+    },
+    "before": {
+      "sameTrack": false,
+      "clearEachRep": false,
+      "repRestSeconds": 1.5
+    },
+    "barrel_label": "KT31_Clear_B2_Track1",
+    "barrel_transform": {
+      "location": {
+        "x": 30976,
+        "y": -94976,
+        "z": 0
+      },
+      "rotation": {
+        "pitch": 0,
+        "yaw": 0.0,
+        "roll": 0
+      },
+      "scale": {
+        "x": 1.0,
+        "y": 1.0,
+        "z": 1.0
+      }
+    },
+    "barrel_settings": {
+      "blast Radius": 8,
+      "player Damage": 0,
+      "structure Damage": 100000,
+      "visible During Game": false,
+      "knockbackPlayer": 0
+    },
+    "bindings": [
+      {
+        "sourceDevicePath": {
+          "refPath": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.Device_Trigger_V2_C_UAID_30560F202F92F50803_1112056715"
+        },
+        "sourceEvent": "OnTriggered",
+        "targetDevicePath": {
+          "refPath": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.Device_ExplosiveBarrel_V2_C_UAID_30560F202F92BF0A03_1637600416"
+        },
+        "targetFunction": "Explode"
+      },
+      {
+        "sourceDevicePath": {
+          "refPath": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.Device_ExplosiveBarrel_V2_C_UAID_30560F202F92BF0A03_1637600416"
+        },
+        "sourceEvent": "On Exploded",
+        "targetDevicePath": {
+          "refPath": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.Device_ExplosiveBarrel_V2_C_UAID_30560F202F92BF0A03_1637600416"
+        },
+        "targetFunction": "Reset"
+      }
+    ],
+    "after": {
+      "sameTrack": true,
+      "clearEachRep": true,
+      "repRestSeconds": 1.5
+    }
+  },
+  {
+    "code": "B3",
+    "lane": {
+      "refPath": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.VerseDevice_C_UAID_30560F202F92E60803_1800699293"
+    },
+    "trigger": {
+      "refPath": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.Device_Trigger_V2_C_UAID_30560F202F92F50803_1112234716"
+    },
+    "before": {
+      "sameTrack": false,
+      "clearEachRep": false,
+      "repRestSeconds": 1.5
+    },
+    "barrel_label": "KT31_Clear_B3_Track1",
+    "barrel_transform": {
+      "location": {
+        "x": 30976,
+        "y": -87808,
+        "z": 0
+      },
+      "rotation": {
+        "pitch": 0,
+        "yaw": 0.0,
+        "roll": 0
+      },
+      "scale": {
+        "x": 1.0,
+        "y": 1.0,
+        "z": 1.0
+      }
+    },
+    "barrel_settings": {
+      "blast Radius": 8,
+      "player Damage": 0,
+      "structure Damage": 100000,
+      "visible During Game": false,
+      "knockbackPlayer": 0
+    },
+    "bindings": [
+      {
+        "sourceDevicePath": {
+          "refPath": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.Device_Trigger_V2_C_UAID_30560F202F92F50803_1112234716"
+        },
+        "sourceEvent": "OnTriggered",
+        "targetDevicePath": {
+          "refPath": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.Device_ExplosiveBarrel_V2_C_UAID_30560F202F92BF0A03_1640862420"
+        },
+        "targetFunction": "Explode"
+      },
+      {
+        "sourceDevicePath": {
+          "refPath": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.Device_ExplosiveBarrel_V2_C_UAID_30560F202F92BF0A03_1640862420"
+        },
+        "sourceEvent": "On Exploded",
+        "targetDevicePath": {
+          "refPath": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.Device_ExplosiveBarrel_V2_C_UAID_30560F202F92BF0A03_1640862420"
+        },
+        "targetFunction": "Reset"
+      }
+    ],
+    "after": {
+      "sameTrack": true,
+      "clearEachRep": true,
+      "repRestSeconds": 1.5
+    }
+  },
+  {
+    "code": "B5",
+    "lane": {
+      "refPath": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.VerseDevice_C_UAID_30560F202F92E60803_1801459301"
+    },
+    "trigger": {
+      "refPath": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.Device_Trigger_V2_C_UAID_30560F202F92F50803_1112546718"
+    },
+    "before": {
+      "sameTrack": false,
+      "clearEachRep": false,
+      "repRestSeconds": 1.5
+    },
+    "barrel_label": "KT31_Clear_B5_Track1",
+    "barrel_transform": {
+      "location": {
+        "x": 30976,
+        "y": -73472,
+        "z": 0
+      },
+      "rotation": {
+        "pitch": 0,
+        "yaw": 0.0,
+        "roll": 0
+      },
+      "scale": {
+        "x": 1.0,
+        "y": 1.0,
+        "z": 1.0
+      }
+    },
+    "barrel_settings": {
+      "blast Radius": 8,
+      "player Damage": 0,
+      "structure Damage": 100000,
+      "visible During Game": false,
+      "knockbackPlayer": 0
+    },
+    "bindings": [
+      {
+        "sourceDevicePath": {
+          "refPath": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.Device_Trigger_V2_C_UAID_30560F202F92F50803_1112546718"
+        },
+        "sourceEvent": "OnTriggered",
+        "targetDevicePath": {
+          "refPath": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.Device_ExplosiveBarrel_V2_C_UAID_30560F202F92BF0A03_1643990424"
+        },
+        "targetFunction": "Explode"
+      },
+      {
+        "sourceDevicePath": {
+          "refPath": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.Device_ExplosiveBarrel_V2_C_UAID_30560F202F92BF0A03_1643990424"
+        },
+        "sourceEvent": "On Exploded",
+        "targetDevicePath": {
+          "refPath": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.Device_ExplosiveBarrel_V2_C_UAID_30560F202F92BF0A03_1643990424"
+        },
+        "targetFunction": "Reset"
+      }
+    ],
+    "after": {
+      "sameTrack": true,
+      "clearEachRep": true,
+      "repRestSeconds": 1.5
+    }
+  },
+  {
+    "code": "E2",
+    "lane": {
+      "refPath": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.VerseDevice_C_UAID_30560F202F92E60803_1806103351"
+    },
+    "trigger": {
+      "refPath": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.Device_Trigger_V2_C_UAID_30560F202F92F50803_1112855720"
+    },
+    "wall": {
+      "bCanBeDamaged": false,
+      "bForciblyStructurallySupported": true
+    },
+    "before": {
+      "sameTrack": false,
+      "clearEachRep": false,
+      "repRestSeconds": 1.5
+    },
+    "barrel_label": "KT31_Clear_E2_Track1",
+    "barrel_transform": {
+      "location": {
+        "x": 51456,
+        "y": -94976,
+        "z": 0
+      },
+      "rotation": {
+        "pitch": 0,
+        "yaw": 0.0,
+        "roll": 0
+      },
+      "scale": {
+        "x": 1.0,
+        "y": 1.0,
+        "z": 1.0
+      }
+    },
+    "barrel_settings": {
+      "blast Radius": 8,
+      "player Damage": 0,
+      "structure Damage": 100000,
+      "visible During Game": false,
+      "knockbackPlayer": 0
+    },
+    "bindings": [
+      {
+        "sourceDevicePath": {
+          "refPath": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.Device_Trigger_V2_C_UAID_30560F202F92F50803_1112855720"
+        },
+        "sourceEvent": "OnTriggered",
+        "targetDevicePath": {
+          "refPath": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.Device_ExplosiveBarrel_V2_C_UAID_30560F202F92BF0A03_1647032428"
+        },
+        "targetFunction": "Explode"
+      },
+      {
+        "sourceDevicePath": {
+          "refPath": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.Device_ExplosiveBarrel_V2_C_UAID_30560F202F92BF0A03_1647032428"
+        },
+        "sourceEvent": "On Exploded",
+        "targetDevicePath": {
+          "refPath": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.Device_ExplosiveBarrel_V2_C_UAID_30560F202F92BF0A03_1647032428"
+        },
+        "targetFunction": "Reset"
+      }
+    ],
+    "after": {
+      "sameTrack": true,
+      "clearEachRep": true,
+      "repRestSeconds": 1.5
+    }
+  },
+  {
+    "code": "E4",
+    "lane": {
+      "refPath": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.VerseDevice_C_UAID_30560F202F92E60803_1806481355"
+    },
+    "trigger": {
+      "refPath": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.Device_Trigger_V2_C_UAID_30560F202F92F50803_1113091722"
+    },
+    "wall": {
+      "bCanBeDamaged": false,
+      "bForciblyStructurallySupported": true
+    },
+    "before": {
+      "sameTrack": false,
+      "clearEachRep": false,
+      "repRestSeconds": 1.5
+    },
+    "barrel_label": "KT31_Clear_E4_Track1",
+    "barrel_transform": {
+      "location": {
+        "x": 51456,
+        "y": -80640,
+        "z": 0
+      },
+      "rotation": {
+        "pitch": 0,
+        "yaw": 0.0,
+        "roll": 0
+      },
+      "scale": {
+        "x": 1.0,
+        "y": 1.0,
+        "z": 1.0
+      }
+    },
+    "barrel_settings": {
+      "blast Radius": 8,
+      "player Damage": 0,
+      "structure Damage": 100000,
+      "visible During Game": false,
+      "knockbackPlayer": 0
+    },
+    "bindings": [
+      {
+        "sourceDevicePath": {
+          "refPath": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.Device_Trigger_V2_C_UAID_30560F202F92F50803_1113091722"
+        },
+        "sourceEvent": "OnTriggered",
+        "targetDevicePath": {
+          "refPath": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.Device_ExplosiveBarrel_V2_C_UAID_30560F202F92BF0A03_1650109432"
+        },
+        "targetFunction": "Explode"
+      },
+      {
+        "sourceDevicePath": {
+          "refPath": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.Device_ExplosiveBarrel_V2_C_UAID_30560F202F92BF0A03_1650109432"
+        },
+        "sourceEvent": "On Exploded",
+        "targetDevicePath": {
+          "refPath": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.Device_ExplosiveBarrel_V2_C_UAID_30560F202F92BF0A03_1650109432"
+        },
+        "targetFunction": "Reset"
+      }
+    ],
+    "after": {
+      "sameTrack": true,
+      "clearEachRep": true,
+      "repRestSeconds": 1.5
+    }
+  },
+  {
+    "code": "E5",
+    "lane": {
+      "refPath": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.VerseDevice_C_UAID_30560F202F92E60803_1806684357"
+    },
+    "trigger": {
+      "refPath": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.Device_Trigger_V2_C_UAID_30560F202F92F50803_1113202723"
+    },
+    "wall": {
+      "bCanBeDamaged": false,
+      "bForciblyStructurallySupported": true
+    },
+    "before": {
+      "sameTrack": false,
+      "clearEachRep": false,
+      "repRestSeconds": 1.5
+    },
+    "barrel_label": "KT31_Clear_E5_Track1",
+    "barrel_transform": {
+      "location": {
+        "x": 51456,
+        "y": -73472,
+        "z": 0
+      },
+      "rotation": {
+        "pitch": 0,
+        "yaw": 0.0,
+        "roll": 0
+      },
+      "scale": {
+        "x": 1.0,
+        "y": 1.0,
+        "z": 1.0
+      }
+    },
+    "barrel_settings": {
+      "blast Radius": 8,
+      "player Damage": 0,
+      "structure Damage": 100000,
+      "visible During Game": false,
+      "knockbackPlayer": 0
+    },
+    "bindings": [
+      {
+        "sourceDevicePath": {
+          "refPath": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.Device_Trigger_V2_C_UAID_30560F202F92F50803_1113202723"
+        },
+        "sourceEvent": "OnTriggered",
+        "targetDevicePath": {
+          "refPath": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.Device_ExplosiveBarrel_V2_C_UAID_30560F202F92BF0A03_1653130436"
+        },
+        "targetFunction": "Explode"
+      },
+      {
+        "sourceDevicePath": {
+          "refPath": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.Device_ExplosiveBarrel_V2_C_UAID_30560F202F92BF0A03_1653130436"
+        },
+        "sourceEvent": "On Exploded",
+        "targetDevicePath": {
+          "refPath": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.Device_ExplosiveBarrel_V2_C_UAID_30560F202F92BF0A03_1653130436"
+        },
+        "targetFunction": "Reset"
+      }
+    ],
+    "after": {
+      "sameTrack": true,
+      "clearEachRep": true,
+      "repRestSeconds": 1.5
+    }
+  },
+  {
+    "code": "E7",
+    "lane": {
+      "refPath": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.VerseDevice_C_UAID_30560F202F92E60803_1807289363"
+    },
+    "trigger": {
+      "refPath": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.Device_Trigger_V2_C_UAID_30560F202F92F50803_1113475725"
+    },
+    "wall": {
+      "bCanBeDamaged": false,
+      "bForciblyStructurallySupported": true
+    },
+    "before": {
+      "sameTrack": false,
+      "clearEachRep": false,
+      "repRestSeconds": 1.5
+    },
+    "barrel_label": "KT31_Clear_E7_Track1",
+    "barrel_transform": {
+      "location": {
+        "x": 51456,
+        "y": -59136,
+        "z": 0
+      },
+      "rotation": {
+        "pitch": 0,
+        "yaw": 0.0,
+        "roll": 0
+      },
+      "scale": {
+        "x": 1.0,
+        "y": 1.0,
+        "z": 1.0
+      }
+    },
+    "barrel_settings": {
+      "blast Radius": 8,
+      "player Damage": 0,
+      "structure Damage": 100000,
+      "visible During Game": false,
+      "knockbackPlayer": 0
+    },
+    "bindings": [
+      {
+        "sourceDevicePath": {
+          "refPath": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.Device_Trigger_V2_C_UAID_30560F202F92F50803_1113475725"
+        },
+        "sourceEvent": "OnTriggered",
+        "targetDevicePath": {
+          "refPath": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.Device_ExplosiveBarrel_V2_C_UAID_30560F202F92BF0A03_1656622439"
+        },
+        "targetFunction": "Explode"
+      },
+      {
+        "sourceDevicePath": {
+          "refPath": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.Device_ExplosiveBarrel_V2_C_UAID_30560F202F92BF0A03_1656622439"
+        },
+        "sourceEvent": "On Exploded",
+        "targetDevicePath": {
+          "refPath": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.Device_ExplosiveBarrel_V2_C_UAID_30560F202F92BF0A03_1656622439"
+        },
+        "targetFunction": "Reset"
+      }
+    ],
+    "after": {
+      "sameTrack": true,
+      "clearEachRep": true,
+      "repRestSeconds": 1.5
+    }
+  },
+  {
+    "code": "W1",
+    "lane": {
+      "refPath": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.VerseDevice_C_UAID_30560F202F92E60803_1807461365"
+    },
+    "trigger": {
+      "refPath": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.Device_Trigger_V2_C_UAID_30560F202F92F50803_1115113734"
+    },
+    "before": {
+      "sameTrack": false,
+      "clearEachRep": false,
+      "repRestSeconds": 1.5
+    },
+    "barrel_label": "KT31_Clear_W1_Track1",
+    "barrel_transform": {
+      "location": {
+        "x": 61696,
+        "y": -102144,
+        "z": 0
+      },
+      "rotation": {
+        "pitch": 0,
+        "yaw": 0.0,
+        "roll": 0
+      },
+      "scale": {
+        "x": 1.0,
+        "y": 1.0,
+        "z": 1.0
+      }
+    },
+    "barrel_settings": {
+      "blast Radius": 8,
+      "player Damage": 0,
+      "structure Damage": 100000,
+      "visible During Game": false,
+      "knockbackPlayer": 0
+    },
+    "bindings": [
+      {
+        "sourceDevicePath": {
+          "refPath": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.Device_Trigger_V2_C_UAID_30560F202F92F50803_1115113734"
+        },
+        "sourceEvent": "OnTriggered",
+        "targetDevicePath": {
+          "refPath": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.Device_ExplosiveBarrel_V2_C_UAID_30560F202F92BF0A03_1659528442"
+        },
+        "targetFunction": "Explode"
+      },
+      {
+        "sourceDevicePath": {
+          "refPath": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.Device_ExplosiveBarrel_V2_C_UAID_30560F202F92BF0A03_1659528442"
+        },
+        "sourceEvent": "On Exploded",
+        "targetDevicePath": {
+          "refPath": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.Device_ExplosiveBarrel_V2_C_UAID_30560F202F92BF0A03_1659528442"
+        },
+        "targetFunction": "Reset"
+      }
+    ],
+    "after": {
+      "sameTrack": true,
+      "clearEachRep": true,
+      "repRestSeconds": 1.5
+    }
+  },
+  {
+    "code": "W2",
+    "lane": {
+      "refPath": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.VerseDevice_C_UAID_30560F202F92E60803_1807946369"
+    },
+    "trigger": {
+      "refPath": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.Device_Trigger_V2_C_UAID_30560F202F92F50803_1115310735"
+    },
+    "before": {
+      "sameTrack": false,
+      "clearEachRep": false,
+      "repRestSeconds": 1.5
+    },
+    "barrel_label": "KT31_Clear_W2_Track1",
+    "barrel_transform": {
+      "location": {
+        "x": 61696,
+        "y": -94976,
+        "z": 0
+      },
+      "rotation": {
+        "pitch": 0,
+        "yaw": 0.0,
+        "roll": 0
+      },
+      "scale": {
+        "x": 1.0,
+        "y": 1.0,
+        "z": 1.0
+      }
+    },
+    "barrel_settings": {
+      "blast Radius": 8,
+      "player Damage": 0,
+      "structure Damage": 100000,
+      "visible During Game": false,
+      "knockbackPlayer": 0
+    },
+    "bindings": [
+      {
+        "sourceDevicePath": {
+          "refPath": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.Device_Trigger_V2_C_UAID_30560F202F92F50803_1115310735"
+        },
+        "sourceEvent": "OnTriggered",
+        "targetDevicePath": {
+          "refPath": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.Device_ExplosiveBarrel_V2_C_UAID_30560F202F92BF0A03_1661885445"
+        },
+        "targetFunction": "Explode"
+      },
+      {
+        "sourceDevicePath": {
+          "refPath": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.Device_ExplosiveBarrel_V2_C_UAID_30560F202F92BF0A03_1661885445"
+        },
+        "sourceEvent": "On Exploded",
+        "targetDevicePath": {
+          "refPath": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.Device_ExplosiveBarrel_V2_C_UAID_30560F202F92BF0A03_1661885445"
+        },
+        "targetFunction": "Reset"
+      }
+    ],
+    "after": {
+      "sameTrack": true,
+      "clearEachRep": true,
+      "repRestSeconds": 1.5
+    }
+  },
+  {
+    "code": "W3",
+    "lane": {
+      "refPath": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.VerseDevice_C_UAID_30560F202F92E60803_1808325373"
+    },
+    "trigger": {
+      "refPath": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.Device_Trigger_V2_C_UAID_30560F202F92F50803_1115465736"
+    },
+    "before": {
+      "sameTrack": false,
+      "clearEachRep": false,
+      "repRestSeconds": 1.5
+    },
+    "barrel_label": "KT31_Clear_W3_Track1",
+    "barrel_transform": {
+      "location": {
+        "x": 61696,
+        "y": -87808,
+        "z": 0
+      },
+      "rotation": {
+        "pitch": 0,
+        "yaw": 0.0,
+        "roll": 0
+      },
+      "scale": {
+        "x": 1.0,
+        "y": 1.0,
+        "z": 1.0
+      }
+    },
+    "barrel_settings": {
+      "blast Radius": 8,
+      "player Damage": 0,
+      "structure Damage": 100000,
+      "visible During Game": false,
+      "knockbackPlayer": 0
+    },
+    "bindings": [
+      {
+        "sourceDevicePath": {
+          "refPath": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.Device_Trigger_V2_C_UAID_30560F202F92F50803_1115465736"
+        },
+        "sourceEvent": "OnTriggered",
+        "targetDevicePath": {
+          "refPath": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.Device_ExplosiveBarrel_V2_C_UAID_30560F202F92BF0A03_1664892447"
+        },
+        "targetFunction": "Explode"
+      },
+      {
+        "sourceDevicePath": {
+          "refPath": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.Device_ExplosiveBarrel_V2_C_UAID_30560F202F92BF0A03_1664892447"
+        },
+        "sourceEvent": "On Exploded",
+        "targetDevicePath": {
+          "refPath": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.Device_ExplosiveBarrel_V2_C_UAID_30560F202F92BF0A03_1664892447"
+        },
+        "targetFunction": "Reset"
+      }
+    ],
+    "after": {
+      "sameTrack": true,
+      "clearEachRep": true,
+      "repRestSeconds": 1.5
+    }
+  }
+]

@@ -45,6 +45,8 @@ kt_sky_box_device<public> := class(creative_device):
     @editable WaveGapSeconds:float = 1.5
     # Every bot box is manned from the start, one wave (player 2026-10-13: "there no bots in the other boxes").
     @editable AllAtOnce:logic = true
+    # Timed coaching only: neither tile selection nor ownership is observable.
+    @editable PracticeCueSeconds:float = 5.0
 
     var Bots:[]guard_spawner_device = array{}
     var BotWave:[]int = array{}
@@ -59,6 +61,7 @@ kt_sky_box_device<public> := class(creative_device):
     var Waiting:logic = false
     var Pending:float = -1.0
     var LastWave:int = 0
+    var PracticeStart:float = 0.0
     Hud:text_block = text_block{DefaultTextColor := NamedColors.White, DefaultTextSize := 24.0}
     var Panel:?canvas = false
 
@@ -115,6 +118,7 @@ kt_sky_box_device<public> := class(creative_device):
 
     StartWave(W:int):void =
         set Wave = W
+        set PracticeStart = GetSimulationElapsedTime()
         set Down = 0
         set Pending = -1.0
         for (S : WaveBots(W)):
@@ -220,7 +224,9 @@ kt_sky_box_device<public> := class(creative_device):
 
     UpdateHud():void =
         Left := WaveBots(Wave).Length - Down
-        Hud.SetText(SkyText("SKY BOX  wave {Wave + 1}/{LastWave + 1}   {Left} left   {KTSkyClock(GetSimulationElapsedTime() - RunStart)}\nBox forward: build your own floor. Off the edge and you start again."))
+        CueNumber := KTSkyPracticeIndex(GetSimulationElapsedTime() - PracticeStart, PracticeCueSeconds)
+        Prompt := KTSkyPracticePrompt(CueNumber)
+        Hud.SetText(SkyText("SKY BOX  wave {Wave + 1}/{LastWave + 1}   {Left} left   {KTSkyClock(GetSimulationElapsedTime() - RunStart)}\nPractice {CueNumber + 1}/5 (timed, ungraded): {Prompt}\nBox > peek > reset > replace > take. Repeat at your pace; build your own floor."))
 
     ShowHud(P:player):void =
         HideHud()
@@ -247,3 +253,16 @@ KTSkyClock<public>(Seconds:float)<transacts>:string =
     if (S < 10) then "{M}:0{S}" else "{M}:{S}"
 
 SkyText<localizes>(Text:string):message = "{Text}"
+
+# Cues never advance on inferred success; only elapsed time rotates the reminder.
+KTSkyPracticeIndex<public>(Elapsed:float, CueSeconds:float)<transacts>:int =
+    N := if (V := Floor[Max(0.0, Elapsed) / Max(1.0, CueSeconds)]) then V else 0
+    if (V := Mod[N, 5]) then V else 0
+
+KTSkyPracticePrompt<public>(Index:int)<computes>:string =
+    case (Index):
+        0 => "Box up: floor, walls and roof before moving forward."
+        1 => "Peek: edit an opening while keeping cover."
+        2 => "Reset your opening before re-positioning."
+        3 => "Replace your damaged wall when needed."
+        _ => "Take the next wall toward the bot, then re-box."
