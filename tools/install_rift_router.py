@@ -18,7 +18,7 @@ REBOX_RIFTS=[('KT14_Rebox_Rift_In','KT18_Sky_Rift_Start'),('KT18_Sky_Rift_Exit',
 # The tunnel run lane (P5) was consolidated into P7 on 2026-10-13; its goal rift went with it.
 RETURN_RIFTS=[('KT22_Return_NinetiesTop','KT22_Return_NinetiesStart')]
 # Drill room exits (tools/build_drill_plates.py; player 2026-10-13): each lane room's rift back to its wing's arrival.
-DRILL_RIFTS=[(f'KT30_Drill_{c}_Exit',f'KT3_0{w}_Dest') for w,codes in ((3,'B2 B3 B5'),(4,'P2 P6 P7'),(5,'E2 E4 E5 E7'),(6,'W1 W2 W3')) for c in codes.split()]+[('KT30_Drill_LAB_Exit','KT2_HubArrival')]
+DRILL_RIFTS=[(f'KT30_Drill_{c}_Exit',f'KT3_0{w}_Dest') for w,codes in ((3,'B5'),(4,'P2 P6 P7'),(5,'E4 E7'),(6,'W2 W3')) for c in codes.split()]+[('KT30_Drill_LAB_Exit','KT2_HubArrival')]
 PAIRS=PAIRS+LAB_RIFTS+REBOX_RIFTS+RETURN_RIFTS+DRILL_RIFTS
 
 def decode(v):return json.loads(v) if isinstance(v,str) else v

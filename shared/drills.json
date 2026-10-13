@@ -107,22 +107,21 @@
     {
       "id": "build",
       "name": "BUILD",
-      "blurb": "Floor, ramp and piece switching",
+      "blurb": "Wall, floor, ramp, cone switching",
       "zone": "Build",
       "drills": [
-        "floor_front",
-        "ramp_forward",
         "piece_switch"
       ]
     },
     {
       "id": "movement",
       "name": "MOVEMENT",
-      "blurb": "Ramp rush, 90s, tunnel and window",
+      "blurb": "Ramp rush, 90s, box up, tunnel and window",
       "zone": "Piece",
       "drills": [
         "ramp_rush",
         "nineties",
+        "box_up",
         "tunnel_edit_peek"
       ],
       "loadout": "melee"
@@ -130,22 +129,19 @@
     {
       "id": "editing",
       "name": "EDITING",
-      "blurb": "Window peek, half-wall jump shot, edit and reset, edit and peek",
+      "blurb": "Half-wall jump shot, edit peek and reset",
       "zone": "Edit",
       "drills": [
-        "edit_window",
         "edit_half_wall",
-        "edit_reset",
         "edit_peek"
       ]
     },
     {
       "id": "weapons",
       "name": "WEAPONS",
-      "blurb": "Gun swap, pickaxe swap, build to gun",
+      "blurb": "Pickaxe swap, build to gun",
       "zone": "Armory",
       "drills": [
-        "swap_shoot",
         "pickaxe_swap",
         "build_swap_shoot"
       ]
@@ -222,7 +218,8 @@
       ],
       "principle": "slow_is_smooth",
       "why": "Floor placement and movement must agree so the landing surface is where you expect it.",
-      "reflect": "Did the floor appear in the intended cell before you moved onto it?"
+      "reflect": "Did the floor appear in the intended cell before you moved onto it?",
+      "retired": true
     },
     {
       "id": "ramp_forward",
@@ -257,7 +254,8 @@
       ],
       "principle": "slow_is_smooth",
       "why": "A correctly placed ramp needs the intended cell and orientation, not just a gain in height.",
-      "reflect": "Did the ramp face the intended route, or did you correct it after moving?"
+      "reflect": "Did the ramp face the intended route, or did you correct it after moving?",
+      "retired": true
     },
     {
       "id": "cone",
@@ -626,8 +624,7 @@
           "cone"
         ]
       ],
-      "basis": "Reference order set by the project owner (floor, wall, floor, then close the other walls). Four walls then floor and cone, wall-wall-floor-ramp and wall-floor-cone appear in guides and are accepted.",
-      "retired": true
+      "basis": "Reference order set by the project owner (floor, wall, floor, then close the other walls). Four walls then floor and cone, wall-wall-floor-ramp and wall-floor-cone appear in guides and are accepted."
     },
     {
       "id": "nineties",
@@ -887,7 +884,8 @@
       ],
       "principle": "slow_is_smooth",
       "why": "A window gives you a sightline while the rest of the wall still covers you. The point of the edit is the shot you take through it, so the drill ends on a hit.",
-      "reflect": "Did you aim at the dummy before the window opened, or after?"
+      "reflect": "Did you aim at the dummy before the window opened, or after?",
+      "retired": true
     },
     {
       "id": "edit_arch",
@@ -1002,7 +1000,8 @@
       "checks": [],
       "principle": "reset_always",
       "why": "Resetting practises closing the sightline you opened. In a fight, also check whether moving would be safer.",
-      "reflect": "Were you behind cover while the wall was returning to its closed shape?"
+      "reflect": "Were you behind cover while the wall was returning to its closed shape?",
+      "retired": true
     },
     {
       "id": "piece_claim",
@@ -1061,6 +1060,7 @@
         "edit",
         "edit_confirm",
         "fire",
+        "edit",
         "reset"
       ],
       "reps": 10,
@@ -1074,7 +1074,7 @@
         "forward": 2,
         "up": 1
       },
-      "tip": "Peek from a side tile, not the obvious middle. Fire once at the dummy, reset, and never repeat the same timing.",
+      "tip": "Open a window, fire once at the dummy, then edit and reset at once. Vary your timing between reps.",
       "checks": [
         {
           "step": 2,
@@ -1082,13 +1082,22 @@
           "target": "gun"
         },
         {
-          "step": 3,
+          "step": 4,
           "kind": "exposure"
         }
       ],
       "principle": "vary_the_peek",
       "why": "Starting near the target reduces correction during exposure. Repeat the setup to learn it, then vary timing and angle as the threat changes.",
-      "reflect": "How far did you move your crosshair after exposing yourself, and did you recover cover?"
+      "reflect": "How far did you move your crosshair after exposing yourself, and did you recover cover?",
+      "accepts": [
+        [
+          "edit",
+          "edit_confirm",
+          "fire",
+          "reset"
+        ]
+      ],
+      "basis": " Merged 2026-10-13 with E2 (window edit and peek) and E5 (edit + reset) at the player's request."
     },
     {
       "id": "swap_shoot",
@@ -1120,7 +1129,8 @@
           "kind": "target_hit",
           "target": "gun"
         }
-      ]
+      ],
+      "retired": true
     },
     {
       "id": "pickaxe_swap",

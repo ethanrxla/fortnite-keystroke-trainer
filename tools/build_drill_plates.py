@@ -55,19 +55,15 @@ HEADERS = {"build": "BUILD DRILLS", "piece": "MOVEMENT DRILLS", "edit": "EDIT DR
 WING_ARRIVAL = {"B": "KT3_03_Dest", "P": "KT3_04_Dest", "E": "KT3_05_Dest", "W": "KT3_06_Dest"}
 # code or area, plate words, rgb (linear), walls in order of preference, lane code or teleporter to arrive at
 PLATES = [
-    ("B2", "FLOOR", (0.05, 0.16, 0.30), ["build_north"], "lane"),
-    ("B3", "RAMP", (0.05, 0.16, 0.30), ["build_north"], "lane"),
     ("B5", "PIECE SWITCH", (0.05, 0.16, 0.30), ["build_north"], "lane"),
     ("P2", "RAMP RUSH", (0.20, 0.06, 0.30), ["piece_west"], "lane"),
     ("P6", "90s", (0.20, 0.06, 0.30), ["piece_west"], "lane"),
+    ("P4", "BOX UP", (0.20, 0.06, 0.30), ["piece_west"], "lane"),
     ("SKY", "SKY BOX", (0.03, 0.22, 0.30), ["piece_west"], "KT18_Sky_Rift_Start"),
     ("P7", "TUNNEL", (0.20, 0.06, 0.30), ["piece_west"], "lane"),
-    ("E2", "WINDOW PEEK", (0.04, 0.24, 0.10), ["edit_south"], "lane"),
     ("E4", "HALF WALL", (0.04, 0.24, 0.10), ["edit_south"], "lane"),
-    ("E5", "EDIT RESET", (0.04, 0.24, 0.10), ["edit_south"], "lane"),
     ("E7", "EDIT PEEK", (0.04, 0.24, 0.10), ["edit_south"], "lane"),
     ("LAB", "PIECE LAB", (0.10, 0.20, 0.04), ["edit_south"], "KT12_Gate_LabIn"),
-    ("W1", "GUN SWAP", (0.28, 0.20, 0.02), ["armory_west", "armory_south"], "lane"),
     ("W2", "PICKAXE SWAP", (0.28, 0.20, 0.02), ["armory_west", "armory_south"], "lane"),
     ("W3", "BUILD SWAP", (0.28, 0.20, 0.02), ["armory_west", "armory_south"], "lane"),
 ]
@@ -75,6 +71,8 @@ SECTION_SIGNS = ["build", "movement", "editing"]
 # Areas whose own teleporter has a target group: its Teleport sends you on to that group (the Piece Lab entry went to
 # the tracking arena, player 2026-10-13), so the plate gets an arrival pad of its own, offset (x, y) from it.
 ARRIVE_NEAR = {"LAB": ("KT12_Gate_LabIn", 450.0, 0.0)}
+# Lanes that live in another lane's room (tools/place_box_up_lane.py): no exit rift of their own.
+SHARED_ROOM = {"P4": "P6"}
 # Extra exit rifts to the main lobby: (code, x, y, z). Routed by install_rift_router.py (DRILL_RIFTS).
 LOBBY_EXITS = [("LAB", -21760.0, -97600.0, 0.0)]
 IGNORE = ("KT_Wall_", "KT_Wing_", "KT_Hub", "KT_Ceil_", "KT19_", "KT23_Theme_Move_", PREFIX)
@@ -193,6 +191,8 @@ def exits(acts, by):
     for code, *_rest, dest in PLATES:
         if dest != "lane":
             continue
+        if code in SHARED_ROOM:
+            continue                     # its room's own exit serves it
         lane = next(a for a in acts if a["label"] == f"KT_Lane_{code}")
         lb = lane["bounds"]
         lx, ly, lz = [(lb["min"][k] + lb["max"][k]) / 2 for k in "xyz"]
@@ -226,6 +226,16 @@ def main():
         if a["label"].startswith(PREFIX):
             m.tool(bm.SCENE, "remove_from_scene", actor={"refPath": a["actorPath"]})
     starts = {}
+    for code in SHARED_ROOM:
+        lane = by.get(f"KT_Lane_{code}")
+        if lane:
+            lb = lane["bounds"]
+            lx, ly, lz = [(lb["min"][k] + lb["max"][k]) / 2 for k in "xyz"]
+            trig = b.device(bm.TRIGGER, f"{PREFIX}{code}_Start", lx, ly, lz - 450.0)
+            b.props(trig, {"visible in Game": False})
+            b.tag(trig, "kt_drill_start_tag")
+            m.tool(bm.SCENE, "save_actor", actor={"refPath": trig})
+            starts[code] = trig
     for r in rifts:
         lx, ly, lz = r["lane"]
         trig = b.device(bm.TRIGGER, f"{PREFIX}{r['code']}_Start", lx, ly, lz - 450.0)
