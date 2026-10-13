@@ -54,15 +54,19 @@ def apply(report):
               dict(barrierWidth=16,barrierDepth=.05,barrierHeight=4,blockWeaponFire=True,zoneShape='Box'))
     zones=[];walls=[];jails=[];sky=[];returns=[];vendors=[];effects=[]
     for side,x in [('Red',72192),('Blue',79360)]:
-        zones.append(put(side+'Safe','mutator',x,-55808,0,
-                    dict(zoneWidth=2,zoneDepth=16,zoneHeight=4,bAllowBuilding=False,bAllowEditing=False,bAllowWeaponFire=False)))
-        walls.append(put(side+'SafeWall','barrier',x,-55808,0,
-                    dict(barrierWidth=16,barrierDepth=2,barrierHeight=4,blockWeaponFire=True,zoneShape='Box')))
+        room_x=70912 if side=='Red' else 80640
+        zones.append(put(side+'Safe','mutator',room_x,-55808,0,
+                    dict(zoneWidth=3,zoneDepth=4,zoneHeight=1,bAllowBuilding=False,bAllowEditing=False,bAllowWeaponFire=False)))
+        walls.append(put(side+'SafeWall','barrier',room_x,-55808,0,
+                    dict(barrierWidth=3,barrierDepth=4,barrierHeight=1,blockWeaponFire=True,zoneShape='Box')))
         jails.append(put(side+'Jail','teleporter',x,-58880,80))
         sky.append(put(side+'SkyReturn','teleporter',x,-55808,1800))
         rx=73984 if side=='Red' else 77568
         returns.append(put(side+'ReturnRift','teleporter',rx,-55808,0))
-        vendors.append(put(side+'Vendor','vendor',x,-54272,0))
+        vendor=put(side+'Vendor','vendor',70374.4 if side=='Red' else 81177.6,-56320,128)
+        b.face(vendor['refPath'],0 if side=='Red' else 180)
+        m.tool(bm.SCENE,'save_actor',actor=vendor)
+        vendors.append(vendor)
         effects.append(put(side+'CaptureEffect','vfx',rx,-55808,0))
     flags=[];rifts=[]
     for i,s in enumerate(SOCKETS):
