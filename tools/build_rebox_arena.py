@@ -152,7 +152,7 @@ def place(b, p):
         ref = b.m.tool(bm.SCENE, "add_to_scene_from_class", actor_type={"refPath": pc["cls"]}, name=pc["label"],
                        xform=bm.xform(x, y, z, yaw=yaw))
         path = b.labelled(ref["refPath"], pc["label"])
-        b.props(path, {"bForciblyStructurallySupported": True, "bIsInvulnerable": True})
+        b.props(path, {"bForciblyStructurallySupported": True, "bIsInvulnerable": True, "bCanBeDamaged": False})
         saved.append(path)
     print(f"slabs {len(p.slabs)}, pieces {len(p.pieces)}")
     paths = {}

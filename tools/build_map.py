@@ -724,7 +724,7 @@ def main():
         b.props(trig, {"visible in Game": False})
         for k, (x, y, z) in enumerate(ln["booms"]):
             boom = b.device(EXPLOSIVE, f"KT_Boom_{d['code']}_{k}", x, y, z)
-            b.props(boom, {"blast Radius": 4, "player Damage": 0, "structure Damage": 100000,
+            b.props(boom, {"blast Radius": 8, "player Damage": 0, "structure Damage": 100000,
                            "visible During Game": False, "knockbackPlayer": 0})
             b.bind(trig, "OnTriggered", boom, "Explode")
             b.bind(boom, "On Exploded", boom, "Reset")

@@ -65,7 +65,7 @@ def main():
             ref = m.tool(bm.SCENE, "add_to_scene_from_class", actor_type={"refPath": CLS[kind]}, name=label,
                          xform=bm.xform(px, py, pz, yaw=yaw))
             path = b.labelled(ref["refPath"], label)
-            b.props(path, {"bForciblyStructurallySupported": True, "bIsInvulnerable": True})
+            b.props(path, {"bForciblyStructurallySupported": True, "bIsInvulnerable": True, "bCanBeDamaged": False})
             m.tool(bm.SCENE, "save_actor", actor={"refPath": path})
     print(f"placed {len(boxes)} enemy boxes")
 

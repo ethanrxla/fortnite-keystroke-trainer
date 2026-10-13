@@ -130,7 +130,7 @@ def place(b, p):
     for label, kind, x, y, z, yaw in p.pieces:
         ref = b.m.tool(bm.SCENE, "add_to_scene_from_class", actor_type={"refPath": CLS[kind]}, name=label, xform=bm.xform(x, y, z, yaw=yaw))
         path = b.labelled(ref["refPath"], label)
-        b.props(path, {"bForciblyStructurallySupported": True, "bIsInvulnerable": True})
+        b.props(path, {"bForciblyStructurallySupported": True, "bIsInvulnerable": True, "bCanBeDamaged": False})
         saved.append(path)
     refused, paths = [], {}
     for d in p.devices:

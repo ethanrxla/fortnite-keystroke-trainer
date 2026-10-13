@@ -279,9 +279,10 @@ keystroke_drill_device := class(creative_device):
         SeenBefore:logic = logic{BriefedPlayers[Player]? or Seen.BestCleanTempo > 0 or Seen.RecentAccuracy.Length > 0}
         if (set BriefedPlayers[Player] = true) {}
         Sleep(if (SeenBefore?) then BriefRepeatSeconds else BriefFirstSeconds)
-        if (not ClearEachRep?):
-            Clearer.Trigger(Player)
-            Sleep(ClearWaitSeconds)
+        # Always start clean: a box left on track 1 blocked the teleport to the start and the set read as abandoned
+        # (player 2026-10-13, box up: "im shooting it, not entering").
+        Clearer.Trigger(Player)
+        Sleep(ClearWaitSeconds)
         var CleanReps:int = 0
         var ObservedReps:int = 0
         var UncheckedSteps:int = 0
@@ -360,6 +361,8 @@ keystroke_drill_device := class(creative_device):
             KTHudDrillEnd(Player)
             if (UI := GetPlayerUI[Player]):
                 UI.RemoveWidget(Canvas)
+            # Builds go when the player leaves (player 2026-10-13: "the builds also need to dissapear after you exit").
+            Clearer.Trigger(Player)
             set ActivePlayer = false
             set Busy = false
             return
@@ -378,6 +381,7 @@ keystroke_drill_device := class(creative_device):
         KTLog("set_end", Drill.Id, Apm, Reps, 0, SetResult,
             "clean={CleanReps}|accuracy={Accuracy}|decision={DecisionName(Decision)}|hits={HitsTaken}|lat_ms={AverageMs}|band={ResultBand}|verified={YesNo(Eligible)}|observed={ObservedReps}|unchecked={UncheckedSteps}")
         MovePlayer(Player, if (Back := ReturnPoint?) then Back else PadPosition())
+        Clearer.Trigger(Player)
         if (Eligible?):
             Stuck := if (IsPlateau(GetDrillProgress(Player, Drill.Id).RecentAccuracy)?) then "\n{PlateauLine}" else ""
             Cue.SetText(CueText("{ResultLine(CleanReps, Reps, Decision)}\n{CoachLine(Band, HitsTaken, Drill.Tip)}\nThink: {Drill.Reflect}{Stuck}"))
