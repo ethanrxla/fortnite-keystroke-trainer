@@ -67,7 +67,10 @@
     },
     {
       "name": "Tactical SMG",
-      "pattern": "/Game/Athena/Items/Weapons/WID_Pistol_AutoHeavyPDW_Athena_{r}_Ore_T03.WID_Pistol_AutoHeavyPDW_Athena_{r}_Ore_T03"
+      "pattern": "/Game/Athena/Items/Weapons/WID_Pistol_Scavenger_Athena_{r}_Ore_T03.WID_Pistol_Scavenger_Athena_{r}_Ore_T03",
+      "paths": {
+        "C": "/Game/Athena/Items/Weapons/WID_Pistol_Scavenger_Athena_UC_Ore_T03.WID_Pistol_Scavenger_Athena_UC_Ore_T03"
+      }
     },
     {
       "name": "Suppressed SMG",
