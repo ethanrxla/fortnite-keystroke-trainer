@@ -41,7 +41,8 @@ class Entries(unittest.TestCase):
         ev += build(10, ["ramp", "wall", "wall", "jump", "floor", "ramp", "turn_right"], [0.2, 0.5, 0.2, 0.2, 0.2, 0.2, 0.2])  # hesitation inside one build (a pause over 0.6 s would end it), odd order
         ev += build(20, ["floor", "wall", "floor", "wall", "wall", "wall"], [0.2] * 6)                    # box in the reference order
         ev += build(30, ["floor", "wall", "wall", "cone", "edit"], [0.2, 0.2, 0.2, 0.2, 0.2])
-        ev += [key(30.9, "edit_confirm")]                                                                  # tunnel edit, never reset
+        ev += [key(30.9, "edit_confirm"), key(31.1, "edit")]                                              # tunnel edit, never reset
+        # (the second edit keeps it closest to P7: piece switch also ends edit, confirm since 2026-10-13)
         return ev
 
     def test_worst_first_and_clean_build_is_labelled_clean(self):

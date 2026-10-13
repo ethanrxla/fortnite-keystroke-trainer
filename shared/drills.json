@@ -139,7 +139,7 @@
     {
       "id": "weapons",
       "name": "WEAPONS",
-      "blurb": "Build to gun",
+      "blurb": "Piece / gun swap",
       "zone": "Armory",
       "drills": [
         "build_swap_shoot"
@@ -291,7 +291,9 @@
         "floor",
         "wall",
         "ramp",
-        "cone"
+        "cone",
+        "edit",
+        "edit_confirm"
       ],
       "reps": 10,
       "advance": [
@@ -304,7 +306,7 @@
         "forward": 2,
         "up": 2
       },
-      "tip": "For this exercise, switch floor, wall, ramp, cone while keeping each preview in its intended cell.",
+      "tip": "Floor, wall, ramp, cone, keeping each preview in its intended cell; then edit the cone open and climb through: reaching the top starts the next rep.",
       "checks": [
         {
           "step": 0,
@@ -327,7 +329,8 @@
       ],
       "principle": "slow_is_smooth",
       "why": "A fixed sequence isolates the transitions between pieces. Other situations need different orders.",
-      "reflect": "Which transition moved your crosshair away from the intended cell?"
+      "reflect": "Which transition moved your crosshair away from the intended cell?",
+      "basis": " Edit at the end and the climb-to-the-top finish added 2026-10-13 (player request)."
     },
     {
       "id": "ramp_rush",
@@ -1175,9 +1178,11 @@
       "id": "build_swap_shoot",
       "code": "W3",
       "tier": 3,
-      "name": "Build, swap, shoot",
+      "name": "Piece / gun swap",
       "steps": [
         "wall",
+        "swap_weapon",
+        "fire",
         "swap_weapon",
         "fire"
       ],
@@ -1192,13 +1197,18 @@
         "forward": 2,
         "up": 1
       },
-      "tip": "After placing the wall, select the intended gun, aim at the target, and fire from useful cover.",
+      "tip": "Wall, swap to your shotgun and fire, then swap to the SMG and fire again: the right gun out before each shot.",
       "principle": "right_tool",
       "why": "This exercise connects a build with a shot. Check both the selected item and your exposure during the transition.",
       "reflect": "Was the gun ready and the crosshair on target before you exposed yourself?",
       "checks": [
         {
           "step": 2,
+          "kind": "target_hit",
+          "target": "gun"
+        },
+        {
+          "step": 4,
           "kind": "target_hit",
           "target": "gun"
         }

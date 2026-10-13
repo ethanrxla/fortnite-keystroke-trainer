@@ -38,6 +38,7 @@ DUMMY_OFF = 22.0                          # dummies between plate and wall
 # Wing walls (inner face): (axis, face coordinate, along-min, along-max, normal into the room)
 WALLS = {
     "build_north": ("y", -56320.0, 4096.0, 7168.0, (0.0, -1.0)),
+    "build_east": ("x", 7168.0, -62976.0, -56320.0, (-1.0, 0.0)),
     "piece_west": ("x", -3584.0, -56320.0, -52736.0, (1.0, 0.0)),
     "piece_east": ("x", 4096.0, -55808.0, -52736.0, (-1.0, 0.0)),
     "edit_south": ("y", -62976.0, -6656.0, -3072.0, (0.0, 1.0)),
@@ -52,14 +53,14 @@ WALL_Z = {"edit_south": 190.0}
 HEADER_Z = {}
 # A header over each wing's plates (player 2026-10-13: "what plates represent those drills? im unsure in the lobby").
 # The swap drills sit with piece switching: the armory is for equipment only (player 2026-10-13).
-HEADERS = {"build": "BUILD AND SWAP DRILLS", "piece": "MOVEMENT DRILLS", "edit": "EDIT DRILLS", "armory": "WEAPON DRILLS"}
+HEADERS = {"build": "BUILD DRILLS", "piece": "MOVEMENT DRILLS", "edit": "EDIT DRILLS", "armory": "WEAPON DRILLS"}
 WING_ARRIVAL = {"B": "KT3_03_Dest", "P": "KT3_04_Dest", "E": "KT3_05_Dest", "W": "KT3_03_Dest"}   # swap plates live in the build wing
 # code or area, plate words, rgb (linear), walls in order of preference, lane code or teleporter to arrive at
 PLATES = [
     ("B5", "PIECE SWITCH", (0.05, 0.16, 0.30), ["build_north"], "lane"),
     ("P2", "RAMP RUSH", (0.20, 0.06, 0.30), ["piece_west"], "lane"),
-    ("P6", "90s", (0.20, 0.06, 0.30), ["piece_west"], "lane"),
-    ("P4", "BOX UP", (0.20, 0.06, 0.30), ["piece_west"], "lane"),
+    ("P6", "90s", (0.05, 0.16, 0.30), ["build_north", "build_east"], "lane"),
+    ("P4", "BOX UP", (0.05, 0.16, 0.30), ["build_north", "build_east"], "lane"),
     ("SKY", "SKY BOX", (0.03, 0.22, 0.30), ["piece_west"], "KT18_Sky_Rift_Start"),
     ("TAKE", "WALL TAKE", (0.30, 0.10, 0.02), ["piece_west"], "KT33_WallTake_Arrive"),
     ("P7", "TUNNEL", (0.20, 0.06, 0.30), ["piece_west"], "lane"),
@@ -77,7 +78,7 @@ SHARED_ROOM = {"P4": "P6"}
 # EXIT plates on each drill room's back wall, behind the start (player 2026-10-13: "there should be plates you can
 # shoot to exit each drill, as running back to the rift inbetween reps is kind of annoying"): room code -> the wing
 # arrival they send you to. Shooting one ends the drill (DrillDevice WatchLeave sees you leave the lane).
-EXIT_ROOMS = {"B5": "KT3_03_Dest", "W3": "KT3_03_Dest", "P2": "KT3_04_Dest", "P6": "KT3_04_Dest", "P7": "KT3_04_Dest",
+EXIT_ROOMS = {"B5": "KT3_03_Dest", "W3": "KT3_03_Dest", "P2": "KT3_04_Dest", "P6": "KT3_03_Dest", "P7": "KT3_04_Dest",
               "W2": "KT3_04_Dest", "E4": "KT3_05_Dest", "E7": "KT3_05_Dest"}
 EXIT_Z, EXIT_SIZE = 470.0, 200.0
 # Lane rooms no longer get exit rifts: the EXIT plates replace them, and the rift pad behind the start was walked into
