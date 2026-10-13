@@ -8,10 +8,15 @@ copies straight from the GPU's desktop image and returns None when nothing chang
 overlay uses to skip work entirely. Read-only screen capture: no input, no game memory.
 """
 import sys
+import time
 
 
 class Grabber:
+    # Longest a dxcam camera may report "no new frame" before it is treated as stopped.
+    STALE_S = 1.0
+
     def __init__(self, prefer_dxcam=True):
+        self.fresh_at = time.monotonic()
         self.prefer_dxcam = prefer_dxcam and sys.platform == "win32"
         self.cams = None          # [(camera, (left, top, right, bottom) desktop rect)]
         self.mss = None
@@ -49,11 +54,29 @@ class Grabber:
                 except Exception:
                     break                        # device lost (resolution change, sleep): fall back to mss
                 self.backend = "dxcam"
+                now = time.monotonic()
                 if frame is None:                # no new desktop frame since the last grab
-                    return self.last, False
+                    if self.last is not None and now - self.fresh_at < self.STALE_S:
+                        return self.last, False
+                    # A game in motion changes every frame, so a long silence means the duplication stopped
+                    # delivering (live 2026-10-12: after the session restarted, every grab came back empty and the
+                    # guide analysed one old frame for half an hour, so it never saw an edit). Rebuild the cameras
+                    # and take this frame with mss.
+                    self.reset_cameras()
+                    self.fresh_at = now
+                    return self._grab_mss(rect), True
+                self.fresh_at = now
                 self.last = frame
                 return frame, True
         return self._grab_mss(rect), True
+
+    def reset_cameras(self):
+        for cam, _ in self.cams or []:
+            try:
+                cam.release()
+            except Exception:
+                pass
+        self.cams = None
 
     def _grab_mss(self, rect):
         import mss
