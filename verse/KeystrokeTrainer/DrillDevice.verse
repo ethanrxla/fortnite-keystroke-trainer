@@ -410,7 +410,7 @@ keystroke_drill_device := class(creative_device):
                 Clearer.Trigger(Player)
                 KTLog("rep_clear", Drill.Id, Apm, Rep, Drill.Steps.Length, rep_result.Unchecked, "boundary=rep_end")
                 Sleep(ClearWaitSeconds)
-                MovePlayer(Player, TrackOrigin(Drill, 1))
+                MovePlayer(Player, TrackOrigin(Drill, Min(Rep + 1, Reps)))
             if (Rep < Reps, not Abandoned?):
                 Cue.SetText(CueText("{Drill.Code}  {Drill.Name}   rep {Rep}/{Reps} done\nNext rep in a moment"))
                 Sleep(RepRestSeconds)
