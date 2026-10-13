@@ -96,6 +96,9 @@ keystroke_drill_device := class(creative_device):
     # Reaching this many levels above the start ends the rep and moves the player to the next one (0 = off). Player
     # 2026-10-13: at the top of ramp rush and 90s, "teleport to next rep".
     @editable TopLevels:int = 0
+    # With TopLevels set, the rep runs until the top is reached (not the first checked step), up to this long after
+    # the cue sequence ends (player 2026-10-13: 90s "reps are too short").
+    @editable TopWaitSeconds:float = 15.0
     # Wire a gun target's hit event to GunHit and a pickaxe target's hit event to PickaxeHit in the
     # editor (device event binding, not Verse). target_hit checks read these. Unlinked is fine.
     # Leaving the lane ends the set (and a section's run): more than this far, in cm, from the current rep's start
@@ -333,7 +336,7 @@ keystroke_drill_device := class(creative_device):
                 KTHudDrillStep(Player, Action, Result)
                 if (TopReached[Player, Drill, Rep]):
                     set RepDone = true
-                else if (StepIndex = LastCheck, Result = rep_result.Ok):
+                else if (TopLevels = 0, StepIndex = LastCheck, Result = rep_result.Ok):
                     set RepDone = true
                 else if (not (WaitsForOutcome? and Result = rep_result.Ok)):
                     # Unchecked steps wait out their window, but end early when the player has already built ahead
@@ -344,6 +347,13 @@ keystroke_drill_device := class(creative_device):
             if (PanelShown?, UI := GetPlayerUI[Player]):
                 UI.RemoveWidget(EditPanel)
                 set PanelShown = false
+            if (TopLevels > 0, not RepDone?, not Abandoned?):
+                Cue.SetText(CueText("{Drill.Code}  {Drill.Name}   rep {Rep}/{Reps}\nKeep going: {TopLevels} levels up ends the rep"))
+                TopBy := GetSimulationElapsedTime() + TopWaitSeconds
+                loop:
+                    if (TopReached[Player, Drill, Rep] or Abandoned? or GetSimulationElapsedTime() >= TopBy):
+                        break
+                    Sleep(0.1)
             if (FlowMode?):
                 # Let the last piece land, then adapt: the window follows how fast this player completes checked steps.
                 Sleep(FlowGraceSeconds)

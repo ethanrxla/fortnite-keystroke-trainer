@@ -61,6 +61,7 @@ PLATES = [
     ("P6", "90s", (0.20, 0.06, 0.30), ["piece_west"], "lane"),
     ("P4", "BOX UP", (0.20, 0.06, 0.30), ["piece_west"], "lane"),
     ("SKY", "SKY BOX", (0.03, 0.22, 0.30), ["piece_west"], "KT18_Sky_Rift_Start"),
+    ("TAKE", "WALL TAKE", (0.30, 0.10, 0.02), ["piece_west"], "KT33_WallTake_Arrive"),
     ("P7", "TUNNEL", (0.20, 0.06, 0.30), ["piece_west"], "lane"),
     ("E4", "HALF WALL", (0.04, 0.24, 0.10), ["edit_south"], "lane"),
     ("E7", "EDIT PEEK", (0.04, 0.24, 0.10), ["edit_south"], "lane"),
@@ -73,6 +74,12 @@ SECTION_SIGNS = ["build", "movement", "editing"]
 ARRIVE_NEAR = {"LAB": ("KT12_Gate_LabIn", 450.0, 0.0)}
 # Lanes that live in another lane's room (tools/place_box_up_lane.py): no exit rift of their own.
 SHARED_ROOM = {"P4": "P6"}
+# EXIT plates on each drill room's back wall, behind the start (player 2026-10-13: "there should be plates you can
+# shoot to exit each drill, as running back to the rift inbetween reps is kind of annoying"): room code -> the wing
+# arrival they send you to. Shooting one ends the drill (DrillDevice WatchLeave sees you leave the lane).
+EXIT_ROOMS = {"B5": "KT3_03_Dest", "W3": "KT3_03_Dest", "P2": "KT3_04_Dest", "P6": "KT3_04_Dest", "P7": "KT3_04_Dest",
+              "W2": "KT3_04_Dest", "E4": "KT3_05_Dest", "E7": "KT3_05_Dest"}
+EXIT_Z, EXIT_SIZE = 470.0, 200.0
 # Extra exit rifts to the main lobby: (code, x, y, z). Routed by install_rift_router.py (DRILL_RIFTS).
 LOBBY_EXITS = [("LAB", -21760.0, -97600.0, 0.0)]
 IGNORE = ("KT_Wall_", "KT_Wing_", "KT_Hub", "KT_Ceil_", "KT19_", "KT23_Theme_Move_", PREFIX)
@@ -276,6 +283,30 @@ def main():
             target = (arrivals.get(p["code"]) or by[p["dest"]]["actorPath"], "Teleport")
         hitbox.place_grid(b, label + "_Hit", (p["x"], p["y"], p["z"]), SIZE, SIZE, p["dummy_yaw"], (p["dx"], p["dy"]),
                           [target])
+    # EXIT plates: two per room on the back wall (x min side), at the first track and a third of the way along.
+    _, exit_tex = plate_texture("EXIT", "EXIT", (0.30, 0.02, 0.02))
+    if not m.tool(ag.AS, "exists", path=exit_tex.split(".")[0]):
+        png, _ = plate_texture("EXIT", "EXIT", (0.30, 0.02, 0.02))
+        m.tool("editor_toolset.toolsets.texture.TextureTools", "import_file", folder_path=TEX_FOLDER,
+               asset_name=exit_tex.split(".")[-1], source_file=str(png))
+        m.tool(ag.AS, "save_assets", asset_paths=[exit_tex])
+    exit_mat = g.icon_material(exit_tex)
+    for room, arrival in EXIT_ROOMS.items():
+        back, ceil = by.get(f"KT_Wall_{room}_0"), by.get(f"KT_Ceil_Lane_{room}")
+        if not (back and ceil and arrival in by):
+            print(f"  exit {room}: wall, room or arrival missing")
+            continue
+        face = back["bounds"]["max"]["x"]
+        lane = by.get(f"KT_Lane_{room}") or by.get("KT33_WallTake_Arrive")
+        ly = (lane["bounds"]["min"]["y"] + lane["bounds"]["max"]["y"]) / 2
+        cy0, cy1 = ceil["bounds"]["min"]["y"], ceil["bounds"]["max"]["y"]
+        for k, y in enumerate((ly, cy0 + (cy1 - cy0) * 0.6)):
+            y = min(max(y, cy0 + 700.0), cy1 - 700.0)
+            label = f"{PREFIX}Exit_{room}_{k}"
+            plate = g.plane(label + "_Plate", face + OFF, y, EXIT_Z, EXIT_SIZE, 270.0, exit_mat)
+            m.tool(bm.SCENE, "save_actor", actor={"refPath": plate})
+            hitbox.place_grid(b, label + "_Hit", (face + OFF, y, EXIT_Z), EXIT_SIZE, EXIT_SIZE, 0.0,
+                              (face + DUMMY_OFF, y), [(by[arrival]["actorPath"], "Teleport")])
     # One header per wall that holds plates, over the plates' span.
     spans = {}
     for p in plates:

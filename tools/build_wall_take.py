@@ -1,0 +1,121 @@
+"""Wall take (piece takeover): the player's structure from 2026-10-13, in the old pickaxe swap room (KT33_WallTake_*).
+
+    python tools/build_wall_take.py --dry-run
+    python tools/build_wall_take.py [--grid-offset 256]
+
+Player 2026-10-13 (two screenshots): "a live bot should be in the enemy box, it should be an enemy builds you have to
+take, the floor youre standing on is yours. the goal is to reclaim this enemies wall and kill the dummy inside."
+Layout, on the room's start ledge (KT_Ledge_W2, top z 0), forward = +X:
+  * your floor: one cell at ground level, where the WALL TAKE plate drops you (KT33_WallTake_Arrive);
+  * the enemy box: the next cell forward, four metal walls and a metal cone, with a live bot inside (team 2, HIGH
+    accuracy, respawns 3 s after it is eliminated). Its walls can be shot down and taken;
+  * your high ground beside it: a metal floor one level up on the left (-Y) with metal stairs climbing to it.
+A Prop Manipulator covers the enemy box; the bot's elimination restores the box's health and shows its pieces again
+(VERIFY that it brings back a wall that was destroyed). --grid-offset moves every cell by that many cm in x and y, for
+when the player build grid turns out to be offset from the world (the hub's KT32_GridTest_A / _B).
+A rerun replaces only KT33_WallTake_* actors.
+"""
+import argparse
+import math
+import pathlib
+import sys
+
+sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
+import build_map as bm  # noqa: E402
+
+PREFIX = "KT33_WallTake_"
+C, H = bm.CELL, bm.LEVEL_H
+METAL = "/Game/Building/ActorBlueprints/Player/Metal/L1/"
+CLS = {k: f"{METAL}PBWA_M1_{n}.PBWA_M1_{n}_C" for k, n in (("wall", "Solid"), ("floor", "Floor"), ("ramp", "StairW"),
+                                                            ("cone", "RoofC"))}
+RAMP_YAW = {"S": 0.0, "E": 90.0, "N": 180.0, "W": 270.0}      # climb direction -> yaw (build_fight_lab.py, measured)
+MANIPULATOR = "/CRD_PropManipulationDevice/SetupAssets/PID_Device_PropManipulator.PID_Device_PropManipulator"
+BOT = {"guardTeamOption": "Team Index", "guard Team Index": {"teamType": "TeamIndex", "teamIndex": 2},
+       "enabledAtGameStart": True, "allowInfiniteSpawn": True, "spawnCount": 1, "spawnOnTimer": True, "spawnTimer": 3.0,
+       "showHealthBar": True, "accuracy": "HIGH", "enablePatrol": False, "useDeviceSpawnLocation": True}
+
+
+def plan(ledge, off):
+    # Cells on the ledge: the second column from its back edge is your floor, the third the enemy box; the row is the
+    # ledge's middle, with the platform one row to the left.
+    i0 = math.floor((ledge["min"]["x"] - off) / C) + 1
+    jm = math.floor(((ledge["min"]["y"] + ledge["max"]["y"]) / 2 - off) / C)
+    centre = lambda i, j: (i * C + C / 2 + off, j * C + C / 2 + off)
+    pieces = []
+
+    def wall(label, i, j, z, edge):
+        cx, cy = centre(i, j)
+        if edge in "WE":
+            pieces.append((label, "wall", cx + (C / 2 if edge == "E" else -C / 2), cy, z, 90.0))
+        else:
+            pieces.append((label, "wall", cx, cy + (C / 2 if edge == "N" else -C / 2), z, 0.0))
+
+    def flat(label, kind, i, j, z, yaw=0.0):
+        cx, cy = centre(i, j)
+        r = math.radians(yaw)
+        dx, dy = -math.sin(r), math.cos(r)
+        pieces.append((label, kind, cx - dx * C / 2, cy - dy * C / 2, z, yaw))
+
+    you, enemy = (i0, jm), (i0 + 1, jm)
+    flat("You_Floor", "floor", *you, 0.0)
+    for e in "NSEW":
+        wall(f"Enemy_{e}", *enemy, 0.0, e)
+    flat("Enemy_Cone", "cone", *enemy, H)
+    flat("High_Floor", "floor", you[0], jm - 1, H)
+    flat("High_Stairs", "ramp", you[0] - 1, jm - 1, 0.0, RAMP_YAW["E"])
+    return pieces, centre(*you), centre(*enemy)
+
+
+def main():
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--dry-run", action="store_true")
+    ap.add_argument("--grid-offset", type=float, default=0.0)
+    args = ap.parse_args()
+    b = bm.Builder()
+    m = b.m
+    acts = {a["label"]: a for a in (m.tool(bm.SCENE, "find_actors", name="KT", collision_channels=[]) or [])}
+    pieces, you, enemy = plan(acts["KT_Ledge_W2"]["bounds"], args.grid_offset)
+    for p in pieces:
+        print(f"  {p[0]:12} {p[1]:5} ({p[2]:.0f}, {p[3]:.0f}, {p[4]:.0f}) yaw {p[5]:.0f}")
+    print("you", you, "enemy", enemy)
+    if args.dry_run:
+        return
+    for label, a in acts.items():
+        if label.startswith(PREFIX):
+            m.tool(bm.SCENE, "remove_from_scene", actor={"refPath": a["actorPath"]})
+    for name, kind, x, y, z, yaw in pieces:
+        label = PREFIX + name
+        ref = m.tool(bm.SCENE, "add_to_scene_from_class", actor_type={"refPath": CLS[kind]}, name=label,
+                     xform=bm.xform(x, y, z, yaw=yaw))
+        path = b.labelled(ref["refPath"], label)
+        # Your pieces stay put; the enemy's can be shot down and taken.
+        b.props(path, {"bForciblyStructurallySupported": True, "bCanBeDamaged": name.startswith("Enemy_")})
+        m.tool(bm.SCENE, "save_actor", actor={"refPath": path})
+    pad = b.device(bm.TELEPORTER, PREFIX + "Arrive", you[0], you[1], 30.0)
+    b.props(pad, {"knob_TeleporterGroup": "Group_None", "knob_TargetTeleporterGroup": "Group_None",
+                  "teleporter Rift Visible": False, "maintain Relative Position": False, "conserve Momentum": False,
+                  "enabledDuringPhase": "Always"})
+    b.face(pad, 0.0)
+    bot = b.device(bm.GUARD, PREFIX + "Bot", enemy[0], enemy[1], 0.0)
+    b.face(bot, 180.0)
+    refused = []
+    for key, value in BOT.items():
+        try:
+            b.props(bot, {key: value})
+        except RuntimeError:
+            refused.append(key)
+    manip = b.device(MANIPULATOR, PREFIX + "Restore", enemy[0], enemy[1], 0.0)
+    links = []
+    for fn in ("Restore Health", "Show Props", "RestoreHealth", "ShowProps"):
+        try:
+            b.bind(bot, "On Eliminated", manip, fn)
+            links.append(fn)
+        except RuntimeError:
+            pass
+    for p in (pad, bot, manip):
+        m.tool(bm.SCENE, "save_actor", actor={"refPath": p})
+    print(f"placed {len(pieces)} pieces, arrival, bot (refused: {refused}), manipulator links: {links}")
+
+
+if __name__ == "__main__":
+    main()
