@@ -64,7 +64,6 @@ PLATES = [
     ("SKY", "SKY BOX", (0.03, 0.22, 0.30), ["piece_west"], "KT18_Sky_Rift_Start"),
     ("TAKE", "WALL TAKE", (0.30, 0.10, 0.02), ["piece_west"], "KT33_WallTake_Arrive"),
     ("P7", "TUNNEL", (0.20, 0.06, 0.30), ["piece_west"], "lane"),
-    ("E4", "HALF WALL", (0.04, 0.24, 0.10), ["edit_south"], "lane"),
     ("E7", "EDIT PEEK", (0.04, 0.24, 0.10), ["edit_south"], "lane"),
     ("LAB", "PIECE LAB", (0.10, 0.20, 0.04), ["edit_south"], "KT12_Gate_LabIn"),
     ("W3", "GUN/PIECE SWAP", (0.28, 0.20, 0.02), ["build_north"], "lane"),
@@ -81,7 +80,7 @@ SHARED_ROOM = {"P4": "P6"}
 # Each wing's EXIT arrival is a pad of its own on the wing floor in front of its plates: the wing teleporters put a
 # player under the map from the half wall room (player 2026-10-13).
 EXIT_ROOMS = {"B5": "build_north", "W3": "build_north", "P6": "build_north", "P2": "piece_west", "P7": "piece_west",
-              "W2": "piece_west", "E4": "edit_south", "E7": "edit_south"}
+              "W2": "piece_west", "E7": "edit_south"}
 EXIT_Z, EXIT_SIZE = 470.0, 200.0
 # Lane rooms no longer get exit rifts: the EXIT plates replace them, and the rift pad behind the start was walked into
 # and read as a stray device (player 2026-10-13).

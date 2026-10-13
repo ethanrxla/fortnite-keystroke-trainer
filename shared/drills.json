@@ -129,10 +129,9 @@
     {
       "id": "editing",
       "name": "EDITING",
-      "blurb": "Half-wall jump shot, edit peek and reset",
+      "blurb": "Edit, peek and reset",
       "zone": "Edit",
       "drills": [
-        "edit_half_wall",
         "edit_peek"
       ]
     },
@@ -965,7 +964,8 @@
       ],
       "principle": "slow_is_smooth",
       "why": "A half wall keeps your legs covered and opens a line above it. A jump shot lifts you into that line for a moment, which is when the shot has to land.",
-      "reflect": "Did you shoot at the top of your jump or on the way down?"
+      "reflect": "Did you shoot at the top of your jump or on the way down?",
+      "retired": true
     },
     {
       "id": "edit_reset",

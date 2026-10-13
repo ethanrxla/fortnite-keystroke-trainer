@@ -14,6 +14,8 @@ using { /UnrealEngine.com/Temporary/SpatialMath }
 keystroke_section_device := class(creative_device):
     @editable SectionId:string = "build"
     @editable PadRadius:float = 160.0
+    # The pad, relative to this device: the device sits under the floor because Verse devices are drawn in game.
+    @editable PadOffset:vector3 = vector3{X := 0.0, Y := 0.0, Z := 0.0}
     @editable PadDwellSeconds:float = 0.4
     # Reps played of each drill when it is run from the section (a lane alone plays its own count).
     @editable RepsPerDrill:int = 6
@@ -44,7 +46,7 @@ keystroke_section_device := class(creative_device):
                     set NeedsLeave = false
 
     PlayerOnPad()<transacts><decides>:player =
-        Pad := GetTransform().Translation
+        Pad := GetTransform().Translation + PadOffset
         Found := for (P : GetPlayspace().GetPlayers(), C := P.GetFortCharacter[], Near[C.GetTransform().Translation, Pad]) { P }
         Found[0]
 
@@ -58,7 +60,7 @@ keystroke_section_device := class(creative_device):
         Found[0]
 
     RunSection(Player:player, Section:section_def)<suspends>:void =
-        Pad := GetTransform().Translation
+        Pad := GetTransform().Translation + PadOffset
         KTLog("section_start", Section.Id, 0, 0, 0, rep_result.Ok, "drills={Section.Drills.Length}")
         var Index:int = 0
         loop:

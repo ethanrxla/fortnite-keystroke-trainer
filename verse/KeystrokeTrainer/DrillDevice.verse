@@ -25,6 +25,9 @@ keystroke_drill_device := class(creative_device):
     @editable DrillId:string = "floor_front"
     # Hub start pad, relative to this device in world axes (cm). Stand on it for a second to start.
     @editable PadOffset:vector3 = vector3{X := 0.0, Y := 0.0, Z := 0.0}
+    # Where rep 1 starts, relative to this device. Verse devices are drawn in game, so the lane device sits under the
+    # floor and this offset puts the start back on it (player 2026-10-13: spawning on the "desk").
+    @editable StartOffset:vector3 = vector3{X := 0.0, Y := 0.0, Z := 0.0}
     @editable PadRadius:float = 160.0
     # Optional metronome click. Unlinked is fine: the on-screen cue is the visual click.
     @editable Click:audio_player_device = audio_player_device{}
@@ -103,6 +106,9 @@ keystroke_drill_device := class(creative_device):
     # start of every rep, and the rep lasts until they are all eliminated (player 2026-10-13, tunnel: "the rep last
     # until you clear the bots"), the player leaves, or BotClearSeconds pass. Leftover bots are despawned.
     @editable BotsToClear:int = 0
+    # Fresh guns every rep (player 2026-10-13: "it should auto reload the players magazines"): the item granter tagged
+    # kt_lane_granter_tag nearest this lane grants its loadout at the start of each rep, replacing the inventory.
+    @editable RefillEachRep:logic = false
     @editable BotClearSeconds:float = 180.0
     # Wire a gun target's hit event to GunHit and a pickaxe target's hit event to PickaxeHit in the
     # editor (device event binding, not Verse). target_hit checks read these. Unlinked is fine.
@@ -125,6 +131,7 @@ keystroke_drill_device := class(creative_device):
     var RepsOverride:int = 0
     var CurrentRep:int = 1
     var LaneBots:[]guard_spawner_device = array{}
+    var Refill:?item_granter_device = false
     var BotsDown:int = 0
     var Metronome:audio_player_device = audio_player_device{}
 
@@ -168,6 +175,14 @@ keystroke_drill_device := class(creative_device):
             G.TriggeredEvent.Subscribe(OnGunHit)
         if (K := NearestTrigger[kt_pickaxe_hit_tag]):
             K.TriggeredEvent.Subscribe(OnPickaxeHit)
+        if (RefillEachRep?):
+            Spot := GetTransform().Translation
+            var BestRefill:float = TagSearchRadius
+            for (O : FindCreativeObjectsWithTag(kt_lane_granter_tag), G := item_granter_device[O]):
+                D := Distance(G.GetTransform().Translation, Spot)
+                if (D < BestRefill):
+                    set BestRefill = D
+                    set Refill = option{G}
         if (BotsToClear > 0):
             Here := GetTransform().Translation
             for (O : FindCreativeObjectsWithTag(kt_lane_bot_tag), S := guard_spawner_device[O], Distance(S.GetTransform().Translation, Here) < 9000.0):
@@ -259,7 +274,7 @@ keystroke_drill_device := class(creative_device):
 
     # Start cell of the track used by Rep (1-based).
     TrackOrigin(Drill:drill_def, Rep:int)<transacts>:vector3 =
-        Origin := GetTransform().Translation
+        Origin := GetTransform().Translation + StartOffset
         N := if (SameTrack?) then 0.0 else (Rep - 1) * 1.0
         Right := if (R := Drill.Advance[0]) then R * 1.0 else 0.0
         Forward := if (F := Drill.Advance[1]) then F * 1.0 else 0.0
@@ -269,9 +284,13 @@ keystroke_drill_device := class(creative_device):
             Y := Origin.Y + Right * CellSize * N
             Z := Origin.Z + Up * LevelHeight * N
 
+    # A teleport fails when its spot is blocked (a build left standing): try a little higher before giving up, so a
+    # player is never left at the top of a rep (player 2026-10-13, 90s: "isnt teleporting me down").
     MovePlayer(Player:player, Where:vector3):void =
         if (Character := Player.GetFortCharacter[]):
             if (Character.TeleportTo[Where + vector3{X := 0.0, Y := 0.0, Z := 100.0}, IdentityRotation()]) {}
+            else if (Character.TeleportTo[Where + vector3{X := 0.0, Y := 0.0, Z := 300.0}, IdentityRotation()]) {}
+            else if (Character.TeleportTo[Where + vector3{X := -400.0, Y := 0.0, Z := 300.0}, IdentityRotation()]) {}
 
     RunSet(Player:player, Drill:drill_def)<suspends>:void =
         Reps := if (RepsOverride > 0) then RepsOverride else Drill.Reps
@@ -329,6 +348,8 @@ keystroke_drill_device := class(creative_device):
         for (Rep := 1..Reps, not Abandoned?):
             set CurrentRep = Rep
             MovePlayer(Player, TrackOrigin(Drill, Rep))
+            if (G := Refill?):
+                G.GrantItem(Player)
             Cue.SetText(CueText("{Drill.Code}  {Drill.Name}   {ModeLabel}   rep {Rep}/{Reps}\n{ChainText(Drill.Steps, -1)}"))
             Sleep(if (FlowMode?) then ReadyMinSeconds else Max(Interval, ReadyMinSeconds))
             if (BotsToClear > 0, LaneBots.Length > 0):

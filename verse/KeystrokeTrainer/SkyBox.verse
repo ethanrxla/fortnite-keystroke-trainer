@@ -61,6 +61,7 @@ kt_sky_box_device<public> := class(creative_device):
     var Waiting:logic = false
     var Pending:float = -1.0
     var LastWave:int = 0
+    var Clearers:[]trigger_device = array{}
     var PracticeStart:float = 0.0
     Hud:text_block = text_block{DefaultTextColor := NamedColors.White, DefaultTextSize := 24.0}
     var Panel:?canvas = false
@@ -75,6 +76,8 @@ kt_sky_box_device<public> := class(creative_device):
             set Bots += array{S}
             set BotWave += array{W}
             S.EliminatedEvent.Subscribe(kt_sky_bot_listener{Wave := W, Owner := Self}.OnEliminated)
+        for (O : FindCreativeObjectsWithTag(kt_sky_clear_tag), T := trigger_device[O]):
+            set Clearers += array{T}
         for (O : FindCreativeObjectsWithTag(kt_sky_loadout_tag), G := item_granter_device[O]):
             set Loadout = option{G}
         Clear()
@@ -168,13 +171,24 @@ kt_sky_box_device<public> := class(creative_device):
         set Falls = 0
         set RunStart = GetSimulationElapsedTime()
         Clear()
+        # Every run starts in your box facing the bots (+X), whichever way the arrival teleporter turned you (player
+        # 2026-10-13: "you would spawn in backwards").
+        if (C := P.GetFortCharacter[], C.TeleportTo[StartPoint(), IdentityRotation()]) {}
         ShowHud(P)
         if (G := Loadout?):
             G.GrantItem(P)
         StartWave(0)
 
+    # Reset the strip's player builds (the overhead rig KT34_Reset_Sky_*, like the free-build RESET BUILDS button; the
+    # pre-built boxes cannot be damaged). Player 2026-10-13: "reset builds if you fall of the map or exit the drill".
+    ClearBuilds():void =
+        for (T : Clearers):
+            T.Trigger()
+
     BackToBox(C:fort_character):void =
-        if (C.TeleportTo[StartPoint(), C.GetTransform().Rotation]) {}
+        # Clear while the player is still below the strip, then put them in their box facing the bots (+X).
+        ClearBuilds()
+        if (C.TeleportTo[StartPoint(), IdentityRotation()]) {}
         if (P := Runner?, G := Loadout?):
             G.GrantItem(P)
         Clear()
@@ -214,6 +228,7 @@ kt_sky_box_device<public> := class(creative_device):
             Finish("done")
 
     Finish(Why:string):void =
+        ClearBuilds()
         if (Why <> "done"):
             KTLog("sky_summary", "sky_box", 0, Wave + 1, 0, rep_result.Unchecked, "ended={Why}|falls={Falls}")
         Clear()

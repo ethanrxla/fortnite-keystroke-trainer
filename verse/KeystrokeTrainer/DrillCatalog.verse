@@ -94,7 +94,7 @@ section_def<public> := struct<computes>:
     # Drill ids played in this order from the section pad.
     Drills<public>:[]string = array{}
 
-SectionCatalog<public>:[]section_def = array{section_def{Id := "build", Name := "BUILD", Blurb := "Wall, floor, ramp, cone switching", Drills := array{"piece_switch"}}, section_def{Id := "movement", Name := "MOVEMENT", Blurb := "Ramp rush, 90s, box up, tunnel and window", Drills := array{"ramp_rush", "nineties", "box_up", "tunnel_edit_peek"}}, section_def{Id := "editing", Name := "EDITING", Blurb := "Half-wall jump shot, edit peek and reset", Drills := array{"edit_half_wall", "edit_peek"}}, section_def{Id := "weapons", Name := "WEAPONS", Blurb := "Build to gun", Drills := array{"build_swap_shoot"}}}
+SectionCatalog<public>:[]section_def = array{section_def{Id := "build", Name := "BUILD", Blurb := "Wall, floor, ramp, cone switching", Drills := array{"piece_switch"}}, section_def{Id := "movement", Name := "MOVEMENT", Blurb := "Ramp rush, 90s, box up, tunnel and window", Drills := array{"ramp_rush", "nineties", "box_up", "tunnel_edit_peek"}}, section_def{Id := "editing", Name := "EDITING", Blurb := "Edit, peek and reset", Drills := array{"edit_peek"}}, section_def{Id := "weapons", Name := "WEAPONS", Blurb := "Build to gun", Drills := array{"build_swap_shoot"}}}
 
 FindSection<public>(Id:string)<decides><transacts>:section_def =
     (for (S : SectionCatalog, S.Id = Id) { S })[0]

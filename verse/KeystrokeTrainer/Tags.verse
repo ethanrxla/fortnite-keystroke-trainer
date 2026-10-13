@@ -37,3 +37,5 @@ kt_team_ammo_stock_tag := class(tag){}
 kt_team_heal_stock_tag := class(tag){}
 kt_rift_port_tag := class(tag){}
 kt_lane_bot_tag := class(tag){}
+kt_lane_granter_tag := class(tag){}
+kt_sky_clear_tag := class(tag){}
