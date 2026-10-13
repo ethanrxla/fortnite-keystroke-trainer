@@ -144,6 +144,8 @@ def main():
         x, y = tg["pos"]
         ref = b.m.tool(bm.SCENE, "add_to_scene_from_asset", asset_path=TARGET, name=tg["label"], xform=bm.xform(x, y, 0.0, yaw=180))
         path = b.labelled(ref["refPath"] if isinstance(ref, dict) else ref, tg["label"])
+        # No auto reset: GunRange.verse raises targets itself (a 2 s reset popped hit targets back mid-round).
+        b.props(path, {"resetDelaySetting": 9999})
         b.tag(path, "kt_range_target_tag")
         # Verse cannot find these legacy targets, so GunRange.verse drives them through hidden triggers
         # under the floor at the target's position: up -> Pop-Up, down -> Pop-Down, target On Hit -> hit.

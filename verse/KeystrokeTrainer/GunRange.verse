@@ -72,6 +72,15 @@ kt_range_tile_listener := class:
         if (A := MaybeAgent?):
             Owner.OnTile(Action, A)
 
+# One per regular lane target: free-fire hits outside a round bring the target back after a short wait. Every range
+# target's own Reset Delay is effectively off (tools/build_range_modes.py, 2026-10-12): the 2 s auto reset popped
+# knocked targets back up in the middle of rounds, so a player shot those instead of the round's target and the HUD
+# counted real hits as misses.
+kt_range_free_hit_listener := class:
+    Index:int
+    Owner:kt_gun_range_lane_device
+    OnHit(MaybeAgent:?agent):void = Owner.FreeFireHit(Index)
+
 kt_gun_range_lane_device := class(creative_device):
     @editable LaneHalfWidth:float = 480.0
     @editable LaneLength:float = 12000.0
@@ -92,6 +101,8 @@ kt_gun_range_lane_device := class(creative_device):
     var Wide:logic = false
     var Level:int = 0
     var Running:logic = false
+    # True while this lane's round is a WIDE one.
+    var RunningWide:logic = false
     # Index into WideTargets this lane has up right now, or -1.
     var Claimed:int = -1
     var Lights:[]?customizable_light_device = array{false, false, false, false, false}
@@ -103,6 +114,8 @@ kt_gun_range_lane_device := class(creative_device):
                                       RangeTriggers(kt_range_wide_hit_tag))
         for (T : WideTargets):
             T.Down.Trigger()
+        for (I -> T : Targets):
+            T.Hit.TriggeredEvent.Subscribe(kt_range_free_hit_listener{Index := I, Owner := Self}.OnHit)
         set Peers = for (O : FindCreativeObjectsWithTag(kt_range_lane_tag), L := kt_gun_range_lane_device[O]) { L }
         set LaneNumber = 1 + (for (L : Peers, L.GetTransform().Translation.Y < Here.Y - 1.0) { L }).Length
         var Best:?button_device = false
@@ -171,7 +184,38 @@ kt_gun_range_lane_device := class(creative_device):
         Pool := if (AsWide?) then WideTargets else Targets
         if (not Running?, Pool.Length > 0):
             set Running = true
+            set RunningWide = AsWide
+            if (AsWide?):
+                # Only the round's hidden targets may stand during a WIDE round: every lane that is not running its
+                # own NARROW round lowers its regular targets until the last WIDE round ends.
+                for (L : Peers):
+                    L.LowerForWide()
             spawn{ Round(A, AsWide) }
+
+    # Succeeds while any lane in the range runs a WIDE round.
+    AnyWide()<transacts><decides>:void =
+        (for (L : Peers, L.RunningWide?) { L }).Length > 0
+
+    LowerForWide():void =
+        if (not Running? or RunningWide?):
+            for (T : Targets):
+                T.Down.Trigger()
+
+    # Free fire: the lane's regular targets stand whenever neither this lane nor a WIDE round needs them down.
+    RaiseForFreeFire():void =
+        if (not Running?, not AnyWide[]):
+            for (T : Targets):
+                T.Up.Trigger()
+
+    # A regular target was hit outside any round: bring it back after 2 s (its own auto reset is off).
+    FreeFireHit(Index:int):void =
+        if (not Running?, not AnyWide[]):
+            spawn{ RaiseLater(Index) }
+
+    RaiseLater(Index:int)<suspends>:void =
+        Sleep(2.0)
+        if (not Running?, not AnyWide[], T := Targets[Index]):
+            T.Up.Trigger()
 
     Present(A:agent)<transacts><decides>:void =
         C := A.GetFortCharacter[]
@@ -199,8 +243,14 @@ kt_gun_range_lane_device := class(creative_device):
         defer:
             if (UI := MaybeUI?):
                 UI.RemoveWidget(Panel)
+            if (Claimed >= 0, T := WideTargets[Claimed]):
+                T.Down.Trigger()
             set Claimed = -1
             set Running = false
+            set RunningWide = false
+            # Every lane that is now idle gets its targets back, unless another WIDE round is still running.
+            for (L : Peers):
+                L.RaiseForFreeFire()
         if (not AsWide?):
             for (R : Targets):
                 R.Down.Trigger()
@@ -263,10 +313,7 @@ kt_gun_range_lane_device := class(creative_device):
             "hits={Hits}|misses={Misses}|avg_ms={Avg}|near_hits={NearHits}|far_hits={FarHits}|left={if (Left?) then 1 else 0}|difficulty={KTRangeLevelName(Lvl)}|mode={Mode}|lane={LaneNumber}")
         Hud.Title.SetText(KTRangeText(if (Left?) then "ROUND STOPPED" else "RANGE  LANE {LaneNumber}  DONE"))
         Hud.Message.SetText(KTRangeText(if (Left?) then "You left the lane, so the round stopped." else "{Hits}/{Rep} hit. Shoot START or press the button to go again."))
-        if (not AsWide?):
-            Sleep(1.0)
-            for (R : Targets):
-                R.Up.Trigger()
+        # The lane's targets come back in the deferred block above, once the summary has shown.
         Sleep(if (Left?) then 2.0 else 5.0)
 
 KTRangeText<localizes>(S:string):message = "{S}"

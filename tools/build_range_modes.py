@@ -33,8 +33,11 @@ PREFIX = "KT26_RangeMode_"
 C = bm.CELL
 FACE_X = FIRE_X - 70.0          # player side of the counter
 Z = 58.0                         # tile centre (counter top is 110)
-SIZE = 140.0  # player 2026-10-11: shootable buttons bigger and easier to hit
-PITCH = 175.0
+SIZE = 95.0   # fits under the 110 cm counter top (player 2026-10-12: "a little smaller cause they go over the short wall")
+PITCH = 160.0
+# Range targets never pop back up by themselves: GunRange.verse raises them (rounds, and free fire 2 s after a hit).
+# The 2 s default reset brought knocked targets back mid-round and the round counted real hits as misses.
+NO_AUTO_RESET = {"resetDelaySetting": 9999}
 # name, plate rgb (linear), trigger tag, light tag, light rgb
 TILES = [("WIDE", (0.12, 0.03, 0.30), "kt_range_wide_shot_tag", "kt_range_light_wide_tag", (0.6, 0.2, 1.0)),
          ("NARROW", (0.02, 0.12, 0.30), "kt_range_narrow_shot_tag", "kt_range_light_narrow_tag", (0.2, 0.5, 1.0)),
@@ -62,9 +65,39 @@ def hidden():
     return out
 
 
+TEX_FOLDER = bm.MODULE + "/KT_UI"
+FONT = bm.ROOT / "assets" / "fonts" / "bitcount-ink"
+
+
+def tile_texture(name, rgb):
+    """The tile's face as one image (colour + its word), imported once: a billboard label on these small tiles
+    drifted off the plate when the sign renderer turned it into a panel, and fresh billboards did not draw at all."""
+    from PIL import Image, ImageDraw, ImageFont
+    out = bm.ROOT / "assets" / "ui" / "range_tiles" / f"T_KT_RangeTile_{name}.png"
+    out.parent.mkdir(parents=True, exist_ok=True)
+    srgb = tuple(int(255 * min(1.0, (c * 1.6) ** (1 / 2.2))) for c in rgb)
+    im = Image.new("RGBA", (512, 512), srgb + (255,))
+    d = ImageDraw.Draw(im)
+    d.rectangle((10, 10, 501, 501), outline=(255, 255, 255, 200), width=10)
+    font_file = next(FONT.glob("*.ttf"))
+    size = 150
+    while size > 40:
+        f = ImageFont.truetype(str(font_file), size)
+        w = d.textlength(name, font=f)
+        if w <= 440:
+            break
+        size -= 6
+    d.text((256, 256), name, font=f, fill=(255, 255, 255, 255), anchor="mm", stroke_width=6, stroke_fill=(0, 0, 0, 220))
+    im.save(out)
+    asset = f"T_KT_RangeTile_{name}"
+    path = f"{TEX_FOLDER}/{asset}.{asset}"
+    return out, path
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--dry-run", action="store_true")
+    ap.add_argument("--tiles-only", action="store_true", help="rebuild the shootable tiles, keep the hidden targets")
     args = ap.parse_args()
     targets = hidden()
     print(f"{POPUP_LANES} lanes x {len(TILES)} tiles, {len(targets)} hidden targets")
@@ -75,7 +108,7 @@ def main():
     g = ag.Grid()
     b, m = g.b, g.m
     acts = {a["label"]: a["actorPath"] for a in (m.tool(bm.SCENE, "find_actors", name="KT", collision_channels=[]) or [])}
-    old = [p for l, p in acts.items() if l.startswith(PREFIX)]
+    old = [p for l, p in acts.items() if l.startswith(PREFIX) and not (args.tiles_only and l.startswith(PREFIX + "Hidden_"))]
     for p in old:
         m.tool(bm.SCENE, "remove_from_scene", actor={"refPath": p})
     print(f"removed {len(old)} old actors")
@@ -86,13 +119,13 @@ def main():
         for k, (name, rgb, tag, light_tag, light_rgb) in enumerate(TILES):
             y = yc + (k - (len(TILES) - 1) / 2) * PITCH
             label = f"{PREFIX}{n}_{name}"
-            saved = [g.plane(label + "_Plate", FACE_X - 45.0, y, Z, SIZE, yaw, g.colour_material(f"M_KT_SkillsTile_{name}", rgb))]
-            lab = b.device(bm.BILLBOARD, label + "_Label", FACE_X - 51.0, y, Z - 20.0)
-            m.tool(bm.ACTOR, "set_actor_transform", actor={"refPath": lab},
-                   xform=bm.xform(FACE_X - 51.0, y, Z - 20.0, 0.3, 0.3, 0.3, yaw=yaw))
-            b.props(lab, {"text": name, "textSize": 60, "showBorder": False, "textFont": "Burbank",
-                          "textColor": {"r": 1, "g": 1, "b": 1, "a": 1},
-                          "backgroundColor": {"r": rgb[0], "g": rgb[1], "b": rgb[2], "a": 1}})
+            png, tex = tile_texture(name, rgb)
+            if not m.tool(ag.AS, "exists", path=tex):
+                m.tool("editor_toolset.toolsets.texture.TextureTools", "import_file", folder_path=TEX_FOLDER,
+                       asset_name=tex.split(".")[-1], source_file=str(png))
+                m.tool(ag.AS, "save_assets", asset_paths=[tex])
+            # yaw 90: the textured front faces -X, towards the booth (yaw 270 showed the words mirrored).
+            saved = [g.plane(label + "_Plate", FACE_X - 45.0, y, Z, SIZE, 90.0, g.icon_material(tex))]
             trig = b.device(bm.TRIGGER, label + "_Trigger", FIRE_X + 50.0, y, -400.0)
             b.props(trig, {"visible in Game": False})
             b.tag(trig, tag)
@@ -106,7 +139,7 @@ def main():
             except RuntimeError:
                 pass
             b.bind(dummy, "On Hit", trig, "Trigger")
-            saved += [lab, trig, dummy]
+            saved += [trig, dummy]
             if light_tag:
                 li = b.device(LIGHT, label + "_Light", FACE_X - 250.0, y, 160.0)
                 b.tag(li, light_tag)
@@ -130,9 +163,13 @@ def main():
         if start:
             b.props(start, {"interaction Text": f"Start pop-up round, lane {n + 1}"})
             m.tool(bm.SCENE, "save_actor", actor={"refPath": start})
+    if args.tiles_only:
+        print("tiles rebuilt; hidden targets kept")
+        return
     for label, x, y in targets:
         ref = m.tool(bm.SCENE, "add_to_scene_from_asset", asset_path=TARGET, name=label, xform=bm.xform(x, y, 0.0, yaw=180))
         path = b.labelled(ref["refPath"] if isinstance(ref, dict) else ref, label)
+        b.props(path, NO_AUTO_RESET)
         saved = [path]
         for kind, tag in (("Up", "kt_range_wide_up_tag"), ("Down", "kt_range_wide_down_tag"), ("Hit", "kt_range_wide_hit_tag")):
             trig = b.device(bm.TRIGGER, f"{label}_{kind}", x, y, -400.0)
