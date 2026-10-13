@@ -36,6 +36,11 @@ def _variants(yaw):
 def plan_grid(face_w, face_h, cell_max=CELL_MAX):
     cols = max(1, math.ceil(face_w / cell_max))
     rows = max(1, math.ceil(face_h / cell_max))
+    # One row would point every head the same way, out past one edge: a 2.6 m sign hanging in the air showed the
+    # inverted dummies' heads below it (player 2026-10-12). Two rows point both halves inward. Only a face under
+    # 1.2 m keeps one row (the range tiles, whose point goes down into the low wall in front of them).
+    if rows == 1 and face_h >= 120.0:
+        rows = 2
     rect_w = RECT_Y[1] - RECT_Y[0]
     # Outer cells give up the small shoulder at the face edge: cell_w * (cols + 2 * spill/rect_w) = face_w.
     cell_w = face_w / (cols + 2 * SPILL_SMALL / rect_w)
