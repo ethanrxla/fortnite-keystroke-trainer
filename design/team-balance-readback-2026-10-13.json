@@ -1,0 +1,1614 @@
+[
+  {
+    "guid": "76C21978-4E1A-B9EA-955A-1FB3E6082DB1",
+    "nativeClass": {
+      "refPath": "/CreativeCoreDevices/Device_VendingMachine_V2.Device_VendingMachine_V2_C"
+    },
+    "class": {
+      "refPath": "/CreativeCoreDevices/Device_VendingMachine_V2.Device_VendingMachine_V2_C"
+    },
+    "name": "Device_VendingMachine_V2_C_UAID_30560F202F92500A03_1423109278",
+    "label": "KT29_Rift_RedVendor",
+    "bounds": {
+      "min": {
+        "x": 70236.27698364257,
+        "y": -56448,
+        "z": 0
+      },
+      "max": {
+        "x": 70502.4,
+        "y": -56127.999923706055,
+        "z": 408
+      },
+      "isValid": true
+    },
+    "runtimeGrid": "None",
+    "bIsSpatiallyLoaded": false,
+    "bActorIsEditorOnly": false,
+    "actorPackage": "None",
+    "actorPath": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.Device_VendingMachine_V2_C_UAID_30560F202F92500A03_1423109278",
+    "folderPath": "None",
+    "dataLayerAssets": []
+  },
+  {
+    "guid": "EA194323-429B-2322-5C8D-ED8331C199C8",
+    "nativeClass": {
+      "refPath": "/CreativeCoreDevices/Device_Button_V2.Device_Button_V2_C"
+    },
+    "class": {
+      "refPath": "/CreativeCoreDevices/Device_Button_V2.Device_Button_V2_C"
+    },
+    "name": "Device_Button_V2_C_UAID_30560F202F92110A03_1605967695",
+    "label": "KT24_Team_RebootNorthUse",
+    "bounds": {
+      "min": {
+        "x": 75648,
+        "y": -52454.4,
+        "z": -28
+      },
+      "max": {
+        "x": 75904,
+        "y": -52198.4,
+        "z": 228
+      },
+      "isValid": true
+    },
+    "runtimeGrid": "None",
+    "bIsSpatiallyLoaded": false,
+    "bActorIsEditorOnly": false,
+    "actorPackage": "None",
+    "actorPath": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.Device_Button_V2_C_UAID_30560F202F92110A03_1605967695",
+    "folderPath": "None",
+    "dataLayerAssets": []
+  },
+  {
+    "guid": "2D657AA6-432B-41E5-142E-528CDA1996C8",
+    "nativeClass": {
+      "refPath": "/Game/Athena/Items/Gameplay/SilkyTrombone/Tanker/Athena_Prop_SilkyTanker.Athena_Prop_SilkyTanker_C"
+    },
+    "class": {
+      "refPath": "/Game/Athena/Items/Gameplay/SilkyTrombone/Tanker/Athena_Prop_SilkyTanker.Athena_Prop_SilkyTanker_C"
+    },
+    "name": "Athena_Prop_SilkyTanker_C_UAID_30560F202F92200A03_2007318370",
+    "label": "KT24_Team_TruckRedProp",
+    "bounds": {
+      "min": {
+        "x": 72302.57369995117,
+        "y": -58029.9469909668,
+        "z": 0
+      },
+      "max": {
+        "x": 72592.90739440918,
+        "y": -56940,
+        "z": 398.0166015625
+      },
+      "isValid": true
+    },
+    "runtimeGrid": "None",
+    "bIsSpatiallyLoaded": false,
+    "bActorIsEditorOnly": false,
+    "actorPackage": "None",
+    "actorPath": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.Athena_Prop_SilkyTanker_C_UAID_30560F202F92200A03_2007318370",
+    "folderPath": "None",
+    "dataLayerAssets": []
+  },
+  {
+    "guid": "DD65C545-4FF9-63D6-95D6-759CD2A7C1D1",
+    "nativeClass": {
+      "refPath": "/CRD_VolumetricRegion/Device_Barrier_V2_Placed.Device_Barrier_V2_Placed_C"
+    },
+    "class": {
+      "refPath": "/CRD_VolumetricRegion/Device_Barrier_V2_Placed.Device_Barrier_V2_Placed_C"
+    },
+    "name": "Device_Barrier_V2_Placed_C_UAID_30560F202F92500A03_1416603274",
+    "label": "KT29_Rift_RedSafeWall",
+    "bounds": {
+      "min": {
+        "x": 69374.46398925781,
+        "y": -57345.53601074219,
+        "z": -961.1520080566406
+      },
+      "max": {
+        "x": 72449.53601074219,
+        "y": -54270.46398925781,
+        "z": 1345.1520080566406
+      },
+      "isValid": true
+    },
+    "runtimeGrid": "None",
+    "bIsSpatiallyLoaded": false,
+    "bActorIsEditorOnly": false,
+    "actorPackage": "None",
+    "actorPath": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.Device_Barrier_V2_Placed_C_UAID_30560F202F92500A03_1416603274",
+    "folderPath": "None",
+    "dataLayerAssets": []
+  },
+  {
+    "guid": "F9125F1D-4E55-68AD-BA50-15A81DC5A1C7",
+    "nativeClass": {
+      "refPath": "/CRD_RebootVan/Device_RebootVan.Device_RebootVan_C"
+    },
+    "class": {
+      "refPath": "/CRD_RebootVan/Device_RebootVan.Device_RebootVan_C"
+    },
+    "name": "Device_RebootVan_C_UAID_30560F202F920F0A03_1368507463",
+    "label": "KT24_Team_RebootSouth",
+    "bounds": {
+      "min": {
+        "x": 75515.06619262695,
+        "y": -59002.07096862793,
+        "z": 0
+      },
+      "max": {
+        "x": 76065.41970825195,
+        "y": -58757.92903137207,
+        "z": 350
+      },
+      "isValid": true
+    },
+    "runtimeGrid": "None",
+    "bIsSpatiallyLoaded": false,
+    "bActorIsEditorOnly": false,
+    "actorPackage": "None",
+    "actorPath": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.Device_RebootVan_C_UAID_30560F202F920F0A03_1368507463",
+    "folderPath": "None",
+    "dataLayerAssets": []
+  },
+  {
+    "guid": "249896B8-471B-88CA-F4EC-13A97BE37FB1",
+    "nativeClass": {
+      "refPath": "/CreativeCoreDevices/Device_VendingMachine_V2.Device_VendingMachine_V2_C"
+    },
+    "class": {
+      "refPath": "/CreativeCoreDevices/Device_VendingMachine_V2.Device_VendingMachine_V2_C"
+    },
+    "name": "Device_VendingMachine_V2_C_UAID_30560F202F92500A03_1430338285",
+    "label": "KT29_Rift_BlueVendor",
+    "bounds": {
+      "min": {
+        "x": 81049.6,
+        "y": -56512.000076293945,
+        "z": 0
+      },
+      "max": {
+        "x": 81315.72301635743,
+        "y": -56192,
+        "z": 408
+      },
+      "isValid": true
+    },
+    "runtimeGrid": "None",
+    "bIsSpatiallyLoaded": false,
+    "bActorIsEditorOnly": false,
+    "actorPackage": "None",
+    "actorPath": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.Device_VendingMachine_V2_C_UAID_30560F202F92500A03_1430338285",
+    "folderPath": "None",
+    "dataLayerAssets": []
+  },
+  {
+    "guid": "2B0CA4F3-492A-F135-8827-D3AD3A65BEC3",
+    "nativeClass": {
+      "refPath": "/CreativeCoreDevices/Device_Button_V2.Device_Button_V2_C"
+    },
+    "class": {
+      "refPath": "/CreativeCoreDevices/Device_Button_V2.Device_Button_V2_C"
+    },
+    "name": "Device_Button_V2_C_UAID_30560F202F92110A03_1608291697",
+    "label": "KT24_Team_RebootSouthUse",
+    "bounds": {
+      "min": {
+        "x": 75648,
+        "y": -58598.4,
+        "z": -28
+      },
+      "max": {
+        "x": 75904,
+        "y": -58342.4,
+        "z": 228
+      },
+      "isValid": true
+    },
+    "runtimeGrid": "None",
+    "bIsSpatiallyLoaded": false,
+    "bActorIsEditorOnly": false,
+    "actorPackage": "None",
+    "actorPath": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.Device_Button_V2_C_UAID_30560F202F92110A03_1608291697",
+    "folderPath": "None",
+    "dataLayerAssets": []
+  },
+  {
+    "guid": "B20161E4-4936-2DCE-9C98-6D9CE7E50D42",
+    "nativeClass": {
+      "refPath": "/CRD_VolumetricRegion/Device_Barrier_V2_Placed.Device_Barrier_V2_Placed_C"
+    },
+    "class": {
+      "refPath": "/CRD_VolumetricRegion/Device_Barrier_V2_Placed.Device_Barrier_V2_Placed_C"
+    },
+    "name": "Device_Barrier_V2_Placed_C_UAID_30560F202F92500A03_1426944281",
+    "label": "KT29_Rift_BlueSafeWall",
+    "bounds": {
+      "min": {
+        "x": 79102.46398925781,
+        "y": -57345.53601074219,
+        "z": -961.1520080566406
+      },
+      "max": {
+        "x": 82177.53601074219,
+        "y": -54270.46398925781,
+        "z": 1345.1520080566406
+      },
+      "isValid": true
+    },
+    "runtimeGrid": "None",
+    "bIsSpatiallyLoaded": false,
+    "bActorIsEditorOnly": false,
+    "actorPackage": "None",
+    "actorPath": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.Device_Barrier_V2_Placed_C_UAID_30560F202F92500A03_1426944281",
+    "folderPath": "None",
+    "dataLayerAssets": []
+  },
+  {
+    "guid": "E7E3539D-467E-5E98-1709-EC9670674729",
+    "nativeClass": {
+      "refPath": "/CRD_RebootVan/Device_RebootVan.Device_RebootVan_C"
+    },
+    "class": {
+      "refPath": "/CRD_RebootVan/Device_RebootVan.Device_RebootVan_C"
+    },
+    "name": "Device_RebootVan_C_UAID_30560F202F920E0A03_2128943266",
+    "label": "KT24_Team_RebootCentre",
+    "bounds": {
+      "min": {
+        "x": 75515.06619262695,
+        "y": -57210.07096862793,
+        "z": 0
+      },
+      "max": {
+        "x": 76065.41970825195,
+        "y": -56965.92903137207,
+        "z": 350
+      },
+      "isValid": true
+    },
+    "runtimeGrid": "None",
+    "bIsSpatiallyLoaded": false,
+    "bActorIsEditorOnly": false,
+    "actorPackage": "None",
+    "actorPath": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.Device_RebootVan_C_UAID_30560F202F920E0A03_2128943266",
+    "folderPath": "None",
+    "dataLayerAssets": []
+  },
+  {
+    "guid": "3138F101-41F5-E93E-FEA4-1E942CD5088F",
+    "nativeClass": {
+      "refPath": "/Script/FortniteGame.FortStaticMeshActor"
+    },
+    "class": {
+      "refPath": "/Script/FortniteGame.FortStaticMeshActor"
+    },
+    "name": "FortStaticMeshActor_UAID_30560F202F92F50903_1108990658",
+    "label": "KT21_Team_EdgeEast",
+    "bounds": {
+      "min": {
+        "x": 79851.52,
+        "y": -59904,
+        "z": 0
+      },
+      "max": {
+        "x": 79892.48,
+        "y": -56832,
+        "z": 384
+      },
+      "isValid": true
+    },
+    "runtimeGrid": "None",
+    "bIsSpatiallyLoaded": false,
+    "bActorIsEditorOnly": false,
+    "actorPackage": "None",
+    "actorPath": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.FortStaticMeshActor_UAID_30560F202F92F50903_1108990658",
+    "folderPath": "None",
+    "dataLayerAssets": []
+  },
+  {
+    "guid": "A3C1C72C-4E7D-E39A-565B-9B8085025535",
+    "nativeClass": {
+      "refPath": "/CRD_RebootVan/Device_RebootVan.Device_RebootVan_C"
+    },
+    "class": {
+      "refPath": "/CRD_RebootVan/Device_RebootVan.Device_RebootVan_C"
+    },
+    "name": "Device_RebootVan_C_UAID_30560F202F920F0A03_1367618462",
+    "label": "KT24_Team_RebootNorth",
+    "bounds": {
+      "min": {
+        "x": 75515.06619262695,
+        "y": -52858.07096862793,
+        "z": 0
+      },
+      "max": {
+        "x": 76065.41970825195,
+        "y": -52613.92903137207,
+        "z": 350
+      },
+      "isValid": true
+    },
+    "runtimeGrid": "None",
+    "bIsSpatiallyLoaded": false,
+    "bActorIsEditorOnly": false,
+    "actorPackage": "None",
+    "actorPath": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.Device_RebootVan_C_UAID_30560F202F920F0A03_1367618462",
+    "folderPath": "None",
+    "dataLayerAssets": []
+  },
+  {
+    "guid": "7910529F-41F5-5E23-548C-D3B097802ADF",
+    "nativeClass": {
+      "refPath": "/CRD_VolumetricRegion/Device_MutatorVolume_V2.Device_MutatorVolume_V2_C"
+    },
+    "class": {
+      "refPath": "/CRD_VolumetricRegion/Device_MutatorVolume_V2.Device_MutatorVolume_V2_C"
+    },
+    "name": "Device_MutatorVolume_V2_C_UAID_30560F202F92500A03_1426198280",
+    "label": "KT29_Rift_BlueSafe",
+    "bounds": {
+      "min": {
+        "x": 79102.46398925781,
+        "y": -57345.53601074219,
+        "z": -961.1520080566406
+      },
+      "max": {
+        "x": 82177.53601074219,
+        "y": -54270.46398925781,
+        "z": 1345.1520080566406
+      },
+      "isValid": true
+    },
+    "runtimeGrid": "None",
+    "bIsSpatiallyLoaded": false,
+    "bActorIsEditorOnly": false,
+    "actorPackage": "None",
+    "actorPath": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.Device_MutatorVolume_V2_C_UAID_30560F202F92500A03_1426198280",
+    "folderPath": "None",
+    "dataLayerAssets": []
+  },
+  {
+    "guid": "ED2D3F54-4DA0-F00D-659A-3EAF329B3DCB",
+    "nativeClass": {
+      "refPath": "/Script/FortniteGame.FortStaticMeshActor"
+    },
+    "class": {
+      "refPath": "/Script/FortniteGame.FortStaticMeshActor"
+    },
+    "name": "FortStaticMeshActor_UAID_30560F202F92F50903_1108809657",
+    "label": "KT21_Team_EdgeWest",
+    "bounds": {
+      "min": {
+        "x": 71659.52,
+        "y": -59904,
+        "z": 0
+      },
+      "max": {
+        "x": 71700.48,
+        "y": -56832,
+        "z": 384
+      },
+      "isValid": true
+    },
+    "runtimeGrid": "None",
+    "bIsSpatiallyLoaded": false,
+    "bActorIsEditorOnly": false,
+    "actorPackage": "None",
+    "actorPath": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.FortStaticMeshActor_UAID_30560F202F92F50903_1108809657",
+    "folderPath": "None",
+    "dataLayerAssets": []
+  },
+  {
+    "guid": "93DA4BA6-4B22-2E34-E5EC-4DB25DD57EB6",
+    "nativeClass": {
+      "refPath": "/Game/Building/ActorBlueprints/Prop/Car_SemiTruck_Tractor.Car_SemiTruck_Tractor_C"
+    },
+    "class": {
+      "refPath": "/Game/Building/ActorBlueprints/Prop/Car_SemiTruck_Tractor.Car_SemiTruck_Tractor_C"
+    },
+    "name": "Car_SemiTruck_Tractor_C_UAID_30560F202F92280A03_1811441104",
+    "label": "KT26_TeamDetail_LoadingTruckRed",
+    "bounds": {
+      "min": {
+        "x": 74202.83367919922,
+        "y": -53404.495429992676,
+        "z": 0.019134521484375
+      },
+      "max": {
+        "x": 74927.89807128906,
+        "y": -53091.40894317627,
+        "z": 417.42889404296875
+      },
+      "isValid": true
+    },
+    "runtimeGrid": "None",
+    "bIsSpatiallyLoaded": false,
+    "bActorIsEditorOnly": false,
+    "actorPackage": "None",
+    "actorPath": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.Car_SemiTruck_Tractor_C_UAID_30560F202F92280A03_1811441104",
+    "folderPath": "None",
+    "dataLayerAssets": []
+  },
+  {
+    "guid": "CE58A5EF-4C55-DD46-463B-86AAC9C8A1A0",
+    "nativeClass": {
+      "refPath": "/Game/Building/ActorBlueprints/Prop/Car_SemiTruck_Tractor.Car_SemiTruck_Tractor_C"
+    },
+    "class": {
+      "refPath": "/Game/Building/ActorBlueprints/Prop/Car_SemiTruck_Tractor.Car_SemiTruck_Tractor_C"
+    },
+    "name": "Car_SemiTruck_Tractor_C_UAID_30560F202F92280A03_1812250105",
+    "label": "KT26_TeamDetail_LoadingTruckBlue",
+    "bounds": {
+      "min": {
+        "x": 76624.10192871094,
+        "y": -53404.59105682373,
+        "z": 0.019134521484375
+      },
+      "max": {
+        "x": 77349.16632080078,
+        "y": -53091.504570007324,
+        "z": 417.42889404296875
+      },
+      "isValid": true
+    },
+    "runtimeGrid": "None",
+    "bIsSpatiallyLoaded": false,
+    "bActorIsEditorOnly": false,
+    "actorPackage": "None",
+    "actorPath": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.Car_SemiTruck_Tractor_C_UAID_30560F202F92280A03_1812250105",
+    "folderPath": "None",
+    "dataLayerAssets": []
+  },
+  {
+    "guid": "32F624DA-478C-E96A-148B-E3A6E0CA00F3",
+    "nativeClass": {
+      "refPath": "/CreativeCoreDevices/Device_Button_V2.Device_Button_V2_C"
+    },
+    "class": {
+      "refPath": "/CreativeCoreDevices/Device_Button_V2.Device_Button_V2_C"
+    },
+    "name": "Device_Button_V2_C_UAID_30560F202F92110A03_1607209696",
+    "label": "KT24_Team_RebootCentreUse",
+    "bounds": {
+      "min": {
+        "x": 75648,
+        "y": -56806.4,
+        "z": -28
+      },
+      "max": {
+        "x": 75904,
+        "y": -56550.4,
+        "z": 228
+      },
+      "isValid": true
+    },
+    "runtimeGrid": "None",
+    "bIsSpatiallyLoaded": false,
+    "bActorIsEditorOnly": false,
+    "actorPackage": "None",
+    "actorPath": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.Device_Button_V2_C_UAID_30560F202F92110A03_1607209696",
+    "folderPath": "None",
+    "dataLayerAssets": []
+  },
+  {
+    "guid": "84286F2C-47C3-02B8-4493-ADBB1D498E41",
+    "nativeClass": {
+      "refPath": "/CRD_VolumetricRegion/Device_MutatorVolume_V2.Device_MutatorVolume_V2_C"
+    },
+    "class": {
+      "refPath": "/CRD_VolumetricRegion/Device_MutatorVolume_V2.Device_MutatorVolume_V2_C"
+    },
+    "name": "Device_MutatorVolume_V2_C_UAID_30560F202F92500A03_1415606273",
+    "label": "KT29_Rift_RedSafe",
+    "bounds": {
+      "min": {
+        "x": 69374.46398925781,
+        "y": -57345.53601074219,
+        "z": -961.1520080566406
+      },
+      "max": {
+        "x": 72449.53601074219,
+        "y": -54270.46398925781,
+        "z": 1345.1520080566406
+      },
+      "isValid": true
+    },
+    "runtimeGrid": "None",
+    "bIsSpatiallyLoaded": false,
+    "bActorIsEditorOnly": false,
+    "actorPackage": "None",
+    "actorPath": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.Device_MutatorVolume_V2_C_UAID_30560F202F92500A03_1415606273",
+    "folderPath": "None",
+    "dataLayerAssets": []
+  },
+  {
+    "guid": "EDB2AB95-4A6C-1E84-1177-A3BAB0959293",
+    "nativeClass": {
+      "refPath": "/Script/FortniteGame.FortStaticMeshActor"
+    },
+    "class": {
+      "refPath": "/Script/FortniteGame.FortStaticMeshActor"
+    },
+    "name": "FortStaticMeshActor_UAID_30560F202F92980A03_1485767615",
+    "label": "KT30_Balance_RedRoomFloor",
+    "bounds": {
+      "min": {
+        "x": 70144,
+        "y": -56832,
+        "z": -100
+      },
+      "max": {
+        "x": 71680,
+        "y": -54784,
+        "z": 0
+      },
+      "isValid": true
+    },
+    "runtimeGrid": "None",
+    "bIsSpatiallyLoaded": false,
+    "bActorIsEditorOnly": false,
+    "actorPackage": "None",
+    "actorPath": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.FortStaticMeshActor_UAID_30560F202F92980A03_1485767615",
+    "folderPath": "None",
+    "dataLayerAssets": []
+  },
+  {
+    "guid": "59F09B12-4FE1-3C4E-A788-61904D58DC61",
+    "nativeClass": {
+      "refPath": "/Script/FortniteGame.FortStaticMeshActor"
+    },
+    "class": {
+      "refPath": "/Script/FortniteGame.FortStaticMeshActor"
+    },
+    "name": "FortStaticMeshActor_UAID_30560F202F92980A03_1486464616",
+    "label": "KT30_Balance_RedRoomRoof",
+    "bounds": {
+      "min": {
+        "x": 70144,
+        "y": -56832,
+        "z": 360
+      },
+      "max": {
+        "x": 71680,
+        "y": -54784,
+        "z": 384
+      },
+      "isValid": true
+    },
+    "runtimeGrid": "None",
+    "bIsSpatiallyLoaded": false,
+    "bActorIsEditorOnly": false,
+    "actorPackage": "None",
+    "actorPath": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.FortStaticMeshActor_UAID_30560F202F92980A03_1486464616",
+    "folderPath": "None",
+    "dataLayerAssets": []
+  },
+  {
+    "guid": "DFA05082-407A-BBA2-92CA-AC974188B41A",
+    "nativeClass": {
+      "refPath": "/Script/FortniteGame.FortStaticMeshActor"
+    },
+    "class": {
+      "refPath": "/Script/FortniteGame.FortStaticMeshActor"
+    },
+    "name": "FortStaticMeshActor_UAID_30560F202F92980A03_1487150617",
+    "label": "KT30_Balance_RedRoomBack",
+    "bounds": {
+      "min": {
+        "x": 70123.52,
+        "y": -56832,
+        "z": 0
+      },
+      "max": {
+        "x": 70164.48,
+        "y": -54784,
+        "z": 384
+      },
+      "isValid": true
+    },
+    "runtimeGrid": "None",
+    "bIsSpatiallyLoaded": false,
+    "bActorIsEditorOnly": false,
+    "actorPackage": "None",
+    "actorPath": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.FortStaticMeshActor_UAID_30560F202F92980A03_1487150617",
+    "folderPath": "None",
+    "dataLayerAssets": []
+  },
+  {
+    "guid": "B2542A3C-4A40-AFD0-2B00-8F81D8718450",
+    "nativeClass": {
+      "refPath": "/Script/FortniteGame.FortStaticMeshActor"
+    },
+    "class": {
+      "refPath": "/Script/FortniteGame.FortStaticMeshActor"
+    },
+    "name": "FortStaticMeshActor_UAID_30560F202F92980A03_1487873618",
+    "label": "KT30_Balance_RedRoomSide6",
+    "bounds": {
+      "min": {
+        "x": 70144,
+        "y": -56852.48,
+        "z": 0
+      },
+      "max": {
+        "x": 71680,
+        "y": -56811.52,
+        "z": 384
+      },
+      "isValid": true
+    },
+    "runtimeGrid": "None",
+    "bIsSpatiallyLoaded": false,
+    "bActorIsEditorOnly": false,
+    "actorPackage": "None",
+    "actorPath": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.FortStaticMeshActor_UAID_30560F202F92980A03_1487873618",
+    "folderPath": "None",
+    "dataLayerAssets": []
+  },
+  {
+    "guid": "21664B47-4554-5CE7-BAFD-F7900117148E",
+    "nativeClass": {
+      "refPath": "/Script/FortniteGame.FortStaticMeshActor"
+    },
+    "class": {
+      "refPath": "/Script/FortniteGame.FortStaticMeshActor"
+    },
+    "name": "FortStaticMeshActor_UAID_30560F202F92980A03_1488577619",
+    "label": "KT30_Balance_RedRoomSide10",
+    "bounds": {
+      "min": {
+        "x": 70144,
+        "y": -54804.479999999996,
+        "z": 0
+      },
+      "max": {
+        "x": 71680,
+        "y": -54763.520000000004,
+        "z": 384
+      },
+      "isValid": true
+    },
+    "runtimeGrid": "None",
+    "bIsSpatiallyLoaded": false,
+    "bActorIsEditorOnly": false,
+    "actorPackage": "None",
+    "actorPath": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.FortStaticMeshActor_UAID_30560F202F92980A03_1488577619",
+    "folderPath": "None",
+    "dataLayerAssets": []
+  },
+  {
+    "guid": "89BB75BA-4F35-58F9-94D4-D987729CD436",
+    "nativeClass": {
+      "refPath": "/Script/FortniteGame.FortStaticMeshActor"
+    },
+    "class": {
+      "refPath": "/Script/FortniteGame.FortStaticMeshActor"
+    },
+    "name": "FortStaticMeshActor_UAID_30560F202F92980A03_1489247620",
+    "label": "KT30_Balance_RedDoor6",
+    "bounds": {
+      "min": {
+        "x": 71659.52,
+        "y": -56832,
+        "z": 0
+      },
+      "max": {
+        "x": 71700.48,
+        "y": -56320,
+        "z": 384
+      },
+      "isValid": true
+    },
+    "runtimeGrid": "None",
+    "bIsSpatiallyLoaded": false,
+    "bActorIsEditorOnly": false,
+    "actorPackage": "None",
+    "actorPath": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.FortStaticMeshActor_UAID_30560F202F92980A03_1489247620",
+    "folderPath": "None",
+    "dataLayerAssets": []
+  },
+  {
+    "guid": "1BFDFA78-411C-F820-24D2-349EF34295E5",
+    "nativeClass": {
+      "refPath": "/Script/FortniteGame.FortStaticMeshActor"
+    },
+    "class": {
+      "refPath": "/Script/FortniteGame.FortStaticMeshActor"
+    },
+    "name": "FortStaticMeshActor_UAID_30560F202F92980A03_1489987621",
+    "label": "KT30_Balance_RedDoor9",
+    "bounds": {
+      "min": {
+        "x": 71659.52,
+        "y": -55296,
+        "z": 0
+      },
+      "max": {
+        "x": 71700.48,
+        "y": -54784,
+        "z": 384
+      },
+      "isValid": true
+    },
+    "runtimeGrid": "None",
+    "bIsSpatiallyLoaded": false,
+    "bActorIsEditorOnly": false,
+    "actorPackage": "None",
+    "actorPath": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.FortStaticMeshActor_UAID_30560F202F92980A03_1489987621",
+    "folderPath": "None",
+    "dataLayerAssets": []
+  },
+  {
+    "guid": "D2EF9AA4-4952-0DE4-DC16-BFB2BC027325",
+    "nativeClass": {
+      "refPath": "/Script/FortniteGame.FortStaticMeshActor"
+    },
+    "class": {
+      "refPath": "/Script/FortniteGame.FortStaticMeshActor"
+    },
+    "name": "FortStaticMeshActor_UAID_30560F202F92980A03_1490717622",
+    "label": "KT30_Balance_RedBaffle",
+    "bounds": {
+      "min": {
+        "x": 70891.52,
+        "y": -56064,
+        "z": 0
+      },
+      "max": {
+        "x": 70932.48,
+        "y": -55552,
+        "z": 384
+      },
+      "isValid": true
+    },
+    "runtimeGrid": "None",
+    "bIsSpatiallyLoaded": false,
+    "bActorIsEditorOnly": false,
+    "actorPackage": "None",
+    "actorPath": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.FortStaticMeshActor_UAID_30560F202F92980A03_1490717622",
+    "folderPath": "None",
+    "dataLayerAssets": []
+  },
+  {
+    "guid": "85871234-4911-24FE-B6F6-EEB821C369D9",
+    "nativeClass": {
+      "refPath": "/Script/FortniteGame.FortStaticMeshActor"
+    },
+    "class": {
+      "refPath": "/Script/FortniteGame.FortStaticMeshActor"
+    },
+    "name": "FortStaticMeshActor_UAID_30560F202F92980A03_1491376623",
+    "label": "KT30_Balance_RedEntryStripe",
+    "bounds": {
+      "min": {
+        "x": 70144,
+        "y": -56320,
+        "z": 0
+      },
+      "max": {
+        "x": 71680,
+        "y": -56279.04000000001,
+        "z": 1
+      },
+      "isValid": true
+    },
+    "runtimeGrid": "None",
+    "bIsSpatiallyLoaded": false,
+    "bActorIsEditorOnly": false,
+    "actorPackage": "None",
+    "actorPath": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.FortStaticMeshActor_UAID_30560F202F92980A03_1491376623",
+    "folderPath": "None",
+    "dataLayerAssets": []
+  },
+  {
+    "guid": "176B0FA5-407E-456B-23C9-CF88492BCAC5",
+    "nativeClass": {
+      "refPath": "/Script/FortniteGame.FortStaticMeshActor"
+    },
+    "class": {
+      "refPath": "/Script/FortniteGame.FortStaticMeshActor"
+    },
+    "name": "FortStaticMeshActor_UAID_30560F202F92980A03_1492063624",
+    "label": "KT30_Balance_BlueRoomFloor",
+    "bounds": {
+      "min": {
+        "x": 79872,
+        "y": -56832,
+        "z": -100
+      },
+      "max": {
+        "x": 81408,
+        "y": -54784,
+        "z": 0
+      },
+      "isValid": true
+    },
+    "runtimeGrid": "None",
+    "bIsSpatiallyLoaded": false,
+    "bActorIsEditorOnly": false,
+    "actorPackage": "None",
+    "actorPath": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.FortStaticMeshActor_UAID_30560F202F92980A03_1492063624",
+    "folderPath": "None",
+    "dataLayerAssets": []
+  },
+  {
+    "guid": "0130E32B-4377-249D-3F93-C2869786B4F0",
+    "nativeClass": {
+      "refPath": "/Script/FortniteGame.FortStaticMeshActor"
+    },
+    "class": {
+      "refPath": "/Script/FortniteGame.FortStaticMeshActor"
+    },
+    "name": "FortStaticMeshActor_UAID_30560F202F92980A03_1492776625",
+    "label": "KT30_Balance_BlueRoomRoof",
+    "bounds": {
+      "min": {
+        "x": 79872,
+        "y": -56832,
+        "z": 360
+      },
+      "max": {
+        "x": 81408,
+        "y": -54784,
+        "z": 384
+      },
+      "isValid": true
+    },
+    "runtimeGrid": "None",
+    "bIsSpatiallyLoaded": false,
+    "bActorIsEditorOnly": false,
+    "actorPackage": "None",
+    "actorPath": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.FortStaticMeshActor_UAID_30560F202F92980A03_1492776625",
+    "folderPath": "None",
+    "dataLayerAssets": []
+  },
+  {
+    "guid": "110D192C-4AB1-D0D8-7B7A-CD82326AD766",
+    "nativeClass": {
+      "refPath": "/Script/FortniteGame.FortStaticMeshActor"
+    },
+    "class": {
+      "refPath": "/Script/FortniteGame.FortStaticMeshActor"
+    },
+    "name": "FortStaticMeshActor_UAID_30560F202F92980A03_1493524626",
+    "label": "KT30_Balance_BlueRoomBack",
+    "bounds": {
+      "min": {
+        "x": 81387.52,
+        "y": -56832,
+        "z": 0
+      },
+      "max": {
+        "x": 81428.48,
+        "y": -54784,
+        "z": 384
+      },
+      "isValid": true
+    },
+    "runtimeGrid": "None",
+    "bIsSpatiallyLoaded": false,
+    "bActorIsEditorOnly": false,
+    "actorPackage": "None",
+    "actorPath": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.FortStaticMeshActor_UAID_30560F202F92980A03_1493524626",
+    "folderPath": "None",
+    "dataLayerAssets": []
+  },
+  {
+    "guid": "94264EC2-45AC-E6AB-9827-2389B0DED4F6",
+    "nativeClass": {
+      "refPath": "/Script/FortniteGame.FortStaticMeshActor"
+    },
+    "class": {
+      "refPath": "/Script/FortniteGame.FortStaticMeshActor"
+    },
+    "name": "FortStaticMeshActor_UAID_30560F202F92980A03_1494225627",
+    "label": "KT30_Balance_BlueRoomSide6",
+    "bounds": {
+      "min": {
+        "x": 79872,
+        "y": -56852.48,
+        "z": 0
+      },
+      "max": {
+        "x": 81408,
+        "y": -56811.52,
+        "z": 384
+      },
+      "isValid": true
+    },
+    "runtimeGrid": "None",
+    "bIsSpatiallyLoaded": false,
+    "bActorIsEditorOnly": false,
+    "actorPackage": "None",
+    "actorPath": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.FortStaticMeshActor_UAID_30560F202F92980A03_1494225627",
+    "folderPath": "None",
+    "dataLayerAssets": []
+  },
+  {
+    "guid": "A0CEA3B0-41AB-B59B-CB13-2AAB440A89E7",
+    "nativeClass": {
+      "refPath": "/Script/FortniteGame.FortStaticMeshActor"
+    },
+    "class": {
+      "refPath": "/Script/FortniteGame.FortStaticMeshActor"
+    },
+    "name": "FortStaticMeshActor_UAID_30560F202F92980A03_1494949628",
+    "label": "KT30_Balance_BlueRoomSide10",
+    "bounds": {
+      "min": {
+        "x": 79872,
+        "y": -54804.479999999996,
+        "z": 0
+      },
+      "max": {
+        "x": 81408,
+        "y": -54763.520000000004,
+        "z": 384
+      },
+      "isValid": true
+    },
+    "runtimeGrid": "None",
+    "bIsSpatiallyLoaded": false,
+    "bActorIsEditorOnly": false,
+    "actorPackage": "None",
+    "actorPath": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.FortStaticMeshActor_UAID_30560F202F92980A03_1494949628",
+    "folderPath": "None",
+    "dataLayerAssets": []
+  },
+  {
+    "guid": "2F33B554-4484-DD87-EFFC-528FC2EBE2CC",
+    "nativeClass": {
+      "refPath": "/Script/FortniteGame.FortStaticMeshActor"
+    },
+    "class": {
+      "refPath": "/Script/FortniteGame.FortStaticMeshActor"
+    },
+    "name": "FortStaticMeshActor_UAID_30560F202F92980A03_1495720629",
+    "label": "KT30_Balance_BlueDoor6",
+    "bounds": {
+      "min": {
+        "x": 79851.52,
+        "y": -56832,
+        "z": 0
+      },
+      "max": {
+        "x": 79892.48,
+        "y": -56320,
+        "z": 384
+      },
+      "isValid": true
+    },
+    "runtimeGrid": "None",
+    "bIsSpatiallyLoaded": false,
+    "bActorIsEditorOnly": false,
+    "actorPackage": "None",
+    "actorPath": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.FortStaticMeshActor_UAID_30560F202F92980A03_1495720629",
+    "folderPath": "None",
+    "dataLayerAssets": []
+  },
+  {
+    "guid": "6AAE0803-46DA-B76A-376F-2B87ED342937",
+    "nativeClass": {
+      "refPath": "/Script/FortniteGame.FortStaticMeshActor"
+    },
+    "class": {
+      "refPath": "/Script/FortniteGame.FortStaticMeshActor"
+    },
+    "name": "FortStaticMeshActor_UAID_30560F202F92980A03_1496438630",
+    "label": "KT30_Balance_BlueDoor9",
+    "bounds": {
+      "min": {
+        "x": 79851.52,
+        "y": -55296,
+        "z": 0
+      },
+      "max": {
+        "x": 79892.48,
+        "y": -54784,
+        "z": 384
+      },
+      "isValid": true
+    },
+    "runtimeGrid": "None",
+    "bIsSpatiallyLoaded": false,
+    "bActorIsEditorOnly": false,
+    "actorPackage": "None",
+    "actorPath": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.FortStaticMeshActor_UAID_30560F202F92980A03_1496438630",
+    "folderPath": "None",
+    "dataLayerAssets": []
+  },
+  {
+    "guid": "AFECDC91-4C61-42D7-F6F2-F58367E3A449",
+    "nativeClass": {
+      "refPath": "/Script/FortniteGame.FortStaticMeshActor"
+    },
+    "class": {
+      "refPath": "/Script/FortniteGame.FortStaticMeshActor"
+    },
+    "name": "FortStaticMeshActor_UAID_30560F202F92980A03_1497192631",
+    "label": "KT30_Balance_BlueBaffle",
+    "bounds": {
+      "min": {
+        "x": 80619.52,
+        "y": -56064,
+        "z": 0
+      },
+      "max": {
+        "x": 80660.48,
+        "y": -55552,
+        "z": 384
+      },
+      "isValid": true
+    },
+    "runtimeGrid": "None",
+    "bIsSpatiallyLoaded": false,
+    "bActorIsEditorOnly": false,
+    "actorPackage": "None",
+    "actorPath": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.FortStaticMeshActor_UAID_30560F202F92980A03_1497192631",
+    "folderPath": "None",
+    "dataLayerAssets": []
+  },
+  {
+    "guid": "1E4532C0-49D2-9444-2847-8AA46C462758",
+    "nativeClass": {
+      "refPath": "/Script/FortniteGame.FortStaticMeshActor"
+    },
+    "class": {
+      "refPath": "/Script/FortniteGame.FortStaticMeshActor"
+    },
+    "name": "FortStaticMeshActor_UAID_30560F202F92980A03_1497910632",
+    "label": "KT30_Balance_BlueEntryStripe",
+    "bounds": {
+      "min": {
+        "x": 79872,
+        "y": -56320,
+        "z": 0
+      },
+      "max": {
+        "x": 81408,
+        "y": -56279.04000000001,
+        "z": 1
+      },
+      "isValid": true
+    },
+    "runtimeGrid": "None",
+    "bIsSpatiallyLoaded": false,
+    "bActorIsEditorOnly": false,
+    "actorPackage": "None",
+    "actorPath": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.FortStaticMeshActor_UAID_30560F202F92980A03_1497910632",
+    "folderPath": "None",
+    "dataLayerAssets": []
+  },
+  {
+    "guid": "ACF48063-4C02-FD13-DADD-37B4BF90F039",
+    "nativeClass": {
+      "refPath": "/Script/FortniteGame.FortStaticMeshActor"
+    },
+    "class": {
+      "refPath": "/Script/FortniteGame.FortStaticMeshActor"
+    },
+    "name": "FortStaticMeshActor_UAID_30560F202F92980A03_1498909633",
+    "label": "KT30_Balance_WestEdgeUpper",
+    "bounds": {
+      "min": {
+        "x": 71659.52,
+        "y": -54784,
+        "z": 0
+      },
+      "max": {
+        "x": 71700.48,
+        "y": -51712,
+        "z": 384
+      },
+      "isValid": true
+    },
+    "runtimeGrid": "None",
+    "bIsSpatiallyLoaded": false,
+    "bActorIsEditorOnly": false,
+    "actorPackage": "None",
+    "actorPath": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.FortStaticMeshActor_UAID_30560F202F92980A03_1498909633",
+    "folderPath": "None",
+    "dataLayerAssets": []
+  },
+  {
+    "guid": "62CA75E0-41F0-9DF1-52A1-2C8F751A1B08",
+    "nativeClass": {
+      "refPath": "/Script/FortniteGame.FortStaticMeshActor"
+    },
+    "class": {
+      "refPath": "/Script/FortniteGame.FortStaticMeshActor"
+    },
+    "name": "FortStaticMeshActor_UAID_30560F202F92980A03_1499908634",
+    "label": "KT30_Balance_EastEdgeUpper",
+    "bounds": {
+      "min": {
+        "x": 79851.52,
+        "y": -54784,
+        "z": 0
+      },
+      "max": {
+        "x": 79892.48,
+        "y": -51712,
+        "z": 384
+      },
+      "isValid": true
+    },
+    "runtimeGrid": "None",
+    "bIsSpatiallyLoaded": false,
+    "bActorIsEditorOnly": false,
+    "actorPackage": "None",
+    "actorPath": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.FortStaticMeshActor_UAID_30560F202F92980A03_1499908634",
+    "folderPath": "None",
+    "dataLayerAssets": []
+  },
+  {
+    "guid": "5204D1D4-4EED-67BC-CFE4-1885941308AF",
+    "nativeClass": {
+      "refPath": "/Game/Building/ActorBlueprints/Prop/Car_SemiTruck_Tractor.Car_SemiTruck_Tractor_C"
+    },
+    "class": {
+      "refPath": "/Game/Building/ActorBlueprints/Prop/Car_SemiTruck_Tractor.Car_SemiTruck_Tractor_C"
+    },
+    "name": "Car_SemiTruck_Tractor_C_UAID_30560F202F92980A03_1501265635",
+    "label": "KT30_Balance_RedServiceTruck",
+    "bounds": {
+      "min": {
+        "x": 74202.83367919922,
+        "y": -58780.495429992676,
+        "z": 0.019134521484375
+      },
+      "max": {
+        "x": 74927.89807128906,
+        "y": -58467.40894317627,
+        "z": 417.42889404296875
+      },
+      "isValid": true
+    },
+    "runtimeGrid": "None",
+    "bIsSpatiallyLoaded": false,
+    "bActorIsEditorOnly": false,
+    "actorPackage": "None",
+    "actorPath": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.Car_SemiTruck_Tractor_C_UAID_30560F202F92980A03_1501265635",
+    "folderPath": "None",
+    "dataLayerAssets": []
+  },
+  {
+    "guid": "106B171F-4578-8F4E-16F5-79AB874A7D82",
+    "nativeClass": {
+      "refPath": "/Game/Creative/Sets/MilitaryBase/BuildingPieces/MilitaryBase_HalfWall.MilitaryBase_HalfWall_C"
+    },
+    "class": {
+      "refPath": "/Game/Creative/Sets/MilitaryBase/BuildingPieces/MilitaryBase_HalfWall.MilitaryBase_HalfWall_C"
+    },
+    "name": "MilitaryBase_HalfWall_C_UAID_30560F202F92980A03_1502328636",
+    "label": "KT30_Balance_RedMidWall",
+    "bounds": {
+      "min": {
+        "x": 74991.98784446716,
+        "y": -57088,
+        "z": 0
+      },
+      "max": {
+        "x": 75024.01216316223,
+        "y": -56576,
+        "z": 192
+      },
+      "isValid": true
+    },
+    "runtimeGrid": "None",
+    "bIsSpatiallyLoaded": false,
+    "bActorIsEditorOnly": false,
+    "actorPackage": "None",
+    "actorPath": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.MilitaryBase_HalfWall_C_UAID_30560F202F92980A03_1502328636",
+    "folderPath": "None",
+    "dataLayerAssets": []
+  },
+  {
+    "guid": "BDE9FBDB-473B-17E6-0A59-6CA01FBAF01F",
+    "nativeClass": {
+      "refPath": "/Game/Creative/Sets/MilitaryBase/BuildingPieces/MilitaryBase_HalfWall.MilitaryBase_HalfWall_C"
+    },
+    "class": {
+      "refPath": "/Game/Creative/Sets/MilitaryBase/BuildingPieces/MilitaryBase_HalfWall.MilitaryBase_HalfWall_C"
+    },
+    "name": "MilitaryBase_HalfWall_C_UAID_30560F202F92980A03_1503028637",
+    "label": "KT30_Balance_RedMidWallRear",
+    "bounds": {
+      "min": {
+        "x": 74991.98784446716,
+        "y": -55040,
+        "z": 0
+      },
+      "max": {
+        "x": 75024.01216316223,
+        "y": -54528,
+        "z": 192
+      },
+      "isValid": true
+    },
+    "runtimeGrid": "None",
+    "bIsSpatiallyLoaded": false,
+    "bActorIsEditorOnly": false,
+    "actorPackage": "None",
+    "actorPath": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.MilitaryBase_HalfWall_C_UAID_30560F202F92980A03_1503028637",
+    "folderPath": "None",
+    "dataLayerAssets": []
+  },
+  {
+    "guid": "9FF61078-4671-6564-A984-8BA1D98B5BAE",
+    "nativeClass": {
+      "refPath": "/Game/Creative/Sets/MilitaryBase/MilitaryBase_Metal_Crate_01.MilitaryBase_Metal_Crate_01_C"
+    },
+    "class": {
+      "refPath": "/Game/Creative/Sets/MilitaryBase/MilitaryBase_Metal_Crate_01.MilitaryBase_Metal_Crate_01_C"
+    },
+    "name": "MilitaryBase_Metal_Crate_01_C_UAID_30560F202F92980A03_1503804638",
+    "label": "KT30_Balance_RedMetalCrate0",
+    "bounds": {
+      "min": {
+        "x": 75082.95446205139,
+        "y": -54445.8744430542,
+        "z": -0.1251983642578125
+      },
+      "max": {
+        "x": 75182.17594337463,
+        "y": -54355.42628479004,
+        "z": 66.24303436279297
+      },
+      "isValid": true
+    },
+    "runtimeGrid": "None",
+    "bIsSpatiallyLoaded": false,
+    "bActorIsEditorOnly": false,
+    "actorPackage": "None",
+    "actorPath": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.MilitaryBase_Metal_Crate_01_C_UAID_30560F202F92980A03_1503804638",
+    "folderPath": "None",
+    "dataLayerAssets": []
+  },
+  {
+    "guid": "F25F3942-4AED-4818-08D9-6A916B5E2B7A",
+    "nativeClass": {
+      "refPath": "/Game/Creative/Sets/MilitaryBase/MilitaryBase_Metal_Crate_01.MilitaryBase_Metal_Crate_01_C"
+    },
+    "class": {
+      "refPath": "/Game/Creative/Sets/MilitaryBase/MilitaryBase_Metal_Crate_01.MilitaryBase_Metal_Crate_01_C"
+    },
+    "name": "MilitaryBase_Metal_Crate_01_C_UAID_30560F202F92980A03_1504514639",
+    "label": "KT30_Balance_RedMetalCrate1",
+    "bounds": {
+      "min": {
+        "x": 75082.95446205139,
+        "y": -54189.8744430542,
+        "z": -0.1251983642578125
+      },
+      "max": {
+        "x": 75182.17594337463,
+        "y": -54099.42628479004,
+        "z": 66.24303436279297
+      },
+      "isValid": true
+    },
+    "runtimeGrid": "None",
+    "bIsSpatiallyLoaded": false,
+    "bActorIsEditorOnly": false,
+    "actorPackage": "None",
+    "actorPath": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.MilitaryBase_Metal_Crate_01_C_UAID_30560F202F92980A03_1504514639",
+    "folderPath": "None",
+    "dataLayerAssets": []
+  },
+  {
+    "guid": "94CCB7D7-4CBC-57E5-79EC-A58A45A7CF39",
+    "nativeClass": {
+      "refPath": "/Game/Athena/Apollo/Environments/BuildingActors/TaskForce/Props/Apollo_TaskForce_Sand_Bag_Wall_01.Apollo_TaskForce_Sand_Bag_Wall_01_C"
+    },
+    "class": {
+      "refPath": "/Game/Athena/Apollo/Environments/BuildingActors/TaskForce/Props/Apollo_TaskForce_Sand_Bag_Wall_01.Apollo_TaskForce_Sand_Bag_Wall_01_C"
+    },
+    "name": "Apollo_TaskForce_Sand_Bag_Wall_01_C_UAID_30560F202F92980A03_1505243640",
+    "label": "KT30_Balance_RedSandbags",
+    "bounds": {
+      "min": {
+        "x": 74999.9061050415,
+        "y": -57644.910301208496,
+        "z": -9.203102111816406
+      },
+      "max": {
+        "x": 75274.79239654541,
+        "y": -57557.255798339844,
+        "z": 74.6250991821289
+      },
+      "isValid": true
+    },
+    "runtimeGrid": "None",
+    "bIsSpatiallyLoaded": false,
+    "bActorIsEditorOnly": false,
+    "actorPackage": "None",
+    "actorPath": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.Apollo_TaskForce_Sand_Bag_Wall_01_C_UAID_30560F202F92980A03_1505243640",
+    "folderPath": "None",
+    "dataLayerAssets": []
+  },
+  {
+    "guid": "71281D80-485F-D88D-46A5-5ABF454C7E8C",
+    "nativeClass": {
+      "refPath": "/Game/Building/ActorBlueprints/Prop/Car_SemiTruck_Tractor.Car_SemiTruck_Tractor_C"
+    },
+    "class": {
+      "refPath": "/Game/Building/ActorBlueprints/Prop/Car_SemiTruck_Tractor.Car_SemiTruck_Tractor_C"
+    },
+    "name": "Car_SemiTruck_Tractor_C_UAID_30560F202F92980A03_1506002641",
+    "label": "KT30_Balance_BlueServiceTruck",
+    "bounds": {
+      "min": {
+        "x": 76624.10192871094,
+        "y": -58780.59105682373,
+        "z": 0.019134521484375
+      },
+      "max": {
+        "x": 77349.16632080078,
+        "y": -58467.504570007324,
+        "z": 417.42889404296875
+      },
+      "isValid": true
+    },
+    "runtimeGrid": "None",
+    "bIsSpatiallyLoaded": false,
+    "bActorIsEditorOnly": false,
+    "actorPackage": "None",
+    "actorPath": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.Car_SemiTruck_Tractor_C_UAID_30560F202F92980A03_1506002641",
+    "folderPath": "None",
+    "dataLayerAssets": []
+  },
+  {
+    "guid": "CAD6999A-4468-4F1A-1E41-3893B6EF9489",
+    "nativeClass": {
+      "refPath": "/Game/Creative/Sets/MilitaryBase/BuildingPieces/MilitaryBase_HalfWall.MilitaryBase_HalfWall_C"
+    },
+    "class": {
+      "refPath": "/Game/Creative/Sets/MilitaryBase/BuildingPieces/MilitaryBase_HalfWall.MilitaryBase_HalfWall_C"
+    },
+    "name": "MilitaryBase_HalfWall_C_UAID_30560F202F92980A03_1506783642",
+    "label": "KT30_Balance_BlueMidWall",
+    "bounds": {
+      "min": {
+        "x": 76527.98784446716,
+        "y": -57088,
+        "z": 0
+      },
+      "max": {
+        "x": 76560.01216316223,
+        "y": -56576,
+        "z": 192
+      },
+      "isValid": true
+    },
+    "runtimeGrid": "None",
+    "bIsSpatiallyLoaded": false,
+    "bActorIsEditorOnly": false,
+    "actorPackage": "None",
+    "actorPath": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.MilitaryBase_HalfWall_C_UAID_30560F202F92980A03_1506783642",
+    "folderPath": "None",
+    "dataLayerAssets": []
+  },
+  {
+    "guid": "0E1B0529-42E0-DF54-6EA0-B899BCB45D73",
+    "nativeClass": {
+      "refPath": "/Game/Creative/Sets/MilitaryBase/BuildingPieces/MilitaryBase_HalfWall.MilitaryBase_HalfWall_C"
+    },
+    "class": {
+      "refPath": "/Game/Creative/Sets/MilitaryBase/BuildingPieces/MilitaryBase_HalfWall.MilitaryBase_HalfWall_C"
+    },
+    "name": "MilitaryBase_HalfWall_C_UAID_30560F202F92980A03_1507441643",
+    "label": "KT30_Balance_BlueMidWallRear",
+    "bounds": {
+      "min": {
+        "x": 76527.98784446716,
+        "y": -55040,
+        "z": 0
+      },
+      "max": {
+        "x": 76560.01216316223,
+        "y": -54528,
+        "z": 192
+      },
+      "isValid": true
+    },
+    "runtimeGrid": "None",
+    "bIsSpatiallyLoaded": false,
+    "bActorIsEditorOnly": false,
+    "actorPackage": "None",
+    "actorPath": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.MilitaryBase_HalfWall_C_UAID_30560F202F92980A03_1507441643",
+    "folderPath": "None",
+    "dataLayerAssets": []
+  },
+  {
+    "guid": "4D0C1981-4162-56A3-2312-85B28BF7E3C9",
+    "nativeClass": {
+      "refPath": "/Game/Creative/Sets/MilitaryBase/MilitaryBase_Metal_Crate_01.MilitaryBase_Metal_Crate_01_C"
+    },
+    "class": {
+      "refPath": "/Game/Creative/Sets/MilitaryBase/MilitaryBase_Metal_Crate_01.MilitaryBase_Metal_Crate_01_C"
+    },
+    "name": "MilitaryBase_Metal_Crate_01_C_UAID_30560F202F92980A03_1508163644",
+    "label": "KT30_Balance_BlueMetalCrate0",
+    "bounds": {
+      "min": {
+        "x": 76369.82405662537,
+        "y": -54444.57371520996,
+        "z": -0.1251983642578125
+      },
+      "max": {
+        "x": 76469.04553794861,
+        "y": -54354.1255569458,
+        "z": 66.24303436279297
+      },
+      "isValid": true
+    },
+    "runtimeGrid": "None",
+    "bIsSpatiallyLoaded": false,
+    "bActorIsEditorOnly": false,
+    "actorPackage": "None",
+    "actorPath": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.MilitaryBase_Metal_Crate_01_C_UAID_30560F202F92980A03_1508163644",
+    "folderPath": "None",
+    "dataLayerAssets": []
+  },
+  {
+    "guid": "EA003DC3-4588-0FCC-9B96-1D945C2C7AE6",
+    "nativeClass": {
+      "refPath": "/Game/Creative/Sets/MilitaryBase/MilitaryBase_Metal_Crate_01.MilitaryBase_Metal_Crate_01_C"
+    },
+    "class": {
+      "refPath": "/Game/Creative/Sets/MilitaryBase/MilitaryBase_Metal_Crate_01.MilitaryBase_Metal_Crate_01_C"
+    },
+    "name": "MilitaryBase_Metal_Crate_01_C_UAID_30560F202F92980A03_1508842645",
+    "label": "KT30_Balance_BlueMetalCrate1",
+    "bounds": {
+      "min": {
+        "x": 76369.82405662537,
+        "y": -54188.57371520996,
+        "z": -0.1251983642578125
+      },
+      "max": {
+        "x": 76469.04553794861,
+        "y": -54098.1255569458,
+        "z": 66.24303436279297
+      },
+      "isValid": true
+    },
+    "runtimeGrid": "None",
+    "bIsSpatiallyLoaded": false,
+    "bActorIsEditorOnly": false,
+    "actorPackage": "None",
+    "actorPath": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.MilitaryBase_Metal_Crate_01_C_UAID_30560F202F92980A03_1508842645",
+    "folderPath": "None",
+    "dataLayerAssets": []
+  },
+  {
+    "guid": "6711EB14-4A96-F620-739F-B1BE59579A3A",
+    "nativeClass": {
+      "refPath": "/Game/Athena/Apollo/Environments/BuildingActors/TaskForce/Props/Apollo_TaskForce_Sand_Bag_Wall_01.Apollo_TaskForce_Sand_Bag_Wall_01_C"
+    },
+    "class": {
+      "refPath": "/Game/Athena/Apollo/Environments/BuildingActors/TaskForce/Props/Apollo_TaskForce_Sand_Bag_Wall_01.Apollo_TaskForce_Sand_Bag_Wall_01_C"
+    },
+    "name": "Apollo_TaskForce_Sand_Bag_Wall_01_C_UAID_30560F202F92980A03_1509572646",
+    "label": "KT30_Balance_BlueSandbags",
+    "bounds": {
+      "min": {
+        "x": 76277.20760345459,
+        "y": -57642.744201660156,
+        "z": -9.203102111816406
+      },
+      "max": {
+        "x": 76552.0938949585,
+        "y": -57555.089698791504,
+        "z": 74.6250991821289
+      },
+      "isValid": true
+    },
+    "runtimeGrid": "None",
+    "bIsSpatiallyLoaded": false,
+    "bActorIsEditorOnly": false,
+    "actorPackage": "None",
+    "actorPath": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.Apollo_TaskForce_Sand_Bag_Wall_01_C_UAID_30560F202F92980A03_1509572646",
+    "folderPath": "None",
+    "dataLayerAssets": []
+  },
+  {
+    "guid": "A7849724-41F6-54FE-9B56-8C8CEE851481",
+    "nativeClass": {
+      "refPath": "/Game/Athena/Items/Gameplay/SilkyTrombone/Tanker/Athena_Prop_SilkyTanker.Athena_Prop_SilkyTanker_C"
+    },
+    "class": {
+      "refPath": "/Game/Athena/Items/Gameplay/SilkyTrombone/Tanker/Athena_Prop_SilkyTanker.Athena_Prop_SilkyTanker_C"
+    },
+    "name": "Athena_Prop_SilkyTanker_C_UAID_30560F202F92980A03_1510588647",
+    "label": "KT30_Balance_BlueShieldTruck",
+    "bounds": {
+      "min": {
+        "x": 78958.57369995117,
+        "y": -58029.9469909668,
+        "z": 0
+      },
+      "max": {
+        "x": 79248.90739440918,
+        "y": -56940,
+        "z": 398.0166015625
+      },
+      "isValid": true
+    },
+    "runtimeGrid": "None",
+    "bIsSpatiallyLoaded": false,
+    "bActorIsEditorOnly": false,
+    "actorPackage": "None",
+    "actorPath": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.Athena_Prop_SilkyTanker_C_UAID_30560F202F92980A03_1510588647",
+    "folderPath": "None",
+    "dataLayerAssets": []
+  },
+  {
+    "guid": "4B76C089-4062-25CF-29CA-6ABE247C7AAD",
+    "nativeClass": {
+      "refPath": "/CRD_VolumetricRegion/Device_MutatorVolume_V2.Device_MutatorVolume_V2_C"
+    },
+    "class": {
+      "refPath": "/CRD_VolumetricRegion/Device_MutatorVolume_V2.Device_MutatorVolume_V2_C"
+    },
+    "name": "Device_MutatorVolume_V2_C_UAID_30560F202F92980A03_1512251648",
+    "label": "KT30_Balance_RedRoomNoFire",
+    "bounds": {
+      "min": {
+        "x": 69374.46398925781,
+        "y": -57345.53601074219,
+        "z": -961.1520080566406
+      },
+      "max": {
+        "x": 72449.53601074219,
+        "y": -54270.46398925781,
+        "z": 1345.1520080566406
+      },
+      "isValid": true
+    },
+    "runtimeGrid": "None",
+    "bIsSpatiallyLoaded": false,
+    "bActorIsEditorOnly": false,
+    "actorPackage": "None",
+    "actorPath": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.Device_MutatorVolume_V2_C_UAID_30560F202F92980A03_1512251648",
+    "folderPath": "None",
+    "dataLayerAssets": []
+  },
+  {
+    "guid": "ED93E342-414E-8215-B3C4-D2900489A8B0",
+    "nativeClass": {
+      "refPath": "/CRD_VolumetricRegion/Device_MutatorVolume_V2.Device_MutatorVolume_V2_C"
+    },
+    "class": {
+      "refPath": "/CRD_VolumetricRegion/Device_MutatorVolume_V2.Device_MutatorVolume_V2_C"
+    },
+    "name": "Device_MutatorVolume_V2_C_UAID_30560F202F92980A03_1530671649",
+    "label": "KT30_Balance_BlueRoomNoFire",
+    "bounds": {
+      "min": {
+        "x": 79102.46398925781,
+        "y": -57345.53601074219,
+        "z": -961.1520080566406
+      },
+      "max": {
+        "x": 82177.53601074219,
+        "y": -54270.46398925781,
+        "z": 1345.1520080566406
+      },
+      "isValid": true
+    },
+    "runtimeGrid": "None",
+    "bIsSpatiallyLoaded": false,
+    "bActorIsEditorOnly": false,
+    "actorPackage": "None",
+    "actorPath": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.Device_MutatorVolume_V2_C_UAID_30560F202F92980A03_1530671649",
+    "folderPath": "None",
+    "dataLayerAssets": []
+  }
+]

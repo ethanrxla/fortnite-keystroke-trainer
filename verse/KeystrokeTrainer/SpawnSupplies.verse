@@ -21,6 +21,8 @@ kt_spawn_supply_service := class(creative_device):
         for (P : GetPlayspace().GetPlayers(), C := P.GetFortCharacter[], C.IsActive[]):
             OnSpawn(P)
     OnSpawn(A:agent):void =
+        if (KTTeamOwnsInventory(A)?):
+            return
         T := GetSimulationElapsedTime()
         if (Previous := LastGrant[A], T - Previous < 0.5):
             return
