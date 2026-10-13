@@ -88,7 +88,7 @@ keystroke_drill_device := class(creative_device):
     @editable ClearEachRep:logic = false
     @editable ClearWaitSeconds:float = 0.4
     # Pause between reps, the same on every lane (player 2026-10-13: "90s and ramp rush need more time inbetween reps").
-    @editable RepRestSeconds:float = 1.5
+    @editable RepRestSeconds:float = 3.0
     # Every rep starts on track 1 instead of moving one track over each rep (player 2026-10-13, box up: "you start in a
     # slightly different spot each time"). Needs ClearEachRep so the last rep's builds are gone; the player waits on
     # the ledge behind the start while the clear runs.
@@ -364,14 +364,13 @@ keystroke_drill_device := class(creative_device):
             if (ScoringEnabled?, AllStepsObserved(RepResults)?):
                 set CleanReps += 1
             if (ClearEachRep?, not Abandoned?):
-                # Every action and the final landing grace complete before any reset. The player waits 60 m above the
-                # lane while it clears, out of the blast (player 2026-10-13: explosions "flying us across the map"),
-                # then stands behind the start for the rest.
-                MovePlayer(Player, TrackOrigin(Drill, 1) + vector3{X := 0.0, Y := 0.0, Z := 6000.0})
+                # Every action and the final landing grace complete before any reset. The player goes back to the start
+                # spot and the lane's builds clear around them: the clear barrels are silent, invisible, without
+                # collision or knockback (player 2026-10-13: "clear the builds each rep WITHOUT EXPLOSIONS").
+                MovePlayer(Player, TrackOrigin(Drill, 1))
                 Clearer.Trigger(Player)
                 KTLog("rep_clear", Drill.Id, Apm, Rep, Drill.Steps.Length, rep_result.Unchecked, "boundary=rep_end")
                 Sleep(ClearWaitSeconds)
-                MovePlayer(Player, TrackOrigin(Drill, 1) - vector3{X := 600.0, Y := 0.0, Z := 0.0})
             if (Rep < Reps, not Abandoned?):
                 Cue.SetText(CueText("{Drill.Code}  {Drill.Name}   rep {Rep}/{Reps} done\nNext rep in a moment"))
                 Sleep(RepRestSeconds)
