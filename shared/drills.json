@@ -139,7 +139,7 @@
     {
       "id": "weapons",
       "name": "WEAPONS",
-      "blurb": "Piece / gun swap",
+      "blurb": "Build to gun",
       "zone": "Armory",
       "drills": [
         "build_swap_shoot"
@@ -1178,11 +1178,9 @@
       "id": "build_swap_shoot",
       "code": "W3",
       "tier": 3,
-      "name": "Piece / gun swap",
+      "name": "Build, swap, shoot",
       "steps": [
         "wall",
-        "swap_weapon",
-        "fire",
         "swap_weapon",
         "fire"
       ],
@@ -1197,18 +1195,13 @@
         "forward": 2,
         "up": 1
       },
-      "tip": "Wall, swap to your shotgun and fire, then swap to the SMG and fire again: the right gun out before each shot.",
+      "tip": "After placing the wall, select the intended gun, aim at the target, and fire from useful cover.",
       "principle": "right_tool",
       "why": "This exercise connects a build with a shot. Check both the selected item and your exposure during the transition.",
       "reflect": "Was the gun ready and the crosshair on target before you exposed yourself?",
       "checks": [
         {
           "step": 2,
-          "kind": "target_hit",
-          "target": "gun"
-        },
-        {
-          "step": 4,
           "kind": "target_hit",
           "target": "gun"
         }

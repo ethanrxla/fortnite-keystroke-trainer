@@ -67,7 +67,7 @@ PLATES = [
     ("E4", "HALF WALL", (0.04, 0.24, 0.10), ["edit_south"], "lane"),
     ("E7", "EDIT PEEK", (0.04, 0.24, 0.10), ["edit_south"], "lane"),
     ("LAB", "PIECE LAB", (0.10, 0.20, 0.04), ["edit_south"], "KT12_Gate_LabIn"),
-    ("W3", "BUILD SWAP", (0.28, 0.20, 0.02), ["build_north"], "lane"),
+    ("W3", "GUN/PIECE SWAP", (0.28, 0.20, 0.02), ["build_north"], "lane"),
 ]
 SECTION_SIGNS = ["build", "movement", "editing"]
 # Areas whose own teleporter has a target group: its Teleport sends you on to that group (the Piece Lab entry went to
@@ -78,8 +78,10 @@ SHARED_ROOM = {"P4": "P6"}
 # EXIT plates on each drill room's back wall, behind the start (player 2026-10-13: "there should be plates you can
 # shoot to exit each drill, as running back to the rift inbetween reps is kind of annoying"): room code -> the wing
 # arrival they send you to. Shooting one ends the drill (DrillDevice WatchLeave sees you leave the lane).
-EXIT_ROOMS = {"B5": "KT3_03_Dest", "W3": "KT3_03_Dest", "P2": "KT3_04_Dest", "P6": "KT3_03_Dest", "P7": "KT3_04_Dest",
-              "W2": "KT3_04_Dest", "E4": "KT3_05_Dest", "E7": "KT3_05_Dest"}
+# Each wing's EXIT arrival is a pad of its own on the wing floor in front of its plates: the wing teleporters put a
+# player under the map from the half wall room (player 2026-10-13).
+EXIT_ROOMS = {"B5": "build_north", "W3": "build_north", "P6": "build_north", "P2": "piece_west", "P7": "piece_west",
+              "W2": "piece_west", "E4": "edit_south", "E7": "edit_south"}
 EXIT_Z, EXIT_SIZE = 470.0, 200.0
 # Lane rooms no longer get exit rifts: the EXIT plates replace them, and the rift pad behind the start was walked into
 # and read as a stray device (player 2026-10-13).
@@ -297,9 +299,25 @@ def main():
                asset_name=exit_tex.split(".")[-1], source_file=str(png))
         m.tool(ag.AS, "save_assets", asset_paths=[exit_tex])
     exit_mat = g.icon_material(exit_tex)
-    for room, arrival in EXIT_ROOMS.items():
+    pads = {}
+    for wall in set(EXIT_ROOMS.values()):
+        axis, face, _, _, n = WALLS[wall]
+        mine = [p for p in plates if p["n"] == n and (abs(p["y"] - (face + n[1] * OFF)) < 1 if axis == "y" else abs(p["x"] - (face + n[0] * OFF)) < 1)]
+        if not mine:
+            continue
+        along = [p["x"] if axis == "y" else p["y"] for p in mine]
+        c = sum(along) / len(along)
+        px, py = (c, face + n[1] * 450.0) if axis == "y" else (face + n[0] * 450.0, c)
+        pad = b.device(bm.TELEPORTER, f"{PREFIX}ExitArrive_{wall}", px, py, 15.0)
+        b.props(pad, {"knob_TeleporterGroup": "Group_None", "knob_TargetTeleporterGroup": "Group_None",
+                      "teleporter Rift Visible": False, "maintain Relative Position": False,
+                      "conserve Momentum": False, "enabledDuringPhase": "Always"})
+        m.tool(bm.SCENE, "save_actor", actor={"refPath": pad})
+        pads[wall] = pad
+    for room, wall in EXIT_ROOMS.items():
         back, ceil = by.get(f"KT_Wall_{room}_0"), by.get(f"KT_Ceil_Lane_{room}")
-        if not (back and ceil and arrival in by):
+        arrival = pads.get(wall)
+        if not (back and ceil and arrival):
             print(f"  exit {room}: wall, room or arrival missing")
             continue
         face = back["bounds"]["max"]["x"]
@@ -312,7 +330,7 @@ def main():
             plate = g.plane(label + "_Plate", face + OFF, y, EXIT_Z, EXIT_SIZE, 270.0, exit_mat)
             m.tool(bm.SCENE, "save_actor", actor={"refPath": plate})
             hitbox.place_grid(b, label + "_Hit", (face + OFF, y, EXIT_Z), EXIT_SIZE, EXIT_SIZE, 0.0,
-                              (face + DUMMY_OFF, y), [(by[arrival]["actorPath"], "Teleport")])
+                              (face + DUMMY_OFF, y), [(arrival, "Teleport")])
     # One header per wall that holds plates, over the plates' span.
     spans = {}
     for p in plates:
