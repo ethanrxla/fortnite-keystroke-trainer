@@ -51,8 +51,9 @@ WALLS = {
 WALL_Z = {"edit_south": 190.0}
 HEADER_Z = {}
 # A header over each wing's plates (player 2026-10-13: "what plates represent those drills? im unsure in the lobby").
-HEADERS = {"build": "BUILD DRILLS", "piece": "MOVEMENT DRILLS", "edit": "EDIT DRILLS", "armory": "WEAPON DRILLS"}
-WING_ARRIVAL = {"B": "KT3_03_Dest", "P": "KT3_04_Dest", "E": "KT3_05_Dest", "W": "KT3_06_Dest"}
+# The swap drills sit with piece switching: the armory is for equipment only (player 2026-10-13).
+HEADERS = {"build": "BUILD AND SWAP DRILLS", "piece": "MOVEMENT DRILLS", "edit": "EDIT DRILLS", "armory": "WEAPON DRILLS"}
+WING_ARRIVAL = {"B": "KT3_03_Dest", "P": "KT3_04_Dest", "E": "KT3_05_Dest", "W": "KT3_03_Dest"}   # swap plates live in the build wing
 # code or area, plate words, rgb (linear), walls in order of preference, lane code or teleporter to arrive at
 PLATES = [
     ("B5", "PIECE SWITCH", (0.05, 0.16, 0.30), ["build_north"], "lane"),
@@ -64,8 +65,8 @@ PLATES = [
     ("E4", "HALF WALL", (0.04, 0.24, 0.10), ["edit_south"], "lane"),
     ("E7", "EDIT PEEK", (0.04, 0.24, 0.10), ["edit_south"], "lane"),
     ("LAB", "PIECE LAB", (0.10, 0.20, 0.04), ["edit_south"], "KT12_Gate_LabIn"),
-    ("W2", "PICKAXE SWAP", (0.28, 0.20, 0.02), ["armory_west", "armory_south"], "lane"),
-    ("W3", "BUILD SWAP", (0.28, 0.20, 0.02), ["armory_west", "armory_south"], "lane"),
+    ("W2", "PICKAXE SWAP", (0.28, 0.20, 0.02), ["build_north"], "lane"),
+    ("W3", "BUILD SWAP", (0.28, 0.20, 0.02), ["build_north"], "lane"),
 ]
 SECTION_SIGNS = ["build", "movement", "editing"]
 # Areas whose own teleporter has a target group: its Teleport sends you on to that group (the Piece Lab entry went to
