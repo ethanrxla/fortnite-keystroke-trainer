@@ -129,7 +129,7 @@ def plan():
         p.wall(f"L1_Cover_{n}", i, j, 0, e)                                      # your cover on the way west
     for n, (i, j) in enumerate(((-59, -128), (-59, -126), (-67, -127), (-67, -125))):
         p.wall(f"L1_BotCover_{n}", i, j, 0, "E")                                 # their cover faces east, at you
-        p.bot(f"L1_Bot_{n}", i, j, 0.0, "LOW", yaw=0.0)
+        p.bot(f"L1_Bot_{n}", i, j, 0.0, "HIGH", yaw=0.0)
     p.stage("Zone edge", "L1 ZONE EDGE",
             "The storm closes from the east. Push west, clear both zone-edge positions, then get into the compound.",
             ((X0, YW1, -100.0), (X1, YL1, 1500.0)), (*cell(-52, -127), 0.0), gate=(-69 * C + C / 2, YC1), kind=1)
@@ -153,7 +153,7 @@ def plan():
     # Room 2 GRENADE (i -66..-62): the nest behind a 2.2 m wall; the north cell is open for the clean-up.
     p.slab("R2_NestWall", -63 * C - WALL_T / 2, -63 * C + WALL_T / 2, YC0, -132 * C, 220.0, 220.0)
     for n, j in enumerate((-135, -134, -133)):
-        p.bot(f"R2_Bot_{n}", -62, j, 0.0, "LOW")
+        p.bot(f"R2_Bot_{n}", -62, j, 0.0, "HIGH")
     gx, _ = cell(-66, -136)
     p.device("R2_Grenades", GRANTER, gx, cell(-66, -136)[1], -400.0, tag="kt_op_grenade_tag", grant="EXPLOSIVES", qty=2)
     p.stage("Grenade", "L2 COMPOUND",
@@ -168,7 +168,7 @@ def plan():
     p.slab("R3_Cover_Top", -60 * C - WALL_T / 2, -60 * C + WALL_T / 2, dy0, dy1, ROOF, ROOF - H)
     p.wall("R3_EditWall", -60, DOOR_J, 0, "W")
     for n, j in enumerate((-135, -133)):
-        p.bot(f"R3_Bot_{n}", -58, j, 0.0, "LOW")
+        p.bot(f"R3_Bot_{n}", -58, j, 0.0, "HIGH")
     p.stage("Peek", "L2 COMPOUND", "Room 3: edit a window in your wall, hit your shot, reset. Two hold the far side.",
             ((PARTITIONS[1], YC0, -100.0), (PARTITIONS[2], YC1, ROOF)), (*cell(-61, DOOR_J), 0.0),
             gate=(PARTITIONS[2], gate_y))
@@ -184,7 +184,7 @@ def plan():
         p.wall(f"R4_Wall_N{-i}", i, -133, 2, "N")
     p.wall("R4_Wall_Front", -55, -133, 2, "W")
     for n, j in enumerate((-134, -133)):
-        p.bot(f"R4_Bot_{n}", -54, j, 2 * H + 20.0, "MODERATE")
+        p.bot(f"R4_Bot_{n}", -54, j, 2 * H + 20.0, "HIGH")
     p.stage("High ground", "L2 COMPOUND",
             "Room 4: they hold a built platform. Take height (their ramp or your own builds), then eliminate both.",
             ((PARTITIONS[2], YC0, -100.0), (PARTITIONS[3], YC1, ROOF)), (*cell(-56, DOOR_J), 0.0),
@@ -196,7 +196,7 @@ def plan():
         for e in "NSEW":
             p.wall(f"R5_Box{n}_{e}", -52, j, 0, e)
         p.flat(f"R5_Box{n}_Cone", "cone", -52, j, H)
-        p.bot(f"R5_Bot_{n}", -52, j, 0.0, "MODERATE")
+        p.bot(f"R5_Bot_{n}", -52, j, 0.0, "HIGH")
     p.stage("Breach", "L2 COMPOUND", "Room 5: their boxes guard the door. Edit in, eliminate both, breach into the towers.",
             ((PARTITIONS[3], YC0, -100.0), (LAB_X, YC1, ROOF)), (*cell(-51, DOOR_J), 0.0), gate=(LAB_X, gate_y))
     # Fight Lab room A's west wall, restored with the door into L3 (no ceiling: the sky stays open).

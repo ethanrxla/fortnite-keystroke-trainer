@@ -43,6 +43,8 @@ kt_sky_box_device<public> := class(creative_device):
     @editable DeviceDepth:float = 700.0
     @editable RestartSeconds:float = 2.5
     @editable WaveGapSeconds:float = 1.5
+    # Every bot box is manned from the start, one wave (player 2026-10-13: "there no bots in the other boxes").
+    @editable AllAtOnce:logic = true
 
     var Bots:[]guard_spawner_device = array{}
     var BotWave:[]int = array{}
@@ -56,6 +58,7 @@ kt_sky_box_device<public> := class(creative_device):
     var Best:float = 0.0
     var Waiting:logic = false
     var Pending:float = -1.0
+    var LastWave:int = 0
     Hud:text_block = text_block{DefaultTextColor := NamedColors.White, DefaultTextSize := 24.0}
     var Panel:?canvas = false
 
@@ -63,7 +66,9 @@ kt_sky_box_device<public> := class(creative_device):
         Origin := GetTransform().Translation
         for (O : FindCreativeObjectsWithTag(kt_sky_bot_tag), S := guard_spawner_device[O]):
             Cells := (S.GetTransform().Translation.X - Origin.X) / CellSize
-            W := KTSkyWaveOf(Cells, Wave2Cells, Wave3Cells)
+            W := if (AllAtOnce?) then 0 else KTSkyWaveOf(Cells, Wave2Cells, Wave3Cells)
+            if (W > LastWave):
+                set LastWave = W
             set Bots += array{S}
             set BotWave += array{W}
             S.EliminatedEvent.Subscribe(kt_sky_bot_listener{Wave := W, Owner := Self}.OnEliminated)
@@ -144,7 +149,7 @@ kt_sky_box_device<public> := class(creative_device):
                     Finish("left")
                     return
                 if (Pending > 0.0, Now >= Pending):
-                    if (Wave < 2):
+                    if (Wave < LastWave):
                         StartWave(Wave + 1)
                     else:
                         Done()
@@ -215,7 +220,7 @@ kt_sky_box_device<public> := class(creative_device):
 
     UpdateHud():void =
         Left := WaveBots(Wave).Length - Down
-        Hud.SetText(SkyText("SKY BOX  wave {Wave + 1}/3   {Left} left   {KTSkyClock(GetSimulationElapsedTime() - RunStart)}\nBox forward. Off the edge and you start again."))
+        Hud.SetText(SkyText("SKY BOX  wave {Wave + 1}/{LastWave + 1}   {Left} left   {KTSkyClock(GetSimulationElapsedTime() - RunStart)}\nBox forward: build your own floor. Off the edge and you start again."))
 
     ShowHud(P:player):void =
         HideHud()

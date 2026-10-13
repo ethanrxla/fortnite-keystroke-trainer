@@ -51,7 +51,7 @@ def bot_props():
     return {"guardTeamOption": "Team Index", "guard Team Index": {"teamType": "TeamIndex", "teamIndex": 2},
             "enabledAtGameStart": False, "allowInfiniteSpawn": True, "spawnOnTimer": False, "spawnCount": 1,
             "showHealthBar": True, "startingHealth": 100, "max Health": 100, "startingShield": 0,
-            "accuracy": "LOW", "enablePatrol": False, "useDeviceSpawnLocation": True}
+            "accuracy": "MODERATE", "enablePatrol": False, "useDeviceSpawnLocation": True}
 
 
 NO_WEAPON = {"guard Weapon": "None"}

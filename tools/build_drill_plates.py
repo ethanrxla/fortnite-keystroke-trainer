@@ -70,6 +70,11 @@ PLATES = [
     ("W3", "BUILD SWAP", (0.28, 0.20, 0.02), ["armory_west", "armory_south"], "lane"),
 ]
 SECTION_SIGNS = ["build", "movement", "boxes", "editing"]
+# Areas whose own teleporter has a target group: its Teleport sends you on to that group (the Piece Lab entry went to
+# the tracking arena, player 2026-10-13), so the plate gets an arrival pad of its own, offset (x, y) from it.
+ARRIVE_NEAR = {"LAB": ("KT12_Gate_LabIn", 450.0, 0.0)}
+# Extra exit rifts to the main lobby: (code, x, y, z). Routed by install_rift_router.py (DRILL_RIFTS).
+LOBBY_EXITS = [("LAB", -21760.0, -97600.0, 0.0)]
 IGNORE = ("KT_Wall_", "KT_Wing_", "KT_Hub", "KT_Ceil_", "KT19_", "KT23_Theme_Move_", PREFIX)
 
 
@@ -226,6 +231,20 @@ def main():
         b.props(t, {"knob_TeleporterGroup": "Group_None", "knob_TargetTeleporterGroup": "Group_None",
                     "teleporter Rift Visible": True, "enabledDuringPhase": "Always"})
         m.tool(bm.SCENE, "save_actor", actor={"refPath": t})
+    for code, x, y, z in LOBBY_EXITS:
+        t = b.device(bm.TELEPORTER, f"{PREFIX}{code}_Exit", x, y, z)
+        b.props(t, {"knob_TeleporterGroup": "Group_None", "knob_TargetTeleporterGroup": "Group_None",
+                    "teleporter Rift Visible": True, "enabledDuringPhase": "Always"})
+        m.tool(bm.SCENE, "save_actor", actor={"refPath": t})
+    arrivals = {}
+    for code, (dest, ox, oy) in ARRIVE_NEAR.items():
+        loc = m.tool(bm.ACTOR, "get_actor_transform", actor={"refPath": by[dest]["actorPath"]})["location"]
+        pad = b.device(bm.TELEPORTER, f"{PREFIX}{code}_Arrive", loc["x"] + ox, loc["y"] + oy, 15.0)
+        b.props(pad, {"knob_TeleporterGroup": "Group_None", "knob_TargetTeleporterGroup": "Group_None",
+                      "teleporter Rift Visible": False, "maintain Relative Position": False,
+                      "conserve Momentum": False, "enabledDuringPhase": "Always"})
+        m.tool(bm.SCENE, "save_actor", actor={"refPath": pad})
+        arrivals[code] = pad
     for p in plates:
         label = f"{PREFIX}{p['code']}"
         png, tex = plate_texture(p["code"], p["words"], p["rgb"])
@@ -235,7 +254,10 @@ def main():
             m.tool(ag.AS, "save_assets", asset_paths=[tex])
         plate = g.plane(label + "_Plate", p["x"], p["y"], p["z"], SIZE, p["plane_yaw"], g.icon_material(tex))
         m.tool(bm.SCENE, "save_actor", actor={"refPath": plate})
-        target = (starts[p["code"]], "Trigger") if p["dest"] == "lane" else (by[p["dest"]]["actorPath"], "Teleport")
+        if p["dest"] == "lane":
+            target = (starts[p["code"]], "Trigger")
+        else:
+            target = (arrivals.get(p["code"]) or by[p["dest"]]["actorPath"], "Teleport")
         hitbox.place_grid(b, label + "_Hit", (p["x"], p["y"], p["z"]), SIZE, SIZE, p["dummy_yaw"], (p["dx"], p["dy"]),
                           [target])
     # Section signs: a dummy grid over the art, a hit puts the shooter on the section pad.

@@ -34,7 +34,10 @@ DEVICE = bm.MODULE + "/_Verse.KeystrokeTrainer-kt_sky_box_device"
 GRANTER = "/CreativeCoreDevices/SetupAssets/PID_Device_ItemGranter.PID_Device_ItemGranter"
 CEIL_MAT = "/Game/Items/Traps/Materials/M_Barrier_BoundsTranslucent_Blue_Inst.M_Barrier_BoundsTranslucent_Blue_Inst"
 PIECES = "/Game/Building/ActorBlueprints/Player/Wood/L1/"
-CLS = {k: f"{PIECES}PBWA_W1_{n}.PBWA_W1_{n}_C" for k, n in (("wall", "Solid"), ("cone", "RoofC"))}
+CLS = {k: f"{PIECES}PBWA_W1_{n}.PBWA_W1_{n}_C" for k, n in (("wall", "Solid"), ("cone", "RoofC"), ("floor", "Floor"))}
+# Solid strip only under the exit and your box; past it you build your own floor (player 2026-10-13: "should be no
+# floor"). Each bot box stands on a floor piece of its own.
+STRIP_TILES = 2
 BOT_BOXES = [(6, 0), (10, -1), (10, 1), (13, 0)]       # (tile east of X0, row: -1 south, 0 middle, 1 north)
 LOADOUT = ("SHOTGUN", "AR")
 COURT_HOME = "KT14_Rebox_Rift_Home"
@@ -62,6 +65,10 @@ class Plan:
         cx, cy = cell(t, row)                       # a cone's pivot is the middle of its near edge (yaw 0: -Y edge)
         self.pieces.append((PREFIX + label, "cone", cx, cy - C / 2, TOP + H, 0.0))
 
+    def floor(self, label, t, row):
+        cx, cy = cell(t, row)                       # a floor's pivot is the middle of its -Y edge, like a cone's
+        self.pieces.append((PREFIX + label, "floor", cx, cy - C / 2, TOP, 0.0))
+
     def box(self, label, t, row, open_west):
         for e in ("NSE" if open_west else "NSEW"):
             self.wall(f"{label}_{e}", t, row, e)
@@ -72,7 +79,7 @@ def bot_props():
     return {"guardTeamOption": "Team Index", "guard Team Index": {"teamType": "TeamIndex", "teamIndex": 2},
             "enabledAtGameStart": False, "spawnOnTimer": False, "allowInfiniteSpawn": True, "spawnCount": 1,
             "showHealthBar": True, "startingHealth": 100, "max Health": 100, "startingShield": 0,
-            "accuracy": "LOW", "enablePatrol": False, "useDeviceSpawnLocation": True}
+            "accuracy": "HIGH", "enablePatrol": False, "useDeviceSpawnLocation": True}
 
 
 def rift_props(walk_in):
@@ -84,10 +91,11 @@ def rift_props(walk_in):
 def plan():
     p = Plan()
     y0, y1 = YC - 1.5 * C, YC + 1.5 * C
-    p.slabs.append({"label": PREFIX + "Strip", "bounds": (X0, X0 + LENGTH * C, y0, y1), "top": TOP, "thick": 100.0, "mat": "Arena"})
+    p.slabs.append({"label": PREFIX + "Strip", "bounds": (X0, X0 + STRIP_TILES * C, y0, y1), "top": TOP, "thick": 100.0, "mat": "Arena"})
     p.box("You", 1, 0, open_west=False)
     for n, (t, row) in enumerate(BOT_BOXES):
         p.box(f"Bot{n}", t, row, open_west=True)
+        p.floor(f"Bot{n}_Floor", t, row)
         x, y = cell(t, row)
         p.devices.append(dict(label=f"Bot{n}", asset=bm.GUARD, pos=(x, y, TOP), props=bot_props(), yaw=180.0, tag="kt_sky_bot_tag"))
     sx, sy = cell(1, 0)

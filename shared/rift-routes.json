@@ -286,31 +286,31 @@
   },
   {
     "source": "KT18_Sky_Rift_Exit",
-    "destination": "KT14_Rebox_Rift_Home",
+    "destination": "KT2_HubArrival",
     "entry": {
       "x": 20736,
       "y": -44288,
       "z": 7680
     },
     "exit": {
-      "x": 5888,
-      "y": -29350,
-      "z": 0
+      "x": -256,
+      "y": -59648,
+      "z": 15
     },
     "walk": true
   },
   {
     "source": "KT14_Rebox_Rift_Back",
-    "destination": "KT14_Rebox_Rift_Home",
+    "destination": "KT2_HubArrival",
     "entry": {
       "x": 24832,
       "y": -29952,
       "z": 0
     },
     "exit": {
-      "x": 5888,
-      "y": -29350,
-      "z": 0
+      "x": -256,
+      "y": -59648,
+      "z": 15
     },
     "walk": true
   },
@@ -586,6 +586,21 @@
       "x": 256,
       "y": -63744,
       "z": 0
+    },
+    "walk": true
+  },
+  {
+    "source": "KT30_Drill_LAB_Exit",
+    "destination": "KT2_HubArrival",
+    "entry": {
+      "x": -21760,
+      "y": -97600,
+      "z": 0
+    },
+    "exit": {
+      "x": -256,
+      "y": -59648,
+      "z": 15
     },
     "walk": true
   }

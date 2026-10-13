@@ -399,7 +399,10 @@ def place_pressure(b, p):
         gx, gy = cc(oi + fwd + 3, jc)
         guard = b.device(GUARD, f"KT_Guard_{code}", gx + CELL / 2, gy + CELL / 2, 0.0)
         b.m.tool(ACTOR, "set_actor_transform", actor={"refPath": guard}, xform=xform(gx + CELL / 2, gy + CELL / 2, 0.0, yaw=180))
-        b.props(guard, {"enabledAtGameStart": True, "allowInfiniteSpawn": True})
+        # Team 2 and HIGH accuracy: the default team 1 is the players' team, so the guard never hurt anyone
+        # (player 2026-10-13: "the bot is also not doing damage to me").
+        b.props(guard, {"enabledAtGameStart": True, "allowInfiniteSpawn": True, "guardTeamOption": "Team Index",
+                        "guard Team Index": {"teamType": "TeamIndex", "teamIndex": 2}, "accuracy": "HIGH"})
         trig = b.device(TRIGGER, f"KT_Pressure_{code}", ox - CELL, oy, 0.0)
         b.props(trig, {"visible in Game": False})
         b.bind(trig, "OnTriggered", guard, "Spawn")

@@ -280,7 +280,7 @@ def bot_props(patrol):
     v = {"guardTeamOption": "Team Index", "guard Team Index": {"teamType": "TeamIndex", "teamIndex": 2},
          "enabledAtGameStart": True, "allowInfiniteSpawn": True, "spawnOnTimer": True, "spawnTimer": 5,
          "spawnCount": 1, "showHealthBar": True, "startingHealth": 100, "max Health": 100, "startingShield": 50,
-         "accuracy": "LOW"}
+         "accuracy": "HIGH"}
     if patrol:
         v.update({"enablePatrol": True, "maxPatrolDistance_InMeter": patrol})
     else:

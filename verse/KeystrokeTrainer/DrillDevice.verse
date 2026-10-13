@@ -87,6 +87,12 @@ keystroke_drill_device := class(creative_device):
     # and clearing between reps blew up the pieces around the player mid-set.
     @editable ClearEachRep:logic = false
     @editable ClearWaitSeconds:float = 0.4
+    # Pause between reps, the same on every lane (player 2026-10-13: "90s and ramp rush need more time inbetween reps").
+    @editable RepRestSeconds:float = 1.5
+    # Every rep starts on track 1 instead of moving one track over each rep (player 2026-10-13, box up: "you start in a
+    # slightly different spot each time"). Needs ClearEachRep so the last rep's builds are gone; the player waits on
+    # the ledge behind the start while the clear runs.
+    @editable SameTrack:logic = false
     # Wire a gun target's hit event to GunHit and a pickaxe target's hit event to PickaxeHit in the
     # editor (device event binding, not Verse). target_hit checks read these. Unlinked is fine.
     # Leaving the lane ends the set (and a section's run): more than this far, in cm, from the current rep's start
@@ -219,7 +225,7 @@ keystroke_drill_device := class(creative_device):
     # Start cell of the track used by Rep (1-based).
     TrackOrigin(Drill:drill_def, Rep:int)<transacts>:vector3 =
         Origin := GetTransform().Translation
-        N := (Rep - 1) * 1.0
+        N := if (SameTrack?) then 0.0 else (Rep - 1) * 1.0
         Right := if (R := Drill.Advance[0]) then R * 1.0 else 0.0
         Forward := if (F := Drill.Advance[1]) then F * 1.0 else 0.0
         Up := if (U := Drill.Advance[2]) then U * 1.0 else 0.0
@@ -336,11 +342,16 @@ keystroke_drill_device := class(creative_device):
                 set ObservedReps += 1
             if (ScoringEnabled?, AllStepsObserved(RepResults)?):
                 set CleanReps += 1
-            if (ClearEachRep?):
-                # Every action and the final landing grace complete before any reset.
+            if (ClearEachRep?, not Abandoned?):
+                # Every action and the final landing grace complete before any reset. Off the track first, so the
+                # clear never goes off around the player.
+                MovePlayer(Player, TrackOrigin(Drill, 1) - vector3{X := 600.0, Y := 0.0, Z := 0.0})
                 Clearer.Trigger(Player)
                 KTLog("rep_clear", Drill.Id, Apm, Rep, Drill.Steps.Length, rep_result.Unchecked, "boundary=rep_end")
                 Sleep(ClearWaitSeconds)
+            if (Rep < Reps, not Abandoned?):
+                Cue.SetText(CueText("{Drill.Code}  {Drill.Name}   rep {Rep}/{Reps} done\nNext rep in a moment"))
+                Sleep(RepRestSeconds)
         if (Abandoned?):
             # Left the lane: no result card, no teleport back; the section stops too (PlaySet returns false).
             if (Active := Subscription?):
