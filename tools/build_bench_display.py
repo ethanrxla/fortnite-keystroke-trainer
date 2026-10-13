@@ -34,6 +34,10 @@ EXTRA = {"GRAPPLE": ["/Game/Athena/Items/Weapons/WID_Hook_Gun_VR_Ore_T03.WID_Hoo
                    "/Game/Athena/Items/Consumables/SuperMedkit/Athena_SuperMedkit.Athena_SuperMedkit",
                    "/PaprikaConsumables/Gameplay/ShieldRefresh/WID_Paprika_ShieldPot.WID_Paprika_ShieldPot",
                    "/ChronoConsumables/Gameplay/SlapSplash/WID_Chrono_SlapSplash.WID_Chrono_SlapSplash"]}
+# Items UEFN validation rejects as disallowed references (push log 2026-10-13): never put them on a bench.
+BLOCKED = {"WID_Hook_Gun_Spytech_R_Ore_T03", "WID_Hook_Gun_Spytech_VR_Ore_T03", "WID_Hook_Gun_Papaya_R_Ore_T03",
+           "WID_Pistol_AutoHeavy_Athena_C_Ore_T02", "WID_Pistol_AutoHeavy_Athena_UC_Ore_T03",
+           "WID_Pistol_AutoHeavy_Athena_R_Ore_T03"}
 BENCH = 480.0                     # bench length (cm); items are spread evenly along it
 
 
@@ -65,6 +69,7 @@ def main():
         ref = dec(m.tool(bm.OBJ, "get_properties", instance={"refPath": g}, properties=["pickupItemList"]))["pickupItemList"]
         items = [i["itemDefinition"]["refPath"] for i in dec(m.tool(bm.OBJ, "get_properties", instance=ref, properties=["itemListData"]))["itemListData"] if i.get("itemDefinition")]
         items += [e for e in EXTRA.get(c, []) if e not in items]
+        items = [i for i in items if i.split(".")[-1] not in BLOCKED]
         loc = m.tool(bm.ACTOR, "get_actor_transform", actor={"refPath": g})["location"]
         plan.append((c, loc["x"], loc["y"], items[: len(XS) * len(YS)]))
         print(c, len(items), "items,", min(len(items), len(XS) * len(YS)), "shown at", round(loc["x"]), round(loc["y"]))
