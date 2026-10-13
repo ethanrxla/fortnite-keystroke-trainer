@@ -21,6 +21,11 @@ CLASSES = ["AR", "SMG", "SHOTGUN", "SNIPER", "PISTOL", "EXPLOSIVES", "GRAPPLE", 
 XS = [-200.0, -120.0, -40.0, 40.0, 120.0, 200.0]
 YS = [-35.0, 35.0]
 TOP = 95.0
+# Shown on a bench besides its granter's list (player 2026-10-13: "we should see grappler, and theres another melee
+# weapon that can go there"). All three passed push validation.
+EXTRA = {"GRAPPLE": ["/Game/Athena/Items/Weapons/WID_Hook_Gun_VR_Ore_T03.WID_Hook_Gun_VR_Ore_T03"],
+         "MELEE": ["/KatanaGameplay/Items/Katana/WID_Melee_Katana_R.WID_Melee_Katana_R",
+                   "/CorruptionGameplay/Gameplay/Items/Weapons/Melee/Scythe/WID_PowerUp_Scythe_R.WID_PowerUp_Scythe_R"]}
 dec = lambda v: json.loads(v) if isinstance(v, str) else v
 
 
@@ -38,6 +43,7 @@ def main():
             continue
         ref = dec(m.tool(bm.OBJ, "get_properties", instance={"refPath": g}, properties=["pickupItemList"]))["pickupItemList"]
         items = [i["itemDefinition"]["refPath"] for i in dec(m.tool(bm.OBJ, "get_properties", instance=ref, properties=["itemListData"]))["itemListData"] if i.get("itemDefinition")]
+        items += [e for e in EXTRA.get(c, []) if e not in items]
         loc = m.tool(bm.ACTOR, "get_actor_transform", actor={"refPath": g})["location"]
         plan.append((c, loc["x"], loc["y"], items[: len(XS) * len(YS)]))
         print(c, len(items), "items,", min(len(items), len(XS) * len(YS)), "shown at", round(loc["x"]), round(loc["y"]))
