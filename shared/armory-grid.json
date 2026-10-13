@@ -89,15 +89,24 @@
     {
       "name": "Reaper Sniper",
       "pattern": "/PaprikaCoreWeapons/Items/Weapons/PaprikaSniper/WID_Sniper_Paprika_Athena_{r}.WID_Sniper_Paprika_Athena_{r}",
-      "moddable": true
+      "moddable": true,
+      "paths": {
+        "C": "/Game/Athena/Items/Weapons/WID_Sniper_BoltAction_Scope_Athena_C_Ore_T03.WID_Sniper_BoltAction_Scope_Athena_C_Ore_T03"
+      },
+      "names": {
+        "C": "Bolt sniper"
+      },
+      "icons": {
+        "C": "/Game/UI/Foundation/Textures/Icons/Weapons/Items/T-Icon-Weapons-BoltActionSniperMark2TT-L.T-Icon-Weapons-BoltActionSniperMark2TT-L"
+      }
     }
   ],
   "heals": [
     {
-      "name": "Bandages",
+      "name": "Flopper",
       "rarity": "C",
-      "item": "/PaprikaConsumables/Gameplay/BandageRefresh/WID_Paprika_Bandage.WID_Paprika_Bandage",
-      "icon": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KT_Theme/T_KT_Icon_Bandage_v2.T_KT_Icon_Bandage_v2"
+      "item": "/Game/Athena/Items/Consumables/Flopper/WID_Athena_Flopper.WID_Athena_Flopper",
+      "icon": "/Game/UI/Foundation/Textures/Icons/Athena/T-T-Icon-BR-FlopperGadget-L.T-T-Icon-BR-FlopperGadget-L"
     },
     {
       "name": "Medkit",
@@ -105,10 +114,10 @@
       "item": "/PaprikaConsumables/Gameplay/MedRefresh/WID_Paprika_MedBox.WID_Paprika_MedBox"
     },
     {
-      "name": "Small shield",
+      "name": "Chug Jug",
       "rarity": "UC",
-      "item": "/PaprikaConsumables/Gameplay/ShieldSmallRefresh/WID_Paprika_ShieldSmall.WID_Paprika_ShieldSmall",
-      "icon": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KT_Theme/T_KT_Icon_SmallShield_v2.T_KT_Icon_SmallShield_v2"
+      "item": "/Game/Athena/Items/Consumables/SuperMedkit/Athena_SuperMedkit.Athena_SuperMedkit",
+      "icon": "/Game/Athena/Items/Consumables/SuperMedkit/T-Icon-BR-SM-Athena-ChugJug-L.T-Icon-BR-SM-Athena-ChugJug-L"
     },
     {
       "name": "Shield potion",

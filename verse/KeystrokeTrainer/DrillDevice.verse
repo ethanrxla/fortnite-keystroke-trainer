@@ -148,8 +148,17 @@ keystroke_drill_device := class(creative_device):
             G.TriggeredEvent.Subscribe(OnGunHit)
         if (K := NearestTrigger[kt_pickaxe_hit_tag]):
             K.TriggeredEvent.Subscribe(OnPickaxeHit)
+        # A drill plate in its wing (tools/build_drill_plates.py) fires the start trigger beside this lane: one set,
+        # then back to where the player shot it from.
+        if (S := NearestTrigger[kt_drill_start_tag]):
+            S.TriggeredEvent.Subscribe(OnStartShot)
         if (AutoPad?):
             WatchPad()
+
+    OnStartShot(Agent:?agent):void =
+        if (A := Agent?, Player := player[A], not Busy?, Character := Player.GetFortCharacter[]):
+            Back := Character.GetTransform().Translation
+            spawn{ PlaySet(Player, Back, 0) }
 
     NearestTrigger(TagType:castable_subtype(tag))<transacts><decides>:trigger_device =
         Here := GetTransform().Translation

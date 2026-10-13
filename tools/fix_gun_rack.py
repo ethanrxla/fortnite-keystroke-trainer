@@ -100,7 +100,7 @@ def main():
    # make the rack legible; the native interaction prompt supplies the action only in range.
   sign=device(bm.BILLBOARD,'KT_Sign_Armory_'+cat,bm.xform(x,y-90,290,1.3,1.3,1.3,yaw=180))
   title='SHIELDS / HEALS' if cat=='HEALS' else cat
-  change(sign,{'text':title+'\n'+str(len(data))+' choices','textSize':18,'showBorder':False,'textColor':{'r':1,'g':1,'b':1,'a':1},'backgroundColor':{'r':.008,'g':.01,'b':.015,'a':1}})
+  change(sign,{'text':title,'textSize':18,'showBorder':False,'textColor':{'r':1,'g':1,'b':1,'a':1},'backgroundColor':{'r':.008,'g':.01,'b':.015,'a':1}})
   m.tool(bm.SCENE,'save_actor',actor={'refPath':g})
  if args.apply:
   for a in m.tool(bm.SCENE,'find_actors',name='KT3_GunRack_SpawnTools',collision_channels=[]):

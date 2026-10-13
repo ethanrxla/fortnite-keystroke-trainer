@@ -22,3 +22,17 @@ kt_transport_test_tag := class(tag){}
 
 kt_rift_node_tag := class(tag){}
 kt_rift_router_tag := class(tag){}
+kt_team_helper_tag := class(tag){}
+kt_team_match_tag := class(tag){}
+kt_drill_start_tag := class(tag){}
+kt_team_nobuild_tag := class(tag){}
+kt_team_queue_pad_tag := class(tag){}
+kt_team_queue_device_tag := class(tag){}
+kt_team_access_tag := class(tag){}
+kt_team_point_tag := class(tag){}
+kt_team_reboot_button_tag := class(tag){}
+kt_team_ctf_base_tag := class(tag){}
+kt_team_ammo_grant_tag := class(tag){}
+kt_team_ammo_stock_tag := class(tag){}
+kt_team_heal_stock_tag := class(tag){}
+kt_rift_port_tag := class(tag){}

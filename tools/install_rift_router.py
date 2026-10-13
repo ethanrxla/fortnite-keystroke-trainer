@@ -15,7 +15,9 @@ REBOX_RIFTS=[('KT14_Rebox_Rift_In','KT18_Sky_Rift_Start'),('KT18_Sky_Rift_Exit',
 # Ways back (tools/build_returns.py): the tunnel goal to the hub, and the 90s room's top level to the lane start.
 # A source listed in shared/return-zones.json is an invisible box, not a portal.
 RETURN_RIFTS=[('KT22_Return_TunnelHub','KT2_HubArrival'),('KT22_Return_NinetiesTop','KT22_Return_NinetiesStart')]
-PAIRS=PAIRS+LAB_RIFTS+REBOX_RIFTS+RETURN_RIFTS
+# Drill room exits (tools/build_drill_plates.py; player 2026-10-13): each lane room's rift back to its wing's arrival.
+DRILL_RIFTS=[(f'KT30_Drill_{c}_Exit',f'KT3_0{w}_Dest') for w,codes in ((3,'B2 B3 B5'),(4,'P2 P4 P5 P6 P7 P8'),(5,'E2 E4 E5 E7'),(6,'W1 W2 W3')) for c in codes.split()]
+PAIRS=PAIRS+LAB_RIFTS+REBOX_RIFTS+RETURN_RIFTS+DRILL_RIFTS
 
 def decode(v):return json.loads(v) if isinstance(v,str) else v
 def main():

@@ -214,7 +214,8 @@ def plan(spec, test=False):
     cols = []
     for w in spec["weapons"]:
         cols.append([(r["code"], w.get("names", {}).get(r["code"], w["name"]),
-                     w.get("paths", {}).get(r["code"]) or w["pattern"].format(r=r["code"]), None) for r in spec["rarities"]])
+                     w.get("paths", {}).get(r["code"]) or w["pattern"].format(r=r["code"]),
+                     w.get("icons", {}).get(r["code"])) for r in spec["rarities"]])
     blocks = [len(cols)]
     rows = spec.get("block_rows")
     if rows:

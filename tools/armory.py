@@ -126,7 +126,7 @@ def place_armory(b):
             if ev:
                 b.bind(btn, ev, g, fn)
         names = " > ".join(n for n, _, _ in items)
-        text = f"{label}\n{len(items)} choices · interact to cycle / equip"
+        text = label                     # player 2026-10-13: no "N choices" line
         b.sign({"label": f"KT_Sign_Armory_{label}", "pos": (x, y - bm.CELL, 250), "yaw": 90,
                 "text": text, "size": 30, "zone": "Armory"})
         print(f"armory {label}: {len(items)} weapons")

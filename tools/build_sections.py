@@ -28,6 +28,7 @@ sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
 import build_map as bm  # noqa: E402
 
 SECTION_DEVICE = bm.MODULE + "/_Verse.KeystrokeTrainer-keystroke_section_device"
+NO_SIGN = {"weapons"}
 PREFIX = "KT3_Section_"
 HI, HJ = bm.HUB_CELL
 # Pad cell for each section: (cell i, cell j, sign offset x, sign offset y, sign yaw). Cells sit clear of the
@@ -126,7 +127,10 @@ def main():
         text = f"{sec['name']}\n{sec.get('blurb', '')}\n{names}\nstand on the pad to play all {len(sec['drills'])} in order"
         if sec.get("loadout") == "melee":
             text += "\n" + bm.MELEE_NOTE
-        b.sign({"label": f"{PREFIX}{sec['id']}_Sign", "pos": (x + sx, y + sy, 180), "yaw": yaw, "text": text, "size": 32, "zone": zone})
+        # The weapons section's board stood in the armory in front of the presets and the heroes wall; player
+        # 2026-10-12: "remove the weapons tile here". Its pad still plays the section.
+        if sec["id"] not in NO_SIGN:
+            b.sign({"label": f"{PREFIX}{sec['id']}_Sign", "pos": (x + sx, y + sy, 180), "yaw": yaw, "text": text, "size": 32, "zone": zone})
         if sec.get("loadout") == "melee":
             trig = b.device(bm.TRIGGER, f"{PREFIX}{sec['id']}_PadTrigger", x, y, 0.0)
             b.props(trig, {"visible in Game": False})

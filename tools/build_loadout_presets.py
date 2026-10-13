@@ -66,12 +66,10 @@ def main():
         saved += [lab, trig, dummy]
         for p in saved:
             m.tool(bm.SCENE, "save_actor", actor={"refPath": p})
-    sign = b.sign({"label": PREFIX + "Sign", "pos": (FACE_X - 40.0, -64050.0, 420.0), "yaw": 180, "zone": "Armory",
-                   "size": 16, "text": SIGN})
+    # No explanation board: player 2026-10-12 "remove the large preset tile 'Loadout presets', keep just the buttons".
     dev = b.device(DEVICE, PREFIX + "Device", FACE_X - 600.0, -64050.0, -700.0)
-    for p in (sign, dev):
-        m.tool(bm.SCENE, "save_actor", actor={"refPath": p})
-    print(f"placed {len(TILES)} preset tiles, sign and device")
+    m.tool(bm.SCENE, "save_actor", actor={"refPath": dev})
+    print(f"placed {len(TILES)} preset tiles and the device")
 
 
 if __name__ == "__main__":

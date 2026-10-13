@@ -348,5 +348,245 @@
       "y": 4864.0,
       "z": 584.0
     }
+  },
+  {
+    "source": "KT30_Drill_B2_Exit",
+    "destination": "KT3_03_Dest",
+    "entry": {
+      "x": 29896,
+      "y": -94975.81902694702,
+      "z": 0
+    },
+    "exit": {
+      "x": 4352,
+      "y": -59648,
+      "z": 0
+    },
+    "walk": true
+  },
+  {
+    "source": "KT30_Drill_B3_Exit",
+    "destination": "KT3_03_Dest",
+    "entry": {
+      "x": 29896,
+      "y": -87807.81902694702,
+      "z": 0
+    },
+    "exit": {
+      "x": 4352,
+      "y": -59648,
+      "z": 0
+    },
+    "walk": true
+  },
+  {
+    "source": "KT30_Drill_B5_Exit",
+    "destination": "KT3_03_Dest",
+    "entry": {
+      "x": 29896,
+      "y": -73471.81902694702,
+      "z": 0
+    },
+    "exit": {
+      "x": 4352,
+      "y": -59648,
+      "z": 0
+    },
+    "walk": true
+  },
+  {
+    "source": "KT30_Drill_P2_Exit",
+    "destination": "KT3_04_Dest",
+    "entry": {
+      "x": 40136,
+      "y": -94975.81902694702,
+      "z": 0
+    },
+    "exit": {
+      "x": 256,
+      "y": -55552,
+      "z": 0
+    },
+    "walk": true
+  },
+  {
+    "source": "KT30_Drill_P4_Exit",
+    "destination": "KT3_04_Dest",
+    "entry": {
+      "x": 40136,
+      "y": -76031.81902694702,
+      "z": 0
+    },
+    "exit": {
+      "x": 256,
+      "y": -55552,
+      "z": 0
+    },
+    "walk": true
+  },
+  {
+    "source": "KT30_Drill_P5_Exit",
+    "destination": "KT3_04_Dest",
+    "entry": {
+      "x": 40136,
+      "y": -64255.81902694702,
+      "z": 0
+    },
+    "exit": {
+      "x": 256,
+      "y": -55552,
+      "z": 0
+    },
+    "walk": true
+  },
+  {
+    "source": "KT30_Drill_P6_Exit",
+    "destination": "KT3_04_Dest",
+    "entry": {
+      "x": 40136,
+      "y": -52479.81902694702,
+      "z": 0
+    },
+    "exit": {
+      "x": 256,
+      "y": -55552,
+      "z": 0
+    },
+    "walk": true
+  },
+  {
+    "source": "KT30_Drill_P7_Exit",
+    "destination": "KT3_04_Dest",
+    "entry": {
+      "x": 40136,
+      "y": -40703.81902694702,
+      "z": 0
+    },
+    "exit": {
+      "x": 256,
+      "y": -55552,
+      "z": 0
+    },
+    "walk": true
+  },
+  {
+    "source": "KT30_Drill_P8_Exit",
+    "destination": "KT3_04_Dest",
+    "entry": {
+      "x": 40136,
+      "y": -28927.81902694702,
+      "z": 0
+    },
+    "exit": {
+      "x": 256,
+      "y": -55552,
+      "z": 0
+    },
+    "walk": true
+  },
+  {
+    "source": "KT30_Drill_E2_Exit",
+    "destination": "KT3_05_Dest",
+    "entry": {
+      "x": 50376,
+      "y": -94975.81902694702,
+      "z": 0
+    },
+    "exit": {
+      "x": -3840,
+      "y": -59648,
+      "z": 0
+    },
+    "walk": true
+  },
+  {
+    "source": "KT30_Drill_E4_Exit",
+    "destination": "KT3_05_Dest",
+    "entry": {
+      "x": 50376,
+      "y": -80639.81902694702,
+      "z": 0
+    },
+    "exit": {
+      "x": -3840,
+      "y": -59648,
+      "z": 0
+    },
+    "walk": true
+  },
+  {
+    "source": "KT30_Drill_E5_Exit",
+    "destination": "KT3_05_Dest",
+    "entry": {
+      "x": 50376,
+      "y": -73471.81902694702,
+      "z": 0
+    },
+    "exit": {
+      "x": -3840,
+      "y": -59648,
+      "z": 0
+    },
+    "walk": true
+  },
+  {
+    "source": "KT30_Drill_E7_Exit",
+    "destination": "KT3_05_Dest",
+    "entry": {
+      "x": 50376,
+      "y": -59135.81902694702,
+      "z": 0
+    },
+    "exit": {
+      "x": -3840,
+      "y": -59648,
+      "z": 0
+    },
+    "walk": true
+  },
+  {
+    "source": "KT30_Drill_W1_Exit",
+    "destination": "KT3_06_Dest",
+    "entry": {
+      "x": 60616,
+      "y": -102143.81902694702,
+      "z": 0
+    },
+    "exit": {
+      "x": 256,
+      "y": -63744,
+      "z": 0
+    },
+    "walk": true
+  },
+  {
+    "source": "KT30_Drill_W2_Exit",
+    "destination": "KT3_06_Dest",
+    "entry": {
+      "x": 60616,
+      "y": -94975.81902694702,
+      "z": 0
+    },
+    "exit": {
+      "x": 256,
+      "y": -63744,
+      "z": 0
+    },
+    "walk": true
+  },
+  {
+    "source": "KT30_Drill_W3_Exit",
+    "destination": "KT3_06_Dest",
+    "entry": {
+      "x": 60616,
+      "y": -87807.81902694702,
+      "z": 0
+    },
+    "exit": {
+      "x": 256,
+      "y": -63744,
+      "z": 0
+    },
+    "walk": true
   }
 ]
