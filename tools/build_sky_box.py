@@ -26,7 +26,10 @@ import build_map as bm  # noqa: E402
 
 PREFIX = "KT18_Sky_"
 C, H = bm.CELL, bm.LEVEL_H
-X0, YC, TOP = 40 * C, -87 * C + C / 2, 20 * H
+# Player build grid (AGENTS.md "Coordinates"): cell centres on multiples of 512, so the strip sits half a cell over
+# from the old world-grid numbers (the live Sky Box was moved by tools/shift_to_player_grid.py logic on 2026-10-13).
+GRID = C / 2
+X0, YC, TOP = 40 * C + GRID, -87 * C + C / 2 + GRID, 20 * H
 LENGTH = 14
 CEIL_Z = TOP + H + 300.0
 DEVICE_DEPTH = 700.0

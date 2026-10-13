@@ -103,10 +103,10 @@
   ],
   "heals": [
     {
-      "name": "Flopper",
-      "rarity": "C",
-      "item": "/Game/Athena/Items/Consumables/Flopper/WID_Athena_Flopper.WID_Athena_Flopper",
-      "icon": "/Game/UI/Foundation/Textures/Icons/Athena/T-T-Icon-BR-FlopperGadget-L.T-T-Icon-BR-FlopperGadget-L"
+      "name": "Slurpfish",
+      "rarity": "VR",
+      "item": "/Game/Athena/Items/Consumables/Flopper/Effective/WID_Athena_Flopper_Effective.WID_Athena_Flopper_Effective",
+      "icon": "/Game/UI/Foundation/Textures/Icons/Athena/T-T-Icon-BR-EffectiveFlopperGadget-t-L.T-T-Icon-BR-EffectiveFlopperGadget-t-L"
     },
     {
       "name": "Medkit",
@@ -115,7 +115,7 @@
     },
     {
       "name": "Chug Jug",
-      "rarity": "UC",
+      "rarity": "SR",
       "item": "/Game/Athena/Items/Consumables/SuperMedkit/Athena_SuperMedkit.Athena_SuperMedkit",
       "icon": "/Game/Athena/Items/Consumables/SuperMedkit/T-Icon-BR-SM-Athena-ChugJug-L.T-Icon-BR-SM-Athena-ChugJug-L"
     },
@@ -133,19 +133,20 @@
   "plate_brightness": 0.35,
   "items": [
     {
-      "name": "Grappler",
+      "name": "Grapple blade",
       "rarity": "VR",
-      "item": "/Game/Athena/Items/Weapons/WID_Hook_Gun_VR_Ore_T03.WID_Hook_Gun_VR_Ore_T03",
-      "icon": "/CorruptionGameplay/Gameplay/Icons/T-T-Icon-BR-FrozenGrappler-L.T-T-Icon-BR-FrozenGrappler-L"
+      "item": "/GrappleWeapon/Items/GrappleKnife/V2/WID_GrappleKnife_VR.WID_GrappleKnife_VR",
+      "icon": "/GrappleWeapon/Items/Icons/T-T-Icon-BR-Sharp-GrappleKnife-L.T-T-Icon-BR-Sharp-GrappleKnife-L"
     },
     {
-      "name": "Grapple glove",
-      "rarity": "SR",
-      "item": "/GrappleGloves/Items/GrappleGloves/WID_GrappleGloves.WID_GrappleGloves"
+      "name": "Impulse grenade",
+      "rarity": "R",
+      "item": "/Game/Athena/Items/Consumables/KnockGrenade/Athena_KnockGrenade.Athena_KnockGrenade",
+      "icon": "/Game/UI/Foundation/Textures/Icons/Athena/T-T-Icon-BR-Grenade-Impulse-L.T-T-Icon-BR-Grenade-Impulse-L"
     },
     {
       "name": "Grenades",
-      "rarity": "UC",
+      "rarity": "C",
       "item": "/Game/Athena/Items/Consumables/Grenade/Athena_Grenade.Athena_Grenade"
     },
     {

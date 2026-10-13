@@ -23,9 +23,30 @@ YS = [-35.0, 35.0]
 TOP = 95.0
 # Shown on a bench besides its granter's list (player 2026-10-13: "we should see grappler, and theres another melee
 # weapon that can go there"). All three passed push validation.
-EXTRA = {"GRAPPLE": ["/Game/Athena/Items/Weapons/WID_Hook_Gun_VR_Ore_T03.WID_Hook_Gun_VR_Ore_T03"],
+EXTRA = {"GRAPPLE": ["/Game/Athena/Items/Weapons/WID_Hook_Gun_VR_Ore_T03.WID_Hook_Gun_VR_Ore_T03",
+                     # the Grapple Blade (player 2026-10-13: "i was thinking of the grapple blade")
+                     "/GrappleWeapon/Items/GrappleKnife/V2/WID_GrappleKnife_VR.WID_GrappleKnife_VR"],
          "MELEE": ["/KatanaGameplay/Items/Katana/WID_Melee_Katana_R.WID_Melee_Katana_R",
-                   "/CorruptionGameplay/Gameplay/Items/Weapons/Melee/Scythe/WID_PowerUp_Scythe_R.WID_PowerUp_Scythe_R"]}
+                   "/CorruptionGameplay/Gameplay/Items/Weapons/Melee/Scythe/WID_PowerUp_Scythe_R.WID_PowerUp_Scythe_R"],
+         # The heals bench showed one item (player 2026-10-13): the gun wall's heals as well.
+         "HEALS": ["/Game/Athena/Items/Consumables/Flopper/WID_Athena_Flopper.WID_Athena_Flopper",
+                   "/PaprikaConsumables/Gameplay/MedRefresh/WID_Paprika_MedBox.WID_Paprika_MedBox",
+                   "/Game/Athena/Items/Consumables/SuperMedkit/Athena_SuperMedkit.Athena_SuperMedkit",
+                   "/PaprikaConsumables/Gameplay/ShieldRefresh/WID_Paprika_ShieldPot.WID_Paprika_ShieldPot",
+                   "/ChronoConsumables/Gameplay/SlapSplash/WID_Chrono_SlapSplash.WID_Chrono_SlapSplash"]}
+BENCH = 480.0                     # bench length (cm); items are spread evenly along it
+
+
+def spot(k, n):
+    """Even spacing along the bench (player 2026-10-13: "placed too near to eachother"): one row up to six items,
+    two rows of up to six beyond that."""
+    per_row = n if n <= 6 else 6
+    row, col = divmod(k, per_row)
+    rows = 1 if n <= 6 else 2
+    step = BENCH / per_row
+    dx = (col - (per_row - 1) / 2) * step
+    dy = 0.0 if rows == 1 else (YS[0] if row == 0 else YS[1])
+    return dx, dy
 dec = lambda v: json.loads(v) if isinstance(v, str) else v
 
 
@@ -55,7 +76,8 @@ def main():
     n = 0
     for c, x, y, items in plan:
         for k, item in enumerate(items):
-            px, py = x + XS[k % len(XS)], y + YS[k // len(XS)]
+            dx, dy = spot(k, len(items))
+            px, py = x + dx, y + dy
             sp = b.device(bm.ITEM_SPAWNER, f"{PREFIX}{c}_{k:02d}", px, py, TOP)
             for name, value in {"items Respawn": True, "respawn Item On Timer": True, "time Between Spawns": 1.0,
                                 "spawn Item On Timer": True, "time Before First Spawn": 0.5,

@@ -27,6 +27,10 @@ LANE = {"drillId": "box_up", "autoPad": False, "sameTrack": True, "clearEachRep"
 
 
 def main():
+    # MILESTONE 2026-10-13 guard: box up now starts at (41472, -44544) in the 90s room, on the player grid, with its device 15 m down (startOffset). Pass --i-know to run anyway.
+    if "--i-know" not in sys.argv:
+        raise SystemExit("place_box_up_lane.py: box up now starts at (41472, -44544) in the 90s room, on the player grid, with its device 15 m down (startOffset). (milestone 2026-10-13). Pass --i-know to run anyway.")
+    sys.argv.remove("--i-know")
     ap = argparse.ArgumentParser()
     ap.add_argument("--dry-run", action="store_true")
     args = ap.parse_args()

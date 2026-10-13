@@ -70,7 +70,7 @@ def plan(ledge, off):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--dry-run", action="store_true")
-    ap.add_argument("--grid-offset", type=float, default=0.0)
+    ap.add_argument("--grid-offset", type=float, default=256.0)   # the player grid (2026-10-13)
     args = ap.parse_args()
     b = bm.Builder()
     m = b.m

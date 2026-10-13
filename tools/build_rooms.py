@@ -139,6 +139,10 @@ def pilot_p4(b, acts, ext, drills, code="P4"):
 
 
 def main():
+    # MILESTONE 2026-10-13 guard: --shells/--pilot rebuild rooms on the old world grid; the lane rooms were moved onto the player build grid. Pass --i-know to run anyway.
+    if "--i-know" not in sys.argv:
+        raise SystemExit("build_rooms.py: --shells/--pilot rebuild rooms on the old world grid; the lane rooms were moved onto the player build grid. (milestone 2026-10-13). Pass --i-know to run anyway.")
+    sys.argv.remove("--i-know")
     ap = argparse.ArgumentParser()
     ap.add_argument("--dry-run", action="store_true")
     ap.add_argument("--shells", action="store_true")

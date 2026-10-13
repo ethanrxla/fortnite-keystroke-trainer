@@ -6,6 +6,7 @@ skipped unless their track-one authored wall reads back as damage-proof and
 structurally supported. No drill catalog, section or plate is changed.
 """
 import argparse
+import sys
 import json
 from pathlib import Path
 import build_map as bm
@@ -18,6 +19,10 @@ def decoded(value):
     return json.loads(value) if isinstance(value,str) else value
 
 def run(apply=False, report='design/same-start-readback-2026-10-13.json'):
+    # MILESTONE 2026-10-13 guard: superseded: only 90s and box up keep one track, and a barrel on a lane start blocks the teleport there. Pass --i-know to run anyway.
+    if "--i-know" not in sys.argv:
+        raise SystemExit("same_start.py: superseded: only 90s and box up keep one track, and a barrel on a lane start blocks the teleport there. (milestone 2026-10-13). Pass --i-know to run anyway.")
+    sys.argv.remove("--i-know")
     b=bm.Builder();m=b.m
     if m.tool(bm.SCENE,'get_current_level') != bm.MODULE+'/KeystrokeTrainer':
         raise RuntimeError('Wrong level')

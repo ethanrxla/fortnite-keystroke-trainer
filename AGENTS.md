@@ -64,10 +64,36 @@ A UEFN island that teaches Fortnite building and editing at a slow tempo first
   roster/respawn/loadout/cleanup and native CTF acceptance have passed.
   `KT26_TeamDetail_` (`build_team_details.py`, PR #5): arena cover, stairs, trucks. `KT27_TeamTower_`
   (`build_team_towers.py`): the two sniper towers (Service-side corners) and two ammo rooms (Loading edge).
+- Shootable buttons (armory wall, presets, skills and range tiles, lobby sign shots) get their hit boxes from
+  `python tools/refit_hitboxes.py` (a grid of target dummies sized from the dummy's real collision, `tools/hitbox.py`).
+  Their builders still place one dummy: run the refit after any of them.
 - Teleporters that share a group are picked between. The Greybox template used A-D and Z (deleted); ours use E-U
   and H-K. Never reuse a group.
 - `shared/drills.json` `steps` is the reference order; `accepts` lists other orders that count. The sources for
   build orders disagree, so never present one order as the only correct one.
+
+## Milestone 2026-10-13 (player-tested drill layer): preserve
+The player tested and approved this state. Don't undo it without asking:
+- Everything pre-built, the bot boxes and the lane starts sit on the **player build grid** (see Coordinates). That covers
+  the B5, P2, P6+P4, P7, W3 and W2 rooms and the Sky Box. `EditTargets.verse` positions were regenerated with the
+  player's approval. Builders that would put things back on the old grid refuse to run without `--i-know`:
+  `build_rooms.py`, `same_start.py`, `place_box_up_lane.py`.
+- **Drills:** B5 piece switch (floor first, then an edit, the top ends the rep), P2 ramp rush, P6 90s and P4 box up (one
+  room; the ceiling ends the rep), P7 tunnel and window (1 rep, clear 3 bots), E7 edit peek (merged), W3 gun/piece
+  swap, Sky Box (all boxes manned, builds reset on a fall or on leaving), Wall take (W2 room, KT33_WallTake_*), Piece
+  Lab bots (KT36_LabBot_*). Retired: B2, B3, W1, W2, E2, E4, E5, P5, P8 and the Rebox Arena.
+- **Builds reset without explosions:** overhead barrels set up like the free-build RESET BUILDS rig (no VFX, no
+  collision, line of sight off, 0 reset wait, radius 4.75). Never put a barrel or a trigger on a start spot. Lane and
+  section Verse devices sit 15 m down (`StartOffset`, `PadOffset`), because Verse devices are drawn in game.
+- **Prefixes:**
+  - KT30_Drill_ plates and exits (`build_drill_plates.py`)
+  - KT31_ enemy boxes
+  - KT33_WallTake_
+  - KT34_Reset_ rigs
+  - KT35_Refill_ granters
+  - KT36_LabBot_
+  - KT37_LobbyReset_
+- Island settings: player invincibility off, health regen on.
 
 ## Iteration loop
 1. Edit Verse (or `shared/drills.json` then `python tools/gen_drills.py`).
@@ -78,3 +104,6 @@ A UEFN island that teaches Fortnite building and editing at a slow tempo first
 ## Coordinates
 Drill cells are `[right, forward, up]` from the drill device, forward = device +X, 512 cm cells,
 384 cm levels (VERIFY). The UEFN MCP uses XYZ, not UEFN's Left-Up-Forward display; convert with care.
+Player build grid (confirmed by the player 2026-10-13): player cells are centred on multiples of 512 cm in X and Y (edges
+at 256 mod 512). Older builders put cell centres at 256 mod 512, half a cell off; `tools/shift_to_player_grid.py`
+moved the lane rooms. Put every new pre-built piece and lane start on the player grid.
