@@ -488,6 +488,7 @@ def downscale(frame, scale):
 
 _TEMPLATE_CACHE = {}
 _CUE_SCALE = {}     # (name, roi, scale) -> template size index of a confident (>= 0.6) match: the HUD's fixed scale
+_CUE_MISSES = {}    # (name, roi, scale) -> misses in a row since the cue was last found (relearn the size every 15th)
 _CUE_HINT = {}      # (name, roi) -> (template index, x, y) of the last confident match: searched first next frame
 
 
@@ -553,7 +554,12 @@ def cue_scores(frame, names, roi=None):
         # size only (1 match instead of 6). All sizes are tried only until the size is learned.
         learned=_CUE_SCALE.get(hint_key)
         ui=_CUE_SCALE.get(('ui',round(scale,3)))
-        if learned is not None:sizes=[learned]
+        # A learned size is never proof: live 2026-10-12 a wrong one stuck and CONFIRM / RESET were never found again,
+        # so the guide stayed blind to every edit until restarted (a fresh process saw them all). After a run of
+        # misses at the learned size, every 15th miss searches all sizes again and relearns.
+        misses=_CUE_MISSES.get(hint_key,0)
+        if (learned is not None or ui is not None) and misses and misses%15==0:sizes=range(len(templates))
+        elif learned is not None:sizes=[learned]
         elif ui is not None:sizes=[i for i in (ui-1,ui,ui+1) if 0<=i<len(templates)]   # all prompts share one UI scale
         else:sizes=range(len(templates))
         for i in sizes:
@@ -562,9 +568,9 @@ def cue_scores(frame, names, roi=None):
             _,best,_,loc=cv2.minMaxLoc(cv2.matchTemplate(mask,current,cv2.TM_CCOEFF_NORMED))
             if best>score:score=float(best);found=(i,loc[0],loc[1])
         if found and score>=.50:
-            _CUE_HINT[hint_key]=found+(score,)
+            _CUE_HINT[hint_key]=found+(score,);_CUE_MISSES[hint_key]=0
             if score>=.60:_CUE_SCALE[hint_key]=found[0];_CUE_SCALE[('ui',round(scale,3))]=found[0]
-        else:_CUE_HINT.pop(hint_key,None)
+        else:_CUE_HINT.pop(hint_key,None);_CUE_MISSES[hint_key]=_CUE_MISSES.get(hint_key,0)+1
         scores.append(score)
     return tuple(scores)
 

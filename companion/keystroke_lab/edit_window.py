@@ -127,13 +127,29 @@ class ContextPipeline:
         if off is None or off==(0,0):
             self.shift_vote=None;return det
         votes=self.shift_vote[1]+1 if self.shift_vote and self.shift_vote[0]==off else 1
-        if votes>=self.SHIFT_VOTES:
+        if votes>=self.SHIFT_VOTES or (n==3 and det_frame is not None and ContextPipeline._fits_better(det,held,det_frame)):
+            # Player 2026-10-13 photos: the held grid had slid a column onto the side wall and the votes kept it there.
+            # A detection whose cells are more surely this wall's tiles than the held grid's wins at once.
             self.shift_vote=None;return det
         self.shift_vote=(off,votes)
         unit=np.float32([[0,0],[n,0],[n,n],[0,n]])
         H=cv2.getPerspectiveTransform(unit,np.float32(det.quad).reshape(4,2))
         quad=cv2.perspectiveTransform((unit-np.float32(off)).reshape(1,4,2),H)[0]
         return self.observer.from_quad(det_frame,replace(det,quad=tuple(map(tuple,quad.tolist()))),det.captured_at)
+
+    @staticmethod
+    def _fits_better(det,held,frame):
+        """True when det's grid has fewer cells that are not this wall's tiles (edit_observation._wall_fit) than the
+        held grid, both read in the same frame."""
+        from .edit_observation import _wall_fit,downscale
+        from .piece_observation import DETECT_WIDTH
+        scale=min(1.,DETECT_WIDTH/frame.shape[1]);image=downscale(frame,scale)
+        unit=np.float32([[0,0],[3,0],[3,3],[0,3]])
+        def off(o):
+            H=cv2.getPerspectiveTransform(unit,np.float32(o.quad).reshape(4,2)*scale)
+            return _wall_fit(image,H,selected=o.selected_tiles)[1]
+        try:return off(det)<off(held)
+        except Exception:return False
 
     def process(self,frame,captured_at=None):
         captured=self.clock() if captured_at is None else captured_at;mode,score=observe_mode(frame,throttle=self.async_detect);profile=self.store.refresh()
