@@ -56,8 +56,8 @@ LOGO_Y, LOGO_Z = -62996.0, 1150.0
 # A target dummy in play stands about 550 cm per unit of Z scale and 125 cm per unit of Y (twice its editor height:
 # 0.82 poked 2 m above the top row). These fill most of a 220 cm tile and stay inside it.
 # Player 2026-10-11: bigger hit boxes, "easier to shoot": now a little wider and taller than the 220 cm plate.
-HIT_SCALE = (0.15, 2.15, 0.49)      # 269 x 270 cm in play: the whole plate
-HIT_DROP = 135.0
+HIT_SCALE = (0.15, 2.4, 0.53)      # player 2026-10-11 'increase hitbox': the whole 300 x 290 cm cell, gaps included
+HIT_DROP = 146.0
 NO_BOUNCE = {"bAffectDynamicIndirectLighting": False, "bAffectDistanceFieldLighting": False}
 dec = lambda v: json.loads(v) if isinstance(v, str) else v
 
@@ -292,14 +292,8 @@ def prune(g, tiles):
             removed += 1
             print(f"  removed {tag} {t['name']} {t['rgb_name']}")
             continue
-        if tag + "_Hit" in mine:
-            cur = g.m.tool(bm.ACTOR, "get_actor_transform", actor={"refPath": mine[tag + "_Hit"]})
-            l = cur["location"]
-            g.m.tool(bm.ACTOR, "set_actor_transform", actor={"refPath": mine[tag + "_Hit"]},
-                     xform=bm.xform(l["x"], l["y"], t["z"] - HIT_DROP, *HIT_SCALE, yaw=cur["rotation"]["yaw"]))
-            g.m.tool(bm.SCENE, "save_actor", actor={"refPath": mine[tag + "_Hit"]})
-            resized += 1
-    print(f"pruned {removed} tiles, resized {resized} hit dummies")
+    # Hit boxes are sized by tools/refit_hitboxes.py (a grid of dummies per plate); run it after this.
+    print(f"pruned {removed} tiles")
 
 
 def fill_icons(g, tiles):
