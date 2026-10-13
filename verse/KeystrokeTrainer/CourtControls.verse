@@ -51,7 +51,7 @@ keystroke_court_controls_device := class(creative_device):
     ExplosivesWithTag(T:castable_subtype(tag))<transacts>:[]explosive_device =
         for (O : FindCreativeObjectsWithTag(T), E := explosive_device[O]) { E }
 
-    ResetBuild(A:agent):void =
+    ResetBuild<public>(A:agent):void =
         spawn{Clear(A, 0, BuildRig)}
 
     ResetRebox(A:agent):void =

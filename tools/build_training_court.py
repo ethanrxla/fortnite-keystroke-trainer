@@ -103,7 +103,7 @@ def plan():
         sign('Instruction_'+kind,3.6,right,'\n'.join(textwrap.wrap(teaching[kind+'_instruction'],width=40)),z=355,scale=2.1)
         items[-1]['props']['textSize']=8
     sign('ResetBuffer',14,11.5,'KEEP CLEAR\nFree-build reset buffer',z=230,scale=1.2)
-    for n,mode in enumerate(['watch','copy','recall','next','slower','faster','stop']):
+    for n,mode in enumerate(['watch','copy','recall','next','slower','faster','stop','replay']):
         items.append(dict(label='KT2_GuideButton_'+mode,kind='device',asset=BUTTON,
             xf=xform(4*C,Y0+(.8+n*.7)*C,90,yaw=180),props={},tag='kt_ghost_'+mode+'_tag'))
         sign('ButtonLabel_'+mode,4.3,.8+n*.7,mode.upper(),z=155,scale=.55)

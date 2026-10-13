@@ -581,7 +581,9 @@ def place_enclosure(b, p):
         for k, (i0, i1, jj0, jj1, z) in enumerate(_runs(ring)):
             b.slab({"label": f"KT_Wall_{code}_{k}", "bounds": rect(i0, i1, jj0, jj1), "top": top,
                     "thick": top - bottom, "mat": z})
-        b.slab({"label": f"KT_RoomFloor_{code}", "bounds": rect(a + 1, c - 1, j0 + 1, j1 - 1), "top": -LEVEL_H - 20.0,
+        # 1 cm under the level (not 20): just clear of the catch floor's top, while pieces built down here sit on it
+        # instead of hovering (player 2026-10-13: "make all structures fit/align with player builds").
+        b.slab({"label": f"KT_RoomFloor_{code}", "bounds": rect(a + 1, c - 1, j0 + 1, j1 - 1), "top": -LEVEL_H - 1.0,
                 "thick": 100.0, "mat": zone})
         b.slab({"label": f"KT_Ceil_Lane_{code}", "bounds": rect(a, c, j0, j1), "top": top + 100.0,
                 "thick": 100.0, "mat": zone})

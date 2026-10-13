@@ -18,6 +18,7 @@ kt_ghost_next_tag := class(tag){}
 kt_ghost_slower_tag := class(tag){}
 kt_ghost_faster_tag := class(tag){}
 kt_ghost_stop_tag := class(tag){}
+kt_ghost_replay_tag := class(tag){}
 kt_ghost_stage0_tag := class(tag){}
 kt_ghost_stage1_tag := class(tag){}
 kt_ghost_stage2_tag := class(tag){}
@@ -53,11 +54,15 @@ keystroke_ghost_guide_device := class(creative_device):
     @editable SlowerButton:button_device = button_device{}
     @editable FasterButton:button_device = button_device{}
     @editable StopButton:button_device = button_device{}
+    # Replay (player 2026-10-13: "a REPLAY sign there that reruns the drill you just did"): clears the bay's builds
+    # through the court controls and starts the last mode again from the first piece.
+    @editable ReplayButton:button_device = button_device{}
 
     var Owner:?player = false
     var GuideStages:[]kt_ghost_stage = array{}
     var Mode:kt_ghost_mode = kt_ghost_mode.Off
     var StageIndex:int = 0
+    var LastMode:kt_ghost_mode = kt_ghost_mode.Watch
     var SecondsPerStage:float = 1.0
     var LastInteraction:float = 0.0
     # Invalidates an old demonstration before it can show another stage after Stop or a mode
@@ -77,6 +82,7 @@ keystroke_ghost_guide_device := class(creative_device):
         SlowerControl := if (UseTaggedButtons?, Found := NearestButton[kt_ghost_slower_tag]) then Found else SlowerButton
         FasterControl := if (UseTaggedButtons?, Found := NearestButton[kt_ghost_faster_tag]) then Found else FasterButton
         StopControl := if (UseTaggedButtons?, Found := NearestButton[kt_ghost_stop_tag]) then Found else StopButton
+        ReplayControl := if (UseTaggedButtons?, Found := NearestButton[kt_ghost_replay_tag]) then Found else ReplayButton
         WatchControl.SetInteractionText(KTGhostText("Watch reference"))
         CopyControl.SetInteractionText(KTGhostText("Copy reference at your pace"))
         RecallControl.SetInteractionText(KTGhostText("Recall: hide reference"))
@@ -84,6 +90,7 @@ keystroke_ghost_guide_device := class(creative_device):
         SlowerControl.SetInteractionText(KTGhostText("Slower demonstration"))
         FasterControl.SetInteractionText(KTGhostText("Faster demonstration"))
         StopControl.SetInteractionText(KTGhostText("Stop guide"))
+        ReplayControl.SetInteractionText(KTGhostText("Replay: clear the bay and start again"))
         set Subscriptions = array:
             WatchControl.InteractedWithEvent.Subscribe(StartWatch)
             CopyControl.InteractedWithEvent.Subscribe(StartCopy)
@@ -92,6 +99,7 @@ keystroke_ghost_guide_device := class(creative_device):
             SlowerControl.InteractedWithEvent.Subscribe(Slower)
             FasterControl.InteractedWithEvent.Subscribe(Faster)
             StopControl.InteractedWithEvent.Subscribe(StopFor)
+            ReplayControl.InteractedWithEvent.Subscribe(Replay)
             GetPlayspace().PlayerRemovedEvent().Subscribe(OnPlayerRemoved)
         loop:
             Sleep(0.25)
@@ -181,6 +189,8 @@ keystroke_ghost_guide_device := class(creative_device):
             StopGuide()
             set Owner = option{P}
             set Mode = Requested
+            if (Requested <> kt_ghost_mode.Recall):
+                set LastMode = Requested
             set StageIndex = 0
             set LastInteraction = GetSimulationElapsedTime()
             CreateDisplay(P)
@@ -230,6 +240,18 @@ keystroke_ghost_guide_device := class(creative_device):
                 spawn{ Demonstrate(Generation) }
             else:
                 Render()
+
+    Replay<public>(Agent:agent):void =
+        if (P := player[Agent]):
+            if (Current := Owner?, Current <> P):
+                return
+            for (Object : FindCreativeObjectsWithTag(kt_court_controls_tag), Controls := keystroke_court_controls_device[Object]):
+                Controls.ResetBuild(Agent)
+            spawn{ ReplayAfterClear(Agent, LastMode) }
+
+    ReplayAfterClear(Agent:agent, Requested:kt_ghost_mode)<suspends>:void =
+        Sleep(0.5)
+        StartMode(Agent, Requested)
 
     StopFor<public>(Agent:agent):void =
         if (P := player[Agent], Current := Owner?, Current = P):

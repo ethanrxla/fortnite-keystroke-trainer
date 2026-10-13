@@ -773,6 +773,7 @@
         "edit",
         "edit_confirm",
         "reset",
+        "wall",
         "wall"
       ],
       "reps": 10,
@@ -786,7 +787,7 @@
         "forward": 1,
         "up": 2
       },
-      "tip": "Build the box, peek and reset, then replace any wall that took damage before you do anything else.",
+      "tip": "Build the box, peek and reset, replace any wall that took damage, then take the wall: claim the next wall toward the bot before it can.",
       "checks": [
         {
           "step": 5,
@@ -794,6 +795,10 @@
         },
         {
           "step": 9,
+          "kind": "exposure"
+        },
+        {
+          "step": 10,
           "kind": "exposure"
         }
       ],
@@ -811,10 +816,11 @@
           "edit",
           "edit_confirm",
           "reset",
+          "wall",
           "wall"
         ]
       ],
-      "basis": "Box part follows box_up. Peek, reset and replace-the-damaged-wall come from the FullBoosts and Boosteria guides."
+      "basis": "Box part follows box_up. Peek, reset and replace-the-damaged-wall come from the FullBoosts and Boosteria guides. Wall take added 2026-10-13 (player request): claim the bot-side wall of the next cell after the re-box."
     },
     {
       "id": "edit_door",

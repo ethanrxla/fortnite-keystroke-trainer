@@ -24,7 +24,8 @@ sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
 import build_map as bm  # noqa: E402
 
 PREFIX = "KT3_Terrain_"
-CODES = ("P3", "P4", "P5", "P6")
+# P4 (box up) runs every rep on track 1 since 2026-10-13 (SameTrack); terrain beside it got in the way of the box.
+CODES = ("P3", "P5", "P6")
 
 
 def lane_plan(drill, origin):
