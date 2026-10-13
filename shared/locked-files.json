@@ -5,7 +5,7 @@
   "verse/KeystrokeTrainer/EditIntent.verse": "42c22883dcf03f56c6c9b77a2bdcc9adff15cc711132923e0b800f6b6da09532",
   "verse/KeystrokeTrainer/EditCatalog.verse": "5bd2a6548ef6b9016f7a13b085d5b24a470b835d1aa533f17aeb4e032ca9a296",
   "verse/KeystrokeTrainer/EditPatterns.verse": "bd125de2c118916d331ab5856cb8ac029aa1fe25e580c60902f8cdef62feff87",
-  "verse/KeystrokeTrainer/EditTargets.verse": "0fa3f2339e5f55d6673b10ad52fe5dcbe4f5510db49feb995fb0f37aa71d1ca1",
+  "verse/KeystrokeTrainer/EditTargets.verse": "9e0c089b2cbc5fd3419f792d0853cd7d6adb51d6e00862d4e229a709e260f94e",
   "verse/KeystrokeTrainer/EditObservation.verse": "d5f81da0ef5a174d3ffd03f467ea84bff3336fd96fd6fcb421fca04b83eaf407",
   "companion/keystroke_lab/edit_window.py": "1107b16b7f7bac509556f996f3716288d448023d32643b5ce37ccdb1952fc25a",
   "companion/keystroke_lab/edit_observation.py": "7f2951b5c22945d204b8dddd7ebc6bb98d533ff116f37bcd2aeb0675a990feba",

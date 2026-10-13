@@ -1,11 +1,11 @@
 [
   {
-    "label": "KT_EditWall_E2_4",
-    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92E60803_1811809408",
+    "label": "KT16_Op_L1_Cover_3",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92F00903_1904209989",
     "kind": "wall",
     "centre": {
-      "x": 51712,
-      "y": -92928,
+      "x": -28160,
+      "y": -63744,
       "z": 0
     },
     "right": {
@@ -22,7 +22,7 @@
     "height": 384.0,
     "depth": 512.0,
     "rise": 0.0,
-    "goal": "window_center"
+    "goal": ""
   },
   {
     "label": "KT12_Lab_roof_roof_two_left_3",
@@ -100,13 +100,38 @@
     "goal": ""
   },
   {
-    "label": "KT_EditWall_E2_0",
-    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92E60803_1811585404",
+    "label": "KT18_Sky_Bot2_S",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92F10903_1987115452",
     "kind": "wall",
     "centre": {
-      "x": 51712,
-      "y": -94976,
-      "z": 0
+      "x": 26112,
+      "y": -43776,
+      "z": 7680
+    },
+    "right": {
+      "x": 1.0,
+      "y": 0.0,
+      "z": 0.0
+    },
+    "normal": {
+      "x": -0.0,
+      "y": 1.0,
+      "z": 0.0
+    },
+    "width": 512.0,
+    "height": 384.0,
+    "depth": 512.0,
+    "rise": 0.0,
+    "goal": ""
+  },
+  {
+    "label": "KT16_Op_L3_Perch1_1W",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92F00903_1910330031",
+    "kind": "wall",
+    "centre": {
+      "x": -22528,
+      "y": -67328,
+      "z": 384
     },
     "right": {
       "x": 2.83276944882399e-16,
@@ -122,7 +147,7 @@
     "height": 384.0,
     "depth": 512.0,
     "rise": 0.0,
-    "goal": "window_center"
+    "goal": ""
   },
   {
     "label": "KT7_Lab_A_Climb_2S",
@@ -175,6 +200,31 @@
     "goal": "side_peek_right"
   },
   {
+    "label": "KT18_Sky_Bot0_E",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92F10903_1986180445",
+    "kind": "wall",
+    "centre": {
+      "x": 24320,
+      "y": -44032,
+      "z": 7680
+    },
+    "right": {
+      "x": 2.83276944882399e-16,
+      "y": 1.0,
+      "z": 0.0
+    },
+    "normal": {
+      "x": -1.0,
+      "y": 2.83276944882399e-16,
+      "z": 0.0
+    },
+    "width": 512.0,
+    "height": 384.0,
+    "depth": 512.0,
+    "rise": 0.0,
+    "goal": ""
+  },
+  {
     "label": "KT7_Lab_A_Climb_3E",
     "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92870903_1690427248",
     "kind": "wall",
@@ -191,6 +241,31 @@
     "normal": {
       "x": -1.0,
       "y": 2.83276944882399e-16,
+      "z": 0.0
+    },
+    "width": 512.0,
+    "height": 384.0,
+    "depth": 512.0,
+    "rise": 0.0,
+    "goal": ""
+  },
+  {
+    "label": "KT16_Op_L3_Perch0_1N",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92F00903_1908519018",
+    "kind": "wall",
+    "centre": {
+      "x": -24832,
+      "y": -67072,
+      "z": 384
+    },
+    "right": {
+      "x": 1.0,
+      "y": 0.0,
+      "z": 0.0
+    },
+    "normal": {
+      "x": -0.0,
+      "y": 1.0,
       "z": 0.0
     },
     "width": 512.0,
@@ -300,6 +375,81 @@
     "goal": "side_peek_right"
   },
   {
+    "label": "KT16_Op_R5_Box0_E",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92F00903_1906666006",
+    "kind": "wall",
+    "centre": {
+      "x": -26112,
+      "y": -68864,
+      "z": 0
+    },
+    "right": {
+      "x": 2.83276944882399e-16,
+      "y": 1.0,
+      "z": 0.0
+    },
+    "normal": {
+      "x": -1.0,
+      "y": 2.83276944882399e-16,
+      "z": 0.0
+    },
+    "width": 512.0,
+    "height": 384.0,
+    "depth": 512.0,
+    "rise": 0.0,
+    "goal": ""
+  },
+  {
+    "label": "KT16_Op_R5_Box1_W",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92F00903_1907583012",
+    "kind": "wall",
+    "centre": {
+      "x": -26624,
+      "y": -67840,
+      "z": 0
+    },
+    "right": {
+      "x": 2.83276944882399e-16,
+      "y": 1.0,
+      "z": 0.0
+    },
+    "normal": {
+      "x": -1.0,
+      "y": 2.83276944882399e-16,
+      "z": 0.0
+    },
+    "width": 512.0,
+    "height": 384.0,
+    "depth": 512.0,
+    "rise": 0.0,
+    "goal": ""
+  },
+  {
+    "label": "KT16_Op_L3_Perch0_1E",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92F00903_1908791020",
+    "kind": "wall",
+    "centre": {
+      "x": -24576,
+      "y": -67328,
+      "z": 384
+    },
+    "right": {
+      "x": 2.83276944882399e-16,
+      "y": 1.0,
+      "z": 0.0
+    },
+    "normal": {
+      "x": -1.0,
+      "y": 2.83276944882399e-16,
+      "z": 0.0
+    },
+    "width": 512.0,
+    "height": 384.0,
+    "depth": 512.0,
+    "rise": 0.0,
+    "goal": ""
+  },
+  {
     "label": "KT_EditWall_E4_0",
     "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92E60803_1812978424",
     "kind": "wall",
@@ -325,54 +475,54 @@
     "goal": "half_wall"
   },
   {
-    "label": "KT_EditWall_E5_5",
-    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92E60803_1813959439",
+    "label": "KT18_Sky_Bot3_N",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92F10903_1987524455",
     "kind": "wall",
     "centre": {
-      "x": 51712,
-      "y": -70912,
-      "z": 0
+      "x": 27648,
+      "y": -43776,
+      "z": 7680
     },
     "right": {
-      "x": 2.83276944882399e-16,
-      "y": 1.0,
+      "x": 1.0,
+      "y": 0.0,
       "z": 0.0
     },
     "normal": {
-      "x": -1.0,
-      "y": 2.83276944882399e-16,
+      "x": -0.0,
+      "y": 1.0,
       "z": 0.0
     },
     "width": 512.0,
     "height": 384.0,
     "depth": 512.0,
     "rise": 0.0,
-    "goal": "window_center"
+    "goal": ""
   },
   {
-    "label": "KT_EditWall_E5_1",
-    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92E60803_1813716435",
+    "label": "KT18_Sky_You_N",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92F10903_1985234438",
     "kind": "wall",
     "centre": {
-      "x": 51712,
-      "y": -72960,
-      "z": 0
+      "x": 21504,
+      "y": -43776,
+      "z": 7680
     },
     "right": {
-      "x": 2.83276944882399e-16,
-      "y": 1.0,
+      "x": 1.0,
+      "y": 0.0,
       "z": 0.0
     },
     "normal": {
-      "x": -1.0,
-      "y": 2.83276944882399e-16,
+      "x": -0.0,
+      "y": 1.0,
       "z": 0.0
     },
     "width": 512.0,
     "height": 384.0,
     "depth": 512.0,
     "rise": 0.0,
-    "goal": "window_center"
+    "goal": ""
   },
   {
     "label": "KT_EditWall_E7_3",
@@ -475,6 +625,31 @@
     "goal": ""
   },
   {
+    "label": "KT18_Sky_Bot1_E",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92F10903_1986698449",
+    "kind": "wall",
+    "centre": {
+      "x": 26368,
+      "y": -44544,
+      "z": 7680
+    },
+    "right": {
+      "x": 2.83276944882399e-16,
+      "y": 1.0,
+      "z": 0.0
+    },
+    "normal": {
+      "x": -1.0,
+      "y": 2.83276944882399e-16,
+      "z": 0.0
+    },
+    "width": 512.0,
+    "height": 384.0,
+    "depth": 512.0,
+    "rise": 0.0,
+    "goal": ""
+  },
+  {
     "label": "KT_EditWall_E4_8",
     "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92E60803_1813546432",
     "kind": "wall",
@@ -500,12 +675,62 @@
     "goal": "half_wall"
   },
   {
-    "label": "KT_EditWall_E5_7",
-    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92E60803_1814069441",
+    "label": "KT16_Op_L3_Perch0_1W",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92F00903_1908926021",
     "kind": "wall",
     "centre": {
-      "x": 51712,
-      "y": -69888,
+      "x": -25088,
+      "y": -67328,
+      "z": 384
+    },
+    "right": {
+      "x": 2.83276944882399e-16,
+      "y": 1.0,
+      "z": 0.0
+    },
+    "normal": {
+      "x": -1.0,
+      "y": 2.83276944882399e-16,
+      "z": 0.0
+    },
+    "width": 512.0,
+    "height": 384.0,
+    "depth": 512.0,
+    "rise": 0.0,
+    "goal": ""
+  },
+  {
+    "label": "KT7_Lab_A_Drop_2E",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92870903_1692089264",
+    "kind": "wall",
+    "centre": {
+      "x": -20992,
+      "y": -68864,
+      "z": 768
+    },
+    "right": {
+      "x": 2.83276944882399e-16,
+      "y": 1.0,
+      "z": 0.0
+    },
+    "normal": {
+      "x": -1.0,
+      "y": 2.83276944882399e-16,
+      "z": 0.0
+    },
+    "width": 512.0,
+    "height": 384.0,
+    "depth": 512.0,
+    "rise": 0.0,
+    "goal": ""
+  },
+  {
+    "label": "KT16_Op_L1_BotCover_3",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92F00903_1904795993",
+    "kind": "wall",
+    "centre": {
+      "x": -33792,
+      "y": -63744,
       "z": 0
     },
     "right": {
@@ -522,16 +747,16 @@
     "height": 384.0,
     "depth": 512.0,
     "rise": 0.0,
-    "goal": "window_center"
+    "goal": ""
   },
   {
-    "label": "KT7_Lab_A_Drop_2E",
-    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92870903_1692089264",
+    "label": "KT18_Sky_You_E",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92F10903_1985490440",
     "kind": "wall",
     "centre": {
-      "x": -20992,
-      "y": -68864,
-      "z": 768
+      "x": 21760,
+      "y": -44032,
+      "z": 7680
     },
     "right": {
       "x": 2.83276944882399e-16,
@@ -700,6 +925,31 @@
     "goal": ""
   },
   {
+    "label": "KT18_Sky_Bot1_N",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92F10903_1986434447",
+    "kind": "wall",
+    "centre": {
+      "x": 26112,
+      "y": -44288,
+      "z": 7680
+    },
+    "right": {
+      "x": 1.0,
+      "y": 0.0,
+      "z": 0.0
+    },
+    "normal": {
+      "x": -0.0,
+      "y": 1.0,
+      "z": 0.0
+    },
+    "width": 512.0,
+    "height": 384.0,
+    "depth": 512.0,
+    "rise": 0.0,
+    "goal": ""
+  },
+  {
     "label": "KT7_Lab_A_Climb_3N",
     "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92870903_1690220246",
     "kind": "wall",
@@ -716,6 +966,31 @@
     "normal": {
       "x": -0.0,
       "y": 1.0,
+      "z": 0.0
+    },
+    "width": 512.0,
+    "height": 384.0,
+    "depth": 512.0,
+    "rise": 0.0,
+    "goal": ""
+  },
+  {
+    "label": "KT18_Sky_You_W",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92F10903_1985616441",
+    "kind": "wall",
+    "centre": {
+      "x": 21248,
+      "y": -44032,
+      "z": 7680
+    },
+    "right": {
+      "x": 2.83276944882399e-16,
+      "y": 1.0,
+      "z": 0.0
+    },
+    "normal": {
+      "x": -1.0,
+      "y": 2.83276944882399e-16,
       "z": 0.0
     },
     "width": 512.0,
@@ -850,13 +1125,13 @@
     "goal": ""
   },
   {
-    "label": "KT_EditWall_E5_2",
-    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92E60803_1813781436",
+    "label": "KT16_Op_L3_Perch1_Cover",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92F00903_1910596033",
     "kind": "wall",
     "centre": {
-      "x": 51712,
-      "y": -72448,
-      "z": 0
+      "x": -22528,
+      "y": -67328,
+      "z": 768
     },
     "right": {
       "x": 2.83276944882399e-16,
@@ -872,7 +1147,7 @@
     "height": 384.0,
     "depth": 512.0,
     "rise": 0.0,
-    "goal": "window_center"
+    "goal": ""
   },
   {
     "label": "KT7_Lab_A_Climb_2N",
@@ -1050,6 +1325,31 @@
     "goal": "corner_upper_left"
   },
   {
+    "label": "KT18_Sky_Bot2_N",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92F10903_1986966451",
+    "kind": "wall",
+    "centre": {
+      "x": 26112,
+      "y": -43264,
+      "z": 7680
+    },
+    "right": {
+      "x": 1.0,
+      "y": 0.0,
+      "z": 0.0
+    },
+    "normal": {
+      "x": -0.0,
+      "y": 1.0,
+      "z": 0.0
+    },
+    "width": 512.0,
+    "height": 384.0,
+    "depth": 512.0,
+    "rise": 0.0,
+    "goal": ""
+  },
+  {
     "label": "KT12_Lab_floor_floor_hole_near_left_0",
     "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Floor_C_UAID_30560F202F929A0903_1589012903",
     "kind": "floor",
@@ -1125,31 +1425,6 @@
     "goal": ""
   },
   {
-    "label": "KT_EditWall_E5_3",
-    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92E60803_1813831437",
-    "kind": "wall",
-    "centre": {
-      "x": 51712,
-      "y": -71936,
-      "z": 0
-    },
-    "right": {
-      "x": 2.83276944882399e-16,
-      "y": 1.0,
-      "z": 0.0
-    },
-    "normal": {
-      "x": -1.0,
-      "y": 2.83276944882399e-16,
-      "z": 0.0
-    },
-    "width": 512.0,
-    "height": 384.0,
-    "depth": 512.0,
-    "rise": 0.0,
-    "goal": "window_center"
-  },
-  {
     "label": "KT7_Lab_A_Drop_3E",
     "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92870903_1692381267",
     "kind": "wall",
@@ -1173,31 +1448,6 @@
     "depth": 512.0,
     "rise": 0.0,
     "goal": ""
-  },
-  {
-    "label": "KT_EditWall_E2_3",
-    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92E60803_1811757407",
-    "kind": "wall",
-    "centre": {
-      "x": 51712,
-      "y": -93440,
-      "z": 0
-    },
-    "right": {
-      "x": 2.83276944882399e-16,
-      "y": 1.0,
-      "z": 0.0
-    },
-    "normal": {
-      "x": -1.0,
-      "y": 2.83276944882399e-16,
-      "z": 0.0
-    },
-    "width": 512.0,
-    "height": 384.0,
-    "depth": 512.0,
-    "rise": 0.0,
-    "goal": "window_center"
   },
   {
     "label": "KT7_Lab_D_BotBox_N",
@@ -1275,12 +1525,12 @@
     "goal": ""
   },
   {
-    "label": "KT_EditWall_E2_9",
-    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92E60803_1812162413",
+    "label": "KT16_Op_L3_Perch0_0E",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92F00903_1908240016",
     "kind": "wall",
     "centre": {
-      "x": 51712,
-      "y": -90368,
+      "x": -24576,
+      "y": -67328,
       "z": 0
     },
     "right": {
@@ -1297,7 +1547,57 @@
     "height": 384.0,
     "depth": 512.0,
     "rise": 0.0,
-    "goal": "window_center"
+    "goal": ""
+  },
+  {
+    "label": "KT16_Op_L3_Perch1_0E",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92F00903_1909685026",
+    "kind": "wall",
+    "centre": {
+      "x": -22016,
+      "y": -67328,
+      "z": 0
+    },
+    "right": {
+      "x": 2.83276944882399e-16,
+      "y": 1.0,
+      "z": 0.0
+    },
+    "normal": {
+      "x": -1.0,
+      "y": 2.83276944882399e-16,
+      "z": 0.0
+    },
+    "width": 512.0,
+    "height": 384.0,
+    "depth": 512.0,
+    "rise": 0.0,
+    "goal": ""
+  },
+  {
+    "label": "KT16_Op_L1_Cover_0",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92F00903_1903369986",
+    "kind": "wall",
+    "centre": {
+      "x": -28160,
+      "y": -64768,
+      "z": 0
+    },
+    "right": {
+      "x": 2.83276944882399e-16,
+      "y": 1.0,
+      "z": 0.0
+    },
+    "normal": {
+      "x": -1.0,
+      "y": 2.83276944882399e-16,
+      "z": 0.0
+    },
+    "width": 512.0,
+    "height": 384.0,
+    "depth": 512.0,
+    "rise": 0.0,
+    "goal": ""
   },
   {
     "label": "KT7_Lab_B_BotCover_0",
@@ -1450,6 +1750,56 @@
     "goal": ""
   },
   {
+    "label": "PBWA_W1_Solid_C",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_2147482645",
+    "kind": "wall",
+    "centre": {
+      "x": -768,
+      "y": -59392,
+      "z": 0
+    },
+    "right": {
+      "x": -1.6081226496766366e-16,
+      "y": -1.0,
+      "z": 0.0
+    },
+    "normal": {
+      "x": 1.0,
+      "y": -1.6081226496766366e-16,
+      "z": 0.0
+    },
+    "width": 512.0,
+    "height": 384.0,
+    "depth": 512.0,
+    "rise": 0.0,
+    "goal": ""
+  },
+  {
+    "label": "KT16_Op_L3_Perch1_0S",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92F00903_1909533025",
+    "kind": "wall",
+    "centre": {
+      "x": -22272,
+      "y": -67584,
+      "z": 0
+    },
+    "right": {
+      "x": 1.0,
+      "y": 0.0,
+      "z": 0.0
+    },
+    "normal": {
+      "x": -0.0,
+      "y": 1.0,
+      "z": 0.0
+    },
+    "width": 512.0,
+    "height": 384.0,
+    "depth": 512.0,
+    "rise": 0.0,
+    "goal": ""
+  },
+  {
     "label": "KT_EditWall_E7_7",
     "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92E60803_1814658451",
     "kind": "wall",
@@ -1500,6 +1850,31 @@
     "goal": ""
   },
   {
+    "label": "KT16_Op_R4_Wall_N54",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92F00903_1906109002",
+    "kind": "wall",
+    "centre": {
+      "x": -27392,
+      "y": -67584,
+      "z": 768
+    },
+    "right": {
+      "x": 1.0,
+      "y": 0.0,
+      "z": 0.0
+    },
+    "normal": {
+      "x": -0.0,
+      "y": 1.0,
+      "z": 0.0
+    },
+    "width": 512.0,
+    "height": 384.0,
+    "depth": 512.0,
+    "rise": 0.0,
+    "goal": ""
+  },
+  {
     "label": "KT7_Lab_D_Box_S",
     "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92870903_1694596289",
     "kind": "wall",
@@ -1525,13 +1900,13 @@
     "goal": ""
   },
   {
-    "label": "KT_EditWall_E2_2",
-    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92E60803_1811704406",
+    "label": "KT18_Sky_Bot2_E",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92F10903_1987264453",
     "kind": "wall",
     "centre": {
-      "x": 51712,
-      "y": -93952,
-      "z": 0
+      "x": 26368,
+      "y": -43520,
+      "z": 7680
     },
     "right": {
       "x": 2.83276944882399e-16,
@@ -1547,7 +1922,7 @@
     "height": 384.0,
     "depth": 512.0,
     "rise": 0.0,
-    "goal": "window_center"
+    "goal": ""
   },
   {
     "label": "KT_EditWall_E7_6",
@@ -1575,6 +1950,81 @@
     "goal": "side_peek_right"
   },
   {
+    "label": "KT16_Op_L1_BotCover_1",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92F00903_1904501991",
+    "kind": "wall",
+    "centre": {
+      "x": -29696,
+      "y": -64256,
+      "z": 0
+    },
+    "right": {
+      "x": 2.83276944882399e-16,
+      "y": 1.0,
+      "z": 0.0
+    },
+    "normal": {
+      "x": -1.0,
+      "y": 2.83276944882399e-16,
+      "z": 0.0
+    },
+    "width": 512.0,
+    "height": 384.0,
+    "depth": 512.0,
+    "rise": 0.0,
+    "goal": ""
+  },
+  {
+    "label": "KT16_Op_R4_Wall_N55",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92F00903_1905687999",
+    "kind": "wall",
+    "centre": {
+      "x": -27904,
+      "y": -67584,
+      "z": 768
+    },
+    "right": {
+      "x": 1.0,
+      "y": 0.0,
+      "z": 0.0
+    },
+    "normal": {
+      "x": -0.0,
+      "y": 1.0,
+      "z": 0.0
+    },
+    "width": 512.0,
+    "height": 384.0,
+    "depth": 512.0,
+    "rise": 0.0,
+    "goal": ""
+  },
+  {
+    "label": "KT16_Op_L3_Perch0_0S",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92F00903_1908074015",
+    "kind": "wall",
+    "centre": {
+      "x": -24832,
+      "y": -67584,
+      "z": 0
+    },
+    "right": {
+      "x": 1.0,
+      "y": 0.0,
+      "z": 0.0
+    },
+    "normal": {
+      "x": -0.0,
+      "y": 1.0,
+      "z": 0.0
+    },
+    "width": 512.0,
+    "height": 384.0,
+    "depth": 512.0,
+    "rise": 0.0,
+    "goal": ""
+  },
+  {
     "label": "KT7_Lab_B_Cover_1",
     "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92870903_1693006273",
     "kind": "wall",
@@ -1598,31 +2048,6 @@
     "depth": 512.0,
     "rise": 0.0,
     "goal": ""
-  },
-  {
-    "label": "KT_EditWall_E5_6",
-    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92E60803_1814018440",
-    "kind": "wall",
-    "centre": {
-      "x": 51712,
-      "y": -70400,
-      "z": 0
-    },
-    "right": {
-      "x": 2.83276944882399e-16,
-      "y": 1.0,
-      "z": 0.0
-    },
-    "normal": {
-      "x": -1.0,
-      "y": 2.83276944882399e-16,
-      "z": 0.0
-    },
-    "width": 512.0,
-    "height": 384.0,
-    "depth": 512.0,
-    "rise": 0.0,
-    "goal": "window_center"
   },
   {
     "label": "KT_EditWall_E4_9",
@@ -1750,6 +2175,31 @@
     "goal": ""
   },
   {
+    "label": "KT16_Op_L1_Cover_2",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92F00903_1903643988",
+    "kind": "wall",
+    "centre": {
+      "x": -32256,
+      "y": -65280,
+      "z": 0
+    },
+    "right": {
+      "x": 2.83276944882399e-16,
+      "y": 1.0,
+      "z": 0.0
+    },
+    "normal": {
+      "x": -1.0,
+      "y": 2.83276944882399e-16,
+      "z": 0.0
+    },
+    "width": 512.0,
+    "height": 384.0,
+    "depth": 512.0,
+    "rise": 0.0,
+    "goal": ""
+  },
+  {
     "label": "KT7_Lab_A_Drop_2W",
     "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92870903_1692192265",
     "kind": "wall",
@@ -1800,31 +2250,6 @@
     "goal": "roof_diagonal_a"
   },
   {
-    "label": "KT_EditWall_E5_8",
-    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92E60803_1814125442",
-    "kind": "wall",
-    "centre": {
-      "x": 51712,
-      "y": -69376,
-      "z": 0
-    },
-    "right": {
-      "x": 2.83276944882399e-16,
-      "y": 1.0,
-      "z": 0.0
-    },
-    "normal": {
-      "x": -1.0,
-      "y": 2.83276944882399e-16,
-      "z": 0.0
-    },
-    "width": 512.0,
-    "height": 384.0,
-    "depth": 512.0,
-    "rise": 0.0,
-    "goal": "window_center"
-  },
-  {
     "label": "KT_EditWall_E7_4",
     "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92E60803_1814501448",
     "kind": "wall",
@@ -1850,31 +2275,6 @@
     "goal": "side_peek_right"
   },
   {
-    "label": "KT_EditWall_E5_9",
-    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92E60803_1814191443",
-    "kind": "wall",
-    "centre": {
-      "x": 51712,
-      "y": -68864,
-      "z": 0
-    },
-    "right": {
-      "x": 2.83276944882399e-16,
-      "y": 1.0,
-      "z": 0.0
-    },
-    "normal": {
-      "x": -1.0,
-      "y": 2.83276944882399e-16,
-      "z": 0.0
-    },
-    "width": 512.0,
-    "height": 384.0,
-    "depth": 512.0,
-    "rise": 0.0,
-    "goal": "window_center"
-  },
-  {
     "label": "KT12_Lab_stairs_open_0",
     "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_StairW_C_UAID_30560F202F929A0903_1592789913",
     "kind": "stairs",
@@ -1897,6 +2297,31 @@
     "height": 512.0,
     "depth": 512.0,
     "rise": 384.0,
+    "goal": ""
+  },
+  {
+    "label": "KT16_Op_L3_Perch1_1S",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92F00903_1910074029",
+    "kind": "wall",
+    "centre": {
+      "x": -22272,
+      "y": -67584,
+      "z": 384
+    },
+    "right": {
+      "x": 1.0,
+      "y": 0.0,
+      "z": 0.0
+    },
+    "normal": {
+      "x": -0.0,
+      "y": 1.0,
+      "z": 0.0
+    },
+    "width": 512.0,
+    "height": 384.0,
+    "depth": 512.0,
+    "rise": 0.0,
     "goal": ""
   },
   {
@@ -1941,6 +2366,31 @@
     "normal": {
       "x": -1.0,
       "y": 2.83276944882399e-16,
+      "z": 0.0
+    },
+    "width": 512.0,
+    "height": 384.0,
+    "depth": 512.0,
+    "rise": 0.0,
+    "goal": ""
+  },
+  {
+    "label": "KT16_Op_R5_Box0_S",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92F00903_1906515005",
+    "kind": "wall",
+    "centre": {
+      "x": -26368,
+      "y": -69120,
+      "z": 0
+    },
+    "right": {
+      "x": 1.0,
+      "y": 0.0,
+      "z": 0.0
+    },
+    "normal": {
+      "x": -0.0,
+      "y": 1.0,
       "z": 0.0
     },
     "width": 512.0,
@@ -2100,12 +2550,12 @@
     "goal": "half_wall"
   },
   {
-    "label": "KT_EditWall_E2_8",
-    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92E60803_1812107412",
+    "label": "KT16_Op_L1_Cover_1",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92F00903_1903503987",
     "kind": "wall",
     "centre": {
-      "x": 51712,
-      "y": -90880,
+      "x": -31744,
+      "y": -64256,
       "z": 0
     },
     "right": {
@@ -2122,7 +2572,7 @@
     "height": 384.0,
     "depth": 512.0,
     "rise": 0.0,
-    "goal": "window_center"
+    "goal": ""
   },
   {
     "label": "KT7_Lab_A_Box_W",
@@ -2150,12 +2600,37 @@
     "goal": ""
   },
   {
-    "label": "KT_EditWall_E2_7",
-    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92E60803_1812020411",
+    "label": "KT16_Op_L3_Perch0_0N",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92F00903_1907906014",
     "kind": "wall",
     "centre": {
-      "x": 51712,
-      "y": -91392,
+      "x": -24832,
+      "y": -67072,
+      "z": 0
+    },
+    "right": {
+      "x": 1.0,
+      "y": 0.0,
+      "z": 0.0
+    },
+    "normal": {
+      "x": -0.0,
+      "y": 1.0,
+      "z": 0.0
+    },
+    "width": 512.0,
+    "height": 384.0,
+    "depth": 512.0,
+    "rise": 0.0,
+    "goal": ""
+  },
+  {
+    "label": "KT16_Op_L1_BotCover_0",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92F00903_1904361990",
+    "kind": "wall",
+    "centre": {
+      "x": -29696,
+      "y": -65280,
       "z": 0
     },
     "right": {
@@ -2172,7 +2647,32 @@
     "height": 384.0,
     "depth": 512.0,
     "rise": 0.0,
-    "goal": "window_center"
+    "goal": ""
+  },
+  {
+    "label": "KT16_Op_L3_Perch1_0N",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92F00903_1909380024",
+    "kind": "wall",
+    "centre": {
+      "x": -22272,
+      "y": -67072,
+      "z": 0
+    },
+    "right": {
+      "x": 1.0,
+      "y": 0.0,
+      "z": 0.0
+    },
+    "normal": {
+      "x": -0.0,
+      "y": 1.0,
+      "z": 0.0
+    },
+    "width": 512.0,
+    "height": 384.0,
+    "depth": 512.0,
+    "rise": 0.0,
+    "goal": ""
   },
   {
     "label": "KT_EditWall_E4_4",
@@ -2198,6 +2698,31 @@
     "depth": 512.0,
     "rise": 0.0,
     "goal": "half_wall"
+  },
+  {
+    "label": "KT16_Op_L3_Perch0_1S",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92F00903_1908641019",
+    "kind": "wall",
+    "centre": {
+      "x": -24832,
+      "y": -67584,
+      "z": 384
+    },
+    "right": {
+      "x": 1.0,
+      "y": 0.0,
+      "z": 0.0
+    },
+    "normal": {
+      "x": -0.0,
+      "y": 1.0,
+      "z": 0.0
+    },
+    "width": 512.0,
+    "height": 384.0,
+    "depth": 512.0,
+    "rise": 0.0,
+    "goal": ""
   },
   {
     "label": "KT_EditWall_E4_5",
@@ -2250,37 +2775,37 @@
     "goal": ""
   },
   {
-    "label": "KT_EditWall_E5_0",
-    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92E60803_1813665434",
+    "label": "KT16_Op_R5_Box0_N",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92F00903_1906387004",
     "kind": "wall",
     "centre": {
-      "x": 51712,
-      "y": -73472,
+      "x": -26368,
+      "y": -68608,
       "z": 0
     },
     "right": {
-      "x": 2.83276944882399e-16,
-      "y": 1.0,
+      "x": 1.0,
+      "y": 0.0,
       "z": 0.0
     },
     "normal": {
-      "x": -1.0,
-      "y": 2.83276944882399e-16,
+      "x": -0.0,
+      "y": 1.0,
       "z": 0.0
     },
     "width": 512.0,
     "height": 384.0,
     "depth": 512.0,
     "rise": 0.0,
-    "goal": "window_center"
+    "goal": ""
   },
   {
-    "label": "KT_EditWall_E2_6",
-    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92E60803_1811967410",
+    "label": "KT16_Op_R5_Box0_W",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92F00903_1906798007",
     "kind": "wall",
     "centre": {
-      "x": 51712,
-      "y": -91904,
+      "x": -26624,
+      "y": -68864,
       "z": 0
     },
     "right": {
@@ -2297,7 +2822,7 @@
     "height": 384.0,
     "depth": 512.0,
     "rise": 0.0,
-    "goal": "window_center"
+    "goal": ""
   },
   {
     "label": "KT_EditWall_E7_5",
@@ -2325,6 +2850,56 @@
     "goal": "side_peek_right"
   },
   {
+    "label": "KT18_Sky_Bot0_S",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92F10903_1986052444",
+    "kind": "wall",
+    "centre": {
+      "x": 24064,
+      "y": -44288,
+      "z": 7680
+    },
+    "right": {
+      "x": 1.0,
+      "y": 0.0,
+      "z": 0.0
+    },
+    "normal": {
+      "x": -0.0,
+      "y": 1.0,
+      "z": 0.0
+    },
+    "width": 512.0,
+    "height": 384.0,
+    "depth": 512.0,
+    "rise": 0.0,
+    "goal": ""
+  },
+  {
+    "label": "KT16_Op_L3_Perch1_1E",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92F00903_1910212030",
+    "kind": "wall",
+    "centre": {
+      "x": -22016,
+      "y": -67328,
+      "z": 384
+    },
+    "right": {
+      "x": 2.83276944882399e-16,
+      "y": 1.0,
+      "z": 0.0
+    },
+    "normal": {
+      "x": -1.0,
+      "y": 2.83276944882399e-16,
+      "z": 0.0
+    },
+    "width": 512.0,
+    "height": 384.0,
+    "depth": 512.0,
+    "rise": 0.0,
+    "goal": ""
+  },
+  {
     "label": "KT7_Lab_D_Mid_-126",
     "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92870903_1695465298",
     "kind": "wall",
@@ -2350,12 +2925,12 @@
     "goal": ""
   },
   {
-    "label": "KT_EditWall_E2_5",
-    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92E60803_1811884409",
+    "label": "KT16_Op_R5_Box1_E",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92F00903_1907428011",
     "kind": "wall",
     "centre": {
-      "x": 51712,
-      "y": -92416,
+      "x": -26112,
+      "y": -67840,
       "z": 0
     },
     "right": {
@@ -2372,7 +2947,57 @@
     "height": 384.0,
     "depth": 512.0,
     "rise": 0.0,
-    "goal": "window_center"
+    "goal": ""
+  },
+  {
+    "label": "KT16_Op_L3_Perch1_0W",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92F00903_1909798027",
+    "kind": "wall",
+    "centre": {
+      "x": -22528,
+      "y": -67328,
+      "z": 0
+    },
+    "right": {
+      "x": 2.83276944882399e-16,
+      "y": 1.0,
+      "z": 0.0
+    },
+    "normal": {
+      "x": -1.0,
+      "y": 2.83276944882399e-16,
+      "z": 0.0
+    },
+    "width": 512.0,
+    "height": 384.0,
+    "depth": 512.0,
+    "rise": 0.0,
+    "goal": ""
+  },
+  {
+    "label": "KT16_Op_L3_Perch0_Cover",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92F00903_1909234023",
+    "kind": "wall",
+    "centre": {
+      "x": -25088,
+      "y": -67328,
+      "z": 768
+    },
+    "right": {
+      "x": 2.83276944882399e-16,
+      "y": 1.0,
+      "z": 0.0
+    },
+    "normal": {
+      "x": -1.0,
+      "y": 2.83276944882399e-16,
+      "z": 0.0
+    },
+    "width": 512.0,
+    "height": 384.0,
+    "depth": 512.0,
+    "rise": 0.0,
+    "goal": ""
   },
   {
     "label": "KT7_Lab_A_Box_E",
@@ -2391,6 +3016,81 @@
     "normal": {
       "x": -1.0,
       "y": 2.83276944882399e-16,
+      "z": 0.0
+    },
+    "width": 512.0,
+    "height": 384.0,
+    "depth": 512.0,
+    "rise": 0.0,
+    "goal": ""
+  },
+  {
+    "label": "KT16_Op_R5_Box1_N",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92F00903_1907128009",
+    "kind": "wall",
+    "centre": {
+      "x": -26368,
+      "y": -67584,
+      "z": 0
+    },
+    "right": {
+      "x": 1.0,
+      "y": 0.0,
+      "z": 0.0
+    },
+    "normal": {
+      "x": -0.0,
+      "y": 1.0,
+      "z": 0.0
+    },
+    "width": 512.0,
+    "height": 384.0,
+    "depth": 512.0,
+    "rise": 0.0,
+    "goal": ""
+  },
+  {
+    "label": "KT16_Op_R4_Wall_Front",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92F00903_1906241003",
+    "kind": "wall",
+    "centre": {
+      "x": -28160,
+      "y": -67840,
+      "z": 768
+    },
+    "right": {
+      "x": 2.83276944882399e-16,
+      "y": 1.0,
+      "z": 0.0
+    },
+    "normal": {
+      "x": -1.0,
+      "y": 2.83276944882399e-16,
+      "z": 0.0
+    },
+    "width": 512.0,
+    "height": 384.0,
+    "depth": 512.0,
+    "rise": 0.0,
+    "goal": ""
+  },
+  {
+    "label": "KT18_Sky_Bot3_S",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92F10903_1987654456",
+    "kind": "wall",
+    "centre": {
+      "x": 27648,
+      "y": -44288,
+      "z": 7680
+    },
+    "right": {
+      "x": 1.0,
+      "y": 0.0,
+      "z": 0.0
+    },
+    "normal": {
+      "x": -0.0,
+      "y": 1.0,
       "z": 0.0
     },
     "width": 512.0,
@@ -2425,6 +3125,31 @@
     "goal": "side_peek_right"
   },
   {
+    "label": "KT16_Op_L3_Perch1_1N",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92F00903_1909939028",
+    "kind": "wall",
+    "centre": {
+      "x": -22272,
+      "y": -67072,
+      "z": 384
+    },
+    "right": {
+      "x": 1.0,
+      "y": 0.0,
+      "z": 0.0
+    },
+    "normal": {
+      "x": -0.0,
+      "y": 1.0,
+      "z": 0.0
+    },
+    "width": 512.0,
+    "height": 384.0,
+    "depth": 512.0,
+    "rise": 0.0,
+    "goal": ""
+  },
+  {
     "label": "KT12_Lab_wall_quarter_wall_6",
     "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F929A0903_1595789921",
     "kind": "wall",
@@ -2448,6 +3173,31 @@
     "depth": 512.0,
     "rise": 0.0,
     "goal": "quarter_wall"
+  },
+  {
+    "label": "KT16_Op_L3_Perch0_0W",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92F00903_1908373017",
+    "kind": "wall",
+    "centre": {
+      "x": -25088,
+      "y": -67328,
+      "z": 0
+    },
+    "right": {
+      "x": 2.83276944882399e-16,
+      "y": 1.0,
+      "z": 0.0
+    },
+    "normal": {
+      "x": -1.0,
+      "y": 2.83276944882399e-16,
+      "z": 0.0
+    },
+    "width": 512.0,
+    "height": 384.0,
+    "depth": 512.0,
+    "rise": 0.0,
+    "goal": ""
   },
   {
     "label": "KT4_Arena_Wall_1",
@@ -2525,12 +3275,37 @@
     "goal": ""
   },
   {
-    "label": "KT_EditWall_E2_1",
-    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92E60803_1811637405",
+    "label": "KT18_Sky_You_S",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92F10903_1985371439",
     "kind": "wall",
     "centre": {
-      "x": 51712,
-      "y": -94464,
+      "x": 21504,
+      "y": -44288,
+      "z": 7680
+    },
+    "right": {
+      "x": 1.0,
+      "y": 0.0,
+      "z": 0.0
+    },
+    "normal": {
+      "x": -0.0,
+      "y": 1.0,
+      "z": 0.0
+    },
+    "width": 512.0,
+    "height": 384.0,
+    "depth": 512.0,
+    "rise": 0.0,
+    "goal": ""
+  },
+  {
+    "label": "KT16_Op_L1_BotCover_2",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92F00903_1904669992",
+    "kind": "wall",
+    "centre": {
+      "x": -33792,
+      "y": -64768,
       "z": 0
     },
     "right": {
@@ -2547,7 +3322,32 @@
     "height": 384.0,
     "depth": 512.0,
     "rise": 0.0,
-    "goal": "window_center"
+    "goal": ""
+  },
+  {
+    "label": "KT18_Sky_Bot0_N",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92F10903_1985935443",
+    "kind": "wall",
+    "centre": {
+      "x": 24064,
+      "y": -43776,
+      "z": 7680
+    },
+    "right": {
+      "x": 1.0,
+      "y": 0.0,
+      "z": 0.0
+    },
+    "normal": {
+      "x": -0.0,
+      "y": 1.0,
+      "z": 0.0
+    },
+    "width": 512.0,
+    "height": 384.0,
+    "depth": 512.0,
+    "rise": 0.0,
+    "goal": ""
   },
   {
     "label": "KT7_Lab_A_Climb_3S",
@@ -2557,6 +3357,31 @@
       "x": -22784,
       "y": -69120,
       "z": 1152
+    },
+    "right": {
+      "x": 1.0,
+      "y": 0.0,
+      "z": 0.0
+    },
+    "normal": {
+      "x": -0.0,
+      "y": 1.0,
+      "z": 0.0
+    },
+    "width": 512.0,
+    "height": 384.0,
+    "depth": 512.0,
+    "rise": 0.0,
+    "goal": ""
+  },
+  {
+    "label": "KT16_Op_R5_Box1_S",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92F00903_1907280010",
+    "kind": "wall",
+    "centre": {
+      "x": -26368,
+      "y": -68096,
+      "z": 0
     },
     "right": {
       "x": 1.0,
@@ -2623,6 +3448,31 @@
     "depth": 512.0,
     "rise": 0.0,
     "goal": "floor_hole_far_left"
+  },
+  {
+    "label": "KT16_Op_R3_EditWall",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92F00903_1904952994",
+    "kind": "wall",
+    "centre": {
+      "x": -30720,
+      "y": -68352,
+      "z": 0
+    },
+    "right": {
+      "x": 2.83276944882399e-16,
+      "y": 1.0,
+      "z": 0.0
+    },
+    "normal": {
+      "x": -1.0,
+      "y": 2.83276944882399e-16,
+      "z": 0.0
+    },
+    "width": 512.0,
+    "height": 384.0,
+    "depth": 512.0,
+    "rise": 0.0,
+    "goal": ""
   },
   {
     "label": "KT12_Lab_roof_roof_diagonal_b_5",
@@ -2750,13 +3600,38 @@
     "goal": "side_peek_left"
   },
   {
-    "label": "KT_EditWall_E5_4",
-    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92E60803_1813882438",
+    "label": "KT18_Sky_Bot1_S",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92F10903_1986555448",
     "kind": "wall",
     "centre": {
-      "x": 51712,
-      "y": -71424,
-      "z": 0
+      "x": 26112,
+      "y": -44800,
+      "z": 7680
+    },
+    "right": {
+      "x": 1.0,
+      "y": 0.0,
+      "z": 0.0
+    },
+    "normal": {
+      "x": -0.0,
+      "y": 1.0,
+      "z": 0.0
+    },
+    "width": 512.0,
+    "height": 384.0,
+    "depth": 512.0,
+    "rise": 0.0,
+    "goal": ""
+  },
+  {
+    "label": "KT18_Sky_Bot3_E",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92F10903_1987790457",
+    "kind": "wall",
+    "centre": {
+      "x": 27904,
+      "y": -44032,
+      "z": 7680
     },
     "right": {
       "x": 2.83276944882399e-16,
@@ -2772,7 +3647,7 @@
     "height": 384.0,
     "depth": 512.0,
     "rise": 0.0,
-    "goal": "window_center"
+    "goal": ""
   },
   {
     "label": "KT4_Arena_Wall_2",
@@ -2800,12 +3675,12 @@
     "goal": ""
   },
   {
-    "label": "KT14_Rebox_You_N",
-    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92ED0903_1823922334",
+    "label": "KT31_EnemyBox_P7_N",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F929D0A03_1609388152",
     "kind": "wall",
     "centre": {
-      "x": 25856,
-      "y": -31744,
+      "x": 44544,
+      "y": -35584,
       "z": 0
     },
     "right": {
@@ -2825,12 +3700,12 @@
     "goal": ""
   },
   {
-    "label": "KT14_Rebox_You_S",
-    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92ED0903_1824369335",
+    "label": "KT31_EnemyBox_P7_S",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F929D0A03_1609935153",
     "kind": "wall",
     "centre": {
-      "x": 25856,
-      "y": -32256,
+      "x": 44544,
+      "y": -36096,
       "z": 0
     },
     "right": {
@@ -2850,12 +3725,12 @@
     "goal": ""
   },
   {
-    "label": "KT14_Rebox_You_E",
-    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92ED0903_1824484336",
+    "label": "KT31_EnemyBox_P7_E",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F929D0A03_1610495154",
     "kind": "wall",
     "centre": {
-      "x": 26112,
-      "y": -32000,
+      "x": 44800,
+      "y": -35840,
       "z": 0
     },
     "right": {
@@ -2875,37 +3750,12 @@
     "goal": ""
   },
   {
-    "label": "KT14_Rebox_You_W",
-    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92ED0903_1824601337",
+    "label": "KT31_EnemyBox_E7_N",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F929D0A03_1614563160",
     "kind": "wall",
     "centre": {
-      "x": 25600,
-      "y": -32000,
-      "z": 0
-    },
-    "right": {
-      "x": 2.83276944882399e-16,
-      "y": 1.0,
-      "z": 0.0
-    },
-    "normal": {
-      "x": -1.0,
-      "y": 2.83276944882399e-16,
-      "z": 0.0
-    },
-    "width": 512.0,
-    "height": 384.0,
-    "depth": 512.0,
-    "rise": 0.0,
-    "goal": ""
-  },
-  {
-    "label": "KT14_Rebox_Bot0_N",
-    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92ED0903_1824837339",
-    "kind": "wall",
-    "centre": {
-      "x": 28928,
-      "y": -33280,
+      "x": 54528,
+      "y": -56832,
       "z": 0
     },
     "right": {
@@ -2925,12 +3775,12 @@
     "goal": ""
   },
   {
-    "label": "KT14_Rebox_Bot0_S",
-    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92ED0903_1824987340",
+    "label": "KT31_EnemyBox_E7_S",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F929D0A03_1615119161",
     "kind": "wall",
     "centre": {
-      "x": 28928,
-      "y": -33792,
+      "x": 54528,
+      "y": -57344,
       "z": 0
     },
     "right": {
@@ -2950,12 +3800,12 @@
     "goal": ""
   },
   {
-    "label": "KT14_Rebox_Bot0_E",
-    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92ED0903_1825122341",
+    "label": "KT31_EnemyBox_E7_E",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F929D0A03_1615684162",
     "kind": "wall",
     "centre": {
-      "x": 29184,
-      "y": -33536,
+      "x": 54784,
+      "y": -57088,
       "z": 0
     },
     "right": {
@@ -2975,37 +3825,12 @@
     "goal": ""
   },
   {
-    "label": "KT14_Rebox_Bot1_N",
-    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92ED0903_1825498344",
+    "label": "KT32_GridTest_A",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92CA0A03_2052299708",
     "kind": "wall",
     "centre": {
-      "x": 29440,
-      "y": -31744,
-      "z": 0
-    },
-    "right": {
-      "x": 1.0,
-      "y": 0.0,
-      "z": 0.0
-    },
-    "normal": {
-      "x": -0.0,
-      "y": 1.0,
-      "z": 0.0
-    },
-    "width": 512.0,
-    "height": 384.0,
-    "depth": 512.0,
-    "rise": 0.0,
-    "goal": ""
-  },
-  {
-    "label": "KT14_Rebox_Bot1_S",
-    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92ED0903_1825626345",
-    "kind": "wall",
-    "centre": {
-      "x": 29440,
-      "y": -32256,
+      "x": -1280,
+      "y": -61440,
       "z": 0
     },
     "right": {
@@ -3025,37 +3850,12 @@
     "goal": ""
   },
   {
-    "label": "KT14_Rebox_Bot1_E",
-    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92ED0903_1825752346",
+    "label": "KT32_GridTest_B",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92CA0A03_2053864710",
     "kind": "wall",
     "centre": {
-      "x": 29696,
-      "y": -32000,
-      "z": 0
-    },
-    "right": {
-      "x": 2.83276944882399e-16,
-      "y": 1.0,
-      "z": 0.0
-    },
-    "normal": {
-      "x": -1.0,
-      "y": 2.83276944882399e-16,
-      "z": 0.0
-    },
-    "width": 512.0,
-    "height": 384.0,
-    "depth": 512.0,
-    "rise": 0.0,
-    "goal": ""
-  },
-  {
-    "label": "KT14_Rebox_Bot2_N",
-    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92ED0903_1826102349",
-    "kind": "wall",
-    "centre": {
-      "x": 28928,
-      "y": -30208,
+      "x": -1536,
+      "y": -60672,
       "z": 0
     },
     "right": {
@@ -3075,12 +3875,12 @@
     "goal": ""
   },
   {
-    "label": "KT14_Rebox_Bot2_S",
-    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92ED0903_1826220350",
+    "label": "KT33_WallTake_Enemy_N",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_M1_Solid_C_UAID_30560F202F92CB0A03_1610712045",
     "kind": "wall",
     "centre": {
-      "x": 28928,
-      "y": -30720,
+      "x": 61952,
+      "y": -91904,
       "z": 0
     },
     "right": {
@@ -3100,387 +3900,12 @@
     "goal": ""
   },
   {
-    "label": "KT14_Rebox_Bot2_E",
-    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92ED0903_1826377351",
+    "label": "KT33_WallTake_Enemy_S",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_M1_Solid_C_UAID_30560F202F92CB0A03_1611327046",
     "kind": "wall",
     "centre": {
-      "x": 29184,
-      "y": -30464,
-      "z": 0
-    },
-    "right": {
-      "x": 2.83276944882399e-16,
-      "y": 1.0,
-      "z": 0.0
-    },
-    "normal": {
-      "x": -1.0,
-      "y": 2.83276944882399e-16,
-      "z": 0.0
-    },
-    "width": 512.0,
-    "height": 384.0,
-    "depth": 512.0,
-    "rise": 0.0,
-    "goal": ""
-  },
-  {
-    "label": "KT14_Rebox_Cover0",
-    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92ED0903_1826739354",
-    "kind": "wall",
-    "centre": {
-      "x": 27648,
-      "y": -33024,
-      "z": 0
-    },
-    "right": {
-      "x": 2.83276944882399e-16,
-      "y": 1.0,
-      "z": 0.0
-    },
-    "normal": {
-      "x": -1.0,
-      "y": 2.83276944882399e-16,
-      "z": 0.0
-    },
-    "width": 512.0,
-    "height": 384.0,
-    "depth": 512.0,
-    "rise": 0.0,
-    "goal": ""
-  },
-  {
-    "label": "KT14_Rebox_Cover1",
-    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92ED0903_1826852355",
-    "kind": "wall",
-    "centre": {
-      "x": 27648,
-      "y": -30976,
-      "z": 0
-    },
-    "right": {
-      "x": 2.83276944882399e-16,
-      "y": 1.0,
-      "z": 0.0
-    },
-    "normal": {
-      "x": -1.0,
-      "y": 2.83276944882399e-16,
-      "z": 0.0
-    },
-    "width": 512.0,
-    "height": 384.0,
-    "depth": 512.0,
-    "rise": 0.0,
-    "goal": ""
-  },
-  {
-    "label": "KT16_Op_L1_Cover_0",
-    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92F00903_1903369986",
-    "kind": "wall",
-    "centre": {
-      "x": -28160,
-      "y": -64768,
-      "z": 0
-    },
-    "right": {
-      "x": 2.83276944882399e-16,
-      "y": 1.0,
-      "z": 0.0
-    },
-    "normal": {
-      "x": -1.0,
-      "y": 2.83276944882399e-16,
-      "z": 0.0
-    },
-    "width": 512.0,
-    "height": 384.0,
-    "depth": 512.0,
-    "rise": 0.0,
-    "goal": ""
-  },
-  {
-    "label": "KT16_Op_L1_Cover_1",
-    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92F00903_1903503987",
-    "kind": "wall",
-    "centre": {
-      "x": -31744,
-      "y": -64256,
-      "z": 0
-    },
-    "right": {
-      "x": 2.83276944882399e-16,
-      "y": 1.0,
-      "z": 0.0
-    },
-    "normal": {
-      "x": -1.0,
-      "y": 2.83276944882399e-16,
-      "z": 0.0
-    },
-    "width": 512.0,
-    "height": 384.0,
-    "depth": 512.0,
-    "rise": 0.0,
-    "goal": ""
-  },
-  {
-    "label": "KT16_Op_L1_Cover_2",
-    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92F00903_1903643988",
-    "kind": "wall",
-    "centre": {
-      "x": -32256,
-      "y": -65280,
-      "z": 0
-    },
-    "right": {
-      "x": 2.83276944882399e-16,
-      "y": 1.0,
-      "z": 0.0
-    },
-    "normal": {
-      "x": -1.0,
-      "y": 2.83276944882399e-16,
-      "z": 0.0
-    },
-    "width": 512.0,
-    "height": 384.0,
-    "depth": 512.0,
-    "rise": 0.0,
-    "goal": ""
-  },
-  {
-    "label": "KT16_Op_L1_Cover_3",
-    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92F00903_1904209989",
-    "kind": "wall",
-    "centre": {
-      "x": -28160,
-      "y": -63744,
-      "z": 0
-    },
-    "right": {
-      "x": 2.83276944882399e-16,
-      "y": 1.0,
-      "z": 0.0
-    },
-    "normal": {
-      "x": -1.0,
-      "y": 2.83276944882399e-16,
-      "z": 0.0
-    },
-    "width": 512.0,
-    "height": 384.0,
-    "depth": 512.0,
-    "rise": 0.0,
-    "goal": ""
-  },
-  {
-    "label": "KT16_Op_L1_BotCover_0",
-    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92F00903_1904361990",
-    "kind": "wall",
-    "centre": {
-      "x": -29696,
-      "y": -65280,
-      "z": 0
-    },
-    "right": {
-      "x": 2.83276944882399e-16,
-      "y": 1.0,
-      "z": 0.0
-    },
-    "normal": {
-      "x": -1.0,
-      "y": 2.83276944882399e-16,
-      "z": 0.0
-    },
-    "width": 512.0,
-    "height": 384.0,
-    "depth": 512.0,
-    "rise": 0.0,
-    "goal": ""
-  },
-  {
-    "label": "KT16_Op_L1_BotCover_1",
-    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92F00903_1904501991",
-    "kind": "wall",
-    "centre": {
-      "x": -29696,
-      "y": -64256,
-      "z": 0
-    },
-    "right": {
-      "x": 2.83276944882399e-16,
-      "y": 1.0,
-      "z": 0.0
-    },
-    "normal": {
-      "x": -1.0,
-      "y": 2.83276944882399e-16,
-      "z": 0.0
-    },
-    "width": 512.0,
-    "height": 384.0,
-    "depth": 512.0,
-    "rise": 0.0,
-    "goal": ""
-  },
-  {
-    "label": "KT16_Op_L1_BotCover_2",
-    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92F00903_1904669992",
-    "kind": "wall",
-    "centre": {
-      "x": -33792,
-      "y": -64768,
-      "z": 0
-    },
-    "right": {
-      "x": 2.83276944882399e-16,
-      "y": 1.0,
-      "z": 0.0
-    },
-    "normal": {
-      "x": -1.0,
-      "y": 2.83276944882399e-16,
-      "z": 0.0
-    },
-    "width": 512.0,
-    "height": 384.0,
-    "depth": 512.0,
-    "rise": 0.0,
-    "goal": ""
-  },
-  {
-    "label": "KT16_Op_L1_BotCover_3",
-    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92F00903_1904795993",
-    "kind": "wall",
-    "centre": {
-      "x": -33792,
-      "y": -63744,
-      "z": 0
-    },
-    "right": {
-      "x": 2.83276944882399e-16,
-      "y": 1.0,
-      "z": 0.0
-    },
-    "normal": {
-      "x": -1.0,
-      "y": 2.83276944882399e-16,
-      "z": 0.0
-    },
-    "width": 512.0,
-    "height": 384.0,
-    "depth": 512.0,
-    "rise": 0.0,
-    "goal": ""
-  },
-  {
-    "label": "KT16_Op_R3_EditWall",
-    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92F00903_1904952994",
-    "kind": "wall",
-    "centre": {
-      "x": -30720,
-      "y": -68352,
-      "z": 0
-    },
-    "right": {
-      "x": 2.83276944882399e-16,
-      "y": 1.0,
-      "z": 0.0
-    },
-    "normal": {
-      "x": -1.0,
-      "y": 2.83276944882399e-16,
-      "z": 0.0
-    },
-    "width": 512.0,
-    "height": 384.0,
-    "depth": 512.0,
-    "rise": 0.0,
-    "goal": ""
-  },
-  {
-    "label": "KT16_Op_R4_Wall_N55",
-    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92F00903_1905687999",
-    "kind": "wall",
-    "centre": {
-      "x": -27904,
-      "y": -67584,
-      "z": 768
-    },
-    "right": {
-      "x": 1.0,
-      "y": 0.0,
-      "z": 0.0
-    },
-    "normal": {
-      "x": -0.0,
-      "y": 1.0,
-      "z": 0.0
-    },
-    "width": 512.0,
-    "height": 384.0,
-    "depth": 512.0,
-    "rise": 0.0,
-    "goal": ""
-  },
-  {
-    "label": "KT16_Op_R4_Wall_N54",
-    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92F00903_1906109002",
-    "kind": "wall",
-    "centre": {
-      "x": -27392,
-      "y": -67584,
-      "z": 768
-    },
-    "right": {
-      "x": 1.0,
-      "y": 0.0,
-      "z": 0.0
-    },
-    "normal": {
-      "x": -0.0,
-      "y": 1.0,
-      "z": 0.0
-    },
-    "width": 512.0,
-    "height": 384.0,
-    "depth": 512.0,
-    "rise": 0.0,
-    "goal": ""
-  },
-  {
-    "label": "KT16_Op_R4_Wall_Front",
-    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92F00903_1906241003",
-    "kind": "wall",
-    "centre": {
-      "x": -28160,
-      "y": -67840,
-      "z": 768
-    },
-    "right": {
-      "x": 2.83276944882399e-16,
-      "y": 1.0,
-      "z": 0.0
-    },
-    "normal": {
-      "x": -1.0,
-      "y": 2.83276944882399e-16,
-      "z": 0.0
-    },
-    "width": 512.0,
-    "height": 384.0,
-    "depth": 512.0,
-    "rise": 0.0,
-    "goal": ""
-  },
-  {
-    "label": "KT16_Op_R5_Box0_N",
-    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92F00903_1906387004",
-    "kind": "wall",
-    "centre": {
-      "x": -26368,
-      "y": -68608,
+      "x": 61952,
+      "y": -92416,
       "z": 0
     },
     "right": {
@@ -3500,37 +3925,12 @@
     "goal": ""
   },
   {
-    "label": "KT16_Op_R5_Box0_S",
-    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92F00903_1906515005",
+    "label": "KT33_WallTake_Enemy_E",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_M1_Solid_C_UAID_30560F202F92CB0A03_1611953047",
     "kind": "wall",
     "centre": {
-      "x": -26368,
-      "y": -69120,
-      "z": 0
-    },
-    "right": {
-      "x": 1.0,
-      "y": 0.0,
-      "z": 0.0
-    },
-    "normal": {
-      "x": -0.0,
-      "y": 1.0,
-      "z": 0.0
-    },
-    "width": 512.0,
-    "height": 384.0,
-    "depth": 512.0,
-    "rise": 0.0,
-    "goal": ""
-  },
-  {
-    "label": "KT16_Op_R5_Box0_E",
-    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92F00903_1906666006",
-    "kind": "wall",
-    "centre": {
-      "x": -26112,
-      "y": -68864,
+      "x": 62208,
+      "y": -92160,
       "z": 0
     },
     "right": {
@@ -3550,963 +3950,13 @@
     "goal": ""
   },
   {
-    "label": "KT16_Op_R5_Box0_W",
-    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92F00903_1906798007",
+    "label": "KT33_WallTake_Enemy_W",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_M1_Solid_C_UAID_30560F202F92CB0A03_1612584048",
     "kind": "wall",
     "centre": {
-      "x": -26624,
-      "y": -68864,
+      "x": 61696,
+      "y": -92160,
       "z": 0
-    },
-    "right": {
-      "x": 2.83276944882399e-16,
-      "y": 1.0,
-      "z": 0.0
-    },
-    "normal": {
-      "x": -1.0,
-      "y": 2.83276944882399e-16,
-      "z": 0.0
-    },
-    "width": 512.0,
-    "height": 384.0,
-    "depth": 512.0,
-    "rise": 0.0,
-    "goal": ""
-  },
-  {
-    "label": "KT16_Op_R5_Box1_N",
-    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92F00903_1907128009",
-    "kind": "wall",
-    "centre": {
-      "x": -26368,
-      "y": -67584,
-      "z": 0
-    },
-    "right": {
-      "x": 1.0,
-      "y": 0.0,
-      "z": 0.0
-    },
-    "normal": {
-      "x": -0.0,
-      "y": 1.0,
-      "z": 0.0
-    },
-    "width": 512.0,
-    "height": 384.0,
-    "depth": 512.0,
-    "rise": 0.0,
-    "goal": ""
-  },
-  {
-    "label": "KT16_Op_R5_Box1_S",
-    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92F00903_1907280010",
-    "kind": "wall",
-    "centre": {
-      "x": -26368,
-      "y": -68096,
-      "z": 0
-    },
-    "right": {
-      "x": 1.0,
-      "y": 0.0,
-      "z": 0.0
-    },
-    "normal": {
-      "x": -0.0,
-      "y": 1.0,
-      "z": 0.0
-    },
-    "width": 512.0,
-    "height": 384.0,
-    "depth": 512.0,
-    "rise": 0.0,
-    "goal": ""
-  },
-  {
-    "label": "KT16_Op_R5_Box1_E",
-    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92F00903_1907428011",
-    "kind": "wall",
-    "centre": {
-      "x": -26112,
-      "y": -67840,
-      "z": 0
-    },
-    "right": {
-      "x": 2.83276944882399e-16,
-      "y": 1.0,
-      "z": 0.0
-    },
-    "normal": {
-      "x": -1.0,
-      "y": 2.83276944882399e-16,
-      "z": 0.0
-    },
-    "width": 512.0,
-    "height": 384.0,
-    "depth": 512.0,
-    "rise": 0.0,
-    "goal": ""
-  },
-  {
-    "label": "KT16_Op_R5_Box1_W",
-    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92F00903_1907583012",
-    "kind": "wall",
-    "centre": {
-      "x": -26624,
-      "y": -67840,
-      "z": 0
-    },
-    "right": {
-      "x": 2.83276944882399e-16,
-      "y": 1.0,
-      "z": 0.0
-    },
-    "normal": {
-      "x": -1.0,
-      "y": 2.83276944882399e-16,
-      "z": 0.0
-    },
-    "width": 512.0,
-    "height": 384.0,
-    "depth": 512.0,
-    "rise": 0.0,
-    "goal": ""
-  },
-  {
-    "label": "KT16_Op_L3_Perch0_0N",
-    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92F00903_1907906014",
-    "kind": "wall",
-    "centre": {
-      "x": -24832,
-      "y": -67072,
-      "z": 0
-    },
-    "right": {
-      "x": 1.0,
-      "y": 0.0,
-      "z": 0.0
-    },
-    "normal": {
-      "x": -0.0,
-      "y": 1.0,
-      "z": 0.0
-    },
-    "width": 512.0,
-    "height": 384.0,
-    "depth": 512.0,
-    "rise": 0.0,
-    "goal": ""
-  },
-  {
-    "label": "KT16_Op_L3_Perch0_0S",
-    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92F00903_1908074015",
-    "kind": "wall",
-    "centre": {
-      "x": -24832,
-      "y": -67584,
-      "z": 0
-    },
-    "right": {
-      "x": 1.0,
-      "y": 0.0,
-      "z": 0.0
-    },
-    "normal": {
-      "x": -0.0,
-      "y": 1.0,
-      "z": 0.0
-    },
-    "width": 512.0,
-    "height": 384.0,
-    "depth": 512.0,
-    "rise": 0.0,
-    "goal": ""
-  },
-  {
-    "label": "KT16_Op_L3_Perch0_0E",
-    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92F00903_1908240016",
-    "kind": "wall",
-    "centre": {
-      "x": -24576,
-      "y": -67328,
-      "z": 0
-    },
-    "right": {
-      "x": 2.83276944882399e-16,
-      "y": 1.0,
-      "z": 0.0
-    },
-    "normal": {
-      "x": -1.0,
-      "y": 2.83276944882399e-16,
-      "z": 0.0
-    },
-    "width": 512.0,
-    "height": 384.0,
-    "depth": 512.0,
-    "rise": 0.0,
-    "goal": ""
-  },
-  {
-    "label": "KT16_Op_L3_Perch0_0W",
-    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92F00903_1908373017",
-    "kind": "wall",
-    "centre": {
-      "x": -25088,
-      "y": -67328,
-      "z": 0
-    },
-    "right": {
-      "x": 2.83276944882399e-16,
-      "y": 1.0,
-      "z": 0.0
-    },
-    "normal": {
-      "x": -1.0,
-      "y": 2.83276944882399e-16,
-      "z": 0.0
-    },
-    "width": 512.0,
-    "height": 384.0,
-    "depth": 512.0,
-    "rise": 0.0,
-    "goal": ""
-  },
-  {
-    "label": "KT16_Op_L3_Perch0_1N",
-    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92F00903_1908519018",
-    "kind": "wall",
-    "centre": {
-      "x": -24832,
-      "y": -67072,
-      "z": 384
-    },
-    "right": {
-      "x": 1.0,
-      "y": 0.0,
-      "z": 0.0
-    },
-    "normal": {
-      "x": -0.0,
-      "y": 1.0,
-      "z": 0.0
-    },
-    "width": 512.0,
-    "height": 384.0,
-    "depth": 512.0,
-    "rise": 0.0,
-    "goal": ""
-  },
-  {
-    "label": "KT16_Op_L3_Perch0_1S",
-    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92F00903_1908641019",
-    "kind": "wall",
-    "centre": {
-      "x": -24832,
-      "y": -67584,
-      "z": 384
-    },
-    "right": {
-      "x": 1.0,
-      "y": 0.0,
-      "z": 0.0
-    },
-    "normal": {
-      "x": -0.0,
-      "y": 1.0,
-      "z": 0.0
-    },
-    "width": 512.0,
-    "height": 384.0,
-    "depth": 512.0,
-    "rise": 0.0,
-    "goal": ""
-  },
-  {
-    "label": "KT16_Op_L3_Perch0_1E",
-    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92F00903_1908791020",
-    "kind": "wall",
-    "centre": {
-      "x": -24576,
-      "y": -67328,
-      "z": 384
-    },
-    "right": {
-      "x": 2.83276944882399e-16,
-      "y": 1.0,
-      "z": 0.0
-    },
-    "normal": {
-      "x": -1.0,
-      "y": 2.83276944882399e-16,
-      "z": 0.0
-    },
-    "width": 512.0,
-    "height": 384.0,
-    "depth": 512.0,
-    "rise": 0.0,
-    "goal": ""
-  },
-  {
-    "label": "KT16_Op_L3_Perch0_1W",
-    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92F00903_1908926021",
-    "kind": "wall",
-    "centre": {
-      "x": -25088,
-      "y": -67328,
-      "z": 384
-    },
-    "right": {
-      "x": 2.83276944882399e-16,
-      "y": 1.0,
-      "z": 0.0
-    },
-    "normal": {
-      "x": -1.0,
-      "y": 2.83276944882399e-16,
-      "z": 0.0
-    },
-    "width": 512.0,
-    "height": 384.0,
-    "depth": 512.0,
-    "rise": 0.0,
-    "goal": ""
-  },
-  {
-    "label": "KT16_Op_L3_Perch0_Cover",
-    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92F00903_1909234023",
-    "kind": "wall",
-    "centre": {
-      "x": -25088,
-      "y": -67328,
-      "z": 768
-    },
-    "right": {
-      "x": 2.83276944882399e-16,
-      "y": 1.0,
-      "z": 0.0
-    },
-    "normal": {
-      "x": -1.0,
-      "y": 2.83276944882399e-16,
-      "z": 0.0
-    },
-    "width": 512.0,
-    "height": 384.0,
-    "depth": 512.0,
-    "rise": 0.0,
-    "goal": ""
-  },
-  {
-    "label": "KT16_Op_L3_Perch1_0N",
-    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92F00903_1909380024",
-    "kind": "wall",
-    "centre": {
-      "x": -22272,
-      "y": -67072,
-      "z": 0
-    },
-    "right": {
-      "x": 1.0,
-      "y": 0.0,
-      "z": 0.0
-    },
-    "normal": {
-      "x": -0.0,
-      "y": 1.0,
-      "z": 0.0
-    },
-    "width": 512.0,
-    "height": 384.0,
-    "depth": 512.0,
-    "rise": 0.0,
-    "goal": ""
-  },
-  {
-    "label": "KT16_Op_L3_Perch1_0S",
-    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92F00903_1909533025",
-    "kind": "wall",
-    "centre": {
-      "x": -22272,
-      "y": -67584,
-      "z": 0
-    },
-    "right": {
-      "x": 1.0,
-      "y": 0.0,
-      "z": 0.0
-    },
-    "normal": {
-      "x": -0.0,
-      "y": 1.0,
-      "z": 0.0
-    },
-    "width": 512.0,
-    "height": 384.0,
-    "depth": 512.0,
-    "rise": 0.0,
-    "goal": ""
-  },
-  {
-    "label": "KT16_Op_L3_Perch1_0E",
-    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92F00903_1909685026",
-    "kind": "wall",
-    "centre": {
-      "x": -22016,
-      "y": -67328,
-      "z": 0
-    },
-    "right": {
-      "x": 2.83276944882399e-16,
-      "y": 1.0,
-      "z": 0.0
-    },
-    "normal": {
-      "x": -1.0,
-      "y": 2.83276944882399e-16,
-      "z": 0.0
-    },
-    "width": 512.0,
-    "height": 384.0,
-    "depth": 512.0,
-    "rise": 0.0,
-    "goal": ""
-  },
-  {
-    "label": "KT16_Op_L3_Perch1_0W",
-    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92F00903_1909798027",
-    "kind": "wall",
-    "centre": {
-      "x": -22528,
-      "y": -67328,
-      "z": 0
-    },
-    "right": {
-      "x": 2.83276944882399e-16,
-      "y": 1.0,
-      "z": 0.0
-    },
-    "normal": {
-      "x": -1.0,
-      "y": 2.83276944882399e-16,
-      "z": 0.0
-    },
-    "width": 512.0,
-    "height": 384.0,
-    "depth": 512.0,
-    "rise": 0.0,
-    "goal": ""
-  },
-  {
-    "label": "KT16_Op_L3_Perch1_1N",
-    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92F00903_1909939028",
-    "kind": "wall",
-    "centre": {
-      "x": -22272,
-      "y": -67072,
-      "z": 384
-    },
-    "right": {
-      "x": 1.0,
-      "y": 0.0,
-      "z": 0.0
-    },
-    "normal": {
-      "x": -0.0,
-      "y": 1.0,
-      "z": 0.0
-    },
-    "width": 512.0,
-    "height": 384.0,
-    "depth": 512.0,
-    "rise": 0.0,
-    "goal": ""
-  },
-  {
-    "label": "KT16_Op_L3_Perch1_1S",
-    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92F00903_1910074029",
-    "kind": "wall",
-    "centre": {
-      "x": -22272,
-      "y": -67584,
-      "z": 384
-    },
-    "right": {
-      "x": 1.0,
-      "y": 0.0,
-      "z": 0.0
-    },
-    "normal": {
-      "x": -0.0,
-      "y": 1.0,
-      "z": 0.0
-    },
-    "width": 512.0,
-    "height": 384.0,
-    "depth": 512.0,
-    "rise": 0.0,
-    "goal": ""
-  },
-  {
-    "label": "KT16_Op_L3_Perch1_1E",
-    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92F00903_1910212030",
-    "kind": "wall",
-    "centre": {
-      "x": -22016,
-      "y": -67328,
-      "z": 384
-    },
-    "right": {
-      "x": 2.83276944882399e-16,
-      "y": 1.0,
-      "z": 0.0
-    },
-    "normal": {
-      "x": -1.0,
-      "y": 2.83276944882399e-16,
-      "z": 0.0
-    },
-    "width": 512.0,
-    "height": 384.0,
-    "depth": 512.0,
-    "rise": 0.0,
-    "goal": ""
-  },
-  {
-    "label": "KT16_Op_L3_Perch1_1W",
-    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92F00903_1910330031",
-    "kind": "wall",
-    "centre": {
-      "x": -22528,
-      "y": -67328,
-      "z": 384
-    },
-    "right": {
-      "x": 2.83276944882399e-16,
-      "y": 1.0,
-      "z": 0.0
-    },
-    "normal": {
-      "x": -1.0,
-      "y": 2.83276944882399e-16,
-      "z": 0.0
-    },
-    "width": 512.0,
-    "height": 384.0,
-    "depth": 512.0,
-    "rise": 0.0,
-    "goal": ""
-  },
-  {
-    "label": "KT16_Op_L3_Perch1_Cover",
-    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92F00903_1910596033",
-    "kind": "wall",
-    "centre": {
-      "x": -22528,
-      "y": -67328,
-      "z": 768
-    },
-    "right": {
-      "x": 2.83276944882399e-16,
-      "y": 1.0,
-      "z": 0.0
-    },
-    "normal": {
-      "x": -1.0,
-      "y": 2.83276944882399e-16,
-      "z": 0.0
-    },
-    "width": 512.0,
-    "height": 384.0,
-    "depth": 512.0,
-    "rise": 0.0,
-    "goal": ""
-  },
-  {
-    "label": "KT18_Sky_You_N",
-    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92F10903_1985234438",
-    "kind": "wall",
-    "centre": {
-      "x": 21248,
-      "y": -44032,
-      "z": 7680
-    },
-    "right": {
-      "x": 1.0,
-      "y": 0.0,
-      "z": 0.0
-    },
-    "normal": {
-      "x": -0.0,
-      "y": 1.0,
-      "z": 0.0
-    },
-    "width": 512.0,
-    "height": 384.0,
-    "depth": 512.0,
-    "rise": 0.0,
-    "goal": ""
-  },
-  {
-    "label": "KT18_Sky_You_S",
-    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92F10903_1985371439",
-    "kind": "wall",
-    "centre": {
-      "x": 21248,
-      "y": -44544,
-      "z": 7680
-    },
-    "right": {
-      "x": 1.0,
-      "y": 0.0,
-      "z": 0.0
-    },
-    "normal": {
-      "x": -0.0,
-      "y": 1.0,
-      "z": 0.0
-    },
-    "width": 512.0,
-    "height": 384.0,
-    "depth": 512.0,
-    "rise": 0.0,
-    "goal": ""
-  },
-  {
-    "label": "KT18_Sky_You_E",
-    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92F10903_1985490440",
-    "kind": "wall",
-    "centre": {
-      "x": 21504,
-      "y": -44288,
-      "z": 7680
-    },
-    "right": {
-      "x": 2.83276944882399e-16,
-      "y": 1.0,
-      "z": 0.0
-    },
-    "normal": {
-      "x": -1.0,
-      "y": 2.83276944882399e-16,
-      "z": 0.0
-    },
-    "width": 512.0,
-    "height": 384.0,
-    "depth": 512.0,
-    "rise": 0.0,
-    "goal": ""
-  },
-  {
-    "label": "KT18_Sky_You_W",
-    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92F10903_1985616441",
-    "kind": "wall",
-    "centre": {
-      "x": 20992,
-      "y": -44288,
-      "z": 7680
-    },
-    "right": {
-      "x": 2.83276944882399e-16,
-      "y": 1.0,
-      "z": 0.0
-    },
-    "normal": {
-      "x": -1.0,
-      "y": 2.83276944882399e-16,
-      "z": 0.0
-    },
-    "width": 512.0,
-    "height": 384.0,
-    "depth": 512.0,
-    "rise": 0.0,
-    "goal": ""
-  },
-  {
-    "label": "KT18_Sky_Bot0_N",
-    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92F10903_1985935443",
-    "kind": "wall",
-    "centre": {
-      "x": 23808,
-      "y": -44032,
-      "z": 7680
-    },
-    "right": {
-      "x": 1.0,
-      "y": 0.0,
-      "z": 0.0
-    },
-    "normal": {
-      "x": -0.0,
-      "y": 1.0,
-      "z": 0.0
-    },
-    "width": 512.0,
-    "height": 384.0,
-    "depth": 512.0,
-    "rise": 0.0,
-    "goal": ""
-  },
-  {
-    "label": "KT18_Sky_Bot0_S",
-    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92F10903_1986052444",
-    "kind": "wall",
-    "centre": {
-      "x": 23808,
-      "y": -44544,
-      "z": 7680
-    },
-    "right": {
-      "x": 1.0,
-      "y": 0.0,
-      "z": 0.0
-    },
-    "normal": {
-      "x": -0.0,
-      "y": 1.0,
-      "z": 0.0
-    },
-    "width": 512.0,
-    "height": 384.0,
-    "depth": 512.0,
-    "rise": 0.0,
-    "goal": ""
-  },
-  {
-    "label": "KT18_Sky_Bot0_E",
-    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92F10903_1986180445",
-    "kind": "wall",
-    "centre": {
-      "x": 24064,
-      "y": -44288,
-      "z": 7680
-    },
-    "right": {
-      "x": 2.83276944882399e-16,
-      "y": 1.0,
-      "z": 0.0
-    },
-    "normal": {
-      "x": -1.0,
-      "y": 2.83276944882399e-16,
-      "z": 0.0
-    },
-    "width": 512.0,
-    "height": 384.0,
-    "depth": 512.0,
-    "rise": 0.0,
-    "goal": ""
-  },
-  {
-    "label": "KT18_Sky_Bot1_N",
-    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92F10903_1986434447",
-    "kind": "wall",
-    "centre": {
-      "x": 25856,
-      "y": -44544,
-      "z": 7680
-    },
-    "right": {
-      "x": 1.0,
-      "y": 0.0,
-      "z": 0.0
-    },
-    "normal": {
-      "x": -0.0,
-      "y": 1.0,
-      "z": 0.0
-    },
-    "width": 512.0,
-    "height": 384.0,
-    "depth": 512.0,
-    "rise": 0.0,
-    "goal": ""
-  },
-  {
-    "label": "KT18_Sky_Bot1_S",
-    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92F10903_1986555448",
-    "kind": "wall",
-    "centre": {
-      "x": 25856,
-      "y": -45056,
-      "z": 7680
-    },
-    "right": {
-      "x": 1.0,
-      "y": 0.0,
-      "z": 0.0
-    },
-    "normal": {
-      "x": -0.0,
-      "y": 1.0,
-      "z": 0.0
-    },
-    "width": 512.0,
-    "height": 384.0,
-    "depth": 512.0,
-    "rise": 0.0,
-    "goal": ""
-  },
-  {
-    "label": "KT18_Sky_Bot1_E",
-    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92F10903_1986698449",
-    "kind": "wall",
-    "centre": {
-      "x": 26112,
-      "y": -44800,
-      "z": 7680
-    },
-    "right": {
-      "x": 2.83276944882399e-16,
-      "y": 1.0,
-      "z": 0.0
-    },
-    "normal": {
-      "x": -1.0,
-      "y": 2.83276944882399e-16,
-      "z": 0.0
-    },
-    "width": 512.0,
-    "height": 384.0,
-    "depth": 512.0,
-    "rise": 0.0,
-    "goal": ""
-  },
-  {
-    "label": "KT18_Sky_Bot2_N",
-    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92F10903_1986966451",
-    "kind": "wall",
-    "centre": {
-      "x": 25856,
-      "y": -43520,
-      "z": 7680
-    },
-    "right": {
-      "x": 1.0,
-      "y": 0.0,
-      "z": 0.0
-    },
-    "normal": {
-      "x": -0.0,
-      "y": 1.0,
-      "z": 0.0
-    },
-    "width": 512.0,
-    "height": 384.0,
-    "depth": 512.0,
-    "rise": 0.0,
-    "goal": ""
-  },
-  {
-    "label": "KT18_Sky_Bot2_S",
-    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92F10903_1987115452",
-    "kind": "wall",
-    "centre": {
-      "x": 25856,
-      "y": -44032,
-      "z": 7680
-    },
-    "right": {
-      "x": 1.0,
-      "y": 0.0,
-      "z": 0.0
-    },
-    "normal": {
-      "x": -0.0,
-      "y": 1.0,
-      "z": 0.0
-    },
-    "width": 512.0,
-    "height": 384.0,
-    "depth": 512.0,
-    "rise": 0.0,
-    "goal": ""
-  },
-  {
-    "label": "KT18_Sky_Bot2_E",
-    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92F10903_1987264453",
-    "kind": "wall",
-    "centre": {
-      "x": 26112,
-      "y": -43776,
-      "z": 7680
-    },
-    "right": {
-      "x": 2.83276944882399e-16,
-      "y": 1.0,
-      "z": 0.0
-    },
-    "normal": {
-      "x": -1.0,
-      "y": 2.83276944882399e-16,
-      "z": 0.0
-    },
-    "width": 512.0,
-    "height": 384.0,
-    "depth": 512.0,
-    "rise": 0.0,
-    "goal": ""
-  },
-  {
-    "label": "KT18_Sky_Bot3_N",
-    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92F10903_1987524455",
-    "kind": "wall",
-    "centre": {
-      "x": 27392,
-      "y": -44032,
-      "z": 7680
-    },
-    "right": {
-      "x": 1.0,
-      "y": 0.0,
-      "z": 0.0
-    },
-    "normal": {
-      "x": -0.0,
-      "y": 1.0,
-      "z": 0.0
-    },
-    "width": 512.0,
-    "height": 384.0,
-    "depth": 512.0,
-    "rise": 0.0,
-    "goal": ""
-  },
-  {
-    "label": "KT18_Sky_Bot3_S",
-    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92F10903_1987654456",
-    "kind": "wall",
-    "centre": {
-      "x": 27392,
-      "y": -44544,
-      "z": 7680
-    },
-    "right": {
-      "x": 1.0,
-      "y": 0.0,
-      "z": 0.0
-    },
-    "normal": {
-      "x": -0.0,
-      "y": 1.0,
-      "z": 0.0
-    },
-    "width": 512.0,
-    "height": 384.0,
-    "depth": 512.0,
-    "rise": 0.0,
-    "goal": ""
-  },
-  {
-    "label": "KT18_Sky_Bot3_E",
-    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92F10903_1987790457",
-    "kind": "wall",
-    "centre": {
-      "x": 27648,
-      "y": -44288,
-      "z": 7680
     },
     "right": {
       "x": 2.83276944882399e-16,
