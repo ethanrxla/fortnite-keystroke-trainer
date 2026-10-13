@@ -99,6 +99,11 @@ keystroke_drill_device := class(creative_device):
     # With TopLevels set, the rep runs until the top is reached (not the first checked step), up to this long after
     # the cue sequence ends (player 2026-10-13: 90s "reps are too short").
     @editable TopWaitSeconds:float = 15.0
+    # Bots to clear (0 = off): the lane spawns this many from the guard spawners tagged kt_lane_bot_tag near it at the
+    # start of every rep, and the rep lasts until they are all eliminated (player 2026-10-13, tunnel: "the rep last
+    # until you clear the bots"), the player leaves, or BotClearSeconds pass. Leftover bots are despawned.
+    @editable BotsToClear:int = 0
+    @editable BotClearSeconds:float = 180.0
     # Wire a gun target's hit event to GunHit and a pickaxe target's hit event to PickaxeHit in the
     # editor (device event binding, not Verse). target_hit checks read these. Unlinked is fine.
     # Leaving the lane ends the set (and a section's run): more than this far, in cm, from the current rep's start
@@ -119,6 +124,8 @@ keystroke_drill_device := class(creative_device):
     var ReturnPoint:?vector3 = false
     var RepsOverride:int = 0
     var CurrentRep:int = 1
+    var LaneBots:[]guard_spawner_device = array{}
+    var BotsDown:int = 0
     var Metronome:audio_player_device = audio_player_device{}
 
     var Busy:logic = false
@@ -161,12 +168,33 @@ keystroke_drill_device := class(creative_device):
             G.TriggeredEvent.Subscribe(OnGunHit)
         if (K := NearestTrigger[kt_pickaxe_hit_tag]):
             K.TriggeredEvent.Subscribe(OnPickaxeHit)
+        if (BotsToClear > 0):
+            Here := GetTransform().Translation
+            for (O : FindCreativeObjectsWithTag(kt_lane_bot_tag), S := guard_spawner_device[O], Distance(S.GetTransform().Translation, Here) < 9000.0):
+                set LaneBots += array{S}
+                S.EliminatedEvent.Subscribe(OnBotDown)
         # A drill plate in its wing (tools/build_drill_plates.py) fires the start trigger beside this lane: one set,
         # then back to where the player shot it from.
         if (S := NearestTrigger[kt_drill_start_tag]):
             S.TriggeredEvent.Subscribe(OnStartShot)
         if (AutoPad?):
             WatchPad()
+
+    OnBotDown(R:device_ai_interaction_result):void =
+        set BotsDown += 1
+
+    SpawnBots()<suspends>:void =
+        set BotsDown = 0
+        for (S : LaneBots):
+            S.Despawn()
+            S.Enable()
+        for (N := 1..BotsToClear, S := LaneBots[Mod[N - 1, Max(LaneBots.Length, 1)]]):
+            S.Spawn()
+            Sleep(0.2)
+
+    DespawnBots():void =
+        for (S : LaneBots):
+            S.Despawn()
 
     OnStartShot(Agent:?agent):void =
         if (A := Agent?, Player := player[A], not Busy?, Character := Player.GetFortCharacter[]):
@@ -303,7 +331,9 @@ keystroke_drill_device := class(creative_device):
             MovePlayer(Player, TrackOrigin(Drill, Rep))
             Cue.SetText(CueText("{Drill.Code}  {Drill.Name}   {ModeLabel}   rep {Rep}/{Reps}\n{ChainText(Drill.Steps, -1)}"))
             Sleep(if (FlowMode?) then ReadyMinSeconds else Max(Interval, ReadyMinSeconds))
-            if (HasPressure?):
+            if (BotsToClear > 0, LaneBots.Length > 0):
+                SpawnBots()
+            else if (HasPressure?):
                 Pressure.Trigger(Player)
             var RepResults:[]rep_result = array{}
             var RepDone:logic = false
@@ -347,6 +377,14 @@ keystroke_drill_device := class(creative_device):
             if (PanelShown?, UI := GetPlayerUI[Player]):
                 UI.RemoveWidget(EditPanel)
                 set PanelShown = false
+            if (BotsToClear > 0, LaneBots.Length > 0, not Abandoned?):
+                ClearBy := GetSimulationElapsedTime() + BotClearSeconds
+                loop:
+                    Cue.SetText(CueText("{Drill.Code}  {Drill.Name}   rep {Rep}/{Reps}\nClear the bots: {BotsDown}/{BotsToClear}"))
+                    if (BotsDown >= BotsToClear or Abandoned? or GetSimulationElapsedTime() >= ClearBy):
+                        break
+                    Sleep(0.25)
+                DespawnBots()
             if (TopLevels > 0, not RepDone?, not Abandoned?):
                 Cue.SetText(CueText("{Drill.Code}  {Drill.Name}   rep {Rep}/{Reps}\nKeep going: {TopLevels} levels up ends the rep"))
                 TopBy := GetSimulationElapsedTime() + TopWaitSeconds
@@ -381,6 +419,7 @@ keystroke_drill_device := class(creative_device):
             if (Active := Subscription?):
                 Active.Cancel()
             KTLog("set_end", Drill.Id, Apm, Reps, 0, rep_result.Unchecked, "abandoned=1|observed={ObservedReps}")
+            DespawnBots()
             KTHudDrillEnd(Player)
             if (UI := GetPlayerUI[Player]):
                 UI.RemoveWidget(Canvas)

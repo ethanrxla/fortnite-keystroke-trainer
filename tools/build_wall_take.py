@@ -6,10 +6,11 @@
 Player 2026-10-13 (two screenshots): "a live bot should be in the enemy box, it should be an enemy builds you have to
 take, the floor youre standing on is yours. the goal is to reclaim this enemies wall and kill the dummy inside."
 Layout, on the room's start ledge (KT_Ledge_W2, top z 0), forward = +X:
-  * your floor: one cell at ground level, where the WALL TAKE plate drops you (KT33_WallTake_Arrive);
+  * your floor: one cell at ground level next to the enemy box;
   * the enemy box: the next cell forward, four metal walls and a metal cone, with a live bot inside (team 2, HIGH
     accuracy, respawns 3 s after it is eliminated). Its walls can be shot down and taken;
-  * your high ground beside it: a metal floor one level up on the left (-Y) with metal stairs climbing to it.
+  * your high ground beside it: a metal floor one level up on the left (-Y) with metal stairs climbing to it; the
+    WALL TAKE plate drops you here (KT33_WallTake_Arrive).
 A Prop Manipulator covers the enemy box; the bot's elimination restores the box's health and shows its pieces again
 (VERIFY that it brings back a wall that was destroyed). --grid-offset moves every cell by that many cm in x and y, for
 when the player build grid turns out to be offset from the world (the hub's KT32_GridTest_A / _B).
@@ -91,7 +92,9 @@ def main():
         # Your pieces stay put; the enemy's can be shot down and taken.
         b.props(path, {"bForciblyStructurallySupported": True, "bCanBeDamaged": name.startswith("Enemy_")})
         m.tool(bm.SCENE, "save_actor", actor={"refPath": path})
-    pad = b.device(bm.TELEPORTER, PREFIX + "Arrive", you[0], you[1], 30.0)
+    # Arrive on the high ground beside the box (player 2026-10-13: "should spawn here", the raised floor).
+    hx, hy = next((x, y) for n, k, x, y, z, yaw in pieces if n == "High_Floor")
+    pad = b.device(bm.TELEPORTER, PREFIX + "Arrive", hx, hy + C / 2, H + 45.0)
     b.props(pad, {"knob_TeleporterGroup": "Group_None", "knob_TargetTeleporterGroup": "Group_None",
                   "teleporter Rift Visible": False, "maintain Relative Position": False, "conserve Momentum": False,
                   "enabledDuringPhase": "Always"})
