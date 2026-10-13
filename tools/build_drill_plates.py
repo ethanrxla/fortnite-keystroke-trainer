@@ -80,6 +80,9 @@ SHARED_ROOM = {"P4": "P6"}
 EXIT_ROOMS = {"B5": "KT3_03_Dest", "W3": "KT3_03_Dest", "P2": "KT3_04_Dest", "P6": "KT3_04_Dest", "P7": "KT3_04_Dest",
               "W2": "KT3_04_Dest", "E4": "KT3_05_Dest", "E7": "KT3_05_Dest"}
 EXIT_Z, EXIT_SIZE = 470.0, 200.0
+# Lane rooms no longer get exit rifts: the EXIT plates replace them, and the rift pad behind the start was walked into
+# and read as a stray device (player 2026-10-13).
+EXIT_RIFTS = False
 # Extra exit rifts to the main lobby: (code, x, y, z). Routed by install_rift_router.py (DRILL_RIFTS).
 LOBBY_EXITS = [("LAB", -21760.0, -97600.0, 0.0)]
 IGNORE = ("KT_Wall_", "KT_Wing_", "KT_Hub", "KT_Ceil_", "KT19_", "KT23_Theme_Move_", PREFIX)
@@ -250,6 +253,8 @@ def main():
         b.tag(trig, "kt_drill_start_tag")
         m.tool(bm.SCENE, "save_actor", actor={"refPath": trig})
         starts[r["code"]] = trig
+        if not EXIT_RIFTS:
+            continue
         t = b.device(bm.TELEPORTER, f"{PREFIX}{r['code']}_Exit", r["x"], r["y"], r["z"])
         b.props(t, {"knob_TeleporterGroup": "Group_None", "knob_TargetTeleporterGroup": "Group_None",
                     "teleporter Rift Visible": True, "enabledDuringPhase": "Always"})

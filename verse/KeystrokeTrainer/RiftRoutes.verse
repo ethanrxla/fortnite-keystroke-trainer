@@ -26,12 +26,5 @@ RiftRoutes:[]rift_route_def = array{
     rift_route_def{Entry := vector3{X := -22784.0, Y := -68864.0, Z := 1536.0}, Exit := vector3{X := -21248.0, Y := -68864.0, Z := 1152.0}, WalkIn := true},
     rift_route_def{Entry := vector3{X := 5888.0, Y := -29900.0, Z := 0.0}, Exit := vector3{X := 21504.0, Y := -44032.0, Z := 7680.0}, WalkIn := true},
     rift_route_def{Entry := vector3{X := 20992.0, Y := -44032.0, Z := 7680.0}, Exit := vector3{X := -256.0, Y := -59648.0, Z := 15.0}, WalkIn := true},
-    rift_route_def{Entry := vector3{X := 30152.0, Y := -73215.81902694702, Z := 0.0}, Exit := vector3{X := 4352.0, Y := -59648.0, Z := 0.0}, WalkIn := true},
-    rift_route_def{Entry := vector3{X := 60872.0, Y := -87551.81902694702, Z := 0.0}, Exit := vector3{X := 4352.0, Y := -59648.0, Z := 0.0}, WalkIn := true},
-    rift_route_def{Entry := vector3{X := 40392.0, Y := -94719.81902694702, Z := 0.0}, Exit := vector3{X := 256.0, Y := -55552.0, Z := 0.0}, WalkIn := true},
-    rift_route_def{Entry := vector3{X := 40392.0, Y := -50687.81902694702, Z := 0.0}, Exit := vector3{X := 256.0, Y := -55552.0, Z := 0.0}, WalkIn := true},
-    rift_route_def{Entry := vector3{X := 40392.0, Y := -40447.81902694702, Z := 0.0}, Exit := vector3{X := 256.0, Y := -55552.0, Z := 0.0}, WalkIn := true},
-    rift_route_def{Entry := vector3{X := 50376.0, Y := -80639.81902694702, Z := 0.0}, Exit := vector3{X := -3840.0, Y := -59648.0, Z := 0.0}, WalkIn := true},
-    rift_route_def{Entry := vector3{X := 50376.0, Y := -59135.81902694702, Z := 0.0}, Exit := vector3{X := -3840.0, Y := -59648.0, Z := 0.0}, WalkIn := true},
     rift_route_def{Entry := vector3{X := -21760.0, Y := -97600.0, Z := 0.0}, Exit := vector3{X := -256.0, Y := -59648.0, Z := 15.0}, WalkIn := true}
 }

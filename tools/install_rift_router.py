@@ -19,7 +19,8 @@ REBOX_RIFTS=[('KT14_Rebox_Rift_In','KT18_Sky_Rift_Start'),('KT18_Sky_Rift_Exit',
 # 2026-10-13: the 90s top zone is gone; DrillDevice TopLevels ends the rep at the top instead.
 RETURN_RIFTS=[]
 # Drill room exits (tools/build_drill_plates.py; player 2026-10-13): each lane room's rift back to its wing's arrival.
-DRILL_RIFTS=[(f'KT30_Drill_{c}_Exit',f'KT3_0{w}_Dest') for w,codes in ((3,'B5 W3'),(4,'P2 P6 P7'),(5,'E4 E7')) for c in codes.split()]+[('KT30_Drill_LAB_Exit','KT2_HubArrival')]
+# Lane rooms exit through EXIT plates (tools/build_drill_plates.py); only the Piece Lab keeps a rift to the lobby.
+DRILL_RIFTS=[('KT30_Drill_LAB_Exit','KT2_HubArrival')]
 PAIRS=PAIRS+LAB_RIFTS+REBOX_RIFTS+RETURN_RIFTS+DRILL_RIFTS
 
 def decode(v):return json.loads(v) if isinstance(v,str) else v

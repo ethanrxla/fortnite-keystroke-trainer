@@ -367,10 +367,12 @@ keystroke_drill_device := class(creative_device):
                 # Every action and the final landing grace complete before any reset. The player goes back to the start
                 # spot and the lane's builds clear around them: the clear barrels are silent, invisible, without
                 # collision or knockback (player 2026-10-13: "clear the builds each rep WITHOUT EXPLOSIONS").
-                MovePlayer(Player, TrackOrigin(Drill, 1))
+                # Reset builds the way the free-build RESET BUILDS button does (an overhead rig, KT34_Reset_*), then put
+                # the player on the start spot (player 2026-10-13: "just use reset builds", no lift).
                 Clearer.Trigger(Player)
                 KTLog("rep_clear", Drill.Id, Apm, Rep, Drill.Steps.Length, rep_result.Unchecked, "boundary=rep_end")
                 Sleep(ClearWaitSeconds)
+                MovePlayer(Player, TrackOrigin(Drill, 1))
             if (Rep < Reps, not Abandoned?):
                 Cue.SetText(CueText("{Drill.Code}  {Drill.Name}   rep {Rep}/{Reps} done\nNext rep in a moment"))
                 Sleep(RepRestSeconds)
