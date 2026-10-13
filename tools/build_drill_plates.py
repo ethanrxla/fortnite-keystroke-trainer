@@ -46,6 +46,12 @@ WALLS = {
     "armory_west": ("x", -3072.0, -66560.0, -63488.0, (1.0, 0.0)),
     "armory_south": ("y", -66560.0, -3072.0, 3584.0, (0.0, 1.0)),
 }
+# Plate centre height per wall when the default would cover wall art: the edit wing's flags hang from 357 cm, so its
+# plates sit under them and its header above them.
+WALL_Z = {"edit_south": 190.0}
+HEADER_Z = {}
+# A header over each wing's plates (player 2026-10-13: "what plates represent those drills? im unsure in the lobby").
+HEADERS = {"build": "BUILD DRILLS", "piece": "MOVEMENT DRILLS", "edit": "EDIT DRILLS", "armory": "WEAPON DRILLS"}
 WING_ARRIVAL = {"B": "KT3_03_Dest", "P": "KT3_04_Dest", "E": "KT3_05_Dest", "W": "KT3_06_Dest"}
 # code or area, plate words, rgb (linear), walls in order of preference, lane code or teleporter to arrive at
 PLATES = [
@@ -53,23 +59,19 @@ PLATES = [
     ("B3", "RAMP", (0.05, 0.16, 0.30), ["build_north"], "lane"),
     ("B5", "PIECE SWITCH", (0.05, 0.16, 0.30), ["build_north"], "lane"),
     ("P2", "RAMP RUSH", (0.20, 0.06, 0.30), ["piece_west"], "lane"),
-    ("P5", "TUNNEL", (0.20, 0.06, 0.30), ["piece_west"], "lane"),
     ("P6", "90s", (0.20, 0.06, 0.30), ["piece_west"], "lane"),
-    ("SKY", "SKY BOX", (0.03, 0.22, 0.30), ["piece_west", "piece_east"], "KT18_Sky_Rift_Start"),
-    ("P4", "BOX UP", (0.30, 0.12, 0.02), ["piece_east"], "lane"),
-    ("P7", "TUNNEL WINDOW", (0.30, 0.12, 0.02), ["piece_east"], "lane"),
-    ("P8", "RE-BOX", (0.30, 0.12, 0.02), ["piece_east"], "lane"),
-    ("REBOX", "PIECE CONTROL", (0.30, 0.04, 0.04), ["piece_east", "piece_west"], "KT14_Rebox_Rift_Start"),
-    ("E2", "WINDOW PEEK", (0.04, 0.24, 0.10), ["edit_south", "edit_north", "edit_west"], "lane"),
-    ("E4", "HALF WALL", (0.04, 0.24, 0.10), ["edit_south", "edit_north", "edit_west"], "lane"),
-    ("E5", "EDIT RESET", (0.04, 0.24, 0.10), ["edit_south", "edit_north", "edit_west"], "lane"),
-    ("E7", "EDIT PEEK", (0.04, 0.24, 0.10), ["edit_south", "edit_north", "edit_west"], "lane"),
-    ("LAB", "PIECE LAB", (0.10, 0.20, 0.04), ["edit_south", "edit_north", "edit_west"], "KT12_Gate_LabIn"),
+    ("SKY", "SKY BOX", (0.03, 0.22, 0.30), ["piece_west"], "KT18_Sky_Rift_Start"),
+    ("P7", "TUNNEL", (0.20, 0.06, 0.30), ["piece_west"], "lane"),
+    ("E2", "WINDOW PEEK", (0.04, 0.24, 0.10), ["edit_south"], "lane"),
+    ("E4", "HALF WALL", (0.04, 0.24, 0.10), ["edit_south"], "lane"),
+    ("E5", "EDIT RESET", (0.04, 0.24, 0.10), ["edit_south"], "lane"),
+    ("E7", "EDIT PEEK", (0.04, 0.24, 0.10), ["edit_south"], "lane"),
+    ("LAB", "PIECE LAB", (0.10, 0.20, 0.04), ["edit_south"], "KT12_Gate_LabIn"),
     ("W1", "GUN SWAP", (0.28, 0.20, 0.02), ["armory_west", "armory_south"], "lane"),
     ("W2", "PICKAXE SWAP", (0.28, 0.20, 0.02), ["armory_west", "armory_south"], "lane"),
     ("W3", "BUILD SWAP", (0.28, 0.20, 0.02), ["armory_west", "armory_south"], "lane"),
 ]
-SECTION_SIGNS = ["build", "movement", "boxes", "editing"]
+SECTION_SIGNS = ["build", "movement", "editing"]
 # Areas whose own teleporter has a target group: its Teleport sends you on to that group (the Piece Lab entry went to
 # the tracking arena, player 2026-10-13), so the plate gets an arrival pad of its own, offset (x, y) from it.
 ARRIVE_NEAR = {"LAB": ("KT12_Gate_LabIn", 450.0, 0.0)}
@@ -80,7 +82,9 @@ IGNORE = ("KT_Wall_", "KT_Wing_", "KT_Hub", "KT_Ceil_", "KT19_", "KT23_Theme_Mov
 
 def plate_texture(code, words, rgb):
     from PIL import Image, ImageDraw, ImageFont
-    out = bm.ROOT / "assets" / "ui" / "drill_plates" / f"T_KT_DrillPlate3_{code}.png"
+    import hashlib
+    tag = hashlib.sha1(f"{words}|{rgb}".encode()).hexdigest()[:6]     # new words, new asset (an old one is never reused)
+    out = bm.ROOT / "assets" / "ui" / "drill_plates" / f"T_KT_DrillPlate_{code}_{tag}.png"
     out.parent.mkdir(parents=True, exist_ok=True)
     # Dark: the plate is unlit emissive and the dim wings are auto-exposed, so mid colours washed out to pastel.
     srgb = tuple(int(255 * min(1.0, (c * 0.25) ** (1 / 2.2))) for c in rgb)
@@ -102,7 +106,7 @@ def plate_texture(code, words, rgb):
     small = ImageFont.truetype(font_file, 44)
     d.text((256, 440), "SHOOT TO GO", font=small, fill=(235, 240, 245, 255), anchor="mm")
     im.save(out)
-    asset = f"T_KT_DrillPlate3_{code}"
+    asset = f"T_KT_DrillPlate_{code}_{tag}"
     return out, f"{TEX_FOLDER}/{asset}.{asset}"
 
 
@@ -119,10 +123,12 @@ def obstacles(acts):
     return out
 
 
-def clear(obs, wall, c, half):
+def clear(obs, wall, c, half, zc=None, zhalf=None):
     axis, face, _, _, n = WALLS[wall]
+    zc = WALL_Z.get(wall, Z) if zc is None else zc
+    zhalf = half if zhalf is None else zhalf
     for b in obs:
-        if b["max"]["z"] < Z - half - 30 or b["min"]["z"] > Z + half + 30:
+        if b["max"]["z"] < zc - zhalf - 30 or b["min"]["z"] > zc + zhalf + 30:
             continue
         a_lo, a_hi = (b["min"]["x"], b["max"]["x"]) if axis == "y" else (b["min"]["y"], b["max"]["y"])
         if a_hi < c - half - 30 or a_lo > c + half + 30:
@@ -161,7 +167,7 @@ def plan(acts):
         axis, face, _, _, n = WALLS[wall]
         px, py = (c, face + n[1] * OFF) if axis == "y" else (face + n[0] * OFF, c)
         dx, dy = (c, face + n[1] * DUMMY_OFF) if axis == "y" else (face + n[0] * DUMMY_OFF, c)
-        out.append(dict(code=code, words=words, rgb=rgb, dest=dest, x=px, y=py, z=Z, n=n, dx=dx, dy=dy,
+        out.append(dict(code=code, words=words, rgb=rgb, dest=dest, x=px, y=py, z=WALL_Z.get(wall, Z), n=n, dx=dx, dy=dy,
                         plane_yaw=math.degrees(math.atan2(-n[0], n[1])) % 360,
                         dummy_yaw=math.degrees(math.atan2(n[1], n[0])) % 360))
     return out
@@ -260,6 +266,36 @@ def main():
             target = (arrivals.get(p["code"]) or by[p["dest"]]["actorPath"], "Teleport")
         hitbox.place_grid(b, label + "_Hit", (p["x"], p["y"], p["z"]), SIZE, SIZE, p["dummy_yaw"], (p["dx"], p["dy"]),
                           [target])
+    # One header per wall that holds plates, over the plates' span.
+    spans = {}
+    for p in plates:
+        wall = next(w for w, v in WALLS.items() if (v[0] == "y" and abs(p["y"] - (v[1] + v[4][1] * OFF)) < 1
+                                                   and v[2] <= p["x"] <= v[3])
+                    or (v[0] == "x" and abs(p["x"] - (v[1] + v[4][0] * OFF)) < 1 and v[2] <= p["y"] <= v[3]))
+        spans.setdefault(wall, []).append(p)
+    for wall, ps in spans.items():
+        axis, face, _, _, n = WALLS[wall]
+        along = [q["x"] if axis == "y" else q["y"] for q in ps]
+        c = (min(along) + max(along)) / 2
+        hx, hy = (c, face + n[1] * 6.0) if axis == "y" else (face + n[0] * 6.0, c)
+        names = "  |  ".join(q["words"] for q in sorted(ps, key=lambda q: q["x"] if axis == "y" else q["y"]))
+        text = f"{HEADERS[wall.split('_')[0]]}\nShoot a plate to start. Each drill room has a rift back here."
+        yaw = {(0.0, -1.0): 0.0, (1.0, 0.0): 90.0, (0.0, 1.0): 180.0, (-1.0, 0.0): 270.0}[n]
+        hz = HEADER_Z.get(wall, ps[0]["z"] + SIZE / 2 + 170.0)
+        # Above the plates when the wall is bare there; otherwise beside them at plate height, so wall art stays seen.
+        if not clear(obstacles(acts), wall, c, 330.0, hz, 110.0):
+            lo_, hi_ = WALLS[wall][2], WALLS[wall][3]
+            right = max(along) + SIZE / 2 + 380.0
+            left = min(along) - SIZE / 2 - 380.0
+            c = right if right + 330 < hi_ and clear(obstacles(acts), wall, right, 330.0, ps[0]["z"], 110.0) else left
+            hz = ps[0]["z"]
+            hx, hy = (c, face + n[1] * 6.0) if axis == "y" else (face + n[0] * 6.0, c)
+        sign = b.device(bm.BILLBOARD, f"{PREFIX}Header_{wall}", hx, hy, hz)
+        m.tool(bm.ACTOR, "set_actor_transform", actor={"refPath": sign}, xform=bm.xform(hx, hy, hz, 1.2, 1.2, 1.2, yaw=yaw))
+        b.props(sign, {"text": text, "textSize": 20, "showBorder": False, "textColor": {"r": 1, "g": 1, "b": 1, "a": 1},
+                       "backgroundColor": {"r": 0.03, "g": 0.04, "b": 0.07, "a": 1}})
+        m.tool(bm.SCENE, "save_actor", actor={"refPath": sign})
+        print(f"header {wall}: {names}")
     # Section signs: a dummy grid over the art, a hit puts the shooter on the section pad.
     for s in SECTION_SIGNS:
         sign, art, pad = (by.get(f"KT3_Section_{s}_Sign"), by.get(f"KT20_SignArt_KT3_Section_{s}_Sign"),

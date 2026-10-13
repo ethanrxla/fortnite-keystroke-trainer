@@ -25,7 +25,7 @@ import build_map as bm  # noqa: E402
 
 PREFIX = "KT3_Terrain_"
 # P4 (box up) runs every rep on track 1 since 2026-10-13 (SameTrack); terrain beside it got in the way of the box.
-CODES = ("P3", "P5", "P6")
+CODES = ()   # 2026-10-13: none; static blocks in the build columns made 90s and boxes build badly
 
 
 def lane_plan(drill, origin):

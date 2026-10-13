@@ -300,36 +300,6 @@
     "walk": true
   },
   {
-    "source": "KT14_Rebox_Rift_Back",
-    "destination": "KT2_HubArrival",
-    "entry": {
-      "x": 24832,
-      "y": -29952,
-      "z": 0
-    },
-    "exit": {
-      "x": -256,
-      "y": -59648,
-      "z": 15
-    },
-    "walk": true
-  },
-  {
-    "source": "KT22_Return_TunnelHub",
-    "destination": "KT2_HubArrival",
-    "entry": {
-      "x": 43896,
-      "y": -59648,
-      "z": 0
-    },
-    "exit": {
-      "x": -256,
-      "y": -59648,
-      "z": 15
-    },
-    "walk": true
-  },
-  {
     "source": "KT22_Return_NinetiesTop",
     "destination": "KT22_Return_NinetiesStart",
     "entry": {
@@ -410,36 +380,6 @@
     "walk": true
   },
   {
-    "source": "KT30_Drill_P4_Exit",
-    "destination": "KT3_04_Dest",
-    "entry": {
-      "x": 40136,
-      "y": -76031.81902694702,
-      "z": 0
-    },
-    "exit": {
-      "x": 256,
-      "y": -55552,
-      "z": 0
-    },
-    "walk": true
-  },
-  {
-    "source": "KT30_Drill_P5_Exit",
-    "destination": "KT3_04_Dest",
-    "entry": {
-      "x": 40136,
-      "y": -64255.81902694702,
-      "z": 0
-    },
-    "exit": {
-      "x": 256,
-      "y": -55552,
-      "z": 0
-    },
-    "walk": true
-  },
-  {
     "source": "KT30_Drill_P6_Exit",
     "destination": "KT3_04_Dest",
     "entry": {
@@ -460,21 +400,6 @@
     "entry": {
       "x": 40136,
       "y": -40703.81902694702,
-      "z": 0
-    },
-    "exit": {
-      "x": 256,
-      "y": -55552,
-      "z": 0
-    },
-    "walk": true
-  },
-  {
-    "source": "KT30_Drill_P8_Exit",
-    "destination": "KT3_04_Dest",
-    "entry": {
-      "x": 40136,
-      "y": -28927.81902694702,
       "z": 0
     },
     "exit": {

@@ -12,12 +12,13 @@ LAB_RIFTS=[(f'KT7_Lab_Rift_{r}_In',f'KT7_Lab_Rift_{r}_Start') for r in 'ABCD']+[
 # Court bay 02's rift goes to the Sky Box (tools/build_sky_box.py; player 2026-10-10: boxing high up, not the ground
 # arena), and the Sky Box exit comes back beside it. The Rebox Arena's own way back stays.
 # Player 2026-10-13: the Sky Box and Rebox Arena exits go to the main lobby, not back to the court.
-REBOX_RIFTS=[('KT14_Rebox_Rift_In','KT18_Sky_Rift_Start'),('KT18_Sky_Rift_Exit','KT2_HubArrival'),('KT14_Rebox_Rift_Back','KT2_HubArrival')]
+REBOX_RIFTS=[('KT14_Rebox_Rift_In','KT18_Sky_Rift_Start'),('KT18_Sky_Rift_Exit','KT2_HubArrival')]
 # Ways back (tools/build_returns.py): the tunnel goal to the hub, and the 90s room's top level to the lane start.
 # A source listed in shared/return-zones.json is an invisible box, not a portal.
-RETURN_RIFTS=[('KT22_Return_TunnelHub','KT2_HubArrival'),('KT22_Return_NinetiesTop','KT22_Return_NinetiesStart')]
+# The tunnel run lane (P5) was consolidated into P7 on 2026-10-13; its goal rift went with it.
+RETURN_RIFTS=[('KT22_Return_NinetiesTop','KT22_Return_NinetiesStart')]
 # Drill room exits (tools/build_drill_plates.py; player 2026-10-13): each lane room's rift back to its wing's arrival.
-DRILL_RIFTS=[(f'KT30_Drill_{c}_Exit',f'KT3_0{w}_Dest') for w,codes in ((3,'B2 B3 B5'),(4,'P2 P4 P5 P6 P7 P8'),(5,'E2 E4 E5 E7'),(6,'W1 W2 W3')) for c in codes.split()]+[('KT30_Drill_LAB_Exit','KT2_HubArrival')]
+DRILL_RIFTS=[(f'KT30_Drill_{c}_Exit',f'KT3_0{w}_Dest') for w,codes in ((3,'B2 B3 B5'),(4,'P2 P6 P7'),(5,'E2 E4 E5 E7'),(6,'W1 W2 W3')) for c in codes.split()]+[('KT30_Drill_LAB_Exit','KT2_HubArrival')]
 PAIRS=PAIRS+LAB_RIFTS+REBOX_RIFTS+RETURN_RIFTS+DRILL_RIFTS
 
 def decode(v):return json.loads(v) if isinstance(v,str) else v

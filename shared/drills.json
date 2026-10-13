@@ -118,25 +118,14 @@
     {
       "id": "movement",
       "name": "MOVEMENT",
-      "blurb": "Ramp rush, 90s and tunneling",
+      "blurb": "Ramp rush, 90s, tunnel and window",
       "zone": "Piece",
       "drills": [
         "ramp_rush",
         "nineties",
-        "tunnel"
+        "tunnel_edit_peek"
       ],
       "loadout": "melee"
-    },
-    {
-      "id": "boxes",
-      "name": "BOXES AND TUNNELS",
-      "blurb": "Box up, tunnel with a window, re-box",
-      "zone": "Piece",
-      "drills": [
-        "box_up",
-        "tunnel_edit_peek",
-        "box_reboxing"
-      ]
     },
     {
       "id": "editing",
@@ -584,7 +573,8 @@
           "ramp"
         ]
       ],
-      "basis": "Guides agree on floor, walls around you, then a roof, then edit the front to go on. Cone-first and wall-ramp tunnels are accepted. Sources disagree on one canonical order (secondary guides, not verified in the live game), so the reference is one valid order and accepts lists the others."
+      "basis": "Guides agree on floor, walls around you, then a roof, then edit the front to go on. Cone-first and wall-ramp tunnels are accepted. Sources disagree on one canonical order (secondary guides, not verified in the live game), so the reference is one valid order and accepts lists the others.",
+      "retired": true
     },
     {
       "id": "box_up",
@@ -636,7 +626,8 @@
           "cone"
         ]
       ],
-      "basis": "Reference order set by the project owner (floor, wall, floor, then close the other walls). Four walls then floor and cone, wall-wall-floor-ramp and wall-floor-cone appear in guides and are accepted."
+      "basis": "Reference order set by the project owner (floor, wall, floor, then close the other walls). Four walls then floor and cone, wall-wall-floor-ramp and wall-floor-cone appear in guides and are accepted.",
+      "retired": true
     },
     {
       "id": "nineties",
@@ -820,7 +811,8 @@
           "wall"
         ]
       ],
-      "basis": "Box part follows box_up. Peek, reset and replace-the-damaged-wall come from the FullBoosts and Boosteria guides. Wall take added 2026-10-13 (player request): claim the bot-side wall of the next cell after the re-box."
+      "basis": "Box part follows box_up. Peek, reset and replace-the-damaged-wall come from the FullBoosts and Boosteria guides. Wall take added 2026-10-13 (player request): claim the bot-side wall of the next cell after the re-box.",
+      "retired": true
     },
     {
       "id": "edit_door",
