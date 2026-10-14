@@ -371,6 +371,8 @@ def run(binds, drill=None, log_base=None, use_ai=True, serve_port=True, binds_pa
     habits = tracker.habits
     server = bind_server.start(lambda: store.snapshot.primary(), lambda: habits.habits(), recent_events, binds_file=store.path, store=store) if serve_port else None
     analyzer = Analyzer(tracker, jev=None if use_ai else JevClient(key=""), llm=None if use_ai else (lambda *a: ""))
+    from .voice_agent import start as start_voice
+    voice = start_voice(focus=game_rect)
     root = tk.Tk()
     root.overrideredirect(True)
     root.attributes("-topmost", True)
@@ -427,6 +429,7 @@ def run(binds, drill=None, log_base=None, use_ai=True, serve_port=True, binds_pa
         verdict, key = tracker.press(name, now)
         if verdict == "ignore":
             return
+        voice.activity((tracker.profile_id, tracker.profile_revision))
         if log:
             log.write(verdict, key, key in tracker.bound)
         flash(key, COLORS["ok" if verdict == "ok" else verdict])
@@ -446,8 +449,10 @@ def run(binds, drill=None, log_base=None, use_ai=True, serve_port=True, binds_pa
 
             def work():
                 revision = analyzer.profile_revision
+                voice_identity = (tracker.profile_id, revision)
                 try:
                     findings = analyzer.resolve(now)
+                    voice.observe(voice_identity, findings)
                     if log and revision == analyzer.profile_revision:
                         log._emit({"kind": "analysis", "profile_revision": revision, "findings": findings,
                                    "attempts": analyzer.jev.calls, "usage": dict(analyzer.jev.tokens)})
@@ -582,6 +587,7 @@ def run(binds, drill=None, log_base=None, use_ai=True, serve_port=True, binds_pa
     except KeyboardInterrupt:
         pass
     finally:
+        voice.close()
         if edit_reference is not None and edit_reference.poll() is None:
             edit_reference.terminate()
         for listener in listeners:
