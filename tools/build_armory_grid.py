@@ -109,6 +109,14 @@ class Grid:
         refs = re.findall(r'"refPath":"([^"]+)"', s)
         large = [r for r in refs if re.search(r"T-Icon-[^/]*-L\.", r) or re.search(r"/T_[^/]*_L\.", r)]
         icons = large or [r for r in refs if "Icon" in r and "-32" not in r and "-16" not in r]
+        if not icons:
+            # Some items (Chug Splash, Shockwave grenade) keep their icon outside the data list; the asset registry
+            # still lists it as a dependency.
+            try:
+                deps = dec(self.m.tool(AS, "get_dependencies", asset_path=item.split(".")[0])) or []
+            except RuntimeError:
+                deps = []
+            icons = [d for d in deps if "/Icons/" in d and re.search(r"-L\.", d)]
         return icons[0] if icons else None
 
     # --- pieces of a tile ------------------------------------------------------------------------------------------
