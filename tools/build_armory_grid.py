@@ -33,10 +33,10 @@ PLANE = "/Engine/BasicShapes/Plane.Plane"
 GRANTER = "/CreativeCoreDevices/SetupAssets/PID_Device_ItemGranter.PID_Device_ItemGranter"
 WALL_Y = -66560.0          # back wall face (KT_Wall_Hub_0)
 PROUD = 60.0               # plates stand this far off the wall
-TILE = 270.0               # player 2026-10-11: bigger, easier to shoot
-PITCH = 300.0              # column pitch (12 gun columns + the item block fit the back wall)
+TILE = 215.0               # 25 gun columns + the item block on the back wall (player 2026-10-13: all guns back)
+PITCH = 235.0              # column pitch
 ROW_PITCH = 290.0
-BLOCK_GAP = 250.0          # extra space between the weapons, items and heals blocks
+BLOCK_GAP = 150.0          # extra space between the weapons and items blocks
 X_CENTER = 256.0
 ROW_Z0 = 150.0             # centre of the bottom (common) row
 # The grid fills the back wall left to right (player 2026-10-11), so every locker and crate on that wall moves to the
@@ -230,7 +230,7 @@ def plan(spec, test=False):
             for it in spec.get(group, []):
                 cols.append([(it["rarity"], it["name"], it["item"], it.get("icon"))])
             blocks.append(len(cols))
-    width = (len(cols) - 1) * PITCH + (len(blocks) - 2) * BLOCK_GAP
+    width = (len(cols) - 1) * PITCH + sum(1 for end in blocks[:-1] if len(cols) - 1 >= end) * BLOCK_GAP
     x0 = X_CENTER - width / 2
     tiles = []
     for c, col in enumerate(cols):
@@ -246,6 +246,16 @@ def plan(spec, test=False):
                 k, r = rar[code]
             tiles.append(dict(tag=f"{PREFIX}{c:02d}{k}", name=name, item=item, icon=icon, rgb_name=r["name"], rgb=r["colour"],
                               x=x, y=WALL_Y, z=ROW_Z0 + k * ROW_PITCH, facing="S"))
+    for tile in tiles:
+        override = spec.get("tile_overrides", {}).get(tile["tag"])
+        if override:
+            _, rarity = rar[override["rarity"]]
+            tile.update(name=override["name"], item=override["item"], icon=override.get("icon"),
+                        rgb_name=rarity["name"], rgb=rarity["colour"])
+    blocked = set(spec.get("disallowed_items", {}))
+    rejected = [t["tag"] for t in tiles if t["item"] in blocked]
+    if rejected:
+        raise ValueError("Armory plan contains island-disallowed items: " + ", ".join(rejected))
     if test:
         tiles = tiles[:2] + tiles[-2:]
     return tiles

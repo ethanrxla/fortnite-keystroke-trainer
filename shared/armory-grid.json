@@ -4,27 +4,52 @@
     {
       "code": "C",
       "name": "Common",
-      "hex": "#B9BEC5"
+      "hex": "#B9BEC5",
+      "colour": [
+        0.1698,
+        0.1802,
+        0.1954
+      ]
     },
     {
       "code": "UC",
       "name": "Uncommon",
-      "hex": "#2E8B3E"
+      "hex": "#2E8B3E",
+      "colour": [
+        0.0096,
+        0.0904,
+        0.0169
+      ]
     },
     {
       "code": "R",
       "name": "Rare",
-      "hex": "#1E64B8"
+      "hex": "#1E64B8",
+      "colour": [
+        0.0045,
+        0.0446,
+        0.1678
+      ]
     },
     {
       "code": "VR",
       "name": "Epic",
-      "hex": "#8A3FC9"
+      "hex": "#8A3FC9",
+      "colour": [
+        0.089,
+        0.0174,
+        0.2044
+      ]
     },
     {
       "code": "SR",
       "name": "Legendary",
-      "hex": "#E8A321"
+      "hex": "#E8A321",
+      "colour": [
+        0.2824,
+        0.1282,
+        0.0053
+      ]
     }
   ],
   "weapons": [
@@ -52,6 +77,35 @@
       "moddable": true
     },
     {
+      "name": "AR / SCAR",
+      "pattern": "/Game/Athena/Items/Weapons/WID_Assault_Auto_Athena_{r}_Ore_T03.WID_Assault_Auto_Athena_{r}_Ore_T03",
+      "names": {
+        "C": "Assault rifle",
+        "UC": "Assault rifle",
+        "R": "Assault rifle",
+        "VR": "SCAR",
+        "SR": "SCAR"
+      },
+      "paths": {
+        "C": "/Game/Athena/Items/Weapons/WID_Assault_Auto_Athena_C_Ore_T02.WID_Assault_Auto_Athena_C_Ore_T02"
+      }
+    },
+    {
+      "name": "Heavy AR",
+      "pattern": "/Game/Athena/Items/Weapons/WID_Assault_Heavy_Athena_{r}_Ore_T03.WID_Assault_Heavy_Athena_{r}_Ore_T03"
+    },
+    {
+      "name": "Burst AR",
+      "pattern": "/Game/Athena/Items/Weapons/WID_Assault_SemiAuto_Athena_{r}_Ore_T03.WID_Assault_SemiAuto_Athena_{r}_Ore_T03",
+      "paths": {
+        "C": "/Game/Athena/Items/Weapons/WID_Assault_SemiAuto_Athena_C_Ore_T02.WID_Assault_SemiAuto_Athena_C_Ore_T02"
+      }
+    },
+    {
+      "name": "Drum Gun",
+      "pattern": "/Game/Athena/Items/Weapons/WID_Assault_AutoDrum_Athena_{r}_Ore_T03.WID_Assault_AutoDrum_Athena_{r}_Ore_T03"
+    },
+    {
       "name": "Combat SG",
       "pattern": "/Game/Athena/Items/Weapons/WID_Shotgun_Combat_Athena_{r}_Ore_T03.WID_Shotgun_Combat_Athena_{r}_Ore_T03"
     },
@@ -66,11 +120,23 @@
       "moddable": true
     },
     {
-      "name": "Tactical SMG",
-      "pattern": "/Game/Athena/Items/Weapons/WID_Pistol_Scavenger_Athena_{r}_Ore_T03.WID_Pistol_Scavenger_Athena_{r}_Ore_T03",
+      "name": "Tactical SG",
+      "pattern": "/Game/Athena/Items/Weapons/WID_Shotgun_SemiAuto_Athena_{r}_Ore_T03.WID_Shotgun_SemiAuto_Athena_{r}_Ore_T03",
       "paths": {
-        "C": "/Game/Athena/Items/Weapons/WID_Pistol_Scavenger_Athena_UC_Ore_T03.WID_Pistol_Scavenger_Athena_UC_Ore_T03"
+        "SR": "/Game/Athena/Items/Weapons/WID_Shotgun_SemiAuto_Athena_SR.WID_Shotgun_SemiAuto_Athena_SR"
       }
+    },
+    {
+      "name": "Charge SG",
+      "pattern": "/Game/Athena/Items/Weapons/WID_Shotgun_Charge_Athena_{r}_Ore_T03.WID_Shotgun_Charge_Athena_{r}_Ore_T03"
+    },
+    {
+      "name": "Drum SG",
+      "pattern": "/Game/Athena/Items/Weapons/WID_Shotgun_AutoDrum_Athena_{r}_Ore_T03.WID_Shotgun_AutoDrum_Athena_{r}_Ore_T03"
+    },
+    {
+      "name": "Tactical SMG",
+      "pattern": "/Game/Athena/Items/Weapons/WID_Pistol_Scavenger_Athena_{r}_Ore_T03.WID_Pistol_Scavenger_Athena_{r}_Ore_T03"
     },
     {
       "name": "Suppressed SMG",
@@ -85,23 +151,44 @@
       "moddable": true
     },
     {
+      "name": "Rapid SMG",
+      "pattern": "/Game/Athena/Items/Weapons/WID_Pistol_RapidFireSMG_Athena_{r}_Ore_T03.WID_Pistol_RapidFireSMG_Athena_{r}_Ore_T03"
+    },
+    {
       "name": "Ranger Pistol",
       "pattern": "/PaprikaCoreWeapons/Items/Weapons/PaprikaPistol/WID_Pistol_Paprika_Auto_Athena_{r}.WID_Pistol_Paprika_Auto_Athena_{r}",
       "moddable": true
     },
     {
+      "name": "Pistol",
+      "pattern": "/Game/Athena/Items/Weapons/WID_Pistol_SemiAuto_Athena_{r}_Ore_T03.WID_Pistol_SemiAuto_Athena_{r}_Ore_T03",
+      "paths": {
+        "C": "/Game/Athena/Items/Weapons/WID_Pistol_SemiAuto_Athena_C_Ore_T02.WID_Pistol_SemiAuto_Athena_C_Ore_T02"
+      }
+    },
+    {
+      "name": "Desert Eagle",
+      "pattern": "/Game/Athena/Items/Weapons/WID_Pistol_HandCannon_Athena_{r}_Ore_T03.WID_Pistol_HandCannon_Athena_{r}_Ore_T03"
+    },
+    {
+      "name": "Suppressed Pistol",
+      "pattern": "/Game/Athena/Items/Weapons/WID_Pistol_SemiAuto_Suppressed_Athena_{r}_Ore_T03.WID_Pistol_SemiAuto_Suppressed_Athena_{r}_Ore_T03"
+    },
+    {
       "name": "Reaper Sniper",
       "pattern": "/PaprikaCoreWeapons/Items/Weapons/PaprikaSniper/WID_Sniper_Paprika_Athena_{r}.WID_Sniper_Paprika_Athena_{r}",
-      "moddable": true,
+      "moddable": true
+    },
+    {
+      "name": "Heavy Sniper",
+      "pattern": "/Game/Athena/Items/Weapons/WID_Sniper_Heavy_Athena_{r}_Ore_T03.WID_Sniper_Heavy_Athena_{r}_Ore_T03",
       "paths": {
-        "C": "/Game/Athena/Items/Weapons/WID_Sniper_BoltAction_Scope_Athena_C_Ore_T03.WID_Sniper_BoltAction_Scope_Athena_C_Ore_T03"
-      },
-      "names": {
-        "C": "Bolt sniper"
-      },
-      "icons": {
-        "C": "/Game/UI/Foundation/Textures/Icons/Weapons/Items/T-Icon-Weapons-BoltActionSniperMark2TT-L.T-Icon-Weapons-BoltActionSniperMark2TT-L"
+        "R": "none: UEFN validation rejects the rare heavy sniper (2026-10-13)"
       }
+    },
+    {
+      "name": "Bolt Sniper",
+      "pattern": "/Game/Athena/Items/Weapons/WID_Sniper_BoltAction_Scope_Athena_{r}_Ore_T03.WID_Sniper_BoltAction_Scope_Athena_{r}_Ore_T03"
     }
   ],
   "heals": [
@@ -143,7 +230,7 @@
     },
     {
       "name": "Impulse grenade",
-      "rarity": "R",
+      "rarity": "VR",
       "item": "/Game/Athena/Items/Consumables/KnockGrenade/Athena_KnockGrenade.Athena_KnockGrenade",
       "icon": "/Game/UI/Foundation/Textures/Icons/Athena/T-T-Icon-BR-Grenade-Impulse-L.T-T-Icon-BR-Grenade-Impulse-L"
     },
@@ -163,5 +250,143 @@
       "item": "/CRD_Melee/SetupAssets/WID_Creative_Melee_Hammer_SledgeWrapped.WID_Creative_Melee_Hammer_SledgeWrapped"
     }
   ],
-  "block_rows": 5
+  "block_rows": 5,
+  "tile_overrides": {
+    "KT9_ArmoryWall_070": {
+      "name": "Suppressed Pistol",
+      "item": "/WeaponsUnvaulted/Gameplay/WID_Pistol_Suppressed_Athena_C.WID_Pistol_Suppressed_Athena_C",
+      "rarity": "C",
+      "icon": "/Game/UI/Foundation/Textures/Icons/Weapons/MilitaryCore/T-Icon-Weapons-SK-45-Silenced-L.T-Icon-Weapons-SK-45-Silenced-L"
+    },
+    "KT9_ArmoryWall_073": {
+      "name": "Suppressed Pistol",
+      "item": "/WeaponsUnvaulted/Gameplay/WID_Pistol_Suppressed_Athena_VR.WID_Pistol_Suppressed_Athena_VR",
+      "rarity": "VR",
+      "icon": "/Game/UI/Foundation/Textures/Icons/Weapons/MilitaryCore/T-Icon-Weapons-SK-45-Silenced-L.T-Icon-Weapons-SK-45-Silenced-L"
+    },
+    "KT9_ArmoryWall_074": {
+      "name": "Scoped AR",
+      "item": "/DragonCartWeaponGameplay/Gameplay/DragonCart_ScopedAR/WID_Assault_DragonCart_Scoped_Athena_VR.WID_Assault_DragonCart_Scoped_Athena_VR",
+      "rarity": "VR",
+      "icon": "/DragonCartWeaponGameplay/Gameplay/DragonCart_ScopedAR/Icons/T_Icon_Weapons_Rifle_Assault_ScopedRecoil_L.T_Icon_Weapons_Rifle_Assault_ScopedRecoil_L"
+    },
+    "KT9_ArmoryWall_110": {
+      "name": "Suppressed Pistol",
+      "item": "/WeaponsUnvaulted/Gameplay/WID_Pistol_Suppressed_Athena_R.WID_Pistol_Suppressed_Athena_R",
+      "rarity": "R",
+      "icon": "/Game/UI/Foundation/Textures/Icons/Weapons/MilitaryCore/T-Icon-Weapons-SK-45-Silenced-L.T-Icon-Weapons-SK-45-Silenced-L"
+    },
+    "KT9_ArmoryWall_140": {
+      "name": "Maven Auto Shotgun",
+      "item": "/MusterCoreWeapons/Items/Weapons/MusterDPSShotgun/WID_Shotgun_MusterDPS_Athena_UC.WID_Shotgun_MusterDPS_Athena_UC",
+      "rarity": "UC",
+      "icon": "/MusterCoreWeapons/Items/Weapons/MusterDPSShotgun/Icons/T-Icon-Weapons-CoreS23AutoShotgun.T-Icon-Weapons-CoreS23AutoShotgun"
+    },
+    "KT9_ArmoryWall_200": {
+      "name": "Thunder Burst SMG",
+      "item": "/PaprikaCoreWeapons/Items/Weapons/PaprikaSMG_Burst/WID_SMG_Paprika_Burst_Athena_C.WID_SMG_Paprika_Burst_Athena_C",
+      "rarity": "C",
+      "icon": "/PaprikaCoreWeapons/Items/Weapons/PaprikaSMG_Burst/Icons/T-Icon-Weapons-SMG-Burst-Paprika-L.T-Icon-Weapons-SMG-Burst-Paprika-L"
+    },
+    "KT9_ArmoryWall_201": {
+      "name": "Thunder Burst SMG",
+      "item": "/PaprikaCoreWeapons/Items/Weapons/PaprikaSMG_Burst/WID_SMG_Paprika_Burst_Athena_UC.WID_SMG_Paprika_Burst_Athena_UC",
+      "rarity": "UC",
+      "icon": "/PaprikaCoreWeapons/Items/Weapons/PaprikaSMG_Burst/Icons/T-Icon-Weapons-SMG-Burst-Paprika-L.T-Icon-Weapons-SMG-Burst-Paprika-L"
+    },
+    "KT9_ArmoryWall_210": {
+      "name": "Scoped AR",
+      "item": "/DragonCartWeaponGameplay/Gameplay/DragonCart_ScopedAR/WID_Assault_DragonCart_Scoped_Athena_C.WID_Assault_DragonCart_Scoped_Athena_C",
+      "rarity": "C",
+      "icon": "/DragonCartWeaponGameplay/Gameplay/DragonCart_ScopedAR/Icons/T_Icon_Weapons_Rifle_Assault_ScopedRecoil_L.T_Icon_Weapons_Rifle_Assault_ScopedRecoil_L"
+    },
+    "KT9_ArmoryWall_212": {
+      "name": "Thunder Burst SMG",
+      "item": "/PaprikaCoreWeapons/Items/Weapons/PaprikaSMG_Burst/WID_SMG_Paprika_Burst_Athena_R.WID_SMG_Paprika_Burst_Athena_R",
+      "rarity": "R",
+      "icon": "/PaprikaCoreWeapons/Items/Weapons/PaprikaSMG_Burst/Icons/T-Icon-Weapons-SMG-Burst-Paprika-L.T-Icon-Weapons-SMG-Burst-Paprika-L"
+    },
+    "KT9_ArmoryWall_213": {
+      "name": "Thunder Burst SMG",
+      "item": "/PaprikaCoreWeapons/Items/Weapons/PaprikaSMG_Burst/WID_SMG_Paprika_Burst_Athena_VR.WID_SMG_Paprika_Burst_Athena_VR",
+      "rarity": "VR",
+      "icon": "/PaprikaCoreWeapons/Items/Weapons/PaprikaSMG_Burst/Icons/T-Icon-Weapons-SMG-Burst-Paprika-L.T-Icon-Weapons-SMG-Burst-Paprika-L"
+    },
+    "KT9_ArmoryWall_220": {
+      "name": "Thunder Burst SMG",
+      "item": "/PaprikaCoreWeapons/Items/Weapons/PaprikaSMG_Burst/WID_SMG_Paprika_Burst_Athena_SR.WID_SMG_Paprika_Burst_Athena_SR",
+      "rarity": "SR",
+      "icon": "/PaprikaCoreWeapons/Items/Weapons/PaprikaSMG_Burst/Icons/T-Icon-Weapons-SMG-Burst-Paprika-L.T-Icon-Weapons-SMG-Burst-Paprika-L"
+    },
+    "KT9_ArmoryWall_230": {
+      "name": "Scoped AR",
+      "item": "/DragonCartWeaponGameplay/Gameplay/DragonCart_ScopedAR/WID_Assault_DragonCart_Scoped_Athena_UC.WID_Assault_DragonCart_Scoped_Athena_UC",
+      "rarity": "UC",
+      "icon": "/DragonCartWeaponGameplay/Gameplay/DragonCart_ScopedAR/Icons/T_Icon_Weapons_Rifle_Assault_ScopedRecoil_L.T_Icon_Weapons_Rifle_Assault_ScopedRecoil_L"
+    },
+    "KT9_ArmoryWall_231": {
+      "name": "Scoped AR",
+      "item": "/DragonCartWeaponGameplay/Gameplay/DragonCart_ScopedAR/WID_Assault_DragonCart_Scoped_Athena_R.WID_Assault_DragonCart_Scoped_Athena_R",
+      "rarity": "R",
+      "icon": "/DragonCartWeaponGameplay/Gameplay/DragonCart_ScopedAR/Icons/T_Icon_Weapons_Rifle_Assault_ScopedRecoil_L.T_Icon_Weapons_Rifle_Assault_ScopedRecoil_L"
+    },
+    "KT9_ArmoryWall_232": {
+      "name": "Scoped AR",
+      "item": "/DragonCartWeaponGameplay/Gameplay/DragonCart_ScopedAR/WID_Assault_DragonCart_Scoped_Athena_SR.WID_Assault_DragonCart_Scoped_Athena_SR",
+      "rarity": "SR",
+      "icon": "/DragonCartWeaponGameplay/Gameplay/DragonCart_ScopedAR/Icons/T_Icon_Weapons_Rifle_Assault_ScopedRecoil_L.T_Icon_Weapons_Rifle_Assault_ScopedRecoil_L"
+    },
+    "KT9_ArmoryWall_111": {
+      "name": "Tactical SG",
+      "item": "/Game/Athena/Items/Weapons/WID_Shotgun_SemiAuto_Athena_UC_Ore_T03.WID_Shotgun_SemiAuto_Athena_UC_Ore_T03",
+      "rarity": "C",
+      "icon": null
+    },
+    "KT9_ArmoryWall_112": {
+      "name": "Tactical SG",
+      "item": "/Game/Athena/Items/Weapons/WID_Shotgun_SemiAuto_Athena_R_Ore_T03.WID_Shotgun_SemiAuto_Athena_R_Ore_T03",
+      "rarity": "UC",
+      "icon": null
+    },
+    "KT9_ArmoryWall_113": {
+      "name": "Tactical SG",
+      "item": "/Game/Athena/Items/Weapons/WID_Shotgun_SemiAuto_Athena_VR_Ore_T03.WID_Shotgun_SemiAuto_Athena_VR_Ore_T03",
+      "rarity": "R",
+      "icon": null
+    },
+    "KT9_ArmoryWall_193": {
+      "name": "Maven Auto Shotgun",
+      "item": "/MusterCoreWeapons/Items/Weapons/MusterDPSShotgun/WID_Shotgun_MusterDPS_Athena_R.WID_Shotgun_MusterDPS_Athena_R",
+      "rarity": "R",
+      "icon": "/MusterCoreWeapons/Items/Weapons/MusterDPSShotgun/Icons/T-Icon-Weapons-CoreS23AutoShotgun.T-Icon-Weapons-CoreS23AutoShotgun"
+    },
+    "KT9_ArmoryWall_194": {
+      "name": "Pistol",
+      "item": "/Game/Athena/Items/Weapons/WID_Pistol_SemiAuto_Athena_SR_Ore_T03.WID_Pistol_SemiAuto_Athena_SR_Ore_T03",
+      "rarity": "VR",
+      "icon": null
+    },
+    "KT9_ArmoryWall_253": {
+      "name": "Impulse grenade",
+      "item": "/Game/Athena/Items/Consumables/KnockGrenade/Athena_KnockGrenade.Athena_KnockGrenade",
+      "rarity": "R",
+      "icon": "/Game/UI/Foundation/Textures/Icons/Athena/T-T-Icon-BR-Grenade-Impulse-L.T-T-Icon-BR-Grenade-Impulse-L"
+    },
+    "KT9_ArmoryWall_251": {
+      "name": "Sword",
+      "item": "/CRD_Melee/SetupAssets/WID_Creative_Melee_Sword_Ninja.WID_Creative_Melee_Sword_Ninja",
+      "rarity": "C",
+      "icon": null
+    },
+    "KT9_ArmoryWall_250": {
+      "name": "Hammer",
+      "item": "/CRD_Melee/SetupAssets/WID_Creative_Melee_Hammer_SledgeWrapped.WID_Creative_Melee_Hammer_SledgeWrapped",
+      "rarity": "C",
+      "icon": null
+    }
+  },
+  "disallowed_items": {
+    "/JethroWeaponGameplay/Gameplay/CleverShrimp/WID_DMR_Jethro_CleverShrimp_Athena_UC.WID_DMR_Jethro_CleverShrimp_Athena_UC": "Rejected by AssetValidator_AssetReferenceRestrictions and FortValidator_FortExposedActors, 2026-10-13; not Creative-exposed.",
+    "/JethroWeaponGameplay/Gameplay/CleverShrimp/WID_DMR_Jethro_CleverShrimp_Athena_R.WID_DMR_Jethro_CleverShrimp_Athena_R": "Rejected by AssetValidator_AssetReferenceRestrictions and FortValidator_FortExposedActors, 2026-10-13; not Creative-exposed."
+  }
 }
