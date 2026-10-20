@@ -17,11 +17,13 @@ from .bind_profiles import BindProfile, ProfileStore
 from .habits import Habits
 from .jev_client import JevClient
 from .input_analysis import KeystrokeAnalyzer, InputEvent
+from .input_gate import GameplayInputGate
 
 NEWLINE = chr(10)
 DOUBLE_SECONDS = 0.07   # two presses of one key this close are a bounce or an accident
 REP_IDLE_SECONDS = 2.5  # silence this long ends a rep; unmet steps are reported as missed
 SLIP_SECONDS = 0.6      # a stray then a neighbouring bound key within this long is a slip
+HOLD_SECONDS = 1.6      # presses wait this long before they are written, so a late-detected typing burst can be dropped
 
 # (label, pynput name, width in key units). Mouse buttons are drawn as keys named mouse_*.
 ROWS = [
@@ -86,23 +88,29 @@ class KeyTracker:
         self.set_profile(binds)
 
     def set_profile(self, binds):
+        binds = getattr(binds, "profile", binds)
         self.profile_revision = binds.revision if isinstance(binds, BindProfile) else 0
         self.profile_id = binds.profile_id if isinstance(binds, BindProfile) else 'explicit'
+        self.profile = binds if isinstance(binds, BindProfile) else None
         self.binds = binds.primary() if isinstance(binds, BindProfile) else dict(binds)
         self.actions, self.verified_actions = {}, set()
+        self.verified_by_key = {}
         entries = binds.bindings if isinstance(binds, BindProfile) else []
         if entries:
             for binding in entries:
                 for key in binding.keys:
                     self.actions.setdefault(normal(key), []).append(binding.action)
+                    if binding.verified:
+                        self.verified_by_key.setdefault(normal(key), set()).add(binding.action)
                 if binding.verified:
                     self.verified_actions.add(binding.action)
         else:
             for action, key in self.binds.items():
                 self.actions.setdefault(normal(key), []).append(action)
                 self.verified_actions.add(action)
+                self.verified_by_key.setdefault(normal(key), set()).add(action)
         self.bound = set(self.actions)
-        self.names = {k: '/'.join(dict.fromkeys(a + (' ?' if a not in self.verified_actions else '') for a in v)) for k, v in self.actions.items()}
+        self.names = {k: '/'.join(dict.fromkeys(a + (' ?' if a not in self.verified_by_key.get(k, set()) else '') for a in v)) for k, v in self.actions.items()}
         # An unverified sequence cannot fairly grade the player's actions.
         self.expected = [(a, normal(self.binds[a])) for a in self.expected_actions if a in self.binds]
         self.grade = bool(self.expected) and all(a in self.verified_actions for a in self.expected_actions)
@@ -138,10 +146,12 @@ class KeyTracker:
                 if self.habits.is_habit(key):
                     return 'habit', key
             return 'unmapped', key
+        if not self.verified_by_key.get(key):
+            return 'unverified', key
         if not self.grade:
             return 'ok', key
         # Ordinary movement/combat/UI keys cannot interrupt a build/edit drill sequence.
-        relevant = [a for a in self.actions[key] if a in self.expected_actions]
+        relevant = [a for a in self.verified_by_key.get(key, ()) if a in self.expected_actions]
         if not relevant:
             return 'ok', key
         self.last_press = now
@@ -202,36 +212,61 @@ def explain(verdict, key, tracker, last_stray=None, now=0.0):
 
 # --- Windows plumbing: find the game window, keep our window click-through and focus-proof --------------------
 
-def foreground_title():
-    """Title of the focused window (Windows only; empty elsewhere). Used to log only while you are in the game."""
-    if sys.platform != "win32":
-        return ""
-    import ctypes
-    user32 = ctypes.windll.user32
-    handle = user32.GetForegroundWindow()
-    length = user32.GetWindowTextLengthW(handle)
-    buffer = ctypes.create_unicode_buffer(length + 1)
-    user32.GetWindowTextW(handle, buffer, length + 1)
-    return buffer.value
+def is_fortnite_executable(path):
+    """Check executable identity, never a browser tab's window title."""
+    return str(path).replace("\\", "/").rsplit("/", 1)[-1].lower() == "fortniteclient-win64-shipping.exe"
 
 
-def in_game(title):
-    return "fortnite" in title.lower()
-
-
-def game_rect():
-    """(left, top, right, bottom) of the focused window if it is the Fortnite game client, else None."""
+def focused_fortnite_window():
     if sys.platform != "win32":
         return None
     import ctypes
     from ctypes import wintypes
-    user32 = ctypes.windll.user32
-    handle = user32.GetForegroundWindow()
-    title = foreground_title().lower()
-    if "fortnite" not in title or "unreal editor" in title:
+    user32, kernel32 = ctypes.windll.user32, ctypes.windll.kernel32
+    user32.GetForegroundWindow.restype = wintypes.HWND
+    user32.GetWindowThreadProcessId.argtypes = (wintypes.HWND, ctypes.POINTER(wintypes.DWORD))
+    hwnd = user32.GetForegroundWindow()
+    pid = wintypes.DWORD()
+    user32.GetWindowThreadProcessId(hwnd, ctypes.byref(pid))
+    kernel32.OpenProcess.argtypes = (wintypes.DWORD, wintypes.BOOL, wintypes.DWORD)
+    kernel32.OpenProcess.restype = wintypes.HANDLE
+    kernel32.QueryFullProcessImageNameW.argtypes = (wintypes.HANDLE, wintypes.DWORD, wintypes.LPWSTR, ctypes.POINTER(wintypes.DWORD))
+    kernel32.CloseHandle.argtypes = (wintypes.HANDLE,)
+    process = kernel32.OpenProcess(0x1000, False, pid.value)
+    if not process:
         return None
+    try:
+        size = wintypes.DWORD(32768)
+        path = ctypes.create_unicode_buffer(size.value)
+        if not kernel32.QueryFullProcessImageNameW(process, 0, path, ctypes.byref(size)):
+            return None
+        if not is_fortnite_executable(path.value) or user32.GetForegroundWindow() != hwnd:
+            return None
+        return hwnd
+    finally:
+        kernel32.CloseHandle(process)
+
+
+def foreground_title():
+    # All production input consumers use this function; fake focus providers in tests remain supported.
+    return "Fortnite" if focused_fortnite_window() else ""
+
+
+def in_game(title):
+    return title.strip().lower() == "fortnite"
+
+
+def game_rect():
+    """Rectangle of the focused Fortnite executable, or None (fail closed)."""
+    hwnd = focused_fortnite_window()
+    if hwnd is None:
+        return None
+    import ctypes
+    from ctypes import wintypes
     rect = wintypes.RECT()
-    user32.GetWindowRect(handle, ctypes.byref(rect))
+    ctypes.windll.user32.GetWindowRect.argtypes = (wintypes.HWND, ctypes.POINTER(wintypes.RECT))
+    if not ctypes.windll.user32.GetWindowRect(hwnd, ctypes.byref(rect)):
+        return None
     return rect.left, rect.top, rect.right, rect.bottom
 
 
@@ -260,7 +295,7 @@ class SessionLog:
     """Records a play session. Two files: <name>.jsonl keeps bound presses in the recorder format (so analyze,
     review and plan read it), <name>.events.jsonl keeps every verdict with the drill, for insights.
 
-    Only presses made while a Fortnite or UEFN window is focused are written, so typing elsewhere is never stored.
+    Only focused Fortnite gameplay presses are written; menu and chat controls are excluded.
     """
 
     def __init__(self, base, drill=None, focus=foreground_title, clock=time.perf_counter):
@@ -272,6 +307,7 @@ class SessionLog:
         self.focus = focus
         self.clock = clock
         self.start = clock()
+        self.wall_start = time.time()
         import queue, threading
         self.pending = queue.Queue()
         self.writer = threading.Thread(target=self._writer, daemon=True)
@@ -282,22 +318,49 @@ class SessionLog:
         self.pending.put(('event', dict(record, ts=round(time.time(), 3))))
 
     def _writer(self):
+        # Presses wait HOLD_SECONDS before they reach disk, so a typing burst the gate recognises a few keys late
+        # (revoke) is never written. Other records go straight through.
+        import queue
+        held = []
         while True:
-            kind, record = self.pending.get()
+            try:
+                kind, record = self.pending.get(timeout=0.1)
+            except queue.Empty:
+                kind, record = None, None
+            if kind == 'revoke':
+                held = [(k, r) for k, r in held if r.get("t", -1) < record]
+            elif kind is not None and kind != 'stop':
+                if isinstance(record.get("t"), (int, float)) and (kind == 'key' or record.get("key")):
+                    held.append((kind, record))
+                else:
+                    self._write_now(kind, record)
+            cutoff = self.clock() - self.start - HOLD_SECONDS
+            while held and (kind == 'stop' or held[0][1]["t"] <= cutoff):
+                self._write_now(*held.pop(0))
             if kind == 'stop':
                 break
-            target = self.keys if kind == 'key' else self.events
-            target.write(json.dumps(record) + NEWLINE)
-            target.flush()
+
+    def _write_now(self, kind, record):
+        target = self.keys if kind == 'key' else self.events
+        target.write(json.dumps(record) + NEWLINE)
+        target.flush()
+
+    def revoke(self, at):
+        """Drop not-yet-written presses from perf time `at` on (the gate found they were typing)."""
+        self.pending.put(('revoke', round(at - self.start, 4)))
 
 
-    def write(self, verdict, key, bound):
-        if not in_game(self.focus()):
+    def write(self, verdict, key, bound, *, at=None, profile=None, actions=(), generation=None):
+        if not in_game(self.focus()) or normal(key) in {"esc", "escape", "enter", "cmd", "cmd_l", "cmd_r", "windows"}:
             return False
-        t = round(self.clock() - self.start, 4)
+        t = round((self.clock() if at is None else at) - self.start, 4)
         if bound and verdict in ("ok", "order"):
             self.pending.put(("key", {"t": t, "kind": "key", "name": key}))
-        self._emit({"t": t, "kind": verdict, "key": key, "drill": self.drill})
+        record = {"t": t, "ts": self.wall_start + t, "kind": verdict, "key": key, "drill": self.drill,
+                  "actions": list(actions), "capture_generation": generation}
+        if profile is not None:
+            record.update(profile_id=profile.profile_id, profile_revision=profile.revision)
+        self.pending.put(('event', record))
         return True
 
     def tip(self, text):
@@ -315,8 +378,11 @@ class SessionLog:
         self.events.close()
 
 
-COLORS = {"idle": "#1d2230", "bound": "#16343f", "ok": "#2ecc71", "habit": "#3b6ea5", "unmapped": "#8196aa", "repeat": "#3b6ea5", "stray": "#8196aa", "double": "#e03030",
-          "order": "#e03030", "text": "#e8ecf4", "clear": "#010203"}
+COLORS = {"idle": "#1d2230", "bound": "#16343f", "ok": "#2ecc71", "habit": "#3b6ea5", "unverified": "#8196aa", "unmapped": "#8196aa", "repeat": "#3b6ea5", "stray": "#8196aa", "double": "#e03030",
+          "order": "#e03030", "text": "#e8ecf4", "clear": "#010203",
+          # Drill-step outcomes (keystroke_live), flashed on the key that was pressed (or expected, when missing).
+          "clean": "#2ecc71", "slip": "#e0a030", "wrong_key": "#e03030", "early": "#e8d040", "late": "#e8d040",
+          "missing": "#e03030"}
 FLASH_MS = 350
 POLL_MS = 3
 KEYS_WIDE = 12.8        # widest row, in key units
@@ -363,6 +429,10 @@ def run(binds, drill=None, log_base=None, use_ai=True, serve_port=True, binds_pa
     except OSError:
         edit_reference = None
     store = ProfileStore(binds_path or drills.BINDS_FILE, confirm_sprint=binds_path is None)
+    # Binds come straight from Fortnite's settings save (no calibration needed); re-read when Fortnite rewrites it.
+    from .fortnite_binds import SavSync
+    bind_sync = SavSync(store) if binds_path is None else None
+    sync_at = [0.0]
     tracker = KeyTracker(store.snapshot, None, habits=Habits(path=store.path.with_suffix(".habits.json")))
     sequences=([drill.steps]+drill.accepts) if drill else []
     local_analysis=[KeystrokeAnalyzer(store.snapshot,sequences)]
@@ -371,6 +441,16 @@ def run(binds, drill=None, log_base=None, use_ai=True, serve_port=True, binds_pa
     habits = tracker.habits
     server = bind_server.start(lambda: store.snapshot.primary(), lambda: habits.habits(), recent_events, binds_file=store.path, store=store) if serve_port else None
     analyzer = Analyzer(tracker, jev=None if use_ai else JevClient(key=""), llm=None if use_ai else (lambda *a: ""))
+    # Drill-step grading from the map's KT|step lines, and Jev on the ambiguous presses (keystroke_live).
+    from .keystroke_live import KeystrokeLive, keystroke_client, follow_kt
+    from .ktlog import DEFAULT_LOG
+    live = KeystrokeLive(tracker.verified_by_key, tracker.profile_revision,
+                         emit=log._emit if log else (lambda record: None),
+                         jev=keystroke_client() if use_ai else None)
+    live_stop = threading.Event()
+    wall = lambda perf: time.time() - (time.perf_counter() - perf)
+    from .voice_agent import start as start_voice
+    voice = start_voice(focus=game_rect)
     root = tk.Tk()
     root.overrideredirect(True)
     root.attributes("-topmost", True)
@@ -418,22 +498,32 @@ def run(binds, drill=None, log_base=None, use_ai=True, serve_port=True, binds_pa
             canvas.itemconfig(rects[key][0], fill=color)
             root.after(FLASH_MS, lambda: canvas.itemconfig(rects[key][0], fill=rects[key][1]))
 
-    def handle(name, now):
+    input_gate = GameplayInputGate(store.snapshot)
+    gate_generation = [-1]
+
+    def handle(name, now, generation):
         title = foreground_title()
         if not in_game(title) or "unreal editor" in title.lower():
             tracker.focus_lost()
+            return
+        if not input_gate.accepts(generation):
             return
         evidence=local_analysis[0].accept(InputEvent(normal(name),"down",now))
         verdict, key = tracker.press(name, now)
         if verdict == "ignore":
             return
+        if verdict in ("ok", "unmapped", "unverified", "habit"):
+            live.press(key, wall(now))
+        voice.activity((tracker.profile_id, tracker.profile_revision))
         if log:
-            log.write(verdict, key, key in tracker.bound)
+            log.write(verdict, key, bool(evidence.get('actions')), at=now, profile=tracker.profile,
+                      actions=evidence.get('actions', ()), generation=generation)
         flash(key, COLORS["ok" if verdict == "ok" else verdict])
         text = explain(verdict, key, tracker, state["last_stray"], now)
         if verdict == "unmapped":
             state["last_stray"] = (key, now)
-        analyzer.note(key, now)
+        if verdict != "repeat":
+            analyzer.note(key, now)
         recent_events.append({"kind": verdict, "key": key})
         del recent_events[:-50]
         if verdict == "unmapped":
@@ -446,12 +536,17 @@ def run(binds, drill=None, log_base=None, use_ai=True, serve_port=True, binds_pa
 
             def work():
                 revision = analyzer.profile_revision
+                epoch = analyzer.epoch
+                voice_identity = (tracker.profile_id, revision)
                 try:
                     findings = analyzer.resolve(now)
+                    if epoch != analyzer.epoch:
+                        return
+                    voice.observe(voice_identity, [f for f in findings if not f.get('shadow', True)])
                     if log and revision == analyzer.profile_revision:
                         log._emit({"kind": "analysis", "profile_revision": revision, "findings": findings,
                                    "attempts": analyzer.jev.calls, "usage": dict(analyzer.jev.tokens)})
-                    incoming.put(("tip", (revision, analyzer.tip(now, tracker.binds))))
+                    incoming.put(("tip", (epoch, revision, analyzer.tip(now, tracker.binds))))
                 finally:
                     analyzer.release_claim()
 
@@ -473,18 +568,46 @@ def run(binds, drill=None, log_base=None, use_ai=True, serve_port=True, binds_pa
         except (OSError,ValueError,TypeError):pass
 
     def poll_once():
+        input_gate.focus(in_game(foreground_title()))
+        if gate_generation[0] != input_gate.generation:
+            gate_generation[0] = input_gate.generation
+            tracker.focus_lost()
+            analyzer.invalidate(tracker.profile_revision, tracker.profile_id)
+            local_analysis[0].accept(InputEvent("", "focus_lost", time.perf_counter()))
+        if input_gate.revoked_from is not None:
+            since, input_gate.revoked_from = input_gate.revoked_from, None
+            if log:
+                log.revoke(since)
+            live.revoke_since(wall(since))
         try:
             while True:
                 kind, payload = incoming.get_nowait()
                 if kind == "key":
                     handle(*payload)
                 elif kind == "release":
-                    name,at=payload
+                    name,at,generation=payload
+                    if not input_gate.accepts(generation) or not in_game(foreground_title()):
+                        continue
+                    observed_down = normal(name) in tracker.held
                     tracker.release(name)
                     local_analysis[0].accept(InputEvent(normal(name),"up",at))
+                    if log and observed_down:
+                        log.write('key_up', normal(name), False, at=at, profile=tracker.profile,
+                                  generation=generation)
+                elif kind == "kstep":
+                    k = payload.get("pressed") or (payload.get("expected") or [None])[0]
+                    if k and payload.get("outcome") in COLORS:
+                        flash(k, COLORS[payload["outcome"]])
+                elif kind == "jev":
+                    if payload.get("accepted") == "live" and payload.get("intended_key") and input_gate.active:
+                        text = (f"{payload['key'].upper()} pressed for {payload['intended_key'].upper()}"
+                                f" ({payload['intended']})")
+                        canvas.itemconfig(ids["status"], text=text)
+                        root.after(2200, lambda expected=text: canvas.itemconfig(ids["status"], text="")
+                                   if canvas.itemcget(ids["status"], "text") == expected else None)
                 elif kind == "tip" and payload:
-                    revision, text = payload
-                    if revision == analyzer.profile_revision and text:
+                    epoch, revision, text = payload
+                    if epoch == analyzer.epoch and revision == analyzer.profile_revision and input_gate.active and text:
                         canvas.itemconfig(ids["tip"], text=text)
                         if log:
                             log.tip(text)
@@ -514,9 +637,17 @@ def run(binds, drill=None, log_base=None, use_ai=True, serve_port=True, binds_pa
 
     def place():
         rect = game_rect()
+        if bind_sync is not None and time.monotonic() - sync_at[0] > 5.0:
+            sync_at[0] = time.monotonic()
+            try:
+                bind_sync.poll()
+            except Exception:  # noqa: BLE001  a bad save must never stop the overlay
+                pass
         snapshot = store.refresh()
         if (snapshot.profile_id, snapshot.revision) != (tracker.profile_id, tracker.profile_revision):
             tracker.set_profile(snapshot)
+            input_gate.configure(snapshot)
+            live.set_profile(tracker.verified_by_key, snapshot.revision)
             analyzer.invalidate(snapshot.revision, snapshot.profile_id)
             local_analysis[0]=KeystrokeAnalyzer(snapshot,sequences)
             state["last_stray"] = None
@@ -548,32 +679,55 @@ def run(binds, drill=None, log_base=None, use_ai=True, serve_port=True, binds_pa
                 state["shown"] = True
         root.after(250, place)
 
+    def queue_press(name):
+        generation = input_gate.press(normal(name), in_game(foreground_title()))
+        if generation is not None:
+            incoming.put(("key", (name, time.perf_counter(), generation)))
+
     def on_key(k):
-        if not game_rect():
-            return
-        incoming.put(("key", (key_name(k), time.perf_counter())))
+        queue_press(key_name(k))
 
     def on_release(k):
-        incoming.put(('release', (key_name(k), time.perf_counter())))
+        name = key_name(k)
+        input_gate.release(normal(name))
+        generation = input_gate.token(in_game(foreground_title()))
+        if generation is not None and normal(name) not in input_gate.chat_keys | {'esc', 'escape'}:
+            incoming.put(('release', (name, time.perf_counter(), generation)))
 
     def on_click(_x, _y, button, pressed):
-        if pressed and not game_rect():
-            return
+        name = f'mouse_{button.name}'
         if pressed:
-            incoming.put(('key', (f'mouse_{button.name}', time.perf_counter())))
+            queue_press(name)
         else:
-            incoming.put(('release', (f'mouse_{button.name}',time.perf_counter())))
+            input_gate.release(name)
+            generation = input_gate.token(in_game(foreground_title()))
+            if generation is not None and name not in input_gate.chat_keys:
+                incoming.put(('release', (name, time.perf_counter(), generation)))
 
     def on_scroll(_x, _y, dx, dy):
-        if not game_rect():
-            return
-        incoming.put(('key', ('wheel_up' if dy > 0 else 'wheel_down', time.perf_counter())))
+        if dy:
+            queue_press('wheel_up' if dy > 0 else 'wheel_down')
 
 
     build(20)
     listeners = [keyboard.Listener(on_press=on_key, on_release=on_release), mouse.Listener(on_click=on_click, on_scroll=on_scroll)]
     for listener in listeners:
         listener.start()
+
+    def kt_worker():
+        for ts, rec in follow_kt(DEFAULT_LOG, live_stop):
+            out = live.on_kt(rec, ts)
+            if out:
+                incoming.put(("kstep", out))
+
+    def jev_worker():
+        while not live_stop.wait(0.2):
+            if live.jev_due():
+                for result in live.ask_jev():
+                    incoming.put(("jev", result))
+
+    threading.Thread(target=kt_worker, daemon=True, name="kt-steps").start()
+    threading.Thread(target=jev_worker, daemon=True, name="jev-keystrokes").start()
     root.after(POLL_MS, poll)
     root.after(50, place)
     print("overlay running over the game window (Ctrl+C here to stop)")
@@ -582,6 +736,8 @@ def run(binds, drill=None, log_base=None, use_ai=True, serve_port=True, binds_pa
     except KeyboardInterrupt:
         pass
     finally:
+        live_stop.set()
+        voice.close()
         if edit_reference is not None and edit_reference.poll() is None:
             edit_reference.terminate()
         for listener in listeners:

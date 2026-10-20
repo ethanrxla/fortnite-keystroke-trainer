@@ -97,16 +97,24 @@ def _first(rows, keys, lo, hi):
     return None
 
 
+def _action_keys(binds, action):
+    """Use verified alternatives when calibration provenance is available."""
+    profile = getattr(binds, "profile", None)
+    if profile is not None:
+        return {normal(k) for b in profile.bindings if b.action == action and b.verified for k in b.keys}
+    key = binds.get(action)
+    return {normal(key)} if key else set()
+
+
 def correlate(store, binds):
     """Join each edit the guide recommended (a `lock`) with the presses and the crosshair travel that followed it."""
-    norm = {a: normal(k) for a, k in binds.items()}
-    edit, confirm, reset = {norm.get("edit")}, {norm.get("edit_confirm")}, {norm.get("reset")}
+    edit, confirm, reset = (_action_keys(binds, a) for a in ("edit", "edit_confirm", "reset"))
     locks = store.rows("SELECT ts, data FROM kt WHERE event='lock' AND drill='edit_guide' ORDER BY ts")
     finishes = store.rows("SELECT ts, data FROM kt WHERE event='crosshair' AND drill='edit_guide' ORDER BY ts")
     done = 0
     for ts, raw in locks:
         d = json.loads(raw)
-        keys = store.rows("SELECT ts, key FROM keys WHERE ts>? AND ts<=? ORDER BY ts", (ts, ts + EDIT_WINDOW + CONFIRM_WINDOW + RESET_WINDOW))
+        keys = store.rows("SELECT ts, key FROM keys WHERE ts>? AND ts<=? AND verdict IN ('ok','order','double') ORDER BY ts", (ts, ts + EDIT_WINDOW + CONFIRM_WINDOW + RESET_WINDOW))
         edit_ts = _first(keys, edit, ts, ts + EDIT_WINDOW)
         confirm_ts = _first(keys, confirm, edit_ts, edit_ts + CONFIRM_WINDOW) if edit_ts else None
         reset_ts = _first(keys, reset, confirm_ts, confirm_ts + RESET_WINDOW) if confirm_ts else None
@@ -151,12 +159,11 @@ def enrich_attempts(store, binds, now=None):
     edit (within 0.15 s of the open) is skipped. A confirm press on a completed shape raises the auto-label confidence;
     a reset press after the last selection turns a 'completed' into 'reset' only if nothing was selected afterwards."""
     now = time.time() if now is None else now
-    norm = {a: normal(k) for a, k in binds.items()}
-    confirm, reset = {norm.get("edit_confirm")} - {None}, {norm.get("reset")} - {None}
+    confirm, reset = (_action_keys(binds, a) for a in ("edit_confirm", "reset"))
     done = 0
     for (attempt_id,) in store.rows("SELECT attempt_id FROM edit_attempts WHERE enriched=0 AND t_close<?", (now - ENRICH_DELAY,)):
         rec = store.attempt(attempt_id)
-        keys = store.rows("SELECT ts, key FROM keys WHERE ts>? AND ts<=? ORDER BY ts",
+        keys = store.rows("SELECT ts, key FROM keys WHERE ts>? AND ts<=? AND verdict IN ('ok','order','double') ORDER BY ts",
                           (rec["t_edit_open"] + 0.15, rec["t_close"] + 0.5))
         if not keys and not store.rows("SELECT 1 FROM keys WHERE ts>? LIMIT 1", (rec["t_close"],)):
             continue            # no key data covering this attempt yet (overlay off, or not ingested): try later

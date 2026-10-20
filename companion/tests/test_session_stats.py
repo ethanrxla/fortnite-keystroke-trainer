@@ -26,15 +26,20 @@ class SessionStats(unittest.TestCase):
         self.assertEqual((a["strays"], a["unmapped"], a["doubles"]), (0, 2, 1))
         self.assertEqual(a["top_keys"][0], "caps_lock")
 
-    def test_only_confident_findings_count_and_unmapped_inputs_stay_unclassified(self):
-        findings = [{"intent": "slip", "confidence": 0.91, "uncertainty": False},
-                    {"intent": "deliberate", "confidence": 0.85, "uncertainty": False},
-                    {"intent": "slip", "confidence": 0.6, "uncertainty": False},
-                    {"intent": "insufficient_evidence", "confidence": 0.95, "uncertainty": True}]
-        events = [{"t": i, "kind": "unmapped", "key": "x"} for i in range(6)] + [{"kind": "analysis", "findings": findings}]
-        v = ss.accidental(events)["verdicts"]
-        self.assertEqual((v["slip"], v["deliberate"], v["noise"], v["unsure"]), (1, 1, 0, 2))
-        self.assertEqual(sum(v.values()), 4)
+    def test_only_valid_non_shadow_findings_reach_player_stats(self):
+        from keystroke_lab.analysis import INTENT_OPTIONS
+        def finding(i, **changes):
+            f = dict(intent='deliberate', confidence=.95, uncertainty=False, shadow=False,
+                     evidence_ids=[str(i)], probabilities={k: (.97 if k == 'deliberate' else .01) for k in INTENT_OPTIONS})
+            f.update(changes)
+            return f
+        good = finding(1)
+        findings = [good, dict(good), finding(2, shadow=True), finding(3, probabilities={}),
+                    finding(4, confidence=True), finding(5, uncertainty=True)]
+        v = ss.accidental([{'kind':'analysis', 'findings': findings}])['verdicts']
+        self.assertEqual(v['deliberate'], 1)
+        self.assertEqual(v['slip'], 0)
+        self.assertEqual(v['unsure'], 3)
 
     def test_drill_grading_never_feeds_the_stats(self):
         store = Store(":memory:")
@@ -65,11 +70,12 @@ class SessionStats(unittest.TestCase):
         add(6, [4], False, enriched=False)                  # key presses not joined yet: not judged
         events = [{"ts": 1000.0, "t": 0, "kind": "ok", "key": "w"}]
         m = ss.missed(events, store, 1000.0, {"edit": "g", "edit_confirm": "mouse_left"})
-        self.assertEqual(m["steps"][0], {"drill": "edit", "step": "confirm", "missed": 2, "graded": 3})
+        self.assertEqual(m["steps"][0]["not_observed"], 2)
+        self.assertEqual((m["missed"], m["graded"]), (0, 0))
         # Edit and confirm on one key (C / C): the second press is the confirm, counted the same way.
-        self.assertEqual(ss.missed(events, store, 1000.0, {"edit": "c", "edit_confirm": "c"})["steps"][0]["missed"], 2)
+        self.assertEqual(ss.missed(events, store, 1000.0, {"edit": "c", "edit_confirm": "c"})["steps"][0]["not_observed"], 2)
 
-    def test_edit_on_release_is_recognised_instead_of_counted_as_misses(self):
+    def test_missing_confirms_never_infer_edit_on_release_or_a_miss(self):
         store = Store(":memory:")
         for n in range(1, 10):                      # nine edits with a selection, none with a confirm press
             rec = attempt(n, "window_center")
@@ -77,13 +83,17 @@ class SessionStats(unittest.TestCase):
             store.add_attempt(rec)
             store.update_attempt(rec, enriched=True)
         m = ss.edit_misses(store, 1000.0)
-        self.assertTrue(m["release"])
+        self.assertTrue(m["unknown_mode"])
+        self.assertIsNone(ss.edits_on_release(store))
         self.assertEqual((m["missed"], m["graded"]), (0, 0))
         # The player's own setting wins over the guess either way.
-        self.assertEqual(ss.edit_misses(store, 1000.0, on_release=False)["missed"], 9)
+        self.assertEqual(ss.edit_misses(store, 1000.0, on_release=False)["missed"], 0)
+        self.assertEqual(ss.edit_misses(store, 1000.0, on_release=False)["not_observed"], 9)
         self.assertTrue(ss.edits_on_release(store, True))
         from keystroke_lab import stats_panel
         snap = ss.snapshot([{"ts": 1000.0, "t": 0, "kind": "ok", "key": "w"}], store)
+        self.assertEqual(stats_panel.lines(snap)[0][1], "9 / 9 · ungraded")
+        snap = ss.snapshot([{"ts": 1000.0}], store, on_release=True)
         self.assertEqual(stats_panel.lines(snap)[0][1], "not observable: edit on release")
 
     def test_selection_match_follows_labels_and_measures_travel_against_ideal(self):
@@ -150,7 +160,7 @@ class PanelLayout(unittest.TestCase):
 
     def test_lines_show_empty_states_and_numbers(self):
         empty = ss.snapshot([], None)
-        self.assertEqual([l[1] for l in self.sp.lines(empty)], ["none yet", "none", "no observed attempts yet"])
+        self.assertEqual([l[1] for l in self.sp.lines(empty)], ["needs a fully observed drill", "none", "no observed attempts yet"])
         snap = {"missed": {"steps": [{"drill": "edit_peek", "step": 2, "missed": 4, "graded": 18}]},
                 "accidental": {"strays": 23, "doubles": 6, "top_keys": ["caps_lock", "x"],
                                "verdicts": {"slip": 11, "deliberate": 3, "noise": 0, "unsure": 9}},

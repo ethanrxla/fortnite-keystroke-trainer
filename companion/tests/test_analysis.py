@@ -112,6 +112,45 @@ class AnalyzerTests(unittest.TestCase):
         self.assertFalse(jev.available)
         self.assertIsNone(jev.decide({}, {'case': choice_question('Classify evidence', {'insufficient_evidence':'unknown'})}))
 
+    def test_old_history_is_not_sent_as_recent_and_all_verified_binds_are_sent(self):
+        from keystroke_lab.bind_profiles import Binding, BindProfile
+        p = BindProfile('C:/private-player-folder/keybinds.json', 1, (Binding('reload', ('mouse_middle',), 'combat', True),
+                               Binding('crouch', ('mouse_x2',), 'move', True),
+                               Binding('emote', ('alt_l',), 'ui', True),
+                               Binding('swap_weapon', ('o',), verified=False)))
+        posted = []
+        c = JevClient(key='test', post=lambda body: posted.append(body) or {'answers': {}})
+        a = analysis.Analyzer(KeyTracker(p), jev=c)
+        a.note('f', 1.)
+        a.add_stray('g', 100., [])
+        a.resolve(100.)
+        self.assertEqual(posted[0]['state']['events'][0]['just_before'], [])
+        self.assertNotIn('private-player-folder', json.dumps(posted))
+        self.assertEqual({b['action'] for b in posted[0]['state']['verified_bindings']}, {'reload', 'crouch', 'emote'})
+
+    def test_broker_deferral_preserves_queue_without_caching_a_fake_decision(self):
+        class Broker:
+            def key(self, *args): return 'key'
+            def acquire(self, *args): return None
+        c = JevClient(key='test', post=lambda _: self.fail('network'), broker=Broker())
+        a = self.make(c)
+        self.feed(a)
+        self.assertEqual(a.resolve(100.), [])
+        self.assertEqual(len(a.queue), 3)
+        self.assertEqual(a.cache, {})
+        self.assertEqual(a.stats['jev_calls'], 0)
+
+    def test_failed_request_is_not_cached_and_pause_invalidates_evidence(self):
+        c = JevClient(key='test', post=lambda _: None)
+        a = self.make(c)
+        self.feed(a)
+        a.resolve(100.)
+        self.assertEqual(a.cache, {})
+        a.note('f', 101.)
+        a.invalidate(a.profile_revision, a.profile_id)
+        self.assertEqual(a.recent, [])
+        self.assertEqual(a.findings, [])
+
 
 class JevClientTests(unittest.TestCase):
     def test_parses_answers_and_counts_usage(self):

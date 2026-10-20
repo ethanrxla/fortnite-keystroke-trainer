@@ -89,13 +89,12 @@ def advice(summary, failures=None):
         out.append((n, f"'{key}' was pressed {n} times and is not one of your binds ({pct(n, total)} of presses): "
                        "unmapped in that recording; calibrate it before drawing conclusions."))
     for key, n in summary["doubles"].most_common(3):
-        out.append((n, f"'{key}' registered twice within 70 ms {n} times: a bounce or a double tap. "
-                       "Press once and let the piece land."))
+        out.append((n, f"'{key}' had {n} recorded rapid-repeat flags. Timing alone does not establish an accident or hardware bounce."))
     for key, n in summary["order"].most_common(3):
         out.append((n, f"'{key}' came out of order {n} times: you pressed it when the drill expected another step."))
     for (drill, action), n in summary["missed"].most_common(3):
-        out.append((n, f"In {drill}, '{action}' was skipped {n} times when a rep went quiet: slow that step down "
-                       "until it is automatic."))
+        out.append((n, f"In {drill}, '{action}' was not observed {n} times before the recording's idle boundary. "
+                       "This does not prove a forgotten or dropped input."))
     return [text for _, text in sorted(out, key=lambda t: -t[0])]
 
 

@@ -15,6 +15,8 @@ import pathlib
 import statistics
 
 from .keyboard_overlay import DOUBLE_SECONDS
+from .analysis import INTENT_OPTIONS
+from .evidence import validate_choice
 
 SESSIONS = pathlib.Path(__file__).resolve().parents[1] / "sessions"
 MIN_CONFIDENCE = 0.8          # as analysis.MIN_CONFIDENCE: a Jev verdict below this counts as unsure
@@ -68,13 +70,27 @@ def accidental(events):
             doubles[e["key"]] += 1
         last[e["key"]] = e["t"]
     verdicts = collections.Counter({v: 0 for v in VERDICTS})
+    seen = set()
     for e in events:
         if e.get("kind") != "analysis":
             continue
         for f in e.get("findings") or []:
+            # Shadow evaluation is never player-facing. Legacy findings lack the
+            # provenance needed to establish an accepted interpretation.
+            if f.get('shadow', True):
+                continue
+            ids = tuple(f.get('evidence_ids') or ())
+            if not ids or ids in seen:
+                continue
+            seen.add(ids)
             intent = f.get("intent")
-            sure = (isinstance(f.get("confidence"), (int, float)) and f["confidence"] >= MIN_CONFIDENCE
+            answer = dict(choice=intent, confidence=f.get('confidence'), probabilities=f.get('probabilities'))
+            sure = (validate_choice(answer, INTENT_OPTIONS)
+                    and f['probabilities'].get(intent, 0) >= .90
+                    and f["confidence"] >= MIN_CONFIDENCE
                     and not f.get("uncertainty", True) and intent in VERDICTS[:3])
+            if intent in ('slip', 'noise'):
+                sure = sure and f.get('evidence', {}).get('observation', {}).get('reviewed_correction') is True
             verdicts[intent if sure else "unsure"] += 1
     judged = sum(verdicts.values())
     # Only known stray events are candidates for interpretation. Unmapped presses
@@ -82,10 +98,6 @@ def accidental(events):
     verdicts["unsure"] += max(0, sum(strays.values()) - judged)
     return {"strays": sum(strays.values()), "unmapped": sum(unmapped.values()), "doubles": sum(doubles.values()),
             "top_keys": [k for k, _ in (strays + unmapped + doubles).most_common(3)], "verdicts": dict(verdicts)}
-
-
-RELEASE_MIN = 8            # edits with a selection needed before deciding the player edits on release
-RELEASE_SHARE = 0.15       # below this share of edits with a confirm press, confirms must be happening on release
 
 
 def _selected_edits(store, since=None):
@@ -103,21 +115,16 @@ def _selected_edits(store, since=None):
 
 
 def edits_on_release(store, setting=None):
-    """True when the player's confirms happen on releasing the edit key (no second press to see). The setting wins
-    (overlay-settings.json "edit_on_release"); otherwise judged from all their recorded edits: with enough of them and
-    almost none showing a confirm press, the confirms must be releases. Too few edits: assume presses."""
-    if setting is not None:
-        return bool(setting)
-    history = _selected_edits(store)
-    return len(history) >= RELEASE_MIN and sum(history) / len(history) < RELEASE_SHARE
+    """Only an explicit setting establishes confirmation mode; absence proves nothing."""
+    return setting if isinstance(setting, bool) else None
 
 
 def edit_misses(store, since, binds=None, on_release=None):
-    """Missed keystrokes in ordinary play: edits where tiles were selected but the edit closed without the confirm key.
-    The collector joins each recorded edit with the overlay's presses; the press that opened the edit is skipped, so with
-    edit and confirm on one key (C / C, common) the second press is the confirm and this works as with separate keys.
-    Only edit-on-release can't be seen (the confirm is a key release, never logged): then the result says so instead of
-    counting false misses."""
+    """Count unobserved confirm presses, never grade free-play intention or success.
+
+    Existing joins have no continuous capture coverage or historical bind snapshot.
+    Even an explicit press-to-confirm setting cannot turn these absences into misses.
+    """
     if store is None or since is None:
         return None
     if edits_on_release(store, on_release):
@@ -125,7 +132,9 @@ def edit_misses(store, since, binds=None, on_release=None):
     session = _selected_edits(store, since)
     if not session:
         return None
-    return {"drill": "edit", "step": "confirm", "missed": session.count(False), "graded": len(session)}
+    return {"drill": "edit", "step": "confirm", "missed": 0, "graded": 0,
+            "not_observed": session.count(False), "observed_attempts": len(session),
+            "unknown_mode": on_release is None, "incomplete_evidence": True}
 
 
 def missed(events, store, since, binds=None, on_release=None):

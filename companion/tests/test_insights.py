@@ -70,9 +70,28 @@ class InsightsTests(unittest.TestCase):
             self.assertEqual([json.loads(k)["name"] for k in keys], ["g"])
             self.assertEqual(len(events), 1)
 
-    def test_in_game_matches_uefn_and_fortnite(self):
-        self.assertTrue(in_game("Unreal Editor for Fortnite"))
+    def test_in_game_matches_only_fortnite_client(self):
+        self.assertFalse(in_game("Unreal Editor for Fortnite"))
+        self.assertFalse(in_game("Fortnite notes - Notepad"))
+        self.assertTrue(in_game("Fortnite"))
         self.assertFalse(in_game("Notepad"))
+
+    def test_event_uses_capture_time_profile_and_resolved_actions(self):
+        from keystroke_lab.bind_profiles import BindProfile
+        with tempfile.TemporaryDirectory() as d:
+            now = [10.]
+            log = SessionLog(Path(d)/'s', focus=lambda: 'Fortnite', clock=lambda: now[0])
+            now[0] = 50.
+            log.write('ok', 'mouse_middle', True, at=10.25, profile=BindProfile('p', 35, ()),
+                      actions=('reload',), generation=2)
+            log.write('key_up', 'mouse_middle', False, at=10.4, profile=BindProfile('p', 35, ()), generation=2)
+            log.close()
+            events = [json.loads(s) for s in (Path(d)/'s.events.jsonl').read_text().splitlines()]
+            self.assertEqual(events[0]['t'], .25)
+            self.assertEqual(events[0]['actions'], ['reload'])
+            self.assertEqual(events[0]['profile_revision'], 35)
+            self.assertEqual(events[1]['kind'], 'key_up')
+            self.assertAlmostEqual(events[1]['ts'] - events[0]['ts'], .15, places=4)
 
 
 if __name__ == "__main__":

@@ -48,7 +48,9 @@ class JevClient:
     def decide(self, state, questions, retries=1):
         """Ask several named choice questions about one state. Returns {name: {choice, confidence, probabilities}}
         or None. Counts one call against the session cap per attempt."""
+        self.last_error = None
         if not self.available or not isinstance(questions,dict) or not 1<=len(questions)<=8:
+            self.last_error = 'unavailable_or_invalid_request'
             return None
         body = {"state": state, "model": self.model, "questions": questions}
         for attempt in range(retries + 1):
@@ -58,7 +60,9 @@ class JevClient:
                 try:token=self.broker.acquire(self.domain,self.broker.key(self.domain,state,questions))
                 except Exception:
                     self.last_error='broker_unavailable';return None
-                if token is None:return None
+                if token is None:
+                    self.last_error = 'admission_deferred'
+                    return None
             self.calls += 1
             try:
                 data = self.post(body)
@@ -82,6 +86,7 @@ class JevClient:
                 try:self.broker.finish(token)
                 except Exception:self.last_error="broker_release_failed"
             if not isinstance(data, dict):
+                self.last_error = 'invalid_response'
                 return None
             self.model_version=data.get("model",self.model)
             usage = data.get("usage") or {}
@@ -91,7 +96,11 @@ class JevClient:
                 amount = usage.get(direction + "_tokens", 0)
                 if isinstance(amount, int) and amount >= 0:
                     self.tokens[direction] += amount
-            return data.get("answers")
+            answers = data.get('answers')
+            if not isinstance(answers, dict):
+                self.last_error = 'invalid_response'
+                return None
+            return answers
         return None
 
 

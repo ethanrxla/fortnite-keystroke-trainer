@@ -53,36 +53,72 @@ def cmd_practice(args):
                 for key in binding.keys:
                     alternates.setdefault(key, binds[binding.action])
     presses = []
+    from .input_gate import GameplayInputGate
+    gate = GameplayInputGate(binds)
+    held = set()
+
+    def capture(name):
+        name = keyboard_overlay.normal(name)
+        token = gate.press(name, bool(keyboard_overlay.game_rect()))
+        if token is None:
+            held.clear()
+            return
+        if name in held:
+            return
+        if not name.startswith('wheel_'):
+            held.add(name)
+        resolved = alternates.get(name, name)
+        if resolved in watched and gate.accepts(token):
+            presses.append((time.perf_counter(), resolved))
+
+    def release(name):
+        name = keyboard_overlay.normal(name)
+        gate.release(name)
+        held.discard(name)
 
     def on_key(k):
-        name = str(keyboard_overlay.key_name(k)).lower()
-        presses.append((time.perf_counter(), alternates.get(name, name)))
+        capture(str(keyboard_overlay.key_name(k)).lower())
 
     def on_click(_x, _y, button, pressed):
+        name = f"mouse_{button.name}"
         if pressed:
-            name = f"mouse_{button.name}"
-            presses.append((time.perf_counter(), alternates.get(name, name)))
+            capture(name)
+        else:
+            release(name)
 
     def on_scroll(_x, _y, dx, dy):
-        name = "wheel_up" if dy > 0 else "wheel_down"
-        presses.append((time.perf_counter(), alternates.get(name, name)))
+        if dy:
+            capture("wheel_up" if dy > 0 else "wheel_down")
+
+    def wait(seconds):
+        end = time.perf_counter() + max(0., seconds)
+        while time.perf_counter() < end:
+            gate.focus(bool(keyboard_overlay.game_rect()))
+            time.sleep(min(.02, max(0., end - time.perf_counter())))
 
     interval = grader.click_interval(args.tempo)
     reps = []
-    with keyboard.Listener(on_press=on_key), mouse.Listener(on_click=on_click, on_scroll=on_scroll):
+    with keyboard.Listener(on_press=on_key, on_release=lambda k: release(keyboard_overlay.key_name(k))), mouse.Listener(on_click=on_click, on_scroll=on_scroll):
         for rep in range(1, drill.reps + 1):
             print(f"\nrep {rep}/{drill.reps}  ({args.tempo} APM)")
-            time.sleep(interval)
+            wait(interval)
             presses.clear()
+            token = gate.token(bool(keyboard_overlay.game_rect()))
             start = time.perf_counter()
             for i, action in enumerate(drill.steps):
                 target = start + i * interval
-                time.sleep(max(0.0, target - time.perf_counter()))
+                wait(max(0.0, target - time.perf_counter()))
                 print(f"\a  {action:>12}", flush=True)
-            time.sleep(interval)
+            wait(interval)
+            if token is None or not gate.accepts(token):
+                print('  Not graded: focus or menu/chat observation gap.')
+                continue
             r = grader.grade_rep(keys, list(presses), start, args.tempo, watched)
             reps.append(r)
             print("  " + "  ".join(s.result for s in r.steps) + ("  +extra" if r.extra_keys else ""))
+    if not reps:
+        print('No fully observed reps to grade.')
+        return 0
     s = grader.grade_set(reps)
     print(f"\naccuracy {s.accuracy:.0%}  timing spread {s.timing_spread_ms:.0f} ms  errors {s.errors}")
     return 0

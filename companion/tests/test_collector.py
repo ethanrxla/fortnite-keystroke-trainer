@@ -58,6 +58,24 @@ class CollectorTests(unittest.TestCase):
         collector.correlate(store, BINDS)
         self.assertIsNone(store.rows("SELECT edit_ts FROM attempts")[0][0])
 
+    def test_repeat_is_not_confirm(self):
+        store = Store(":memory:")
+        store.add_kt(100, {"event": "lock", "drill_id": "edit_guide", "face": "F", "edit": "half_wall"})
+        store.add_key(101, "c", "ok", None, "test")
+        store.add_key(101.2, "c", "repeat", None, "test")
+        collector.correlate(store, {"edit": "c", "edit_confirm": "c"})
+        self.assertEqual(store.rows("SELECT edit_ts, confirm_ts FROM attempts")[0], (101.0, None))
+        store.close()
+
+    def test_verified_alternatives(self):
+        from keystroke_lab.bind_profiles import Binding, BindProfile, BindMap
+        binds = BindMap(BindProfile("p", 1, (
+            Binding("edit_confirm", ("c", "mouse_middle"), verified=True),
+            Binding("reset", ("mouse_x2",), verified=False),
+        )))
+        self.assertEqual(collector._action_keys(binds, "edit_confirm"), {"c", "mouse_middle"})
+        self.assertEqual(collector._action_keys(binds, "reset"), set())
+
 
 class PersonalizeTests(unittest.TestCase):
     def seed(self, store, n, edit="window_center"):

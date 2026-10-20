@@ -37,6 +37,28 @@ class KeyTrackerTests(unittest.TestCase):
         t = KeyTracker({"sprint": "shift"})
         self.assertEqual(t.press("shift_r", 0.0)[0], "ok")
 
+    def test_mouse_and_repress(self):
+        t = KeyTracker({"reload": "mouse_middle", "crouch": "mouse_x2", "wall": "f"})
+        for key in ("mouse_middle", "mouse_x2", "f"):
+            self.assertEqual(t.press(key, 0)[0], "ok")
+        self.assertEqual(t.press("f", .02)[0], "repeat")
+        t.release("f")
+        self.assertEqual(t.press("f", .04)[0], "ok")
+
+    def test_unverified_alternate_cannot_complete_drill(self):
+        from keystroke_lab.bind_profiles import Binding, BindProfile, BindMap
+        profile = BindProfile("player", 35, (
+            Binding("wall", ("f",), verified=True),
+            Binding("wall", ("q",), verified=False),
+        ))
+        t = KeyTracker(BindMap(profile), ["wall"])
+        self.assertEqual(t.profile_revision, 35)
+        self.assertIn("?", t.names["q"])
+        t.press("q", 0)
+        self.assertEqual(t.index, 0)
+        t.press("f", .1)
+        self.assertEqual(t.index, 1)
+
 
 if __name__ == "__main__":
     unittest.main()
@@ -60,3 +82,11 @@ class ExplainTests(unittest.TestCase):
         text = self.ko.explain("ok", "tab", self.t, ("caps_lock", 10.0), 10.3)
         self.assertEqual(text, "")
         self.assertEqual(self.ko.explain("ok", "tab", self.t, ("caps_lock", 10.0), 12.0), "")
+
+
+class WindowIdentityTests(unittest.TestCase):
+    def test_browser_and_editor_cannot_be_game_window(self):
+        from keystroke_lab.keyboard_overlay import is_fortnite_executable
+        self.assertTrue(is_fortnite_executable(r"C:\Games\FortniteClient-Win64-Shipping.exe"))
+        for path in (r"C:\Chrome\chrome.exe", "msedge.exe", "UnrealEditorFortnite-Win64-Shipping.exe", "Fortnite.exe"):
+            self.assertFalse(is_fortnite_executable(path))

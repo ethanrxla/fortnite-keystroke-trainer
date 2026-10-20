@@ -28,7 +28,7 @@ SETTINGS = pathlib.Path(__file__).resolve().parents[1] / "overlay-settings.json"
 
 
 def edit_on_release_setting(path=SETTINGS):
-    """overlay-settings.json "edit_on_release": true / false, or None to let session_stats judge it from your edits."""
+    """Explicit confirmation setting, or None (unknown; never inferred from absence)."""
     try:
         v = json.loads(pathlib.Path(path).read_text()).get("edit_on_release")
     except (OSError, ValueError, TypeError, AttributeError):
@@ -66,12 +66,15 @@ def lines(snap):
     m, a, e = snap["missed"], snap["accidental"], snap["edits"]
     if m["steps"] and m["steps"][0].get("release"):
         miss = ("Confirm presses", "not observable: edit on release", None)
+    elif m["steps"] and m["steps"][0].get("incomplete_evidence"):
+        s = m['steps'][0]
+        miss = ('Confirm press not observed', f"{s['not_observed']} / {s['observed_attempts']} · ungraded", None)
     elif m["steps"]:
         s = m["steps"][0]
         name = "confirm after editing" if (s["drill"], s["step"]) == ("edit", "confirm") else f"{s['drill']} · {s['step']}"
         miss = (f"Not observed: {name}", f"{s['missed']} / {s['graded']}", s["missed"] / s["graded"] if s["graded"] else None)
     else:
-        miss = ("Missed keystrokes", "none yet", None)
+        miss = ("Keystroke accuracy", "needs a fully observed drill", None)
     acc = (f"Input flags: {a['strays']} stray · {a.get('unmapped', 0)} unmapped · {a['doubles']} rapid",
            ("top " + ", ".join(a["top_keys"])) if a["top_keys"] else "none", None)
     if e["attempts"] >= 1 and e["completed_pct"] is not None:
@@ -84,6 +87,29 @@ def lines(snap):
     else:
         edit = ("Shape match", "no observed attempts yet", None)
     return [miss, acc, edit]
+
+
+def keystroke_snapshot(events, binds=None, tip=""):
+    """The four keystroke rows (stats_rows.py) from this session's events: accuracy, timing, misses by cause, fix next.
+    The coach's tip stands in for "Fix next" only when the math has nothing to say yet."""
+    import time
+    from .keystroke_math import summary
+    from .stats_rows import rows
+    action_of = {str(k).lower(): a for a, k in (binds or {}).items() if isinstance(k, str)}
+    # Drill rows only while a drill is live (a graded step in the last DRILL_LINGER_S); otherwise back to free play.
+    steps = [e.get("ts") for e in events if e.get("kind") == "kstep" and isinstance(e.get("ts"), (int, float))]
+    if not steps or time.time() - max(steps) > DRILL_LINGER_S:
+        events = [e for e in events if e.get("kind") not in ("kstep", "jev")]
+    out = rows(summary(events), action_of)
+    if tip and out[-1][1] == "keep going":
+        out[-1] = ("Fix next", tip[:70], None)
+    return {"rows": out}
+
+
+DRILL_LINGER_S = 30.0
+
+CAUSE_COLOURS = {"wrong_key": "#e03030", "slip": "#e0a030", "early": "#e8d040", "late": "#e8d040",
+                 "missing": "#b03050", "modifier": "#9a6ad6", "unmapped": "#5a6a7a"}
 
 
 def verdict_parts(snap):
@@ -121,7 +147,7 @@ def run(sessions=None):
             try:
                 binds = dict(drills.load_binds())
                 events = session_stats.read_events(session_stats.newest_events(folder))
-                latest.put(session_stats.snapshot(events, store, binds, edit_on_release_setting()))
+                latest.put(keystroke_snapshot(events, binds, session_stats.tip(events)))
             except Exception as exc:  # noqa: BLE001  a bad read must never take the panel down; try again next tick
                 print("stats panel: read failed:", type(exc).__name__, exc)
             stop.wait(REFRESH_S)
@@ -149,28 +175,31 @@ def run(sessions=None):
         canvas.create_text(10 * f, 8 * f, anchor="nw", text="SESSION STATS", fill=COLOURS["text"],
                            font=("Segoe UI", fs(11), "bold"))
         y = 30 * f
-        for n, (label, value, frac) in enumerate(lines(snap)):
-            canvas.create_text(10 * f, y, anchor="nw", text=label, fill=COLOURS["text"], font=("Segoe UI", fs(10)))
-            canvas.create_text(w - 10 * f, y, anchor="ne", text=value, fill=COLOURS["muted"], font=("Segoe UI", fs(9)))
+        x0, x1 = 10 * f, w - 10 * f
+        for label, value, bar in snap["rows"]:
+            canvas.create_text(x0, y, anchor="nw", text=label, fill=COLOURS["muted"], font=("Segoe UI", fs(9)))
+            canvas.create_text(x1, y, anchor="ne", text=value, fill=COLOURS["text"], font=("Segoe UI", fs(10), "bold"))
             bar_y = y + 17 * f
-            if n == 1:
-                parts, total = verdict_parts(snap), sum(c for _, c in verdict_parts(snap))
-                x = 10 * f
-                for verdict, count in parts:
-                    seg = (w - 20 * f) * count / total - 2 * f
-                    canvas.create_rectangle(x, bar_y, x + max(seg, 1), bar_y + 5 * f, fill=COLOURS[verdict], width=0)
-                    x += seg + 2 * f
-                if not parts:
-                    canvas.create_rectangle(10 * f, bar_y, w - 10 * f, bar_y + 5 * f, fill=COLOURS["track"], width=0)
-            else:
-                canvas.create_rectangle(10 * f, bar_y, w - 10 * f, bar_y + 5 * f, fill=COLOURS["track"], width=0)
-                if frac:
-                    canvas.create_rectangle(10 * f, bar_y, 10 * f + (w - 20 * f) * min(frac, 1.0), bar_y + 5 * f,
-                                            fill=COLOURS["meter"], width=0)
+            if bar and bar[0] != "none":
+                canvas.create_rectangle(x0, bar_y, x1, bar_y + 5 * f, fill=COLOURS["track"], width=0)
+            if bar and bar[0] == "meter":
+                canvas.create_rectangle(x0, bar_y, x0 + (x1 - x0) * max(0.0, min(bar[1], 1.0)), bar_y + 5 * f,
+                                        fill=COLOURS["meter"], width=0)
+            elif bar and bar[0] == "centre":          # early (left) / late (right) of your own median
+                mid = (x0 + x1) / 2
+                end = mid + (x1 - x0) / 2 * bar[1]
+                canvas.create_rectangle(min(mid, end), bar_y, max(mid, end) + 2 * f, bar_y + 5 * f,
+                                        fill=COLOURS["meter"], width=0)
+                canvas.create_rectangle(mid - f, bar_y - 2 * f, mid + f, bar_y + 7 * f, fill=COLOURS["text"], width=0)
+            elif bar and bar[0] == "stack":
+                total = sum(c for _, c in bar[1]) or 1
+                x = x0
+                for cause, count in bar[1]:
+                    seg = (x1 - x0) * count / total
+                    canvas.create_rectangle(x, bar_y, x + max(seg - 2 * f, 1), bar_y + 5 * f,
+                                            fill=CAUSE_COLOURS.get(cause, COLOURS["meter"]), width=0)
+                    x += seg
             y += 30 * f
-        if snap["tip"]:
-            canvas.create_text(10 * f, y, anchor="nw", width=w - 20 * f, text=snap["tip"][:140], fill=COLOURS["tip"],
-                               font=("Segoe UI", fs(9)))
 
     def tick():
         try:

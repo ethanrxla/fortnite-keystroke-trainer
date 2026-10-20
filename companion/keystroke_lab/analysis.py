@@ -10,6 +10,7 @@ import os
 import time
 import threading
 import math
+import hashlib
 
 from . import envfile  # noqa: F401  (loads ../.env)
 from .jev_client import JevClient, choice_question
@@ -89,7 +90,7 @@ class Analyzer:
 
     def add_stray(self, key, now, neighbours, evidence=None):
         with self.lock:
-            prev = [(k, round((now-t)*1000)) for k,t in self.recent if k != key][-3:]
+            prev = [(k, round((now-t)*1000)) for k,t in self.recent if k != key and 0 <= now-t <= 1.0][-3:]
             self.queue.append({'key': key, 'next_to': [{'key':k,'action':a} for k,a in neighbours[:3]],
                                'just_before': [{'key':k,'ms_ago':ms} for k,ms in prev],
                                'profile_revision': self.profile_revision, 'profile_id':self.profile_id,
@@ -124,11 +125,30 @@ class Analyzer:
         answers = None
         if pending and self.jev and self.jev.available:
             questions = {f'e{i}': choice_question(describe(i,e), INTENT_OPTIONS) for i,e in enumerate(pending)}
+            profile = getattr(self.tracker, 'profile', None)
+            bindings = ([dict(action=b.action, keys=list(b.keys), context=b.context)
+                         for b in profile.bindings if b.verified] if profile else
+                        [dict(action=a, keys=[k], context='unknown')
+                         for a,k in getattr(self.tracker, 'binds', {}).items()])
+            calls_before = getattr(self.jev, 'calls', 0)
+            # Calibration IDs may be absolute local paths; the service only needs
+            # an opaque identity and this request's event references.
+            public_profile = hashlib.sha256(str(profile_id).encode()).hexdigest()[:24]
+            remote_events = [dict(e, profile_id=public_profile, evidence_id=f'e{i}')
+                             for i,e in enumerate(pending)]
             try:
-                answers = self.jev.decide({'domain':'keystroke','profile_id':profile_id,'profile_revision':revision,'events': pending}, questions, retries=0)
+                answers = self.jev.decide({'domain':'keystroke','profile_id':public_profile,'profile_revision':revision,
+                                           'verified_bindings': bindings,
+                                           'context': 'unknown unless supplied by an observation',
+                                           'events': remote_events}, questions, retries=0)
             except Exception:
                 answers = None
-            self.stats['jev_calls'] += 1
+            self.stats['jev_calls'] += max(0, getattr(self.jev, 'calls', calls_before) - calls_before)
+            if getattr(self.jev, 'last_error', None) in ('admission_deferred', 'broker_unavailable'):
+                with self.lock:
+                    if epoch == self.epoch:
+                        self.queue = (pending + self.queue)[-BATCH*2:]
+                return results
         for i,event in enumerate(pending):
             answer = answers.get(f'e{i}') if isinstance(answers,dict) else None
             choice, confidence, probabilities = 'insufficient_evidence', 0.0, {}
@@ -152,7 +172,9 @@ class Analyzer:
             with self.lock:
                 if epoch != self.epoch or revision != self.profile_revision:
                     return []
-                self.cache[self.cache_key(event)] = finding
+                # Transport failure or unavailable AI is not a model decision.
+                if isinstance(answer, dict) and validate_choice(answer, INTENT_OPTIONS):
+                    self.cache[self.cache_key(event)] = finding
             results.append(finding)
         with self.lock:
             if epoch != self.epoch or revision != self.profile_revision:

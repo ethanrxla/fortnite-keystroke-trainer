@@ -48,10 +48,11 @@ class FortniteBinds(unittest.TestCase):
             self.assertIn("forward", changed)
             primary = store.snapshot.primary()
             self.assertEqual((primary["jump"], primary["forward"], primary["swap_weapon"]), ("mouse_x1", "e", "2"))
-            # ESDF movement now reads as bound, not stray, and stays ungraded until calibrated.
+            # ESDF movement now reads as bound (not unmapped) but, imported from an ini without --trust, stays
+            # unverified and neutral: never graded and never shown as a confirmed mapping.
             tracker = KeyTracker(store.snapshot, ["edit"])
-            self.assertEqual(tracker.press("e", 0)[0], "ok")
-            self.assertEqual(tracker.press("f", 0.1)[0], "ok")
+            self.assertEqual(tracker.press("e", 0)[0], "unverified")
+            self.assertEqual(tracker.press("f", 0.1)[0], "unverified")
             self.assertEqual(store.merge(fortnite_binds.to_bindings(found)), [])
             self.assertEqual(json.loads(path.read_text())["version"], 1)
 
