@@ -9,6 +9,15 @@ the dummy's On Hit fires a tagged trigger under the floor, and kt_skills_test_de
 level or starts a run. A tagged customizable light in front of each level tile is on for the chosen level.
 The interact buttons behind the shoot line stay as they are.
 """
+
+import sys as _sys
+# RETIRED (player 2026-10-20): the floating WIDE/EASY/MEDIUM/HARD/START tiles over aim lane A2 were removed from the aim practice area. The Skills Test runs from its
+# Start / Difficulty / Weapon buttons. Pass --i-know to rebuild anyway.
+if __name__ == "__main__" and "--i-know" not in _sys.argv:
+    raise SystemExit("build_skills_tiles.py: retired 2026-10-20 (the floating WIDE/EASY/MEDIUM/HARD/START tiles over aim lane A2). Pass --i-know to run anyway.")
+if "--i-know" in _sys.argv:
+    _sys.argv.remove("--i-know")
+
 import argparse
 import pathlib
 import sys

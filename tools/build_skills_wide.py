@@ -10,6 +10,15 @@ inside its box (SkillsTest.verse HalfExtent 6500 x 3400 x 1500), and the WIDE ti
 spawners and these. Spots run 6 to 90 m out and from the plate's south edge to its north edge, clear of the A4
 recoil wall, ordered so neighbours in the list are far apart.
 """
+
+import sys as _sys
+# RETIRED (player 2026-10-20): the Skills Test WIDE bots, which spilled into the gun range lanes were removed from the aim practice area. The Skills Test runs from its
+# Start / Difficulty / Weapon buttons. Pass --i-know to rebuild anyway.
+if __name__ == "__main__" and "--i-know" not in _sys.argv:
+    raise SystemExit("build_skills_wide.py: retired 2026-10-20 (the Skills Test WIDE bots, which spilled into the gun range lanes). Pass --i-know to run anyway.")
+if "--i-know" in _sys.argv:
+    _sys.argv.remove("--i-know")
+
 import argparse
 import pathlib
 import sys

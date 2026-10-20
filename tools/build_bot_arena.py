@@ -56,6 +56,7 @@ def main():
     x0, x1 = w["min"]["x"], n["min"]["x"]           # arena interior along X (open side toward the ready room)
     y0, y1 = w["max"]["y"], e["min"]["y"]           # between the west and east walls
     xm, ym = (x0 + x1) / 2, (y0 + y1) / 2
+    # Pieces sit on the player build grid (player 2026-10-20): walls +C/2 in x, floor and ramp +C/2 in x and y.
     print(f"arena interior x {x0:.0f}..{x1:.0f}, y {y0:.0f}..{y1:.0f}")
     if args.dry_run:
         return
@@ -66,10 +67,10 @@ def main():
     # Cover: two wall pairs either side of the middle, a ramp up to a floor on the far side.
     k = 0
     for dy in (-2 * C, 2 * C):
-        piece(b, f"KT4_Arena_Wall_{k}", WALL, xm, ym + dy, 0.0, yaw=90); k += 1
-        piece(b, f"KT4_Arena_Wall_{k}", WALL, xm, ym + dy + C, 0.0, yaw=90); k += 1
-    piece(b, "KT4_Arena_Ramp", RAMP, x1 - 3.5 * C, ym, 0.0)
-    piece(b, "KT4_Arena_Floor", FLOOR, x1 - 2.5 * C, ym, H)
+        piece(b, f"KT4_Arena_Wall_{k}", WALL, xm + C / 2, ym + dy, 0.0, yaw=90); k += 1
+        piece(b, f"KT4_Arena_Wall_{k}", WALL, xm + C / 2, ym + dy + C, 0.0, yaw=90); k += 1
+    piece(b, "KT4_Arena_Ramp", RAMP, x1 - 3.0 * C, ym + C / 2, 0.0)
+    piece(b, "KT4_Arena_Floor", FLOOR, x1 - 2.0 * C, ym + C / 2, H)
     # Live bots on the far side, spread across the width.
     for i, dy in enumerate((-3 * C, 3 * C)):
         bot(b, f"KT4_Arena_Bot_{i}", x1 - 1.5 * C, ym + dy)

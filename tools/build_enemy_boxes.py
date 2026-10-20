@@ -20,7 +20,7 @@ PREFIX = "KT31_EnemyBox_"
 C, H = bm.CELL, bm.LEVEL_H
 PIECES = "/Game/Building/ActorBlueprints/Player/Wood/L1/"
 CLS = {k: f"{PIECES}PBWA_W1_{n}.PBWA_W1_{n}_C" for k, n in (("wall", "Solid"), ("cone", "RoofC"))}
-CODES = ("P7", "P8", "E7")
+CODES = ("P8", "E7")      # P7 has its own five-box gauntlet (build_tunnel_gauntlet.py, KT38_Tunnel_*)
 
 
 def plan(by, m):

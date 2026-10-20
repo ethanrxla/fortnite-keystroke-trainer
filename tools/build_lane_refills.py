@@ -1,6 +1,11 @@
 """Fresh guns every rep on the shooting lanes (KT35_Refill_*): an item granter under each lane, read by DrillDevice.
 
-    python tools/build_lane_refills.py
+RETIRED (player 2026-10-14): "for all the drills, users load in with the equipment they have in their inventory." The
+granter replaced the player's inventory with the practice shotgun + SMG every rep. Running this now turns the refill
+off on every lane in LANES and removes the KT35_Refill_* granters; --enable rebuilds the old behaviour.
+
+    python tools/build_lane_refills.py              # off: keep the player's own inventory
+    python tools/build_lane_refills.py --enable     # the old replace-inventory refill
 
 Player 2026-10-13: "on reps for gun/ piece switch, it should auto reload the players magazines. same for edit peek".
 Verse cannot refill a magazine, but an item granter can hand the guns over again: each lane in LANES gets a granter
@@ -27,6 +32,14 @@ def main():
     for label, path in acts.items():
         if label.startswith(PREFIX):
             m.tool(bm.SCENE, "remove_from_scene", actor={"refPath": path})
+    if "--enable" not in sys.argv:
+        for code in LANES:
+            lane = acts.get(f"KT_Lane_{code}")
+            if lane:
+                m.tool(bm.DEVICE, "SetDeviceProperty", device={"refPath": lane}, propertyName="refillEachRep", value="false")
+                m.tool(bm.SCENE, "save_actor", actor={"refPath": lane})
+                print(f"{code}: refill off; the player keeps their own inventory")
+        return
     loadout = json.loads((bm.ROOT / "shared" / "practice-loadout.json").read_text(encoding="utf-8"))["items"]
     for code, items in LANES.items():
         lane = acts.get(f"KT_Lane_{code}")

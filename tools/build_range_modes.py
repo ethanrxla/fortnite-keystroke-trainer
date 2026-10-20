@@ -12,11 +12,14 @@ the same distances in different places, one per player playing it.
   (KT8_Range_Counter_n, 110 cm high). Each is a coloured plate standing proud of the wall, a play-size target dummy
   between plate and wall (550 x 125 cm per unit of scale in play), a hidden trigger under the floor that the dummy's
   On Hit fires, a label and (except START) a small light the device turns on for the current choices.
-* Hidden targets: two per lane at each of 10 / 20 / 35 / 50 / 75 m (a little nearer or further), 380 cm either side
-  of the lane centre, clear of the lane's own targets (120 cm off centre). Wired like tools/build_gun_range.py, with
-  the kt_range_wide_* tags; the lane devices pop them down at game start.
-* Lane devices KT8_Range_Lane_0..3 get kt_range_lane_tag (so WIDE rounds never pick a target another lane holds), and
-  the booth buttons get back their original text.
+* Hidden side targets (player 2026-10-20: WIDE stays in the lane; "add dummies to the immediate left or right in the
+  lanes ... dont move any of the dummies"): one SIDE_CM either side of each of the lane's own targets
+  (KT8_Range_Target_n_m, 120 cm off the lane centre), at the same distance, so a WIDE round spreads over the lane's
+  width and never past its line (lane centre +-512). Wired like tools/build_gun_range.py, with the kt_range_wide_*
+  tags; the lane devices pop them down at game start and only use their own lane's.
+* Lane devices KT8_Range_Lane_0..3 get kt_range_lane_tag, and the booth buttons get back their original text.
+
+    python tools/build_range_modes.py --hidden-only     # rebuild only the side targets, keep the wall tiles
 """
 import argparse
 import json
@@ -47,6 +50,7 @@ TILES = [("WIDE", (0.12, 0.03, 0.30), "kt_range_wide_shot_tag", "kt_range_light_
          ("START", (0.25, 0.25, 0.28), "kt_range_start_shot_tag", None, None)]
 H_UNIT, W_UNIT = 550.0, 125.0
 SEED = 20261011
+SIDE_CM = 260.0                  # side target offset from its lane target (target prop is about 150 cm wide)
 
 
 def lane_centre(n):
@@ -54,14 +58,16 @@ def lane_centre(n):
 
 
 def hidden():
-    rng = random.Random(SEED)
+    """(label, x, y): beside each lane target (build_gun_range.py: x FIRE_X + m*100, y centre -120 / +120 for odd m)."""
     out = []
     for n in range(POPUP_LANES):
         yc = lane_centre(n)
         for m in POPUP_M:
+            yt = yc + (120.0 if m % 2 else -120.0)
             for side in (-1, 1):
-                dm = rng.uniform(-2.0, 2.0)
-                out.append((f"{PREFIX}Hidden_{n}_{m}m_{'S' if side < 0 else 'N'}", FIRE_X + (m + dm) * 100.0, yc + side * 380.0))
+                y = yt + side * SIDE_CM
+                assert abs(y - yc) + 75.0 <= C - 50.0, (n, m, y)       # target edge stays 50 cm inside the lane line
+                out.append((f"{PREFIX}Hidden_{n}_{m}m_{'S' if side < 0 else 'N'}", FIRE_X + m * 100.0, y))
     return out
 
 
@@ -98,6 +104,7 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--dry-run", action="store_true")
     ap.add_argument("--tiles-only", action="store_true", help="rebuild the shootable tiles, keep the hidden targets")
+    ap.add_argument("--hidden-only", action="store_true", help="rebuild the hidden side targets, keep the tiles")
     args = ap.parse_args()
     targets = hidden()
     print(f"{POPUP_LANES} lanes x {len(TILES)} tiles, {len(targets)} hidden targets")
@@ -108,10 +115,18 @@ def main():
     g = ag.Grid()
     b, m = g.b, g.m
     acts = {a["label"]: a["actorPath"] for a in (m.tool(bm.SCENE, "find_actors", name="KT", collision_channels=[]) or [])}
-    old = [p for l, p in acts.items() if l.startswith(PREFIX) and not (args.tiles_only and l.startswith(PREFIX + "Hidden_"))]
+    old = [p for l, p in acts.items() if l.startswith(PREFIX) and not (args.tiles_only and l.startswith(PREFIX + "Hidden_"))
+           and not (args.hidden_only and not l.startswith(PREFIX + "Hidden_"))]
+    if not args.tiles_only:
+        # Their aim-evidence relays (install_aim_accuracy.py, KT40_Aim_<label>_*) are bound to the targets being
+        # replaced; drop them too so ensure_target_evidence builds fresh ones bound to the new targets.
+        old += [p for l, p in acts.items() if l.startswith("KT40_Aim_" + PREFIX + "Hidden_")]
     for p in old:
         m.tool(bm.SCENE, "remove_from_scene", actor={"refPath": p})
     print(f"removed {len(old)} old actors")
+    if args.hidden_only:
+        place_hidden(b, m, targets)
+        return
     yaw = 270.0                                   # faces -X, towards the booth
     sy, sz = SIZE / W_UNIT, SIZE / H_UNIT          # the whole plate is the hitbox
     for n in range(POPUP_LANES):
@@ -166,6 +181,10 @@ def main():
     if args.tiles_only:
         print("tiles rebuilt; hidden targets kept")
         return
+    place_hidden(b, m, targets)
+
+
+def place_hidden(b, m, targets):
     for label, x, y in targets:
         ref = m.tool(bm.SCENE, "add_to_scene_from_asset", asset_path=TARGET, name=label, xform=bm.xform(x, y, 0.0, yaw=180))
         path = b.labelled(ref["refPath"] if isinstance(ref, dict) else ref, label)
@@ -181,6 +200,8 @@ def main():
                 b.bind(trig, "OnTriggered", path, "Pop-Down")
             else:
                 b.bind(path, "On Hit", trig, "Trigger")
+                from install_aim_accuracy import ensure_target_evidence
+                ensure_target_evidence(b, label, path, trig)
             saved.append(trig)
         for p in saved:
             m.tool(bm.SCENE, "save_actor", actor={"refPath": p})

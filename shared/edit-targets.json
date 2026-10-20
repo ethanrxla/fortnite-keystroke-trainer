@@ -2404,7 +2404,7 @@
     "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F922F0903_1140184840",
     "kind": "wall",
     "centre": {
-      "x": -30720,
+      "x": -30464,
       "y": -77824,
       "z": 0
     },
@@ -3204,7 +3204,7 @@
     "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F922F0903_1140266841",
     "kind": "wall",
     "centre": {
-      "x": -30720,
+      "x": -30464,
       "y": -77312,
       "z": 0
     },
@@ -3554,7 +3554,7 @@
     "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F922F0903_1140470843",
     "kind": "wall",
     "centre": {
-      "x": -30720,
+      "x": -30464,
       "y": -75264,
       "z": 0
     },
@@ -3654,7 +3654,7 @@
     "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F922F0903_1140397842",
     "kind": "wall",
     "centre": {
-      "x": -30720,
+      "x": -30464,
       "y": -75776,
       "z": 0
     },

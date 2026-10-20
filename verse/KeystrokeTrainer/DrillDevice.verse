@@ -8,7 +8,7 @@
 #     so pieces left over from earlier reps never satisfy a later rep's check.
 #   * "gap" lanes have a catch floor one level down in front of the ledge, so a floor or ramp is
 #     the only way to stand at level 0 or climb in the next cell.
-# Grid axes are world axes: forward = +X, right = +Y (VERIFY build grid alignment in UEFN).
+# Grid axes are world axes: forward = +X, right = +Y (player-confirmed 2026-10-13: cells centred on multiples of 512 cm).
 
 using { /Fortnite.com/Devices }
 using { /Fortnite.com/Characters }
@@ -31,7 +31,7 @@ keystroke_drill_device := class(creative_device):
     @editable PadRadius:float = 160.0
     # Optional metronome click. Unlinked is fine: the on-screen cue is the visual click.
     @editable Click:audio_player_device = audio_player_device{}
-    # Fortnite build grid, in cm (VERIFY in UEFN).
+    # Fortnite build grid, in cm (player-confirmed 2026-10-13).
     @editable CellSize:float = 512.0
     @editable LevelHeight:float = 384.0
     # How close to a level's height counts as standing on it, in cm.
@@ -90,6 +90,9 @@ keystroke_drill_device := class(creative_device):
     # and clearing between reps blew up the pieces around the player mid-set.
     @editable ClearEachRep:logic = false
     @editable ClearWaitSeconds:float = 0.4
+    # Player 2026-10-20: rooms reset every 60 s while idle. The clear trigger also fires this often while no lane in
+    # this room (lane devices within TagSearchRadius) is running a set, so a rep is never wiped mid-way. 0 = off.
+    @editable IdleClearSeconds:float = 60.0
     # Pause between reps, the same on every lane (player 2026-10-13: "90s and ramp rush need more time inbetween reps").
     @editable RepRestSeconds:float = 3.0
     # Every rep starts on track 1 instead of moving one track over each rep (player 2026-10-13, box up: "you start in a
@@ -125,6 +128,7 @@ keystroke_drill_device := class(creative_device):
     @editable TagSearchRadius:float = 6000.0
     var Pressure:trigger_device = trigger_device{}
     var Clearer:trigger_device = trigger_device{}
+    var HasClearer:logic = false
     # Section play: when a section device runs this lane it sets where the player goes afterwards and
     # how many reps to play; both are cleared when the set ends.
     var ReturnPoint:?vector3 = false
@@ -169,6 +173,9 @@ keystroke_drill_device := class(creative_device):
         set Pressure = if (T := NearestTrigger[kt_pressure_tag]) then T else PressureTrigger
         set Metronome = if (A := NearestAudio[kt_click_tag]) then A else Click
         set Clearer = if (C := NearestTrigger[kt_clear_tag]) then C else trigger_device{}
+        set HasClearer = if (NearestTrigger[kt_clear_tag]) then true else false
+        if (HasClearer?, IdleClearSeconds > 0.0):
+            spawn{ IdleClear() }
         GunHit.TriggeredEvent.Subscribe(OnGunHit)
         PickaxeHit.TriggeredEvent.Subscribe(OnPickaxeHit)
         if (G := NearestTrigger[kt_gun_hit_tag]):
@@ -194,6 +201,18 @@ keystroke_drill_device := class(creative_device):
             S.TriggeredEvent.Subscribe(OnStartShot)
         if (AutoPad?):
             WatchPad()
+
+    IdleClear()<suspends>:void =
+        loop:
+            Sleep(IdleClearSeconds)
+            if (not Busy?, not RoomBusy[]):
+                Clearer.Trigger()
+
+    # Succeeds while another lane device in this room (within TagSearchRadius) is running a set.
+    RoomBusy()<transacts><decides>:void =
+        Here := GetTransform().Translation
+        (for (O : FindCreativeObjectsWithTag(kt_lane_tag), L := keystroke_drill_device[O], L.Busy?,
+              Distance(L.GetTransform().Translation, Here) < TagSearchRadius) { L }).Length > 0
 
     OnBotDown(R:device_ai_interaction_result):void =
         set BotsDown += 1

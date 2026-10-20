@@ -93,6 +93,17 @@ The player tested and approved this state. Don't undo it without asking:
   - KT35_Refill_ granters
   - KT36_LabBot_
   - KT37_LobbyReset_
+  - KT38_Tunnel_ five-box P7 gauntlet (`build_tunnel_gauntlet.py`; `build_enemy_boxes.py` no longer builds P7)
+  - KT39_RoomReset_ full-room reset barrel grids, fired by each room's clear trigger (`build_room_resets.py`); W2 wall
+    take is excluded on purpose (its enemy walls are meant to be destroyed)
+  - KT41_Exit_ EXIT plates for the aim room, gun range, tracking range, 1v1 arena, Piece Lab, Sky Box and free build
+    (`build_room_exits.py`)
+  - KT33_WallTake_Reset* per-rep box reset (`build_wall_take_reset.py`)
+- 2026-10-20: drills keep the player's own inventory (`build_lane_refills.py` now turns refills off). The floating
+  Skills Test tiles and WIDE bots are retired (`build_skills_tiles.py`, `build_skills_wide.py` need `--i-know`). Gun
+  range WIDE stays in the lane, using side targets beside each lane target (`build_range_modes.py --hidden-only`).
+  DrillDevice clears a room every `IdleClearSeconds` (60) while no lane in it runs a set. Court button tags:
+  `fix_court_tags.py`. The 1v1 arena pieces are on the player grid; `EditTargets.verse` holds only their new positions.
 - Island settings: player invincibility off, health regen on.
 
 ## Iteration loop

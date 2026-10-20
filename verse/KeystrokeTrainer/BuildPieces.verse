@@ -97,7 +97,7 @@ kt_build_piece<public> := class:
         set MaxHealth = if (M = "metal") then 500.0 else if (M = "stone") then 300.0 else 150.0
         set Health = MaxHealth
 
-    # World location (cm) -> grid cell (x, y, level): 512 cm cells, 384 cm levels (VERIFY).
+    # World location (cm) -> grid cell (x, y, level): 512 cm cells, 384 cm levels (player-confirmed 2026-10-13).
     Snap<public>(Location:vector3)<transacts>:void =
         X := if (V := Floor[Location.X / 512.0]) then V * 1.0 else 0.0
         Y := if (V := Floor[Location.Y / 512.0]) then V * 1.0 else 0.0
