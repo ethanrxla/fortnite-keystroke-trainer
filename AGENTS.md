@@ -57,13 +57,10 @@ A UEFN island that teaches Fortnite building and editing at a slow tempo first
   or `build_skills_test.py`.
   `KT23_Theme_` (`build_theme_rooms.py`, art from `render_theme_art.py`): heroes wall and cross in the armory, the build wing's
   67s; `KT23_AimRail_` is a different builder, never delete all `KT23_*`.
-  `KT21_Team_` (`build_team_arena.py`): reserved team-arena greybox, separate from
-  `KT21_Marker_`. Never delete all `KT21_*` actors to rebuild either one.
-  `KT24_Team_` (`build_team_modes.py`): additive hub access, staging controls,
-  tagged match helpers and validation devices. Keep runtime gates off until
-  roster/respawn/loadout/cleanup and native CTF acceptance have passed.
-  `KT26_TeamDetail_` (`build_team_details.py`, PR #5): arena cover, stairs, trucks. `KT27_TeamTower_`
-  (`build_team_towers.py`): the two sniper towers (Service-side corners) and two ammo rooms (Loading edge).
+  The team game modes moved out on 2026-10-20 (tag `pre-split-2026-10`): their Verse, builders and a dump of the 378
+  actors (`KT21_Team_`, `KT24_Team_`, `KT25_Compound_`, `KT26_TeamDetail_`, `KT27_TeamTower_`, `KT28_CourtRead_`,
+  `KT29_Rift_`, `KT30_Balance_`, the hub `KT26_Lobby_Modes` sign) live in https://github.com/ethanrxla/fortnite-arena-modes
+  under `legacy-v1/`. Don't add team modes back here. The 1v1 arena (`KT4_`, `KT10_Arena_`) and the RiftRouter stay.
 - Shootable buttons (armory wall, presets, skills and range tiles, lobby sign shots) get their hit boxes from
   `python tools/refit_hitboxes.py` (a grid of target dummies sized from the dummy's real collision, `tools/hitbox.py`).
   Their builders still place one dummy: run the refit after any of them.

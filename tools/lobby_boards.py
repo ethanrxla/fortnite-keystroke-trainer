@@ -3,15 +3,14 @@
     python tools/lobby_boards.py [--dry-run]
     then: python tools/render_signs.py && python tools/build_sign_shots.py
 
-* "where the RXLA TRAINING board is, replace it with the game modes graphic and move the rxla training onto the
-  adjacent wall": KT_Sign_Title (RXLA TRAINING GROUND / START HERE / FREE BUILD) moves flat onto the hub's south wall
-  (y=-61952, facing +Y, left of a player looking at the pads), and a new billboard KT26_Lobby_Modes takes its old spot
-  in front of the join pads: GAME MODES with Rift, Control, Skirmish, Elimination and Free for all.
+* (2026-10-11, done once) KT_Sign_Title moved onto the hub's south wall. The GAME MODES board that took its old spot
+  (KT26_Lobby_Modes) left with the team modes on 2026-10-20 (fortnite-arena-modes legacy-v1), so this no longer
+  places it.
 * "the boards in the lobby should be AGAINST the wall, not slightly in front of it": every hub board standing within
   4 m of a hub wall and parallel to it is pushed back until its billboard touches the wall; its sign art, back panel and
   shoot-to-travel dummy move with it.
 Old KT20_SignArt_ / KT25_SignBack_ panels of the moved boards are removed so render_signs.py / build_sign_shots.py
-redraw them in place (render_signs also gives KT24_Team_HubLabel the sign font).
+redraw them in place.
 """
 import argparse
 import pathlib
@@ -21,11 +20,7 @@ sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
 import build_map as bm  # noqa: E402
 
 HUB = (-2048.0, 2560.0, -61952.0, -57344.0)       # inner wall faces: west, east, south, north
-TITLE = "KT_Sign_Title"
-MODES = "KT26_Lobby_Modes"
-MODES_TEXT = "GAME MODES\nRift | Control | Skirmish | Elimination | Rumble\nStep on a glowing pad to queue"
-TITLE_SPOT = (1700.0, -61952.0)                   # south wall face, between the pads' row ends and the east corner
-BOARDS = ("KT3_Sign", "KT_Sign_Gate_Aim", "KT_Sign_Gate_Arena", "KT_Sign_Gate_Scenario", "KT24_Team_HubLabel")
+BOARDS = ("KT3_Sign", "KT_Sign_Gate_Aim", "KT_Sign_Gate_Arena", "KT_Sign_Gate_Scenario")
 FOLLOW = ("KT20_SignArt_", "KT25_SignBack_", "KT25_SignShot_")
 
 
@@ -69,32 +64,6 @@ def main():
         for f in FOLLOW:
             if f + label in acts:
                 shift(f + label, dx, dy)
-
-    # 2. The title onto the south wall; the modes board in its place.
-    t = xf(TITLE)
-    old = dict(t["location"])
-    depth = acts[TITLE]["bounds"]["max"]["x"] - acts[TITLE]["bounds"]["min"]["x"]
-    if not args.dry_run:
-        for f in ("KT20_SignArt_", "KT25_SignBack_"):
-            if f + TITLE in acts:
-                m.tool(bm.SCENE, "remove_from_scene", actor={"refPath": acts[f + TITLE]["actorPath"]})
-        # A billboard at yaw 0 faces -Y; yaw 180 faces +Y, into the hub from the south wall.
-        m.tool(bm.ACTOR, "set_actor_transform", actor={"refPath": acts[TITLE]["actorPath"]},
-               xform={"location": {"x": TITLE_SPOT[0], "y": TITLE_SPOT[1] + depth / 2 + 1.0, "z": old["z"]},
-                      "rotation": dict(t["rotation"], yaw=180.0), "scale": t["scale"]})
-        m.tool(bm.SCENE, "save_actor", actor={"refPath": acts[TITLE]["actorPath"]})
-        modes = acts[MODES]["actorPath"] if MODES in acts else b.device(bm.BILLBOARD, MODES, old["x"], old["y"], old["z"])
-        m.tool(bm.ACTOR, "set_actor_transform", actor={"refPath": modes},
-               xform={"location": old, "rotation": t["rotation"], "scale": t["scale"]})
-        props = {}
-        src = m.tool(bm.OBJ, "get_properties", instance={"refPath": acts[TITLE]["actorPath"]},
-                     properties=["backgroundColor", "textSize", "showBorder", "textColor"])
-        src = __import__("json").loads(src) if isinstance(src, str) else src
-        props.update(src or {})
-        props["text"] = MODES_TEXT
-        b.props(modes, props)
-        m.tool(bm.SCENE, "save_actor", actor={"refPath": modes})
-    print(f"title -> south wall at x {TITLE_SPOT[0]}; {MODES} at the old title spot {old}")
 
 
 if __name__ == "__main__":
