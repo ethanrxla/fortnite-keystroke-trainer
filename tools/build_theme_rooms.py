@@ -354,37 +354,65 @@ VERSE_EYE = 330.0           # card centre above the room's own floor: reading he
 VERSE_STEP = 900.0          # candidate spots along a wall
 
 
+VERSE_TOTAL = 60            # cards on the map: every verse once, then repeats in other places
+VERSE_REGION = 6000.0       # spots are grouped into squares this size and filled in turn, so the cards spread out
+
+
+def wall_faces(actors):
+    """Every wall slab's two long faces (labels with "Wall", 6 m+ long, 3 m+ tall): (x, y, normal, along, length, top,
+    bottom). graf.faces only knows the hub, wing, lane-room and gun-range walls."""
+    out = []
+    for a in actors:
+        lab = a["label"]
+        if "Wall" not in lab or not lab.startswith("KT") or "Sign" in lab:
+            continue
+        mn, mx = a["bounds"]["min"], a["bounds"]["max"]
+        dx, dy = mx["x"] - mn["x"], mx["y"] - mn["y"]
+        if mx["z"] - mn["z"] < 300 or max(dx, dy) < 600 or min(dx, dy) > 600:
+            continue
+        if dx >= dy:
+            cx = (mn["x"] + mx["x"]) / 2
+            out += [(cx, mn["y"], (0, -1), (1, 0), dx, mx["z"], mn["z"]), (cx, mx["y"], (0, 1), (1, 0), dx, mx["z"], mn["z"])]
+        else:
+            cy = (mn["y"] + mx["y"]) / 2
+            out += [(mn["x"], cy, (-1, 0), (0, 1), dy, mx["z"], mn["z"]), (mx["x"], cy, (1, 0), (0, 1), dy, mx["z"], mn["z"])]
+    return out
+
+
+def floor_under(floors, x, y, lo_z, hi_z):
+    """The top of a floor slab under (x, y) between lo_z and hi_z, or None (no floor: that face looks outside)."""
+    tops = [f["max"]["z"] for f in floors if f["min"]["x"] <= x <= f["max"]["x"] and f["min"]["y"] <= y <= f["max"]["y"]
+            and lo_z <= f["max"]["z"] <= hi_z]
+    return max(tops) if tops else None
+
+
 def verses(b, actors):
-    """Bible verses (shared/bible-verses.json, KJV; cards from render_theme_art.py) on free wall space across the map:
-    the hub, the three themed wings, every drill room and the Piece Lab, each verse once, at reading height. A spot that
-    would cover graffiti, signs, devices or other theme art is skipped (player 2026-10-20: "scatter bible verses across
-    the map in free space")."""
-    import build_room_resets as rr
+    """Bible verses (shared/bible-verses.json, KJV; cards from render_theme_art.py) all over the map (player 2026-10-20:
+    "scatter bible verses across the map in free space"; 2026-10-21: "include bible verses all over the map"). Every
+    wall slab with a floor in front of it is a candidate, at reading height above that floor; spots are grouped into
+    VERSE_REGION squares and filled in turn so the cards spread out. Every verse is placed once, then repeats fill up
+    to VERSE_TOTAL. A spot that would cover graffiti, signs, devices or other art is skipped."""
     pngs = sorted((ART / "verses").glob("verse_*.png"))
-    rooms = {"HUB": (HUB_RECT, 0.0), "BUILD": (BUILD_RECT, 0.0), "EDIT": (EDIT_RECT, 0.0), "PIECE": (PIECE_RECT, 0.0)}
-    for code in list(rr.ROOMS) + ["LAB"]:
-        box = rr.room_box(actors, code)
-        if box:
-            lo, hi = box
-            floors = [a["bounds"]["max"]["z"] for a in actors if a["label"] == f"KT_RoomFloor_{code}"]
-            rooms[code] = ((lo["x"], hi["x"], lo["y"], hi["y"]), min(floors + [0.0]))
+    floors = [a["bounds"] for a in actors if a["label"].startswith("KT") and any(k in a["label"] for k in
+              ("Floor", "Area_", "Strip", "Ledge", "Plate_", "_Plate", "Pad_"))
+              and a["bounds"]["max"]["x"] - a["bounds"]["min"]["x"] > 800 and a["bounds"]["max"]["y"] - a["bounds"]["min"]["y"] > 800]
     spots = []
-    for room, ((x0, x1, y0, y1), floor) in rooms.items():
-        for (fx, fy, normal, along, length, top) in graf.faces(actors):
-            ix, iy = fx + normal[0] * 50, fy + normal[1] * 50
-            if not (x0 < ix < x1 and y0 < iy < y1) or top < max(floor, 0.0) + VERSE_EYE + 250:
-                continue
-            centre = fx if along[0] else fy
-            lo, hi = (max(centre - length / 2, x0), min(centre + length / 2, x1)) if along[0] else \
-                     (max(centre - length / 2, y0), min(centre + length / 2, y1))
-            c = lo + VERSE_W / 2 + 60
-            while c <= hi - VERSE_W / 2 - 60:
-                x = c if along[0] else fx + normal[0] * 3.0
-                y = fy + normal[1] * 3.0 if along[0] else c
-                # Reading height from where the player stands: the ledge (z 0) in sunken drill rooms.
-                spots.append((room, x, y, max(floor, 0.0) + VERSE_EYE, normal))
-                c += VERSE_STEP
-    # Round-robin over the rooms (each room's spots shuffled), so the verses spread across the map.
+    for (fx, fy, normal, along, length, top, bottom) in wall_faces(actors):
+        floor = floor_under(floors, fx + normal[0] * 250, fy + normal[1] * 250, bottom - 600, bottom + 400)
+        if floor is None:
+            continue
+        stand = max(floor, 0.0) if floor > -600 else floor
+        z = stand + VERSE_EYE
+        if top < z + 250:
+            continue
+        centre = fx if along[0] else fy
+        c = centre - length / 2 + VERSE_W / 2 + 60
+        while c <= centre + length / 2 - VERSE_W / 2 - 60:
+            x = c if along[0] else fx + normal[0] * 3.0
+            y = fy + normal[1] * 3.0 if along[0] else c
+            region = (int(x // VERSE_REGION), int(y // VERSE_REGION))
+            spots.append((region, x, y, z, normal))
+            c += VERSE_STEP
     rng = random.Random(316)
     queues = {}
     for spot in spots:
@@ -393,25 +421,29 @@ def verses(b, actors):
         rng.shuffle(q)
     order = list(queues)
     rng.shuffle(order)
+    print(f"  {len(spots)} candidate spots in {len(order)} regions")
+    mats = {}
     placed, turn = 0, 0
-    for png in pngs:
-        mat, aspect = material(b, png, False), png_aspect(png)
+    for k in range(VERSE_TOTAL):
+        png = pngs[k % len(pngs)]
+        if png not in mats:
+            mats[png] = (material(b, png, False), png_aspect(png))
+        mat, aspect = mats[png]
         w, h = VERSE_W, VERSE_W / aspect
         while any(queues.values()):
-            room = order[turn % len(order)]
+            region = order[turn % len(order)]
             turn += 1
-            if not queues[room]:
+            if not queues[region]:
                 continue
-            _, x, y, z, normal = queues[room].pop()
+            _, x, y, z, normal = queues[region].pop()
             if blocked(actors, x, y, z, w / 2 + 40, normal, h / 2 + 40):
-                turn -= 1                   # stay on this room until it yields a free spot or runs out
+                turn -= 1                   # stay on this region until it yields a free spot or runs out
                 continue
-            label = f"{PREFIX}Verse_{png.stem}"
+            label = f"{PREFIX}Verse_{png.stem}" + (f"_{k // len(pngs)}" if k >= len(pngs) else "")
             remember(actors, label, mount(b, label, mat, x, y, z, w, h, normal), x, y, z, w, h, normal)
             placed += 1
-            print(f"  {png.stem} -> {room} ({x:.0f}, {y:.0f}, {z:.0f})")
             break
-    print("verse cards:", placed, "of", len(pngs))
+    print("verse cards:", placed, "of", VERSE_TOTAL, f"({len(pngs)} verses)")
 
 
 def main():

@@ -7,7 +7,7 @@ Player 2026-10-20: "ensure verify all builds clear after rep". For each lane roo
   * the barrels its clear trigger fires (event bindings into each barrel) cover the whole room: every point on a
     SAMPLE_CM grid from the room's floor to its ceiling is within the blast radius of one of them;
   * every one of those barrels is silent and invisible (play Audio / VFX off, hidden), does structure damage only,
-    never touches indestructible buildings, and re-arms itself on exploding.
+    never touches indestructible buildings, and is re-armed after exploding; no knockback (player 2026-10-21: W3 "sending us flying").
 Exit status 1 when any room fails. This proves the wiring and the coverage; the blast itself still needs one playtest.
 """
 import json
@@ -21,7 +21,7 @@ from build_room_resets import ROOMS, room_box  # noqa: E402
 
 TILE_CM = 512.0
 SAMPLE_CM = 256.0
-EXPECT = {"play Audio / VFX": False, "visible During Game": False, "player Damage": 0,
+EXPECT = {"play Audio / VFX": False, "visible During Game": False, "player Damage": 0, "knockback": "None",
           "damage Indestructible Buildings": False}
 
 
@@ -47,8 +47,9 @@ def main():
             bad = {k: props.get(k) for k, v in EXPECT.items() if props.get(k) != v}
             if props.get("structure Damage", 0) < 1000:
                 bad["structure Damage"] = props.get("structure Damage")
-            if not any(l["sourceDevicePath"]["refPath"] == path and l["targetFunction"] == "Reset" for l in links[path]):
-                bad["self reset"] = False
+            # Re-armed after exploding: a Reset link into it (its own On Exploded, or a delayed re-arm trigger).
+            if not any(l["targetFunction"] == "Reset" for l in links[path]):
+                bad["re-arm"] = False
             if bad:
                 problems.append(f"{a['label']}: {bad}")
             r = props.get("blast Radius", 0) * TILE_CM

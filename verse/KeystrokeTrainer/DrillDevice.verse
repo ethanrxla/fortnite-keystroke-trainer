@@ -21,7 +21,7 @@ using { /Verse.org/Simulation/Tags }
 using { /UnrealEngine.com/Temporary/SpatialMath }
 using { /UnrealEngine.com/Temporary/UI }
 
-keystroke_drill_device := class(creative_device):
+keystroke_drill_device := class(creative_device, kt_bot_count_target):
     @editable DrillId:string = "floor_front"
     # Hub start pad, relative to this device in world axes (cm). Stand on it for a second to start.
     @editable PadOffset:vector3 = vector3{X := 0.0, Y := 0.0, Z := 0.0}
@@ -109,6 +109,10 @@ keystroke_drill_device := class(creative_device):
     # start of every rep, and the rep lasts until they are all eliminated (player 2026-10-13, tunnel: "the rep last
     # until you clear the bots"), the player leaves, or BotClearSeconds pass. Leftover bots are despawned.
     @editable BotsToClear:int = 0
+    # The live count (player 2026-10-20: "players can choose how many bots"): starts at BotsToClear, changed by shooting
+    # the room's 1..5 tiles (BotCount.verse, tools/build_bot_count_tiles.py); nearest bots to the start first.
+    var BotCount:int = 0
+    var BotSign:?billboard_device = false
     # Fresh guns every rep (player 2026-10-13: "it should auto reload the players magazines"): the item granter tagged
     # kt_lane_granter_tag nearest this lane grants its loadout at the start of each rep, replacing the inventory.
     @editable RefillEachRep:logic = false
@@ -137,6 +141,7 @@ keystroke_drill_device := class(creative_device):
     var LaneBots:[]guard_spawner_device = array{}
     var Refill:?item_granter_device = false
     var BotsDown:int = 0
+    var RepBots:int = 0            # how many this rep spawned (BotCount can change mid-set)
     var Metronome:audio_player_device = audio_player_device{}
 
     var Busy:logic = false
@@ -199,6 +204,9 @@ keystroke_drill_device := class(creative_device):
             for (O : FindCreativeObjectsWithTag(kt_lane_bot_tag), S := guard_spawner_device[O], Distance(S.GetTransform().Translation, Here) < 9000.0):
                 set LaneBots += array{S}
                 S.EliminatedEvent.Subscribe(OnBotDown)
+            set LaneBots = KTBotsByDistance(LaneBots, Here + StartOffset)
+            set BotSign = KTBotCountWire(Self, Here + StartOffset, TagSearchRadius, Self)
+            SetBotCount(BotsToClear)
         # A drill plate in its wing (tools/build_drill_plates.py) fires the start trigger beside this lane: one set,
         # then back to where the player shot it from.
         if (S := NearestTrigger[kt_drill_start_tag]):
@@ -218,6 +226,11 @@ keystroke_drill_device := class(creative_device):
         (for (O : FindCreativeObjectsWithTag(kt_lane_tag), L := keystroke_drill_device[O], L.Busy?,
               Distance(L.GetTransform().Translation, Here) < TagSearchRadius) { L }).Length > 0
 
+    # A change during a set applies from the next rep.
+    SetBotCount<override>(N:int):void =
+        set BotCount = Clamp(N, 1, Max(LaneBots.Length, 1))
+        KTBotCountShow(BotSign, BotCount, LaneBots.Length)
+
     OnBotDown(R:device_ai_interaction_result):void =
         set BotsDown += 1
 
@@ -226,7 +239,9 @@ keystroke_drill_device := class(creative_device):
         for (S : LaneBots):
             S.Despawn()
             S.Enable()
-        for (N := 1..BotsToClear, S := LaneBots[Mod[N - 1, Max(LaneBots.Length, 1)]]):
+        Spawned := BotCount
+        set RepBots = Spawned
+        for (N := 1..Spawned, S := LaneBots[Mod[N - 1, Max(LaneBots.Length, 1)]]):
             S.Spawn()
             Sleep(0.2)
 
@@ -424,8 +439,8 @@ keystroke_drill_device := class(creative_device):
             if (BotsToClear > 0, LaneBots.Length > 0, not Abandoned?):
                 ClearBy := GetSimulationElapsedTime() + BotClearSeconds
                 loop:
-                    Cue.SetText(CueText("{Drill.Code}  {Drill.Name}   rep {Rep}/{Reps}\nClear the bots: {BotsDown}/{BotsToClear}"))
-                    if (BotsDown >= BotsToClear or Abandoned? or GetSimulationElapsedTime() >= ClearBy):
+                    Cue.SetText(CueText("{Drill.Code}  {Drill.Name}   rep {Rep}/{Reps}\nClear the bots: {BotsDown}/{RepBots}"))
+                    if (BotsDown >= RepBots or Abandoned? or GetSimulationElapsedTime() >= ClearBy):
                         break
                     Sleep(0.25)
                 DespawnBots()

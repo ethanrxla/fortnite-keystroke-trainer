@@ -39,9 +39,15 @@ LOW_CM, HIGH_CM, TALL_CM = 700.0, 1900.0, 1700.0
 FLOOR_CM = 250.0
 INSET_CM = 300.0
 START_CLEAR_CM = 450.0
-BARREL = {"blast Radius": 4.75, "player Damage": 0, "structure Damage": 10000, "visible During Game": False,
+# Player 2026-10-21: "you don't need that many explosive devices, just one right above the ramps set to 10 will do more
+# than enough", plus a trigger that resets the barrel 0.5 s after it explodes. One barrel per room (two along a long
+# room), at mid-height, its radius set to reach every corner of its half (tools/audit_room_clears.py checks it).
+MARGIN_CM = 400.0
+TILE_CM = 512.0
+RESET_DELAY = 0.5
+BARREL = {"blast Radius": 10.0, "player Damage": 0, "structure Damage": 10000, "visible During Game": False,
           "collision During Games": "Off", "requires Line of Sight": False, "play Audio": False,
-          "time Until Reset Allowed": 0, "knockbackPlayer": 0, "damage Indestructible Buildings": False,
+          "time Until Reset Allowed": 0, "knockbackPlayer": 0, "knockback": "None", "damage Indestructible Buildings": False,
           "display Damage Numbers": False, "blastLineOfSight": False,
           "play Audio / VFX": False}  # the explosion effect; "play Audio" alone left it visible (player 2026-10-20)
 # room -> (lanes whose start must stay clear, existing clear triggers to wire)
@@ -49,6 +55,9 @@ ROOMS = {"B5": (["B5"], ["KT3_Clear_B5"]), "P2": (["P2"], ["KT3_Clear_P2"]),
          "P6": (["P6", "P4"], ["KT34_Reset_P6_Trigger", "KT34_Reset_P4_Trigger"]),
          "P7": (["P7"], ["KT3_Clear_P7"]), "W3": (["W3"], ["KT3_Clear_W3"]), "E7": (["E7"], ["KT3_Clear_E7"])}
 LANES = ["B5", "P2", "P6", "P4", "P7", "W3", "E7"]
+# Lanes that clear only when the set ends or the player leaves, not after every rep (player 2026-10-21, W3 build-swap-
+# shoot: "the builds in this one should clear at the end of the drill, not every rep").
+CLEAR_AT_END = {"W3"}
 
 
 def room_box(acts, code):
@@ -64,19 +73,24 @@ def room_box(acts, code):
 
 
 def grid(lo, hi, floor, starts):
-    xs = max(1, math.ceil((hi["x"] - lo["x"] - 2 * INSET_CM) / GRID_CM))
-    ys = max(1, math.ceil((hi["y"] - lo["y"] - 2 * INSET_CM) / GRID_CM))
-    layers = [floor + FLOOR_CM, floor + LOW_CM] + ([floor + HIGH_CM] if hi["z"] - floor > TALL_CM else [])
+    """[(x, y, z, radius_tiles)]: one barrel at the room's centre, or two along its long axis when it is long."""
+    w, d = hi["x"] - lo["x"], hi["y"] - lo["y"]
+    parts = 2 if max(w, d) > 1.4 * min(w, d) else 1
+    zc = (floor + hi["z"]) / 2
+    height = hi["z"] - floor
     out = []
-    for i in range(xs + 1):
-        for j in range(ys + 1):
-            x = lo["x"] + INSET_CM + (hi["x"] - lo["x"] - 2 * INSET_CM) * i / xs
-            y = lo["y"] + INSET_CM + (hi["y"] - lo["y"] - 2 * INSET_CM) * j / ys
-            for sx, sy in starts:
-                if math.hypot(x - sx, y - sy) < START_CLEAR_CM:
-                    x += START_CLEAR_CM if x < hi["x"] - START_CLEAR_CM else -START_CLEAR_CM
-            for z in layers:
-                out.append((round(x), round(y), round(z)))
+    for k in range(parts):
+        if w >= d:
+            x0, x1, y0, y1 = lo["x"] + w * k / parts, lo["x"] + w * (k + 1) / parts, lo["y"], hi["y"]
+        else:
+            x0, x1, y0, y1 = lo["x"], hi["x"], lo["y"] + d * k / parts, lo["y"] + d * (k + 1) / parts
+        x, y = (x0 + x1) / 2, (y0 + y1) / 2
+        for sx, sy in starts:                       # never on a start spot
+            if math.hypot(x - sx, y - sy) < START_CLEAR_CM:
+                y += START_CLEAR_CM
+        reach = math.dist((x0, y0, floor), (x, y, zc)) + MARGIN_CM
+        reach = max(reach, math.dist((x1, y1, hi["z"]), (x, y, zc)) + MARGIN_CM)
+        out.append((round(x), round(y), round(zc), math.ceil(reach / TILE_CM * 4) / 4))
     return out
 
 
@@ -104,7 +118,8 @@ def main():
                                (a["bounds"]["min"]["y"] + a["bounds"]["max"]["y"]) / 2))
         floors = [a["bounds"]["max"]["z"] for l, a in by.items() if l == f"KT_RoomFloor_{code}"]
         plan[code] = grid(lo, hi, min(floors + [0.0]), starts)
-        print(f"  {code}: x {lo['x']:.0f}..{hi['x']:.0f} y {lo['y']:.0f}..{hi['y']:.0f} top {hi['z']:.0f} -> {len(plan[code])} barrels")
+        print(f"  {code}: x {lo['x']:.0f}..{hi['x']:.0f} y {lo['y']:.0f}..{hi['y']:.0f} top {hi['z']:.0f} -> "
+              f"{len(plan[code])} barrel(s), radius {[r for *_, r in plan[code]]} tiles")
     if args.dry_run:
         return
     for a in acts:
@@ -112,15 +127,20 @@ def main():
             m.tool(bm.SCENE, "remove_from_scene", actor={"refPath": a["actorPath"]})
     for code, pts in plan.items():
         barrels = []
-        for n, (x, y, z) in enumerate(pts):
+        for n, (x, y, z, radius) in enumerate(pts):
             boom = b.device(bm.EXPLOSIVE, f"{PREFIX}{code}_{n:02d}", x, y, z)
-            for key, value in BARREL.items():
+            for key, value in dict(BARREL, **{"blast Radius": radius}).items():
                 try:
                     b.props(boom, {key: value})
                 except RuntimeError as exc:
                     print(f"  {code}: barrel {key} refused ({str(exc)[-60:]})")
-            b.bind(boom, "On Exploded", boom, "Reset")
+            # Re-arm: exploded -> a trigger (0.5 s delay) -> Reset, so the barrel can fire again and again.
+            rearm = b.device(bm.TRIGGER, f"{PREFIX}{code}_{n:02d}_Rearm", x, y, -400.0)
+            b.props(rearm, {"visible in Game": False, "triggerDelay": RESET_DELAY, "reset Delay": 0.0})
+            b.bind(boom, "On Exploded", rearm, "Trigger")
+            b.bind(rearm, "OnTriggered", boom, "Reset")
             barrels.append(boom)
+            barrels.append(rearm)
         if code == "LAB":
             lo, hi = room_box(acts, "LAB")
             timer = b.device(TIMER, f"{PREFIX}LAB_Timer", lo["x"] + 200, lo["y"] + 200, -400.0)
@@ -136,7 +156,7 @@ def main():
             sources = [(by[t]["actorPath"], "OnTriggered") for t in ROOMS[code][1] if t in by]
         for src, event in sources:
             for boom in barrels:
-                if boom != src and not boom.endswith("_Timer"):
+                if boom != src and "ExplosiveBarrel" in boom:
                     b.bind(src, event, boom, "Explode")
         for p in barrels:
             m.tool(bm.SCENE, "save_actor", actor={"refPath": p})
@@ -144,9 +164,10 @@ def main():
     for lane in LANES:
         a = by.get(f"KT_Lane_{lane}")
         if a:
-            m.tool(bm.DEVICE, "SetDeviceProperty", device={"refPath": a["actorPath"]}, propertyName="clearEachRep", value="true")
+            m.tool(bm.DEVICE, "SetDeviceProperty", device={"refPath": a["actorPath"]}, propertyName="clearEachRep",
+                   value="false" if lane in CLEAR_AT_END else "true")
             m.tool(bm.SCENE, "save_actor", actor={"refPath": a["actorPath"]})
-    print("clearEachRep on for", LANES)
+    print("clearEachRep on for", [l for l in LANES if l not in CLEAR_AT_END], "; set end only:", sorted(CLEAR_AT_END))
 
 
 if __name__ == "__main__":

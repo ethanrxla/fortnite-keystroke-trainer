@@ -35,7 +35,7 @@ SPARE_Z = -6000.0               # well under the room floor and the 30 m drop th
 RADIUS_TILES = 1.5
 BARREL = {"blast Radius": RADIUS_TILES, "player Damage": 0, "structure Damage": 10000, "visible During Game": False,
           "collision During Games": "Off", "requires Line of Sight": False, "play Audio": False,
-          "time Until Reset Allowed": 0, "knockbackPlayer": 0, "damage Indestructible Buildings": False,
+          "time Until Reset Allowed": 0, "knockbackPlayer": 0, "knockback": "None", "damage Indestructible Buildings": False,
           "display Damage Numbers": False, "play Audio / VFX": False}  # no visible explosion (player 2026-10-20)
 BOT = {"accuracy": "VERY HIGH", "spawnOnTimer": False, "enabledAtGameStart": True}
 

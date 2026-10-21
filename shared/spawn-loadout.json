@@ -15,12 +15,8 @@
       "name": "Medkit",
       "item": "/PaprikaConsumables/Gameplay/MedRefresh/WID_Paprika_MedBox.WID_Paprika_MedBox",
       "count": 2
-    },
-    {
-      "name": "Gold",
-      "item": "/Game/Items/ResourcePickups/Athena_WadsItemData.Athena_WadsItemData",
-      "count": 10000
     }
   ],
-  "slurp_fish_note": "No slurp item is usable here: slurp fish exists only as an entity item (granters refuse it) and the creative slurp juice (Figment_Athena_PurpleStuff) fails UEFN validation (disallowed reference, 2026-10-10)."
+  "slurp_fish_note": "No slurp item is usable here: slurp fish exists only as an entity item (granters refuse it) and the creative slurp juice (Figment_Athena_PurpleStuff) fails UEFN validation (disallowed reference, 2026-10-10).",
+  "gold_note": "Gold bars (/Game/Items/ResourcePickups/Athena_WadsItemData) are a disallowed reference in UEFN: granting them fails island validation and blocks every session (found 2026-10-21). No gold on spawn until an allowed gold item is found."
 }
