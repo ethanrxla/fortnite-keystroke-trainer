@@ -16,6 +16,7 @@ kt_practice_bot_control_device := class(creative_device):
     @editable Centre:vector3 = vector3{}
     @editable HalfExtent:vector3 = vector3{X := 6000.0, Y := 3300.0, Z := 3000.0}
     @editable DefaultEnabled:logic = false
+    @editable RecordAimDamage:logic = false
     @editable Waypoints:[]vector3 = array{}
     var Requested:logic = false
     var Live:logic = false
@@ -72,6 +73,8 @@ kt_practice_bot_control_device := class(creative_device):
     OnEnd<override>():void =
         Shutdown()
     OnSpawned(A:agent):void =
+        if (RecordAimDamage?):
+            spawn{ KTAimWatchBot(A, "aim_practice") }
         set Spawned += 1
         Print("KT|practice_bots|spawned={Spawned}", ?Duration := 0.0)
         if (Waypoints.Length > 1):

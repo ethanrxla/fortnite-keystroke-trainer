@@ -7,7 +7,12 @@
 #   * L1 has a storm: an edge that moves west from the east wall; east of it you take damage;
 #   * the grenade room grants two grenades on entry;
 #   * if you are eliminated you come back at the start of the room you were in, its bots respawn, loadout re-granted;
-#   * clearing the last room (L3) finishes the run: time, deaths, best time this session, and every gate opens again.
+#   * L4 bombsite A (player 2026-10-20, Counter-Strike style): clear the site's three defenders, then the stages that
+#     follow need no walking into a new room: Kind 3 plant (stand in the A plate box PlantSeconds; stepping off
+#     resets it), Kind 4 hold (the retake bots, tagged kt_op_retake_tag, spawn; the bomb timer runs HoldSeconds and
+#     the stage clears when it blows, not when they are down), Kind 5 extract (reach the extraction box);
+#   * reaching extraction finishes the run: time, deaths, a medal from the par times, best time this session, and every
+#     gate opens again. The first BriefingSeconds of a run show the mission briefing.
 # Outside a run the whole level is open with no bots, so it can be walked. One runner at a time.
 # Bots are assigned to a room by the room's box, gates by the room's Gate point (nearest barrier within 4 m).
 # Logs KT|op_stage|operation|... per room and KT|op_summary|operation|... per run (pairs only after t=).
@@ -27,11 +32,14 @@ kt_op_gate_tag<public> := class(tag){}
 kt_op_start_tag<public> := class(tag){}
 kt_op_loadout_tag<public> := class(tag){}
 kt_op_grenade_tag<public> := class(tag){}
+kt_op_retake_tag<public> := class(tag){}
 
-# Which stage box holds a point, or -1.
+KTOpBriefing<public>:string = "BRIEFING: break in, take bombsite A, plant, hold it until it blows, then extract. Gold: under 6:00, no deaths."
+
+# Which room box holds a point, or -1. Plant / hold / extract boxes (Kind 3..5) are zones inside the site, not rooms.
 KTOpStageAt<public>(Pos:vector3)<transacts>:int =
     var Found:int = -1
-    for (I -> S : KTOpStages, Found < 0):
+    for (I -> S : KTOpStages, Found < 0, S.Kind < 3):
         if (Pos.X >= S.Lo.X, Pos.X <= S.Hi.X, Pos.Y >= S.Lo.Y, Pos.Y <= S.Hi.Y, Pos.Z >= S.Lo.Z, Pos.Z <= S.Hi.Z):
             set Found = I
     Found
@@ -40,6 +48,15 @@ KTOpStageAt<public>(Pos:vector3)<transacts>:int =
 KTOpStormX<public>(Seconds:float)<transacts>:float =
     F := Clamp(Seconds / Max(KTOpStormSeconds, 1.0), 0.0, 1.0)
     KTOpStormStartX + (KTOpStormEndX - KTOpStormStartX) * F
+
+KTOpInBox<public>(Pos:vector3, S:kt_op_stage)<transacts>:logic =
+    logic{Pos.X >= S.Lo.X and Pos.X <= S.Hi.X and Pos.Y >= S.Lo.Y and Pos.Y <= S.Hi.Y}
+
+# Medal for a finished run: gold under GoldSeconds with no deaths, silver under SilverSeconds with at most two.
+KTOpMedal<public>(Seconds:float, Deaths:int, GoldSeconds:float, SilverSeconds:float)<transacts>:string =
+    if (Seconds <= GoldSeconds and Deaths = 0) then "GOLD"
+    else if (Seconds <= SilverSeconds and Deaths <= 2) then "SILVER"
+    else "BRONZE"
 
 # m:ss for the HUD and the summary.
 KTOpClock<public>(Seconds:float)<transacts>:string =
@@ -54,6 +71,11 @@ kt_op_bot_listener := class:
     OnEliminated(R:device_ai_interaction_result):void = Owner.BotDown(Stage)
 
 kt_operation_device<public> := class(creative_device):
+    @editable PlantSeconds:float = 5.0
+    @editable HoldSeconds:float = 40.0
+    @editable BriefingSeconds:float = 6.0
+    @editable GoldSeconds:float = 360.0
+    @editable SilverSeconds:float = 540.0
     var Bots:[]guard_spawner_device = array{}
     var BotStage:[]int = array{}
     var Gates:[]barrier_device = array{}
@@ -87,6 +109,7 @@ kt_operation_device<public> := class(creative_device):
     StormText:text_block = text_block{DefaultTextColor := KTHudStormText, DefaultTextSize := 16.0}
     var Panel:?canvas = false
     var Outside:float = 0.0
+    var Planting:float = 0.0
 
     OnBegin<override>()<suspends>:void =
         for (O : FindCreativeObjectsWithTag(kt_op_bot_tag), S := guard_spawner_device[O]):
@@ -95,6 +118,16 @@ kt_operation_device<public> := class(creative_device):
                 set Bots += array{S}
                 set BotStage += array{Index}
                 Listener := kt_op_bot_listener{Stage := Index, Owner := Self}
+                S.EliminatedEvent.Subscribe(Listener.OnEliminated)
+        # The retake wave belongs to the hold stage (they stand in the site's room box, so position cannot tell).
+        var HoldIndex:int = -1
+        for (I -> S : KTOpStages, HoldIndex < 0, S.Kind = 4):
+            set HoldIndex = I
+        if (HoldIndex >= 0):
+            for (O : FindCreativeObjectsWithTag(kt_op_retake_tag), S := guard_spawner_device[O]):
+                set Bots += array{S}
+                set BotStage += array{HoldIndex}
+                Listener := kt_op_bot_listener{Stage := HoldIndex, Owner := Self}
                 S.EliminatedEvent.Subscribe(Listener.OnEliminated)
         for (O : FindCreativeObjectsWithTag(kt_op_gate_tag), B := barrier_device[O]):
             Pos := B.GetTransform().Translation
@@ -187,6 +220,7 @@ kt_operation_device<public> := class(creative_device):
         set Stage = Index
         set Down = 0
         set Cleared = false
+        set Planting = 0.0
         set StageStart = GetSimulationElapsedTime()
         if (S := KTOpStages[Index], S.Kind = 1):
             set StormStart = StageStart
@@ -194,7 +228,7 @@ kt_operation_device<public> := class(creative_device):
             S.Enable()
             S.Spawn()
         GrantStageItems()
-        if (StageBots(Index).Length = 0):
+        if (StageBots(Index).Length = 0, S := KTOpStages[Index], S.Kind < 3):
             ClearStage()
 
     GrantStageItems():void =
@@ -204,7 +238,8 @@ kt_operation_device<public> := class(creative_device):
     BotDown(Index:int):void =
         if (Running?, Index = Stage, not Cleared?):
             set Down += 1
-            if (Down >= StageBots(Index).Length):
+            # The hold stage ends when the bomb blows, not when the retake is down.
+            if (Down >= StageBots(Index).Length, S := KTOpStages[Index], S.Kind <> 4):
                 ClearStage()
 
     ClearStage():void =
@@ -217,6 +252,9 @@ kt_operation_device<public> := class(creative_device):
         KTLog("op_stage", "operation", 0, Runs, Stage, rep_result.Ok, "stage={Name}|ms={StageMs}|deaths={Deaths}")
         if (Stage = KTOpStages.Length - 1):
             Finish()
+        else if (Next := KTOpStages[Stage + 1], Next.Kind >= 3):
+            # Plant, hold and extract follow on at once: they happen where you already are.
+            EnterStage(Stage + 1)
 
     # Every 0.25 s while running: deaths and checkpoints, moving on to the next room, the storm, the HUD.
     Tick():void =
@@ -239,6 +277,17 @@ kt_operation_device<public> := class(creative_device):
                     if (Pos.X > Edge, Here = Stage):
                         set InStorm = true
                         C.Damage(KTOpStormDamage * 0.5)
+                if (S := KTOpStages[Stage], not Cleared?):
+                    if (S.Kind = 3):
+                        set Planting = if (KTOpInBox(Pos, S)?) then Planting + 0.25 else 0.0
+                        if (Planting >= PlantSeconds):
+                            ClearStage()
+                    else if (S.Kind = 4, GetSimulationElapsedTime() - StageStart >= HoldSeconds):
+                        for (B : StageBots(Stage)):
+                            B.Despawn()
+                        ClearStage()
+                    else if (S.Kind = 5, KTOpInBox(Pos, S)?):
+                        ClearStage()
                 UpdateHud(InStorm)
             else:
                 # Eliminated: wait for the respawn, then put the runner back at the start of the room.
@@ -284,9 +333,17 @@ kt_operation_device<public> := class(creative_device):
             ClearChip.SetOpacity(if (Cleared?) then 1.0 else 0.0)
             ClearText.SetText(OpText(if (Cleared?) then "CLEAR" else ""))
             LeftText.SetText(OpText(if (not Cleared? and Left > 0) then "{Left} left" else ""))
-            Instruction.SetText(OpText(if (Cleared?) then "Next door is open. {S.Instruction}" else S.Instruction))
-            StormBlock.SetOpacity(if (InStorm?) then 0.95 else 0.0)
-            StormText.SetText(OpText(if (InStorm?) then "IN THE STORM: move west!" else ""))
+            Elapsed := GetSimulationElapsedTime() - RunStart
+            Instruction.SetText(OpText(
+                if (Elapsed < BriefingSeconds) then KTOpBriefing
+                else if (Cleared?) then "Next door is open. {S.Instruction}" else S.Instruction))
+            # The red row: the storm in L1, the plant progress and the bomb timer on the site.
+            PlantShown := if (P := Floor[Planting]) then P else 0
+            Bomb := if (S.Kind = 3 and Planting > 0.0) then "PLANTING  {PlantShown} s of {KTOpClock(PlantSeconds)}"
+                    else if (S.Kind = 4 and not Cleared?) then "BOMB HAS BEEN PLANTED   {KTOpClock(HoldSeconds - (GetSimulationElapsedTime() - StageStart))}   hold the site"
+                    else ""
+            StormBlock.SetOpacity(if (InStorm? or Bomb <> "") then 0.95 else 0.0)
+            StormText.SetText(OpText(if (InStorm?) then "IN THE STORM: move west!" else Bomb))
 
     Finish():void =
         Total := GetSimulationElapsedTime() - RunStart
@@ -295,17 +352,18 @@ kt_operation_device<public> := class(creative_device):
             set Best = Total
         Ms := if (V := Round[Total * 1000.0]) then V else 0
         KTLog("op_summary", "operation", 0, Runs, KTOpStages.Length, rep_result.Ok,
-            "ms={Ms}|deaths={Deaths}|best_ms={if (V := Round[Best * 1000.0]) then V else 0}")
+            "ms={Ms}|deaths={Deaths}|best_ms={if (V := Round[Best * 1000.0]) then V else 0}|medal={KTOpMedal(Total, Deaths, GoldSeconds, SilverSeconds)}")
         Title.SetText(OpText("OPERATION COMPLETE"))
         ClockText.SetText(OpText(KTOpClock(Total)))
-        LevelText.SetText(OpText("deaths {Deaths}"))
+        Medal := KTOpMedal(Total, Deaths, GoldSeconds, SilverSeconds)
+        LevelText.SetText(OpText("{Medal}  deaths {Deaths}"))
         RoomText.SetText(OpText(""))
         LeftText.SetText(OpText(""))
         ClearChip.SetOpacity(1.0)
         ClearText.SetText(OpText("DONE"))
         StormBlock.SetOpacity(0.0)
         StormText.SetText(OpText(""))
-        Instruction.SetText(OpText("{if (NewBest?) then "New best time!" else "Best: {KTOpClock(Best)}"}   START OPERATION to run it again"))
+        Instruction.SetText(OpText("Bombsite A destroyed. {if (NewBest?) then "New best time!" else "Best: {KTOpClock(Best)}"}   Shoot EXIT to leave, or START OPERATION to run it again"))
         set Running = false
         spawn{ EndAfter(8.0) }
 
@@ -325,9 +383,9 @@ kt_operation_device<public> := class(creative_device):
 
     # Runtime checks for the playtest runner (AutoTestDevice): every room has its bots and its gate.
     RunSmokeTests<public>(P:player, Report:autotest_report)<suspends>:void =
-        Report.Check("OP01-stages", logic{KTOpStages.Length = 7}, "seven rooms in the layout")
-        # L1 4, grenade 3, peek 2, high ground 2, breach 2, towers 2 (tools/build_operation.py).
-        Report.Check("OP02-bots", logic{Bots.Length = 15}, "operation bots found: {Bots.Length} (want 15)")
+        Report.Check("OP01-stages", logic{KTOpStages.Length = 11}, "eleven stages in the layout")
+        # L1 4, grenade 3, peek 2, high ground 2, breach 2, towers 2, site 3, retake 3 (tools/build_operation.py).
+        Report.Check("OP02-bots", logic{Bots.Length = 21}, "operation bots found: {Bots.Length} (want 21)")
         var Missing:int = 0
         for (I -> S : KTOpStages, S.HasGate?):
             if ((for (G -> St : GateStage, St = I) { G }).Length = 0):

@@ -41,6 +41,7 @@ kt_tracking_range_device := class(creative_device):
         Print("KT|tracking_range|waypoints={Waypoints.Length}|spawners={Count}")
 
     OnSpawned(A:agent):void =
+        spawn{ KTAimWatchBot(A, "tracking_range") }
         spawn{ Roam(A) }
 
     Roam(A:agent)<suspends>:void =

@@ -74,7 +74,7 @@ def main():
         t = m.tool(bm.ACTOR, "get_actor_transform", actor={"refPath": path})
         base = label[:-4] if label.endswith("_Hit") else label
         names = [base + s for s in ("_Granter", "_Track", "_Trigger", "_Arrive")]
-        names += [base[:-4] + "_Trigger"] if base.endswith("_Big") else []     # range big copies share their tile's trigger
+
         names += ["KT_Portal_Scenario_Return", "KT_Portal_Arena_Return"] if label.startswith("KT25_") else []
         targets = hitbox.on_hit_targets(m, path, [acts[n]["actorPath"] for n in names if n in acts])
         if not targets:
@@ -99,10 +99,16 @@ def main():
             if other == label or re.fullmatch(re.escape(label) + r"_\d+", other):
                 m.tool(bm.SCENE, "remove_from_scene", actor={"refPath": oa["actorPath"]})
         c, w, h = centre_size(face["bounds"])
+        expanded = label.startswith(("KT26_RangeMode_", "KT15_SkillsTile_"))
+        if expanded:
+            c, w, h = (c[0], c[1], 100.0), 150.0, 200.0
         loc = t["location"]
         yaw = round(t["rotation"]["yaw"] / 90.0) * 90.0 % 360          # the base facing, ignoring an old mirror
         cell = next((v for k, v in CELL_MAX.items() if label.startswith(k)), hitbox.CELL_MAX)
         paths = hitbox.place_grid(b, label, c, w, h, yaw, (loc["x"], loc["y"]), targets, cell)
+        if expanded:
+            for dummy in paths:
+                hitbox.hide(m, dummy)
         made.update(paths)
         total += len(paths)
         if n % 10 == 0:

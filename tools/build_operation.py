@@ -4,6 +4,7 @@
     python tools/build_operation.py --write-verse   # only regenerate verse/KeystrokeTrainer/OperationLayout.verse
     python tools/build_operation.py                 # (re)place it: removes KT16_Op_* actors, the old S1..S4 bays and
                                                     # their signs and the four ANGLE free-practice labs (backed up)
+    python tools/build_operation.py --site-only     # (re)place only bombsite A (KT16_Op_Site_*), keep everything else
     then BuildAll; the run is driven by Operation.verse (kt_operation_device)
 
 Player 2026-10-11: the Scenario Expansion becomes the island's one real game level, built only from existing areas:
@@ -14,7 +15,14 @@ Player 2026-10-11: the Scenario Expansion becomes the island's one real game lev
                   1 crawl under the barrier (crouch or slide)  2 grenade the nest over its wall, clean up the gap
                   3 edit a window in your wall, peek, reset    4 retake the high ground (bots on a built platform)
                   5 breach their boxes, then the door into the towers.
-  L3 TOWERS     Fight Lab room A: bots on top of the climb and drop towers; eliminate both to finish.
+  L3 TOWERS     Fight Lab room A: bots on top of the climb and drop towers; eliminate both, then south to the site.
+  L4 BOMBSITE A (player 2026-10-20: "go with the bombsite plan", a Counter-Strike style ending) on the empty ground
+                south of Fight Lab rooms A and B (x -25600..-15360, y -74752..-69632): two entrances from the towers
+                (main and short), crates for cover, the A plant zone. Stages: clear the three defenders, plant (stand on
+                the A plate PlantSeconds), hold the site while a retake wave comes until the bomb timer runs out, then
+                reach the extraction corner (south-west), where the EXIT plate takes you to the hub
+                (tools/build_room_exits.py "OpExtract"). Its pieces sit on the player build grid (cells centred on
+                multiples of 512), unlike the older rooms.
 The Fight Lab's room A west wall (KT7_Lab_Wall_W_S, removed with the ceiling) is restored here as KT16_Op_LabWall_*,
 with the L2 -> L3 door in it; the sky stays open. The walkway between the strips (j -131..-130, portal to the Fight Lab
 spine) stays open. Grid: cells of 512 cm, i = x / 512, j = y / 512; plate i -70..-51, j -136..-125.
@@ -38,6 +46,15 @@ GATE_MAT = "/Game/Items/Traps/Materials/M_Barrier_BoundsTranslucent_Blue_Inst.M_
 PIECES = "/Game/Building/ActorBlueprints/Player/Wood/L1/"
 CLS = {k: f"{PIECES}PBWA_W1_{n}.PBWA_W1_{n}_C" for k, n in
        (("wall", "Solid"), ("floor", "Floor"), ("ramp", "StairW"), ("cone", "RoofC"))}
+METAL = "/Game/Building/ActorBlueprints/Player/Metal/L1/"
+CLS.update({"mwall": f"{METAL}PBWA_M1_Solid.PBWA_M1_Solid_C", "mfloor": f"{METAL}PBWA_M1_Floor.PBWA_M1_Floor_C",
+            "mramp": f"{METAL}PBWA_M1_StairW.PBWA_M1_StairW_C"})
+# Bombsite A: the strip south of Fight Lab rooms A and B, open to room A on its north side.
+SITE_X0, SITE_X1, SITE_Y0, SITE_Y1 = -50 * C, -30 * C, -146 * C, -136 * C     # x -25600..-15360, y -74752..-69632
+SITE_WALL = 2 * H
+PLANT = (-19712.0, -17664.0, -73472.0, -71424.0)      # the A plate: 4 x 4 player cells
+EXTRACT = (SITE_X0, -24576.0, SITE_Y0, -73728.0)      # south-west corner, 2 x 2 cells, beside the EXIT plate
+ENEMY_TEAM = {"Team": "HumanPvP_Team2", "TeamIndex": 4}   # site crates: theirs, not editable (Creative team 2)
 RAMP_YAW = {"S": 0.0, "E": 90.0, "N": 180.0, "W": 270.0}     # as build_fight_lab.py (measured 2026-10-09)
 WALL_T = 40.0
 LAB_CEIL = 6 * H                  # Fight Lab wall height (build_fight_lab.py CEIL)
@@ -73,8 +90,17 @@ class Plan:
     def slab(self, label, x0, x1, y0, y1, top, thick, zone="Void"):
         self.slabs.append({"label": PREFIX + label, "bounds": (x0, x1, y0, y1), "top": top, "thick": thick, "mat": zone})
 
-    def piece(self, label, kind, x, y, z, yaw):
-        self.pieces.append({"label": PREFIX + label, "cls": CLS[kind], "xf": (x, y, z, yaw)})
+    def piece(self, label, kind, x, y, z, yaw, props=None):
+        self.pieces.append({"label": PREFIX + label, "cls": CLS[kind], "xf": (x, y, z, yaw), "props": props or {}})
+
+    def crate(self, label, i, j, levels=1):
+        """A metal crate on the player grid: cell (i, j) centred at (i*512, j*512), 4 walls and a lid per level."""
+        x, y = i * C, j * C
+        for k in range(levels):
+            for e, (dx, dy, yaw) in {"N": (0, C / 2, 0.0), "S": (0, -C / 2, 0.0), "E": (C / 2, 0, 90.0),
+                                     "W": (-C / 2, 0, 90.0)}.items():
+                self.piece(f"{label}_{k}{e}", "mwall", x + dx, y + dy, k * H, yaw, ENEMY_TEAM)
+            self.piece(f"{label}_{k}Lid", "mfloor", x, y - C / 2, (k + 1) * H, 0.0, ENEMY_TEAM)
 
     def wall(self, label, i, j, k, edge):
         cx, cy = cell(i, j)
@@ -93,9 +119,9 @@ class Plan:
         self.devices.append(dict({"label": PREFIX + label, "asset": asset, "pos": (x, y, z), "props": props or {},
                                    "yaw": yaw, "tag": tag}, **extra))
 
-    def bot(self, label, i, j, z, accuracy, health=100, shield=0, yaw=180.0):
-        x, y = cell(i, j)
-        self.device(label, bm.GUARD, x, y, z, bot_props(accuracy, health, shield), yaw=yaw, tag="kt_op_bot_tag")
+    def bot(self, label, i, j, z, accuracy, health=100, shield=0, yaw=180.0, tag="kt_op_bot_tag", grid=False):
+        x, y = (i * C, j * C) if grid else cell(i, j)
+        self.device(label, bm.GUARD, x, y, z, bot_props(accuracy, health, shield), yaw=yaw, tag=tag)
 
     def gate(self, label, x, y, along_x):
         """A blue barrier in a 1-cell doorway; along_x for a door in a wall that runs along x (yaw 90)."""
@@ -113,7 +139,8 @@ def bot_props(accuracy, health, shield):
     return {"guardTeamOption": "Team Index", "guard Team Index": {"teamType": "TeamIndex", "teamIndex": 2},
             "enabledAtGameStart": False, "allowInfiniteSpawn": True, "spawnOnTimer": False, "spawnCount": 1,
             "showHealthBar": True, "startingHealth": health, "max Health": health, "startingShield": shield,
-            "accuracy": accuracy, "enablePatrol": False, "useDeviceSpawnLocation": True}
+            "accuracy": accuracy, "enablePatrol": False, "useDeviceSpawnLocation": True,
+            "spawnRadius_InMeter": 0}       # hold their spot, not anywhere within 10 m (2026-10-20)
 
 
 def plan():
@@ -216,8 +243,10 @@ def plan():
         p.wall(f"L3_Perch{n}_Cover", i, -132, 2, "W")
         p.bot(f"L3_Bot_{n}", i, -132, 2 * H + 20.0, "HIGH", health=150)
     p.stage("Towers", "L3 TOWERS",
-            "Last: two bots hold walled perches behind cover. Take height on them (build or climb and edit out), eliminate both.",
+            "Two bots hold walled perches behind cover. Take height on them (build or climb and edit out), eliminate both, "
+            "then go south to bombsite A.",
             ((LAB_X, YC0, -100.0), (-40 * C, YC1, 2600.0)), (*cell(-50, DOOR_J), 0.0))
+    site(p)
 
     # ---- Start, loadout, run device, signs (on the walkway by the portal). ----
     sx, sy = -34560.0, -66816.0
@@ -239,6 +268,52 @@ def plan():
     return p
 
 
+def site(p):
+    """L4 BOMBSITE A, Counter-Strike style: main and short entrances from the towers, crates, the A plate, defenders,
+    a retake wave, extraction in the south-west corner. Player build grid: cell (i, j) is centred at (i*512, j*512)."""
+    x0, x1, y0, y1 = SITE_X0, SITE_X1, SITE_Y0, SITE_Y1
+    p.slab("Site_Floor", x0, x1, y0, y1, 0.0, 100.0, "Scenario")
+    # Outer walls; the north side is open to the towers (room A) at main (west) and short (east), and closed to room B.
+    p.slab("Site_Wall_S", x0 - WALL_T, x1 + WALL_T, y0 - WALL_T, y0, SITE_WALL, SITE_WALL + 100)
+    p.slab("Site_Wall_W", x0 - WALL_T, x0, y0, y1, SITE_WALL, SITE_WALL + 100)
+    p.slab("Site_Wall_E", x1, x1 + WALL_T, y0, y1, SITE_WALL, SITE_WALL + 100)
+    p.slab("Site_Wall_N_Mid", -24576.0, -21504.0, y1 - WALL_T, y1, SITE_WALL, SITE_WALL + 100)     # between main and short
+    p.slab("Site_Wall_N_B", -20480.0, x1, y1 - WALL_T, y1, SITE_WALL, SITE_WALL + 100)            # room B stays separate
+    # The A plate (orange) and the extraction pad (green), painted on the floor.
+    p.slab("Site_Plate_A", *PLANT, 6.0, 6.0, "Edit")
+    p.slab("Site_Extract", *EXTRACT, 6.0, 6.0, "Scenario")
+    # Cover. Mid divider between the main and short routes, then crates on and around the site.
+    for j in (-138, -139, -140):
+        p.piece(f"Site_Mid_{-j}", "mwall", -44 * C - C / 2, j * C, 0.0, 90.0, ENEMY_TEAM)
+    for label, i, j, levels in (("Site_Crate_Main", -47, -140, 1), ("Site_Crate_Mid", -44, -142, 1),
+                                ("Site_Crate_Front", -40, -139, 1), ("Site_Crate_Default", -37, -141, 1),
+                                ("Site_Crate_Back", -35, -144, 1), ("Site_Crate_Stack", -34, -139, 2)):
+        p.crate(label, i, j, levels)
+    # Defenders hold the site (face north, at the entrances); the retake comes from the far sides.
+    p.bot("Site_Def_0", -37, -143, 0.0, "HIGH", yaw=90.0, grid=True)
+    p.bot("Site_Def_1", -34, -139, 2 * H + 20.0, "HIGH", yaw=135.0, grid=True)
+    p.bot("Site_Def_2", -40, -142, 0.0, "HIGH", yaw=90.0, grid=True)
+    for n, (i, j, yaw) in enumerate(((-32, -145, 135.0), (-32, -138, 225.0), (-44, -145, 45.0))):
+        p.bot(f"Site_Retake_{n}", i, j, 0.0, "HIGH", yaw=yaw, tag="kt_op_retake_tag", grid=True)
+    site_box = ((x0, y0, -100.0), (x1, y1 - 1.0, 2600.0))
+    plant_box = ((PLANT[0], PLANT[2], -100.0), (PLANT[1], PLANT[3], 800.0))
+    extract_box = ((EXTRACT[0], EXTRACT[2], -100.0), (EXTRACT[1], EXTRACT[3], 800.0))
+    plant_mid = ((PLANT[0] + PLANT[1]) / 2, (PLANT[2] + PLANT[3]) / 2, 0.0)
+    p.stage("Site", "L4 BOMBSITE A",
+            "Three hold bombsite A. Come in through main (left) or short (right), clear the site.",
+            site_box, (-24832.0, -70144.0, 0.0))
+    p.stage("Plant", "L4 BOMBSITE A", "Plant the bomb: stand on the orange A plate until it is planted.",
+            plant_box, plant_mid, kind=3)
+    p.stage("Hold", "L4 BOMBSITE A", "Bomb planted. The retake is coming: hold the site until it blows.",
+            plant_box, plant_mid, kind=4)
+    p.stage("Extract", "L4 BOMBSITE A", "Get out: reach the green extraction pad in the south-west corner.",
+            extract_box, ((EXTRACT[0] + EXTRACT[1]) / 2, (EXTRACT[2] + EXTRACT[3]) / 2, 0.0), kind=5)
+    p.signs.append({"label": PREFIX + "Site_Sign_A", "pos": (-18688.0, y0 + 120.0, 300.0), "yaw": 90,
+                    "zone": "Arena", "size": 60, "text": "A"})
+    p.signs.append({"label": PREFIX + "Site_Sign_Extract", "pos": (x0 + 120.0, -74240.0, 520.0), "yaw": 0,
+                    "zone": "Scenario", "size": 30, "text": "EXTRACTION\nShoot EXIT to leave"})
+
+
 # Removed so the plate is free (all backed up first): the empty "opening next" bays and the four ANGLE labs.
 OLD = [f"KT_Bay_S{k}" for k in range(1, 5)] + [f"KT_Sign_Bay_S{k}" for k in range(1, 5)] + \
       [f"KT3_Upgrade_Scenario_{n}_{s}" for n in range(4) for s in ("Corner", "Angle", "Target", "Brief")]
@@ -258,7 +333,9 @@ def verse_str(s):
 def render_verse(p):
     lines = ["# GENERATED by tools/build_operation.py (the same plan that places the level). Do not edit by hand.",
              "# One entry per room of the Operation, in play order. Operation.verse assigns each tagged bot to the stage",
-             "# whose box holds it and each gate to the stage whose Gate point is nearest; Kind 1 = storm, 2 = grenades.",
+             "# whose box holds it and each gate to the stage whose Gate point is nearest; Kind 1 = storm, 2 = grenades,",
+             "# 3 = plant (stand in the box), 4 = hold (retake bots, bomb timer), 5 = extract (reach the box). Kinds 3-5 follow",
+             "# the room before them; their boxes are zones, not rooms.",
              "",
              "using { /UnrealEngine.com/Temporary/SpatialMath }",
              "",
@@ -292,11 +369,14 @@ def check(p):
     """Every bot sits in exactly one stage box, every gate point has a barrier, every checkpoint is inside its box."""
     errors = []
     inside = lambda pos, box: all(box[0][k] <= pos[k] <= box[1][k] for k in range(3))
+    rooms = [s for s in p.stages if s["kind"] < 3]
     for d in p.devices:
-        if d["tag"] == "kt_op_bot_tag":
-            n = sum(inside(d["pos"], s["box"]) for s in p.stages)
+        if d["tag"] in ("kt_op_bot_tag", "kt_op_retake_tag"):
+            n = sum(inside(d["pos"], s["box"]) for s in rooms)
             if n != 1:
-                errors.append(f"{d['label']} is in {n} stage boxes")
+                errors.append(f"{d['label']} is in {n} room boxes")
+    if sum(s["kind"] == 4 for s in p.stages) > 1:
+        errors.append("more than one hold stage")
     gates = [d["pos"] for d in p.devices if d["tag"] == "kt_op_gate_tag"]
     for s in p.stages:
         if not inside(s["checkpoint"], s["box"]):
@@ -306,10 +386,19 @@ def check(p):
     return errors
 
 
-def place(b, p):
+def place(b, p, only=None):
+    """Remove and (re)place the plan. With only (a label part after PREFIX, e.g. "Site_"), just those actors."""
     found = b.m.tool(bm.SCENE, "find_actors", name="KT", collision_channels=[]) or []
     by_label = {a["label"]: a["actorPath"] for a in found}
-    gone = [a for a in found if a["label"].startswith(PREFIX) or a["label"] in OLD]
+    if only:
+        keep = lambda label: label.startswith(PREFIX + only)
+        p.slabs = [x for x in p.slabs if keep(x["label"])]
+        p.pieces = [x for x in p.pieces if keep(x["label"])]
+        p.devices = [x for x in p.devices if keep(x["label"])]
+        p.signs = [x for x in p.signs if keep(x["label"])]
+        gone = [a for a in found if keep(a["label"])]
+    else:
+        gone = [a for a in found if a["label"].startswith(PREFIX) or a["label"] in OLD]
     backup = bm.ROOT / "backups" / f"operation-{datetime.date.today()}"
     backup.mkdir(parents=True, exist_ok=True)
     (backup / f"removed-{datetime.datetime.now():%H%M%S}.json").write_text(
@@ -325,7 +414,8 @@ def place(b, p):
         ref = b.m.tool(bm.SCENE, "add_to_scene_from_class", actor_type={"refPath": pc["cls"]}, name=pc["label"],
                        xform=bm.xform(x, y, z, yaw=yaw))
         path = b.labelled(ref["refPath"], pc["label"])
-        b.props(path, {"bForciblyStructurallySupported": True, "bIsInvulnerable": True, "bCanBeDamaged": False})
+        b.props(path, {"bForciblyStructurallySupported": True, "bIsInvulnerable": True, "bCanBeDamaged": False,
+                       **pc.get("props", {})})
         saved.append(path)
     loadout = json.loads((bm.ROOT / "shared" / "practice-loadout.json").read_text(encoding="utf-8"))["items"]
     for d in p.devices:
@@ -357,7 +447,7 @@ def place(b, p):
         saved.append(path)
     for s in p.signs:
         saved.append(b.sign(s))
-    for label, text in RETEXT.items():
+    for label, text in ({} if only else RETEXT).items():
         if label in by_label:
             b.props(by_label[label], {"text": text})
             saved.append(by_label[label])
@@ -375,14 +465,15 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--dry-run", action="store_true")
     ap.add_argument("--write-verse", action="store_true", help="only regenerate OperationLayout.verse")
+    ap.add_argument("--site-only", action="store_true", help="(re)place only bombsite A (KT16_Op_Site_*)")
     args = ap.parse_args()
     p = plan()
     errors = check(p)
     print(f"plan: {len(p.slabs)} slabs, {len(p.pieces)} pieces, {len(p.devices)} devices, {len(p.signs)} signs, "
           f"{len(p.stages)} stages")
     for n, s in enumerate(p.stages):
-        bots = sum(1 for d in p.devices if d["tag"] == "kt_op_bot_tag" and
-                   all(s["box"][0][k] <= d["pos"][k] <= s["box"][1][k] for k in range(3)))
+        tag = "kt_op_retake_tag" if s["kind"] == 4 else "kt_op_bot_tag"
+        bots = sum(1 for d in p.devices if d["tag"] == tag) if s["kind"] == 4 else 0 if s["kind"] in (3, 5) else             sum(1 for d in p.devices if d["tag"] == tag and all(s["box"][0][k] <= d["pos"][k] <= s["box"][1][k] for k in range(3)))
         print(f"  {n} {s['level']:<12} {s['name']:<12} bots {bots}  gate {'yes' if s['gate'] else 'no '}  kind {s['kind']}")
     if errors:
         print("\n".join(errors))
@@ -391,7 +482,7 @@ def main():
     print("wrote", OUT_VERSE.name)
     if args.dry_run or args.write_verse:
         return 0
-    place(bm.Builder(), p)
+    place(bm.Builder(), p, only="Site_" if args.site_only else None)
     return 0
 
 

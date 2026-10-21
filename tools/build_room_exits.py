@@ -37,6 +37,8 @@ EXITS = {
     # free-standing past the end landing (KT18_Sky_End, east edge x 28416) and its rift, facing back down the strip
     # (player 2026-10-20: "add a rift and shoot to exit at the end of skybox")
     "SkyEnd": (28416.0 + 444.0, -1, [-44032.0], 7698.0 + 300.0),
+    # the Operation's extraction corner (bombsite A, tools/build_operation.py EXTRACT): on the site's west wall
+    "OpExtract": (-25600.0, 1, [-74240.0], EXIT_Z),
     "Free": (7166.0 - 200.0, 1, [-34816.0], EXIT_Z),             # free-standing at the free build's west edge
 }
 

@@ -37,7 +37,7 @@ def main():
             if not trig:
                 bad.append(f"{base}: no trigger")
                 continue
-            for kind in ("", "_Big"):
+            for kind in ("",):        # the big copies were removed 2026-10-20
                 plate = acts.get(base + kind + "_Plate")
                 if not plate:
                     if not kind:

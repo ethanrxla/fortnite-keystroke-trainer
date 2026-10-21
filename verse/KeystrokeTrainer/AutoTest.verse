@@ -56,16 +56,18 @@ RunAutoTests<public>(Playspace:fort_playspace)<suspends>:void=
 
 # Pure logic: tempo rules and the drill catalog. These need no player input.
 RunLogicTests(Report:autotest_report):void =
+    KTAimAccuracyTests(Report)
     KTBuildPieceTests(Report)
     Report.Check("SK-T1-windows", logic{KTSkillsWindow(0) > KTSkillsWindow(1) and KTSkillsWindow(1) > KTSkillsWindow(2) and KTSkillsWindow(2) >= 0.4}, "skills bots stay shorter as difficulty rises")
     Report.Check("SK-T2-cycle", logic{KTSkillsNext(0, KTSkillsLevels) = 1 and KTSkillsNext(2, KTSkillsLevels) = 0 and KTSkillsNext(1, 2) = 0}, "difficulty and weapon buttons cycle")
     Report.Check("SK-T3-reps", logic{KTSkillsReps(0) < KTSkillsReps(2) and KTSkillsGapMin(2) < KTSkillsGapMax(2)}, "harder runs are longer with shorter gaps")
     Report.Check("SK-T4-bar", logic{KTSkillsBarFraction(0.0, 0.5) = 1.0 and KTSkillsBarFraction(0.25, 0.5) = 0.5 and KTSkillsBarFraction(2.0, 0.5) = 0.0}, "bot-stays bar is full on appear, half at mid-window, empty after")
+    Report.Check("SK-T5-format", logic{KTSkillsSecs(1.4) = "1.4" and KTSkillsSecs(2.0) = "2.0"}, "readable timing labels")
     var BadCheckpoints:int = 0
     for (I -> St : KTOpStages):
-        if (KTOpStageAt(St.Checkpoint) <> I):
+        if (St.Checkpoint.X < St.Lo.X or St.Checkpoint.X > St.Hi.X or St.Checkpoint.Y < St.Lo.Y or St.Checkpoint.Y > St.Hi.Y or St.Checkpoint.Z < St.Lo.Z or St.Checkpoint.Z > St.Hi.Z):
             set BadCheckpoints += 1
-    Report.Check("OP-T1-checkpoints", logic{KTOpStages.Length = 7 and BadCheckpoints = 0}, "every operation checkpoint lies in its own room ({BadCheckpoints} wrong)")
+    Report.Check("OP-T1-checkpoints", logic{KTOpStages.Length = 11 and BadCheckpoints = 0}, "every operation checkpoint lies in its own room ({BadCheckpoints} wrong)")
     Report.Check("OP-T2-clock", logic{KTOpClock(75.4) = "1:15" and KTOpClock(9.0) = "0:09"}, "run clock reads m:ss")
     Report.Check("OP-T3-storm", logic{KTOpStormX(0.0) = KTOpStormStartX and KTOpStormX(KTOpStormSeconds * 2.0) = KTOpStormEndX}, "storm edge starts at the east wall and stops at its end line")
     Report.Check("T-edit-corners", logic{EditRouteAt(0.5, 0.5) = 0 and EditRouteAt(2.5, 0.5) = 1 and EditRouteAt(0.5, 2.5) = 2 and EditRouteAt(2.5, 2.5) = 3 and EditRouteAt(1.5, 1.5) = 4}, "aim selects lower/upper corners and center window")

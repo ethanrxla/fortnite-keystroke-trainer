@@ -122,3 +122,16 @@ def on_hit_targets(m, dummy_path, candidates):
             if link["sourceDevicePath"]["refPath"] == dummy_path and link["sourceEvent"] == "On Hit":
                 out.append((link["targetDevicePath"]["refPath"], link["targetFunction"]))
     return out
+
+
+HIDDEN_PARTS = ("TargetMesh", "SM_Target_Base", "SM_Target_StandShort", "HeightExtender")
+
+
+def hide(m, dummy_path):
+    """Stop drawing a target dummy (its figure, base, stand and extender) while it keeps its collision, so a hit area
+    can reach past the visible plate without white mannequins showing (player 2026-10-20: "the size of the tile needs
+    to be unmodified, only the hitbox should increase"). VERIFY in game that a hidden dummy still takes hits."""
+    for c in m.tool(bm.ACTOR, "get_components", actor={"refPath": dummy_path}) or []:
+        if c["refPath"].rsplit(".", 1)[-1] in HIDDEN_PARTS:
+            m.tool(bm.OBJ, "set_properties", instance={"refPath": c["refPath"]}, values=json.dumps({"bHiddenInGame": True}))
+    m.tool(bm.SCENE, "save_actor", actor={"refPath": dummy_path})

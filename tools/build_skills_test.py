@@ -42,7 +42,7 @@ LANE_Y = -87808.0
 # (metres down range, sideways offset cm): spread so consecutive reps pull the crosshair left, right, near and far.
 BOTS = [(5, 0), (8, -480), (12, 420), (15, -260), (20, 360), (25, -500), (30, 500), (40, -200), (50, 260)]
 SIGN = ("A2  SKILLS TEST\n"
-        "START: bots appear one at a time and vanish. DIFFICULTY sets how fast (Easy 1.2 s, Medium 0.8, Hard 0.5).\n"
+        "START: bots appear one at a time and vanish. DIFFICULTY sets how fast (Easy 2.0 s, Medium 1.4, Hard 1.0).\n"
         "WEAPON swaps Hand Cannon / Heavy AR. Eliminate each bot before it goes. Why: first-shot flicks under a clock.")
 
 
@@ -51,7 +51,9 @@ def bot_props():
     return {"guardTeamOption": "Team Index", "guard Team Index": {"teamType": "TeamIndex", "teamIndex": 2},
             "enabledAtGameStart": False, "allowInfiniteSpawn": True, "spawnOnTimer": False, "spawnCount": 1,
             "showHealthBar": True, "startingHealth": 100, "max Health": 100, "startingShield": 0,
-            "accuracy": "MODERATE", "enablePatrol": False, "useDeviceSpawnLocation": True}
+            "accuracy": "MODERATE", "enablePatrol": False, "useDeviceSpawnLocation": True,
+            # Appear at once and exactly on the spot (player 2026-10-20: bots "spawn and die right after").
+            "spawnRadius_InMeter": 0, "playSpawnVisualEffect": False}
 
 
 NO_WEAPON = {"guard Weapon": "None"}
