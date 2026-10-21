@@ -2,13 +2,13 @@
 #
 # One long run (player 2026-10-21: "one long pipeline"): L1 compound (5 rooms), L2 Fight Lab (rooms A, C, D, B), L3
 # bombsite A. Arriving in the crawl room (the hub portal or the OPERATION sign, KT16_Op_Arrive) or standing in it
-# starts a run: every gate closes, the bots clear, the loadout and grenades are granted. Rooms run in the order of
+# starts a run: every gate closes, the bots clear, the loadout is granted (grenades are on the floor). Rooms run in the order of
 # KTOpStages (OperationLayout.verse, generated with the layout):
 #   * a room's bots spawn when you walk into its box (the first room on START);
 #   * when every bot of the room is eliminated its gate (a blue barrier) opens and the HUD points to the next room;
 #   * a room with Pick > 0 spawns only that many of its bots, chosen at random (the peek room: left or right);
 #   * a Kind 1 room would have a storm (unused since the storm strip went on 2026-10-21);
-#   * the grenade room grants two grenades on entry;
+#   * grenades are floor pickups (crawl room, grenade room door), not granted;
 #   * if you are eliminated you come back at the start of the room you were in, its bots respawn, loadout re-granted;
 #   * L3 bombsite A (player 2026-10-20, Counter-Strike style): clear the site's three defenders, then the stages that
 #     follow need no walking into a new room: Kind 3 plant (hold the bomb console's button, kt_op_plant_tag, which
@@ -276,13 +276,8 @@ kt_operation_device<public> := class(creative_device):
             S.Spawn()
         if (B := PlantButton?):
             if (S := KTOpStages[Index], S.Kind = 3) then B.Enable() else B.Disable()
-        GrantStageItems()
         if (Active.Length = 0, S := KTOpStages[Index], S.Kind < 3):
             ClearStage()
-
-    GrantStageItems():void =
-        if (P := Runner?, S := KTOpStages[Stage], S.Kind = 2, G := Grenades?):
-            G.GrantItem(P)
 
     BotDown(Index:int):void =
         if (Running?, Index = Stage, not Cleared?):
@@ -370,11 +365,8 @@ kt_operation_device<public> := class(creative_device):
         if (S := KTOpStages[Stage], C.TeleportTo[S.Checkpoint + vector3{Z := 60.0}, C.GetTransform().Rotation]) {}
         if (P := Runner?, G := Loadout?):
             G.GrantItem(P)
-        # Grenades from the start of the run and after every death (player 2026-10-21: "some grenades ... at the
-        # start"). After the loadout, which clears the inventory first.
-        if (P := Runner?, G := Grenades?):
-            G.GrantItem(P)
-        GrantStageItems()
+        # Grenades are floor pickups in the crawl room and at the grenade room's door (tools/build_operation.py
+        # KT16_Op_Nade_*; player 2026-10-21), not granted.
 
     UpdateHud(InStorm:logic):void =
         if (S := KTOpStages[Stage]):
@@ -445,6 +437,6 @@ kt_operation_device<public> := class(creative_device):
             if ((for (G -> St : GateStage, St = I) { G }).Length = 0):
                 set Missing += 1
         Report.Check("OP03-gates", logic{Missing = 0 and Gates.Length >= 10}, "every gated room has a barrier ({Gates.Length} found)")
-        Report.Check("OP04-start", logic{PlantButton? and Loadout? and Grenades?}, "plant console, loadout and grenade granters")
+        Report.Check("OP04-start", logic{PlantButton? and Loadout?}, "plant console and loadout granter")
 
 OpText<localizes>(S:string):message = "{S}"

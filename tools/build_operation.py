@@ -143,9 +143,10 @@ class Plan:
         x, y = (i * C, j * C) if grid else cell(i, j)
         self.device(label, bm.GUARD, x, y, z, bot_props(accuracy, health, shield), yaw=yaw, tag=tag)
 
-    def gate(self, label, x, y, along_x, cells=1.0):
-        """A blue barrier in a doorway cells wide; along_x for a door in a wall that runs along x (yaw 90)."""
-        self.device(label, BARRIER, x, y, 0.0, {"barrierWidth": cells, "barrierDepth": 0.1, "barrierHeight": ROOF / C,
+    def gate(self, label, x, y, along_x, cells=1.0, height=ROOF):
+        """A blue barrier in a doorway cells wide; along_x for a door in a wall that runs along x (yaw 90). It fills the
+        doorway to the top of its wall (height), so it cannot be climbed or built over."""
+        self.device(label, BARRIER, x, y, 0.0, {"barrierWidth": cells, "barrierDepth": 0.1, "barrierHeight": height / C,
                                                 "zoneShape": "Box", "blockWeaponFire": True, "collide with Camera": False,
                                                 "baseVisibleDuringGame": False, "barrierMaterial": {"refPath": GATE_MAT}},
                     yaw=90.0 if along_x else 0.0, tag="kt_op_gate_tag")
@@ -191,8 +192,10 @@ def plan():
     p.slab("R2_NestWall", -63 * C - WALL_T / 2, -63 * C + WALL_T / 2, YC0, -132 * C, 220.0, 220.0)
     for n, j in enumerate((-135, -133)):
         p.bot(f"R2_Bot_{n}", -62, j, 0.0, "VERY HIGH")
-    gx, gy = cell(-66, -136)
-    p.device("R2_Grenades", GRANTER, gx, gy, -400.0, tag="kt_op_grenade_tag", grant="EXPLOSIVES", qty=2)
+    # Grenades lie on the floor (player 2026-10-21: "switch it so that they are on the floor"): two pickups where the
+    # run starts and two at the grenade room's door, each back 5 s after it is taken.
+    for n, (x, y) in enumerate(((-35328.0, -68352.0), (-35072.0, -68864.0), (*cell(-66, -135),), (*cell(-66, -133),))):
+        p.device(f"Nade_{n}", bm.ITEM_SPAWNER, x, y, 0.0, spawn="EXPLOSIVES")
     p.stage("Grenade", "L1 COMPOUND",
             "Room 2: two behind the wall. Lob a grenade over it, then clear the gap on the left.",
             ((PARTITIONS[0], YC0, -100.0), (PARTITIONS[1], YC1, ROOF)), (*cell(-66, DOOR_J), 0.0),
@@ -261,21 +264,21 @@ def plan():
     p.stage("Towers", "L2 FIGHT LAB",
             "Room A: one on top of each tower. Edit your way up (or build), eliminate both. Then room C, across the hall.",
             lab_box(LAB_X, LAB_MID, YC0, YC1), (*cell(-50, DOOR_J), 0.0), gate=door_c)
-    p.gate("Gate_LabC", *door_c, along_x=True, cells=2.0)
+    p.gate("Gate_LabC", *door_c, along_x=True, cells=2.0, height=LAB_CEIL)
     # C RETAKE: their ramp, cone and two-level platform (team 2 since 2026-10-21), a bot on the platform.
     p.bot("C_Bot", -42, -127, 2 * H + 20.0, "VERY HIGH", health=150)
     door_d = lab_door("D")
     p.stage("Retake", "L2 FIGHT LAB",
             "Room C: they own the platform. Wall their ramp, go up a layer, own the height, eliminate them.",
             lab_box(LAB_X, LAB_MID, labn_y0, labn_y1), (door_c[0], labn_y0 + 256.0, 0.0), gate=door_d)
-    p.gate("Gate_LabD", *door_d, along_x=True, cells=2.0)
+    p.gate("Gate_LabD", *door_d, along_x=True, cells=2.0, height=LAB_CEIL)
     # D BOX FIGHT: your closed box against theirs.
     p.bot("D_Bot", -33, -127, 0.0, "VERY HIGH")
     door_b = lab_door("B")
     p.stage("Box fight", "L2 FIGHT LAB",
             "Room D: box up in yours, edit out, trade, re-box. Take their box.",
             lab_box(LAB_MID, LAB_X1, labn_y0, labn_y1), (door_d[0], labn_y0 + 256.0, 0.0), gate=door_b)
-    p.gate("Gate_LabB", *door_b, along_x=True, cells=2.0)
+    p.gate("Gate_LabB", *door_b, along_x=True, cells=2.0, height=LAB_CEIL)
     # B PEEK AND RESET: two behind their cover; the doors into the site are behind them.
     for n, j in enumerate((-135, -133)):
         p.bot(f"B_Bot_{n}", -32, j, 0.0, "VERY HIGH")
@@ -284,7 +287,7 @@ def plan():
             "Room B: two hold the far wall. Edit, shoot, reset. The doors to bombsite A are behind them.",
             lab_box(LAB_MID, LAB_X1, YC0, YC1), (door_b[0], SPINE_Y0 - 256.0, 0.0), gate=site_gates)
     for n, (x, y) in enumerate(site_gates):
-        p.gate(f"Gate_Site{n}", x, y, along_x=True)
+        p.gate(f"Gate_Site{n}", x, y, along_x=True, height=LAB_CEIL)
     site(p)
 
     # ---- Loadout and run device (out of the play space, under the old walkway). ----
@@ -323,11 +326,12 @@ def site(p):
     p.slab("Site_Wall_S", x0 - WALL_T, x1 + WALL_T, y0 - WALL_T, y0, SITE_WALL, SITE_WALL + 100)
     p.slab("Site_Wall_W", x0 - WALL_T, x0, y0, y1, SITE_WALL, SITE_WALL + 100)
     p.slab("Site_Wall_E", x1, x1 + WALL_T, y0, y1, SITE_WALL, SITE_WALL + 100)
-    p.slab("Site_Wall_N_A", x0, LAB_MID, y1 - WALL_T, y1, SITE_WALL, SITE_WALL + 100)
+    # As tall as the Fight Lab's walls, so nobody builds over from room B instead of using the gated doors.
+    p.slab("Site_Wall_N_A", x0, LAB_MID, y1 - WALL_T, y1, LAB_CEIL, LAB_CEIL + 100)
     edges = [LAB_MID] + [v for i in SITE_DOORS for v in (i * C, (i + 1) * C)] + [x1]
     for n in range(0, len(edges), 2):
         if edges[n + 1] > edges[n]:
-            p.slab(f"Site_Wall_N_B{n // 2}", edges[n], edges[n + 1], y1 - WALL_T, y1, SITE_WALL, SITE_WALL + 100)
+            p.slab(f"Site_Wall_N_B{n // 2}", edges[n], edges[n + 1], y1 - WALL_T, y1, LAB_CEIL, LAB_CEIL + 100)
     # The A plate (orange) and the extraction pad (green), painted on the floor.
     p.slab("Site_Plate_A", *PLANT, 6.0, 6.0, "Edit")
     # The plant zone, marked so it reads from the doors (player 2026-10-21: "clearly defined with props / controls"):
@@ -440,6 +444,14 @@ def render_verse(p):
     return "\n".join(lines) + "\n"
 
 
+def KTOpStageAt_py(p, pos):
+    """Operation.verse KTOpStageAt: the first room box (Kind < 3) holding pos, or -1."""
+    for n, s in enumerate(p.stages):
+        if s["kind"] < 3 and all(s["box"][0][k] <= pos[k] <= s["box"][1][k] for k in range(3)):
+            return n
+    return -1
+
+
 def check(p):
     """Every bot sits in exactly one stage box, every gate point has a barrier, every checkpoint is inside its box."""
     errors = []
@@ -518,6 +530,15 @@ def place(b, p, only=None):
             b.m.tool(bm.OBJ, "reset_properties", instance=items, properties=["itemListData"])
             b.props(items["refPath"], {"itemListData": [{"itemDefinition": {"refPath": loadout[k]}, "itemQuantity": d["qty"]}
                                                         for k in names]})
+        if d.get("spawn"):
+            for key, value in {"items Respawn": True, "respawn Item On Timer": True, "time Between Spawns": 5.0,
+                               "spawn Item On Timer": True, "time Before First Spawn": 0.5,
+                               "initial Movement of Item": "None", "run Over Pickup": False}.items():
+                try:
+                    b.props(path, {key: value})
+                except RuntimeError as exc:
+                    refused.append(f"{d['label']}: {key} ({str(exc)[-50:]})")
+            bm.fill_item_list(b, path, [loadout[d["spawn"]]])
         if d["tag"]:
             b.tag(path, d["tag"])
         saved.append(path)
@@ -549,6 +570,7 @@ def main():
     ap.add_argument("--write-verse", action="store_true", help="only regenerate OperationLayout.verse")
     ap.add_argument("--site-only", action="store_true", help="(re)place only bombsite A (KT16_Op_Site_*)")
     ap.add_argument("--arrive-only", action="store_true", help="(re)place only the crawl-room arrival pad (KT16_Op_Arrive)")
+    ap.add_argument("--grenades-only", action="store_true", help="(re)place only the floor grenades (KT16_Op_Nade_*)")
     args = ap.parse_args()
     p = plan()
     errors = check(p)
@@ -566,7 +588,8 @@ def main():
     print("wrote", OUT_VERSE.name)
     if args.dry_run or args.write_verse:
         return 0
-    place(bm.Builder(), p, only="Site_" if args.site_only else "Arrive" if args.arrive_only else None)
+    place(bm.Builder(), p, only="Site_" if args.site_only else "Arrive" if args.arrive_only else
+          "Nade_" if args.grenades_only else None)
     return 0
 
 
