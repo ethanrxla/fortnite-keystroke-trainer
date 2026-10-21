@@ -89,7 +89,9 @@ SPINE_Y0, SPINE_Y1 = -131 * C, -129 * C           # y -67072..-66048
 LAB_MID = -40 * C                                  # x -20480, between the west rooms (A, C) and the east rooms (B, D)
 LAB_X1 = -30 * C                                   # x -15360, the lab's east wall
 LAB_DOORS = {"A": (-46, -45), "B": (-36, -35), "C": (-46, -45), "D": (-36, -35)}   # build_fight_lab.DOORS
-SITE_DOORS = (-40, -31)                            # one-cell doors from room B into the site (west, east)
+LAB_SHIFT = (-256.0, -256.0)                       # build_fight_lab.PIECE_SHIFT: lab pieces on the player grid
+GRID_SHIFT = {"R4_": (-256.0, 256.0), "R5_": (-256.0, 256.0), "A_Bot": LAB_SHIFT, "B_Bot": LAB_SHIFT}
+SITE_DOORS = (-40, -31)                          # one-cell doors from room B into the site (west, east)
 # Pieces of the Fight Lab that belong to the enemy: team 2, so the player cannot edit them (player 2026-10-21).
 LAB_ENEMY = ("KT7_Lab_C_Plat_", "KT7_Lab_C_PlatWall_", "KT7_Lab_C_EnemyRamp", "KT7_Lab_C_EnemyCone",
              "KT7_Lab_D_BotBox_", "KT7_Lab_B_BotCover_")
@@ -206,10 +208,16 @@ def plan():
     p.slab("R3_Cover_S", -60 * C - WALL_T / 2, -60 * C + WALL_T / 2, YC0, dy0, ROOF, ROOF)
     p.slab("R3_Cover_N", -60 * C - WALL_T / 2, -60 * C + WALL_T / 2, dy1, YC1, ROOF, ROOF)
     p.slab("R3_Cover_Top", -60 * C - WALL_T / 2, -60 * C + WALL_T / 2, dy0, dy1, ROOF, ROOF - H)
-    p.wall("R3_EditWall", -60, DOOR_J, 0, "W")
-    for n, j in enumerate((-135, -133)):
-        p.bot(f"R3_Bot_{n}", -58, j, 0.0, "VERY HIGH")
-    p.stage("Peek", "L1 COMPOUND", "Room 3: one holds the far side, left or right. Edit a window, hit your shot, reset.",
+    # Their wall in the gap (player 2026-10-21: "the wall should be enemy build and there should be a bot there"):
+    # team 2 and breakable, with the bot right behind it, left or right. Shot out, it comes back on a session restart
+    # (Verse cannot rebuild a piece). The label stays: the edit guide's target list names it.
+    p.wall("R3_EditWall", -60, DOOR_J, 0, "W", {**team2, "bCanBeDamaged": True, "bIsInvulnerable": False})
+    wx, wy = -60 * C, (dy0 + dy1) / 2
+    for n, side in enumerate((-1, 1)):
+        p.device(f"R3_Bot_{n}", bm.GUARD, wx + 220.0, wy + side * 170.0, 0.0, bot_props("VERY HIGH", 100, 0),
+                 yaw=180.0, tag="kt_op_bot_tag")
+    p.stage("Peek", "L1 COMPOUND", "Room 3: one waits right behind their wall, left or right. Shoot the wall out, "
+            "take the fight.",
             ((PARTITIONS[1], YC0, -100.0), (PARTITIONS[2], YC1, ROOF)), (*cell(-61, DOOR_J), 0.0),
             gate=(PARTITIONS[2], gate_y), pick=1)
     p.gate("Gate_R3", PARTITIONS[2], gate_y, along_x=False)
@@ -247,47 +255,40 @@ def plan():
     # The spine's west end (it used to open onto the walkway and the Scenario portal): closed.
     p.slab("SpineEnd", LAB_X - WALL_T / 2, LAB_X + WALL_T / 2, SPINE_Y0, SPINE_Y1, LAB_CEIL, LAB_CEIL + 100, "Scenario")
 
-    # ---- L2 FIGHT LAB: rooms A, C, D, B in that order. Each room's doorway onto the spine is gated by the room
-    # before it, so the spine never offers a choice. Lab geometry is tools/build_fight_lab.py's (KT7_Lab_*). ----
-    def lab_door(room):
-        a, b_ = LAB_DOORS[room]
-        return ((a * C + (b_ + 1) * C) / 2, SPINE_Y0 if room in "AB" else SPINE_Y1)
-
+    # ---- L2 FIGHT LAB, straight on (player 2026-10-21: rooms "one in front of each other"): room A, then room B
+    # through a door in the wall between them, then the bombsite south of B. Rooms C and D and the spine are off the
+    # run: A's and B's spine doorways are walled up. Lab geometry is tools/build_fight_lab.py's (KT7_Lab_*). ----
     def lab_box(x0, x1, y0, y1):
         return ((x0, y0, -100.0), (x1, y1, 2600.0))
 
-    labn_y0, labn_y1 = SPINE_Y1, -124 * C                     # north rooms C, D: y -66048..-63488
+    for room in "AB":
+        a, b_ = LAB_DOORS[room]
+        p.slab(f"LabDoorFill_{room}", a * C, (b_ + 1) * C, SPINE_Y0 - WALL_T / 2, SPINE_Y0 + WALL_T / 2,
+               LAB_CEIL, LAB_CEIL + 100, "Scenario")
+    # The wall between A and B (was KT7_Lab_Wall_Mid_S), with a door on the compound's door row.
+    p.slab("LabMid_S0", LAB_MID - WALL_T / 2, LAB_MID + WALL_T / 2, YC0, dy0, LAB_CEIL, LAB_CEIL + 100, "Scenario")
+    p.slab("LabMid_S1", LAB_MID - WALL_T / 2, LAB_MID + WALL_T / 2, dy1, YC1, LAB_CEIL, LAB_CEIL + 100, "Scenario")
     # A TOWERS: a bot on top of each tower (player 2026-10-21: "bot here"): edit your way up, take them.
     p.bot("A_Bot_Drop", -42, -135, 3 * H + 20.0, "VERY HIGH", health=150)
     p.bot("A_Bot_Climb", -45, -135, 4 * H + 20.0, "VERY HIGH", health=150)
-    door_c = lab_door("C")
     p.stage("Towers", "L2 FIGHT LAB",
-            "Room A: one on top of each tower. Edit your way up (or build), eliminate both. Then room C, across the hall.",
-            lab_box(LAB_X, LAB_MID, YC0, YC1), (*cell(-50, DOOR_J), 0.0), gate=door_c)
-    p.gate("Gate_LabC", *door_c, along_x=True, cells=2.0, height=LAB_CEIL)
-    # C RETAKE: their ramp, cone and two-level platform (team 2 since 2026-10-21), a bot on the platform.
-    p.bot("C_Bot", -42, -127, 2 * H + 20.0, "VERY HIGH", health=150)
-    door_d = lab_door("D")
-    p.stage("Retake", "L2 FIGHT LAB",
-            "Room C: they own the platform. Wall their ramp, go up a layer, own the height, eliminate them.",
-            lab_box(LAB_X, LAB_MID, labn_y0, labn_y1), (door_c[0], labn_y0 + 256.0, 0.0), gate=door_d)
-    p.gate("Gate_LabD", *door_d, along_x=True, cells=2.0, height=LAB_CEIL)
-    # D BOX FIGHT: your closed box against theirs.
-    p.bot("D_Bot", -33, -127, 0.0, "VERY HIGH")
-    door_b = lab_door("B")
-    p.stage("Box fight", "L2 FIGHT LAB",
-            "Room D: box up in yours, edit out, trade, re-box. Take their box.",
-            lab_box(LAB_MID, LAB_X1, labn_y0, labn_y1), (door_d[0], labn_y0 + 256.0, 0.0), gate=door_b)
-    p.gate("Gate_LabB", *door_b, along_x=True, cells=2.0, height=LAB_CEIL)
-    # B PEEK AND RESET: two behind their cover; the doors into the site are behind them.
+            "Room A: one on top of each tower. Edit your way up (or build), eliminate both. Room B is straight ahead.",
+            lab_box(LAB_X, LAB_MID, YC0, YC1), (*cell(-50, DOOR_J), 0.0), gate=(LAB_MID, gate_y))
+    p.gate("Gate_LabB", LAB_MID, gate_y, along_x=False, height=LAB_CEIL)
+    # B PEEK AND RESET: two behind their cover (team 2); the doors into the site are behind them.
     for n, j in enumerate((-135, -133)):
         p.bot(f"B_Bot_{n}", -32, j, 0.0, "VERY HIGH")
     site_gates = [(i * C + C / 2, SITE_Y1) for i in SITE_DOORS]
     p.stage("Peek and reset", "L2 FIGHT LAB",
             "Room B: two hold the far wall. Edit, shoot, reset. The doors to bombsite A are behind them.",
-            lab_box(LAB_MID, LAB_X1, YC0, YC1), (door_b[0], SPINE_Y0 - 256.0, 0.0), gate=site_gates)
+            lab_box(LAB_MID, LAB_X1, YC0, YC1), (LAB_MID + 256.0, gate_y, 0.0), gate=site_gates)
     for n, (x, y) in enumerate(site_gates):
         p.gate(f"Gate_Site{n}", x, y, along_x=True, height=LAB_CEIL)
+    p.signs.append({"label": PREFIX + "Sign_LabA", "pos": (-24320.0, YC0 + 120, 260), "yaw": 90, "zone": "Edit",
+                    "size": 30, "text": "6  TOWERS\nOne on top of each tower. Edit your way up.\nRoom B is straight ahead"})
+    p.signs.append({"label": PREFIX + "Sign_LabB", "pos": (-17920.0, YC0 + 120, 260), "yaw": 90, "zone": "Aim",
+                    "size": 30, "text": "7  PEEK AND RESET\nTwo behind their cover. Edit, shoot, reset.\n"
+                                        "Bombsite A: through the doors in this wall"})
     site(p)
 
     # ---- Loadout and run device (out of the play space, under the old walkway). ----
@@ -300,15 +301,29 @@ def plan():
     p.device("Arrive", bm.TELEPORTER, ax, ay - 256.0, 15.0, {"knob_TeleporterGroup": "Group_None",
              "knob_TargetTeleporterGroup": "Group_None", "teleporter Rift Visible": False, "maintain Relative Position": False,
              "conserve Momentum": False, "enabledDuringPhase": "Always"}, yaw=270.0, tag="kt_op_arrive_tag")
-    room_signs = [("Sign_R1", -69, "1  CRAWL\nCrouch or slide under the barrier"),
-                  ("Sign_R2", -65, "2  GRENADE\nLob it over the wall, then clear the gap"),
-                  ("Sign_R3", -61, "3  PEEK\nOne bot, left or right. Edit, shoot, reset"),
-                  ("Sign_R4", -56, "4  HIGH GROUND\nTake height first"),
-                  ("Sign_R5", -52, "5  BREACH\nEdit in, eliminate, door opens")]
-    for label, i, text in room_signs:
-        x, _ = cell(i, -136)
-        p.signs.append({"label": PREFIX + label, "pos": (x, YC0 + 120, 260), "yaw": 90, "zone": "Scenario",
+    # Each sign where its 7.2 m panel fits whole (player 2026-10-21: the crawl sign ran into the barrier, peek and high
+    # ground into the partitions, breach was hidden by the bot box): (label, x, y, yaw, text); yaw 90 faces +Y (on
+    # the south wall), 180 faces -X (on a wall ahead of you as you come in from the west).
+    room_signs = [("Sign_R1", (X0 - 68 * C) / 2, YC0 + 120, 90, "1  CRAWL\nCrouch or slide under the barrier"),
+                  ("Sign_R2", cell(-65, 0)[0], YC0 + 120, 90, "2  GRENADE\nLob it over the wall, then clear the gap"),
+                  ("Sign_R3", -60 * C - WALL_T / 2 - 120, (YC0 + dy0) / 2, 180,
+                   "3  PEEK\nTheir wall, one bot right behind it.\nShoot it out, take the fight"),
+                  ("Sign_R4", PARTITIONS[3] - WALL_T / 2 - 120, (YC0 + dy0) / 2, 180, "4  HIGH GROUND\nTake height first"),
+                  ("Sign_R5", LAB_X - WALL_T / 2 - 120, (YC0 + dy0) / 2, 180, "5  BREACH\nEdit in, eliminate, door opens")]
+    for label, x, y, yaw, text in room_signs:
+        p.signs.append({"label": PREFIX + label, "pos": (x, y, 260), "yaw": yaw, "zone": "Scenario",
                         "size": 30, "text": text})
+    # Pieces the player builds against go on the player build grid (player 2026-10-21: "builds are also not in line"):
+    # half a cell from the room grid, the bots on them with them. The direction keeps each group clear of its walls.
+    for d in p.pieces + p.devices:
+        for prefix, (sx, sy) in GRID_SHIFT.items():
+            if d["label"].startswith(PREFIX + prefix):
+                if "xf" in d:
+                    x, y, z, yaw = d["xf"]
+                    d["xf"] = (x + sx, y + sy, z, yaw)
+                else:
+                    x, y, z = d["pos"]
+                    d["pos"] = (x + sx, y + sy, z)
     p.signs.append({"label": PREFIX + "Sign_Brief", "pos": (X0 + 120, -68096.0, 330), "yaw": 0, "zone": "Scenario",
                     "size": 24, "text": "OPERATION\nCompound > Fight Lab > Bombsite A, one room at a time.\n"
                                         "Each door opens when its room is clear. Die and you restart that room.\n"
@@ -387,7 +402,8 @@ def site(p):
 OLD = [f"KT_Bay_S{k}" for k in range(1, 5)] + [f"KT_Sign_Bay_S{k}" for k in range(1, 5)] + \
       [f"KT3_Upgrade_Scenario_{n}_{s}" for n in range(4) for s in ("Corner", "Angle", "Target", "Brief")] + \
       [f"KT7_Lab_Rift_{r}_{e}" for r in "ABCD" for e in ("In", "Start")] + ["KT7_Lab_Rift_A_Loop"] + \
-      ["KT7_Lab_B_Bot_0", "KT7_Lab_B_Bot_1", "KT7_Lab_C_Bot", "KT7_Lab_D_Bot", "KT7_Lab_Sign_Title"]
+      ["KT7_Lab_B_Bot_0", "KT7_Lab_B_Bot_1", "KT7_Lab_C_Bot", "KT7_Lab_D_Bot", "KT7_Lab_Sign_Title"] + \
+      ["KT7_Lab_Wall_S_B", "KT7_Lab_Wall_Mid_S"]   # room B's south wall hid the site doors; A|B gets a door (Op)
 RETEXT = {"KT_Sign_Area_Scenario": "OPERATION\nThe way in is the OPERATION sign or portal in the hub:\n"
                                    "you start in the crawl room",
           "KT_Sign_Gate_Scenario": "OPERATION\nCompound > Fight Lab > Bombsite A, one long run",
@@ -573,6 +589,7 @@ def main():
     ap.add_argument("--site-only", action="store_true", help="(re)place only bombsite A (KT16_Op_Site_*)")
     ap.add_argument("--arrive-only", action="store_true", help="(re)place only the crawl-room arrival pad (KT16_Op_Arrive)")
     ap.add_argument("--grenades-only", action="store_true", help="(re)place only the floor grenades (KT16_Op_Nade_*)")
+    ap.add_argument("--signs-only", action="store_true", help="(re)place only the compound signs (KT16_Op_Sign_*)")
     args = ap.parse_args()
     p = plan()
     errors = check(p)
@@ -591,7 +608,7 @@ def main():
     if args.dry_run or args.write_verse:
         return 0
     place(bm.Builder(), p, only="Site_" if args.site_only else "Arrive" if args.arrive_only else
-          "Nade_" if args.grenades_only else None)
+          "Nade_" if args.grenades_only else "Sign_" if args.signs_only else None)
     return 0
 
 

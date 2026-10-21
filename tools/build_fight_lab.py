@@ -60,6 +60,7 @@ ROOM_ZONE = {"A": "Edit", "B": "Aim", "C": "Piece", "D": "Arena"}
 # Floors, ramps and cones extend from their pivot (middle of one edge) along (-sin yaw, cos yaw); a ramp
 # climbs the opposite way. Measured 2026-10-09 with temporary pieces (bounds + a side capture).
 RAMP_YAW = {"S": 0.0, "E": 90.0, "N": 180.0, "W": 270.0}
+PIECE_SHIFT = (-256.0, -256.0)       # room grid -> player build grid (2026-10-21); build_operation.py LAB_SHIFT
 
 SIGNS = {
     "A": "A  EDIT TOWERS\n"
@@ -99,7 +100,10 @@ class Plan:
             self.slab(label, x0, x1, y - WALL_T / 2, y + WALL_T / 2, CEIL, CEIL + 100, zone)
 
     def piece(self, label, kind, x, y, z, yaw):
-        self.pieces.append({"label": PREFIX + label, "cls": CLS[kind], "xf": (x, y, z, yaw)})
+        # Build pieces sit on the player build grid (player 2026-10-21: "builds are also not in line"): half a cell
+        # from the room grid, which keeps cell centres at 256 mod 512 for the walls and doors.
+        self.pieces.append({"label": PREFIX + label, "cls": CLS[kind],
+                            "xf": (x + PIECE_SHIFT[0], y + PIECE_SHIFT[1], z, yaw)})
 
     # Build pieces in grid terms. Edges: W/E = x-min/x-max edge of the cell, S/N = y-min/y-max.
     def wall(self, label, i, j, k, edge):
@@ -138,9 +142,9 @@ def plan_lab():
     # Perimeter: west wall open onto the spine (the way in from Scenarios).
     p.wall_x("Wall_W_N", x0, ys1, y1, "Scenario")
     p.wall_x("Wall_E", x1, y0, y1, "Scenario")
-    p.wall_y("Wall_S_B", y0, xm, x1, "Scenario")
+    # Room B's south wall and the A|B wall belong to the Operation since 2026-10-21 (KT16_Op_Site_Wall_N_*, the site
+    # doors; KT16_Op_LabMid_*, the door from A to B), so Wall_S_B and Wall_Mid_S are not placed here.
     p.wall_y("Wall_N", y1, x0, x1, "Scenario")
-    p.wall_x("Wall_Mid_S", xm, y0, ys0, "Scenario")
     p.wall_x("Wall_Mid_N", xm, ys1, y1, "Scenario")
     # Spine walls with a two-cell doorway into each room.
     for side, y in (("S", ys0), ("N", ys1)):

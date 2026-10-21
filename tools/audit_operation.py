@@ -20,7 +20,10 @@ sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
 import build_map as bm  # noqa: E402
 import build_operation as op  # noqa: E402
 
-ASSIGN_CM = 400.0          # Operation.verse: a barrier belongs to the stage with the nearest Gates point within 4 m
+# Their wall in the peek room fills a fixed gap in the cover line (a slab wall on the room grid); it is shot out, not
+# built against.
+GRID_EXEMPT = {"KT16_Op_R3_EditWall"}
+ASSIGN_CM = 400.0         # Operation.verse: a barrier belongs to the stage with the nearest Gates point within 4 m
 
 
 def main():
@@ -68,6 +71,32 @@ def main():
             problems.append(f"{label} moved: at {tuple(round(v) for v in pos)}, plan {d['pos']}")
         if d["tag"] == "kt_op_bot_tag" and op.KTOpStageAt_py(p, pos) < 0:
             problems.append(f"{label} is in no room box: Operation.verse would never spawn it")
+    # Build pieces, live (player 2026-10-21: "builds are 1:1 to player builds on grid", "build structures are team
+    # 2"): every Operation and Fight Lab piece on the player build grid, the enemy's pieces on team 2, yours not.
+    lab = {a["label"]: a for a in (m.tool(bm.SCENE, "find_actors", name="KT7_Lab_", collision_channels=[]) or [])}
+    enemy = {d["label"] for d in p.pieces if d["props"].get("TeamIndex") == op.ENEMY_TEAM["TeamIndex"]}
+    off_grid, wrong_team, n_pieces = [], [], 0
+    for label, a in {**acts, **lab}.items():
+        if "PBWA" not in a["class"]["refPath"] or label in GRID_EXEMPT:
+            continue
+        n_pieces += 1
+        t = m.tool(bm.ACTOR, "get_actor_transform", actor={"refPath": a["actorPath"]})
+        x, y, z, yaw = t["location"]["x"], t["location"]["y"], t["location"]["z"], t["rotation"]["yaw"]
+        along_x = round(yaw) % 180 == 0
+        want = (0.0, 256.0) if along_x else (256.0, 0.0)
+        err = max(abs(((x - want[0] + 256) % 512) - 256), abs(((y - want[1] + 256) % 512) - 256),
+                  abs(((z + 192) % op.H) - 192))
+        if err > 1.0:
+            off_grid.append(f"{label} ({x:.0f}, {y:.0f}, {z:.0f}) yaw {yaw:.0f}: {err:.0f} cm off")
+        team = json.loads(m.tool(bm.OBJ, "get_properties", instance={"refPath": a["actorPath"]},
+                                 properties=["teamIndex"])).get("teamIndex")
+        theirs = label in enemy or label.startswith(op.LAB_ENEMY)
+        if theirs != (team == op.ENEMY_TEAM["TeamIndex"]):
+            wrong_team.append(f"{label}: team index {team}, want {'team 2' if theirs else 'yours'}")
+    problems += off_grid[:12] + wrong_team[:12]
+    if len(off_grid) > 12 or len(wrong_team) > 12:
+        problems.append(f"... {len(off_grid)} off grid, {len(wrong_team)} wrong team in all")
+    print(f"{n_pieces} build pieces checked: {len(off_grid)} off the player grid, {len(wrong_team)} on the wrong team")
     if "KT16_Op_Site_PlantButton" not in acts:
         problems.append("no bomb console button")
     # Generated stage table.

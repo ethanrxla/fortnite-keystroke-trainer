@@ -1,6 +1,6 @@
 # Operation: the island's one game level (design/operation-level-design.md), laid out by tools/build_operation.py.
 #
-# One long run (player 2026-10-21: "one long pipeline"): L1 compound (5 rooms), L2 Fight Lab (rooms A, C, D, B), L3
+# One long run (player 2026-10-21: "one long pipeline"): L1 compound (5 rooms), L2 Fight Lab (room A, then room B), L3
 # bombsite A. Arriving in the crawl room (the hub portal or the OPERATION sign, KT16_Op_Arrive) or standing in it
 # starts a run: every gate closes, the bots clear, the loadout is granted (grenades are on the floor). Rooms run in the order of
 # KTOpStages (OperationLayout.verse, generated with the layout):
@@ -428,15 +428,14 @@ kt_operation_device<public> := class(creative_device):
 
     # Runtime checks for the playtest runner (AutoTestDevice): every room has its bots and its gate.
     RunSmokeTests<public>(P:player, Report:autotest_report)<suspends>:void =
-        Report.Check("OP01-stages", logic{KTOpStages.Length = 13}, "thirteen stages in the layout")
-        # Grenade 2, peek 2 (1 spawns), high ground 2, breach 2, towers 2, retake 1, box fight 1, peek and reset 2,
-        # site 3, retake wave 3 (tools/build_operation.py).
-        Report.Check("OP02-bots", logic{Bots.Length = 20}, "operation bots found: {Bots.Length} (want 20)")
+        Report.Check("OP01-stages", logic{KTOpStages.Length = 11}, "eleven stages in the layout")
+        # Grenade 2, peek 2 (1 spawns), high ground 2, breach 2, towers 2, peek and reset 2, site 3, retake wave 3 (tools/build_operation.py).
+        Report.Check("OP02-bots", logic{Bots.Length = 18}, "operation bots found: {Bots.Length} (want 18)")
         var Missing:int = 0
         for (I -> S : KTOpStages, S.Gates.Length > 0):
             if ((for (G -> St : GateStage, St = I) { G }).Length = 0):
                 set Missing += 1
-        Report.Check("OP03-gates", logic{Missing = 0 and Gates.Length >= 10}, "every gated room has a barrier ({Gates.Length} found)")
+        Report.Check("OP03-gates", logic{Missing = 0 and Gates.Length >= 7}, "every gated room has a barrier ({Gates.Length} found)")
         Report.Check("OP04-start", logic{PlantButton? and Loadout?}, "plant console and loadout granter")
 
 OpText<localizes>(S:string):message = "{S}"
