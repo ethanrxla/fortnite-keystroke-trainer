@@ -354,7 +354,6 @@ VERSE_EYE = 330.0           # card centre above the room's own floor: reading he
 VERSE_STEP = 900.0          # candidate spots along a wall
 
 
-VERSE_TOTAL = 60            # cards on the map: every verse once, then repeats in other places
 VERSE_REGION = 6000.0       # spots are grouped into squares this size and filled in turn, so the cards spread out
 
 
@@ -390,8 +389,8 @@ def verses(b, actors):
     """Bible verses (shared/bible-verses.json, KJV; cards from render_theme_art.py) all over the map (player 2026-10-20:
     "scatter bible verses across the map in free space"; 2026-10-21: "include bible verses all over the map"). Every
     wall slab with a floor in front of it is a candidate, at reading height above that floor; spots are grouped into
-    VERSE_REGION squares and filled in turn so the cards spread out. Every verse is placed once, then repeats fill up
-    to VERSE_TOTAL. A spot that would cover graffiti, signs, devices or other art is skipped."""
+    VERSE_REGION squares and filled in turn so the cards spread out. Every verse is placed exactly once. A spot that
+    would cover graffiti, signs, devices or other art is skipped."""
     pngs = sorted((ART / "verses").glob("verse_*.png"))
     floors = [a["bounds"] for a in actors if a["label"].startswith("KT") and any(k in a["label"] for k in
               ("Floor", "Area_", "Strip", "Ledge", "Plate_", "_Plate", "Pad_"))
@@ -424,8 +423,7 @@ def verses(b, actors):
     print(f"  {len(spots)} candidate spots in {len(order)} regions")
     mats = {}
     placed, turn = 0, 0
-    for k in range(VERSE_TOTAL):
-        png = pngs[k % len(pngs)]
+    for k, png in enumerate(pngs):
         if png not in mats:
             mats[png] = (material(b, png, False), png_aspect(png))
         mat, aspect = mats[png]
@@ -439,11 +437,11 @@ def verses(b, actors):
             if blocked(actors, x, y, z, w / 2 + 40, normal, h / 2 + 40):
                 turn -= 1                   # stay on this region until it yields a free spot or runs out
                 continue
-            label = f"{PREFIX}Verse_{png.stem}" + (f"_{k // len(pngs)}" if k >= len(pngs) else "")
+            label = f"{PREFIX}Verse_{png.stem}"
             remember(actors, label, mount(b, label, mat, x, y, z, w, h, normal), x, y, z, w, h, normal)
             placed += 1
             break
-    print("verse cards:", placed, "of", VERSE_TOTAL, f"({len(pngs)} verses)")
+    print("verse cards:", placed, "of", len(pngs), "unique verses")
 
 
 def main():

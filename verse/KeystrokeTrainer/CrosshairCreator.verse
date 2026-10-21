@@ -150,15 +150,16 @@ kt_crosshair_creator_device := class(creative_device):
         S.Drawing.Init()
         S.HUD.AddWidget(canvas_slot{Anchors := anchors{Minimum := vector2{X := 0.5, Y := 0.5}, Maximum := vector2{X := 0.5, Y := 0.5}}, SizeToContent := true, Widget := S.Drawing.Root})
         if (set Live[P] = S) {}
-        StockReticle(P, S.Enabled)
+        StockReticle(P, logic{S.Enabled? and R.HideStock?})
         spawn{ Run(S) }
 
     # Fortnite's own reticle: hidden while this player's custom crosshair is on, shown otherwise.
-    StockReticle(P:player, CustomOn:logic):void =
-        if (CustomOn?):
+    StockReticle(P:player, HideIt:logic):void =
+        if (HideIt?):
             if (S := HideStock?) then S.ChangeClass(P)
         else if (S := ShowStock?):
             S.ChangeClass(P)
+        Print("KT|crosshair|stock_reticle|hidden={if (HideIt?) then 1 else 0}|selectors={(if (HideStock?) then 1 else 0) + (if (ShowStock?) then 1 else 0)}")
 
     Left(P:player):void =
         if (E := Editors[P]):
@@ -279,8 +280,14 @@ kt_crosshair_creator_device := class(creative_device):
                     set S.Values = New.Active
                     set S.Enabled = New.Enabled
                     set S.Dirty = true
-                StockReticle(E.Player, New.Enabled)
+                StockReticle(E.Player, logic{New.Enabled? and New.HideStock?})
                 Close(E)
+        else if (Action = "stock"):
+            New := KTCrosshairSetHideStock(R, logic{not R.HideStock?})
+            if (set KTCrosshairRecords[E.Player] = New):
+                StockReticle(E.Player, logic{New.Enabled? and New.HideStock?})
+                E.Status.SetText(KTCrosshairText(
+                    if (New.HideStock?) then "Fortnite's crosshair is hidden while yours is on." else "Fortnite's crosshair stays visible."))
         else if (Action = "save"):
             if (set KTCrosshairRecords[E.Player] = KTCrosshairSaveSlot(R, N, E.Draft)):
                 E.Status.SetText(KTCrosshairText("Your preset {N} saved. Apply to equip."))
@@ -334,6 +341,7 @@ kt_crosshair_creator_device := class(creative_device):
         Body.AddWidget(MakeCanvasSlot(E.Colour, vector2{X := 520.0, Y := 300.0}))
         Button(E, Body, "Shape", "shape", 0, 500.0, 335.0, 170.0)
         Button(E, Body, "Outline black/white", "outline", 0, 680.0, 335.0, 190.0)
+        Button(E, Body, "Fortnite crosshair: hide / show", "stock", 0, 500.0, 590.0, 370.0)
         for (I -> Name : array{"Classic", "Dot", "Dynamic T"}):
             Button(E, Body, Name, "factory", I, 500.0 + I * 125.0, 383.0, 120.0)
         for (I := 1..3):
@@ -342,7 +350,7 @@ kt_crosshair_creator_device := class(creative_device):
             Button(E, Body, "Save {I}", "save", I, X, 480.0, 120.0)
         Body.AddWidget(MakeCanvasSlot(E.Status, vector2{X := 28.0, Y := 583.0}))
         E.Status.SetText(KTCrosshairText("Movement animation is cosmetic, not weapon spread."))
-        Label(Body, "Double reticle? Settings > Game UI > Reticle: Off", 28.0, 610.0, 16.0)
+        Label(Body, "Fortnite's crosshair hides while yours is on (button on the right).", 28.0, 610.0, 16.0)
         Button(E, Body, "Apply & save", "apply", 0, 500.0, 635.0, 150.0)
         Button(E, Body, "Disable", "off", 0, 655.0, 635.0, 100.0)
         Cancel := Button(E, Body, "Cancel", "close", 0, 760.0, 635.0, 110.0)

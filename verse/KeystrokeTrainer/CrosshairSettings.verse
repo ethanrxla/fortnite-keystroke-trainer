@@ -31,6 +31,8 @@ kt_crosshair_record := class<final><persistable>:
     Slot1:[]int = array{}
     Slot2:[]int = array{}
     Slot3:[]int = array{}
+    # Hide Fortnite's own reticle while this crosshair is on (player 2026-10-21: "theres no option to turn it off").
+    HideStock:logic = true
 
 var KTCrosshairRecords:weak_map(player, kt_crosshair_record) = map{}
 
@@ -44,6 +46,7 @@ KTCrosshairSaveSlot(R:kt_crosshair_record, N:int, V:[]int)<transacts>:kt_crossha
         Slot1 := if (N = 1) then KTCrosshairClean(V) else R.Slot1
         Slot2 := if (N = 2) then KTCrosshairClean(V) else R.Slot2
         Slot3 := if (N = 3) then KTCrosshairClean(V) else R.Slot3
+        HideStock := R.HideStock
 
 KTCrosshairApply(R:kt_crosshair_record, V:[]int, Enabled:logic)<transacts>:kt_crosshair_record =
     kt_crosshair_record:
@@ -52,6 +55,16 @@ KTCrosshairApply(R:kt_crosshair_record, V:[]int, Enabled:logic)<transacts>:kt_cr
         Slot1 := R.Slot1
         Slot2 := R.Slot2
         Slot3 := R.Slot3
+        HideStock := R.HideStock
+
+KTCrosshairSetHideStock(R:kt_crosshair_record, HideIt:logic)<transacts>:kt_crosshair_record =
+    kt_crosshair_record:
+        Enabled := R.Enabled
+        Active := R.Active
+        Slot1 := R.Slot1
+        Slot2 := R.Slot2
+        Slot3 := R.Slot3
+        HideStock := HideIt
 
 KTCrosshairFactory(N:int)<transacts>:[]int =
     case (N):

@@ -17,7 +17,7 @@ import sys
 
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
 import build_map as bm  # noqa: E402
-from build_room_resets import ROOMS, room_box  # noqa: E402
+from build_room_resets import ROOMS, room_box, CLEAR_AT_END  # noqa: E402
 
 TILE_CM = 512.0
 SAMPLE_CM = 256.0
@@ -53,9 +53,9 @@ def main():
             if bad:
                 problems.append(f"{a['label']}: {bad}")
             r = props.get("blast Radius", 0) * TILE_CM
-            radius = r if radius is None else min(radius, r)
+            radius = r if radius is None else max(radius, r)
             t = m.tool(bm.ACTOR, "get_actor_transform", actor={"refPath": path})["location"]
-            centres.append((t["x"], t["y"], t["z"]))
+            centres.append((t["x"], t["y"], t["z"], r))      # each barrel reaches its own radius
         box = room_box(acts, code)
         floors = [a["bounds"]["max"]["z"] for l, a in by.items() if l == f"KT_RoomFloor_{code}"]
         if not box or not centres:
@@ -72,10 +72,10 @@ def main():
                     for k in range(nz + 1):
                         p = (lo["x"] + i * SAMPLE_CM, lo["y"] + j * SAMPLE_CM, floor + k * SAMPLE_CM)
                         total += 1
-                        if min(math.dist(p, c) for c in centres) > radius:
+                        if not any(math.dist(p, c[:3]) <= c[3] for c in centres):
                             uncovered.append(p)
             if uncovered:
-                worst = max(uncovered, key=lambda p: min(math.dist(p, c) for c in centres))
+                worst = uncovered[0]
                 problems.append(f"{len(uncovered)}/{total} sample points out of reach, e.g. "
                                 f"({worst[0]:.0f}, {worst[1]:.0f}, {worst[2]:.0f})")
         for lane in lanes:
@@ -86,11 +86,11 @@ def main():
             p = m.tool(bm.DEVICE, "GetDeviceProperties", device={"refPath": dev["actorPath"]},
                        propertyNames=["ClearEachRep", "SameTrack"])
             p = json.loads(p) if isinstance(p, str) else p
-            if not p.get("ClearEachRep"):
+            if not p.get("ClearEachRep") and lane not in CLEAR_AT_END:
                 problems.append(f"KT_Lane_{lane} ClearEachRep off")
             print(f"  KT_Lane_{lane}: ClearEachRep {p.get('ClearEachRep')}, SameTrack {p.get('SameTrack')}")
         state = "FAIL" if problems else "ok"
-        print(f"{code}: {state}  {len(centres)} barrels, radius {radius or 0:.0f} cm, {total} points checked")
+        print(f"{code}: {state}  {len(centres)} barrels, largest radius {radius or 0:.0f} cm, {total} points checked")
         for line in problems[:8]:
             print("   ", line)
         if problems:

@@ -19,6 +19,16 @@ This replaces the four walls in place (same labels, kt_wall_take_wall_tag), plac
 KT33_WallTake_ResetTrigger, KT33_WallTake_Restore, KT42_Probe_* and the old links. A rerun replaces only
 KT33_WallTake_Reset* actors except the barrel, which it keeps.
 """
+
+import sys as _sys
+# RETIRED (player 2026-10-21): the box is four real metal walls (KT33_WallTake_Enemy_N/E/S/W, team 2, breakable), placed
+# directly; the prop walls, the 40 spares and the barrel this placed are gone. A broken wall returns when the session
+# restarts. WallTake.verse still runs one rep per visit. Pass --i-know to run this anyway.
+if __name__ == "__main__" and "--i-know" not in _sys.argv:
+    raise SystemExit("build_wall_take_reset.py: retired 2026-10-21 (the box is real walls now). Pass --i-know to run anyway.")
+if "--i-know" in _sys.argv:
+    _sys.argv.remove("--i-know")
+
 import argparse
 import pathlib
 import sys

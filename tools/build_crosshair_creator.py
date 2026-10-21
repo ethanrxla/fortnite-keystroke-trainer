@@ -68,7 +68,9 @@ def main():
         b.props(sel, {'classToSwitchTo': {'classType': 'ClassSlot', 'classSlot': slot}, 'visibleDuringGame': False,
                       'volumeVisibleInGame': False, 'zoneAudio': False, 'zoneActivationVFX': False,
                       'restoreHealthAndShieldsOnSwitch': False, 'clearItemsOnSwitch': False,
-                      'bRespawnPlayerOnSwitch': False, 'timeToSwitch': 0.0})
+                      'bRespawnPlayerOnSwitch': False, 'timeToSwitch': 0.0,
+                      # 'Gameplay Only' ignored ChangeClass in test sessions (player 2026-10-21: the reticle stayed).
+                      'enabledDuringPhase': 'Always'})
         if fresh:
             b.tag(sel, tag)
         stock.append(sel)
