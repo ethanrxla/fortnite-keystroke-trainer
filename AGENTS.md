@@ -90,7 +90,7 @@ The player tested and approved this state. Don't undo it without asking:
   - KT35_Refill_ granters
   - KT36_LabBot_
   - KT37_LobbyReset_
-  - KT38_Tunnel_ five-box P7 gauntlet (`build_tunnel_gauntlet.py`; `build_enemy_boxes.py` no longer builds P7)
+  - KT38_Tunnel_ five-box P7 gauntlet (`build_tunnel_gauntlet.py`; the lane spawns 2 of its 5 bots since 2026-10-20; `build_enemy_boxes.py` no longer builds P7)
   - KT39_RoomReset_ full-room reset barrel grids, fired by each room's clear trigger (`build_room_resets.py`); W2 wall
     take is excluded on purpose (its enemy walls are meant to be destroyed)
   - KT41_Exit_ EXIT plates for the aim room, gun range, tracking range, 1v1 arena, Piece Lab, Sky Box and free build

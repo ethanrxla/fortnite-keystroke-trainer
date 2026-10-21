@@ -27,6 +27,9 @@ kt_crosshair_coach_device := class(creative_device):
     @editable DrillId:string = "edit_window"
     @editable CellSize:float = 512.0
     @editable WallHeight:float = 384.0
+    # Where the lane's floor-level origin is, relative to this device. Verse devices are drawn in game, so the coach sits
+    # 15 m under the floor like the lane devices (player 2026-10-20: "this white desk thingy is still seen in edit peek").
+    @editable OriginOffset:vector3 = vector3{X := 0.0, Y := 0.0, Z := 0.0}
     @editable Range:float = 900.0
     @editable SampleSeconds:float = 0.05
     @editable TilePixels:float = 48.0
@@ -65,7 +68,7 @@ kt_crosshair_coach_device := class(creative_device):
 
     Coach(Player:player, Drill:drill_def, Guide:edit_guide)<suspends>:void =
         Frame := GetTransform()
-        Origin := Frame.Translation
+        Origin := Frame.Translation + OriginOffset
         ForwardAxis := Frame.Rotation.GetLocalForward()
         RightAxis := Frame.Rotation.GetLocalRight()
         Tile := TilePixels

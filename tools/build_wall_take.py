@@ -33,7 +33,8 @@ RAMP_YAW = {"S": 0.0, "E": 90.0, "N": 180.0, "W": 270.0}      # climb direction 
 MANIPULATOR = "/CRD_PropManipulationDevice/SetupAssets/PID_Device_PropManipulator.PID_Device_PropManipulator"
 BOT = {"guardTeamOption": "Team Index", "guard Team Index": {"teamType": "TeamIndex", "teamIndex": 2},
        "enabledAtGameStart": True, "allowInfiniteSpawn": True, "spawnCount": 1, "spawnOnTimer": True, "spawnTimer": 3.0,
-       "showHealthBar": True, "accuracy": "VERY HIGH", "enablePatrol": False, "useDeviceSpawnLocation": True}   # max (player 2026-10-20)
+       "showHealthBar": True, "accuracy": "VERY HIGH", "enablePatrol": False, "useDeviceSpawnLocation": True,
+       "spawnRadius_InMeter": 0}   # max accuracy; spawn inside the box (player 2026-10-20)
 
 
 def plan(ledge, off):

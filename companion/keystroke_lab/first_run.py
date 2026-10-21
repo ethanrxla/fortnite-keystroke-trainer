@@ -64,8 +64,14 @@ def reset(path=STATE_FILE):
         pass
 
 
-def maybe_launch(popen=subprocess.Popen, binds_path=None, state_path=STATE_FILE, now=None):
-    """Open the calibration window if this player still needs it. Returns the process, or None when not needed."""
+def maybe_launch(popen=subprocess.Popen, binds_path=None, state_path=STATE_FILE, now=None, saves=None):
+    """Open the calibration window if this player still needs it. Returns the process, or None when not needed.
+    Never while Fortnite's own settings save is on this PC: the overlay imports the binds from it (fortnite_binds.SavSync,
+    confirmed 2026-10-20 against the player's binds), so calibration is not needed (player 2026-10-20: hide it)."""
+    if saves is None:
+        from .fortnite_binds import sav_files as saves
+    if saves():
+        return None
     if not should_prompt(load_state(state_path), now, needs_calibration(binds_path)):
         return None
     record_prompt(state_path, now)

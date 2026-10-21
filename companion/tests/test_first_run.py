@@ -33,11 +33,19 @@ class FirstRunTests(unittest.TestCase):
             launched = []
             kwargs = dict(popen=lambda cmd, **kw: launched.append(cmd) or "proc", binds_path=Path(d) / "keybinds.json",
                           state_path=Path(d) / "state.json")
-            self.assertEqual(first_run.maybe_launch(now=5000.0, **kwargs), "proc")
+            self.assertEqual(first_run.maybe_launch(saves=lambda: [], now=5000.0, **kwargs), "proc")
             self.assertTrue(any("calibration_window" in part for part in launched[0]))
-            self.assertIsNone(first_run.maybe_launch(now=5001.0, **kwargs))          # inside the gap: not again
-            self.assertEqual(first_run.maybe_launch(now=9000.0, **kwargs), "proc")   # a later game start offers it again
+            self.assertIsNone(first_run.maybe_launch(saves=lambda: [], now=5001.0, **kwargs))          # inside the gap: not again
+            self.assertEqual(first_run.maybe_launch(saves=lambda: [], now=9000.0, **kwargs), "proc")   # a later game start offers it again
             self.assertEqual(first_run.load_state(Path(d) / "state.json")["prompts"], 2)
+
+    def test_no_launch_when_fortnite_settings_save_exists(self):
+        with tempfile.TemporaryDirectory() as d:
+            launched = []
+            proc = first_run.maybe_launch(saves=lambda: [Path(d) / "ClientSettings.Sav"], popen=lambda *a, **k: launched.append(a),
+                                          binds_path=Path(d) / "keybinds.json", state_path=Path(d) / "s.json", now=5000.0)
+            self.assertIsNone(proc)
+            self.assertEqual(launched, [])
 
     def test_no_launch_when_calibrated(self):
         with tempfile.TemporaryDirectory() as d:
@@ -46,7 +54,7 @@ class FirstRunTests(unittest.TestCase):
                 "version": 1, "profile_id": "p", "revision": 1,
                 "bindings": [{"action": a, "keys": ["x"], "context": "any", "verified": True} for a in first_run.CORE_ACTIONS]}),
                 encoding="utf-8")
-            self.assertIsNone(first_run.maybe_launch(popen=lambda *a, **k: "proc", binds_path=path, state_path=Path(d) / "s.json", now=1.0))
+            self.assertIsNone(first_run.maybe_launch(saves=lambda: [], popen=lambda *a, **k: "proc", binds_path=path, state_path=Path(d) / "s.json", now=1.0))
 
 
 if __name__ == "__main__":

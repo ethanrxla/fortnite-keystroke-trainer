@@ -26,5 +26,6 @@ RiftRoutes:[]rift_route_def = array{
     rift_route_def{Entry := vector3{X := -22784.0, Y := -68864.0, Z := 1536.0}, Exit := vector3{X := -21248.0, Y := -68864.0, Z := 1152.0}, WalkIn := true},
     rift_route_def{Entry := vector3{X := 5888.0, Y := -29900.0, Z := 0.0}, Exit := vector3{X := 21504.0, Y := -44032.0, Z := 7680.0}, WalkIn := true},
     rift_route_def{Entry := vector3{X := 20992.0, Y := -44032.0, Z := 7680.0}, Exit := vector3{X := -256.0, Y := -59648.0, Z := 15.0}, WalkIn := true},
+    rift_route_def{Entry := vector3{X := 28160.0, Y := -44032.0, Z := 7680.0}, Exit := vector3{X := -256.0, Y := -59648.0, Z := 15.0}, WalkIn := true},
     rift_route_def{Entry := vector3{X := -21760.0, Y := -97600.0, Z := 0.0}, Exit := vector3{X := -256.0, Y := -59648.0, Z := 15.0}, WalkIn := true}
 }

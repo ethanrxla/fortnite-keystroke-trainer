@@ -577,8 +577,40 @@ def header_other():
     return img
 
 
+def verse_card(text, ref):
+    """A Bible verse panel (shared/bible-verses.json, KJV): verse in white, reference in gold, on a dark card with a
+    thin gold frame. The text shrinks until it fits, so long and short verses share one card size."""
+    w, h = 1600, 900
+    img = Image.new("RGBA", (w, h), (10, 14, 26, 255))
+    d = ImageDraw.Draw(img)
+    d.rectangle((18, 18, w - 19, h - 19), outline=GOLD, width=6)
+    d.rectangle((34, 34, w - 35, h - 35), outline=(120, 100, 30), width=2)
+    ref_font = font(TITLE, 64)
+    box_w, box_h = w - 220, h - 300
+    for size in range(84, 30, -2):
+        body = font(BODY, size)
+        lines = wrap(d, "“" + text + "”", body, box_w)
+        line_h = int(size * 1.28)
+        if len(lines) * line_h <= box_h:
+            break
+    y = 110 + (box_h - len(lines) * line_h) // 2
+    for line in lines:
+        d.text(((w - d.textlength(line, font=body)) / 2, y), line, font=body, fill=(245, 245, 240))
+        y += line_h
+    d.text(((w - d.textlength(ref, font=ref_font)) / 2, h - 170), ref, font=ref_font, fill=GOLD)
+    return img
+
+
 def main():
     import sys
+    import json
+    (OUT / "verses").mkdir(parents=True, exist_ok=True)
+    verses = json.loads((ROOT / "shared" / "bible-verses.json").read_text(encoding="utf-8"))["verses"]
+    for n, v in enumerate(verses):
+        verse_card(v["text"], v["ref"]).save(OUT / "verses" / f"verse_{n:02d}.png")
+    if "--verses-only" in sys.argv:
+        print("rendered", len(verses), "verse cards to", OUT / "verses")
+        return
     (OUT / "heroes").mkdir(parents=True, exist_ok=True)
     (OUT / "67").mkdir(parents=True, exist_ok=True)
     if "--portraits" in sys.argv:

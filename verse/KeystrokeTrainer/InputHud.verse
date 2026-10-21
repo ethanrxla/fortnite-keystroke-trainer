@@ -133,10 +133,15 @@ kt_input_hud_device := class(creative_device):
     HeaderTextSize:float = 22.0
     @editable
     BodyTextSize:float = 16.0
+    # Player 2026-10-20: "we dont want stats for the drills... do keep the aim practice / gun range target practice
+    # features and stats". The rank / steps / off-plan panel stays hidden; the device still listens and logs, and the
+    # gun range and aim rooms draw their own panels (GunRange.verse), which this does not touch.
+    @editable
+    ShowPanel:logic = false
 
     # Ask each action once when the player joins.
     @editable
-    CalibrateOnJoin:logic = true
+    CalibrateOnJoin:logic = false      # off 2026-10-20: binds come from Fortnite's own settings (companion), and the panel is hidden
     @editable
     CalibrationTimeoutSeconds:float = 30.0
     @editable
@@ -367,7 +372,7 @@ kt_input_hud_device := class(creative_device):
                     Alignment := vector2{X := 0.0, Y := 0.0}
                     SizeToContent := false
                     Widget := Card
-        if (PlayerUI := GetPlayerUI[Player]):
+        if (ShowPanel?, PlayerUI := GetPlayerUI[Player]):
             PlayerUI.AddWidget(Root, player_ui_slot{InputMode := ui_input_mode.None})
         if (set Headers[Player] = Header) {}
         if (set Panels[Player] = Body) {}

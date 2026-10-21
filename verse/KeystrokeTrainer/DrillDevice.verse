@@ -174,6 +174,10 @@ keystroke_drill_device := class(creative_device):
         set Metronome = if (A := NearestAudio[kt_click_tag]) then A else Click
         set Clearer = if (C := NearestTrigger[kt_clear_tag]) then C else trigger_device{}
         set HasClearer = if (NearestTrigger[kt_clear_tag]) then true else false
+        # The clear triggers were placed with Times Can Trigger 1, so builds cleared once per session and never again
+        # (player 2026-10-20: ramp rush and box up kept every rep's builds). 0 = no limit.
+        if (HasClearer?):
+            Clearer.SetMaxTriggerCount(0)
         if (HasClearer?, IdleClearSeconds > 0.0):
             spawn{ IdleClear() }
         GunHit.TriggeredEvent.Subscribe(OnGunHit)

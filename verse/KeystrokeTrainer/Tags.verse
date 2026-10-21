@@ -23,6 +23,17 @@ kt_transport_test_tag := class(tag){}
 kt_rift_node_tag := class(tag){}
 kt_rift_router_tag := class(tag){}
 kt_drill_start_tag := class(tag){}
+# The hub title sign's shot (RandomDrill.verse): start a random drill.
+kt_random_drill_tag := class(tag){}
 kt_lane_bot_tag := class(tag){}
 kt_lane_granter_tag := class(tag){}
 kt_sky_clear_tag := class(tag){}
+
+# Wall take (WallTake.verse): the enemy box's pieces and the spares stashed under the room.
+kt_wall_take_wall_tag := class(tag){}
+kt_wall_take_cone_tag := class(tag){}
+kt_wall_take_spare_wall_tag := class(tag){}
+kt_wall_take_spare_cone_tag := class(tag){}
+kt_wall_take_arrive_tag := class(tag){}
+kt_wall_take_bot_tag := class(tag){}
+kt_wall_take_clear_tag := class(tag){}

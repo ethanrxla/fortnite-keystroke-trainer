@@ -68,18 +68,22 @@ def main():
             print(f"  {label}: face {w:.0f} x {h:.0f}, {len(hitbox.plan_grid(w, h, cell))} dummies")
         return
     total = 0
+    made = set()
     for n, (label, a, face) in enumerate(jobs, 1):
         path = a["actorPath"]
         t = m.tool(bm.ACTOR, "get_actor_transform", actor={"refPath": path})
         base = label[:-4] if label.endswith("_Hit") else label
         names = [base + s for s in ("_Granter", "_Track", "_Trigger", "_Arrive")]
+        names += [base[:-4] + "_Trigger"] if base.endswith("_Big") else []     # range big copies share their tile's trigger
         names += ["KT_Portal_Scenario_Return", "KT_Portal_Arena_Return"] if label.startswith("KT25_") else []
         targets = hitbox.on_hit_targets(m, path, [acts[n]["actorPath"] for n in names if n in acts])
         if not targets:
             print(f"  skip {label}: no On Hit binding")
             continue
         # Drop the targets' links from dummies that no longer exist (the old single dummy, an earlier grid).
-        live = {x["actorPath"] for x in acts.values()}
+        # Dummies made earlier in this run are live too: the Scenario and Arena signs share both portals in `names`,
+        # and without this each one's refit deleted the other's fresh links (2026-10-20: both came out unwired).
+        live = {x["actorPath"] for x in acts.values()} | made
         for n2 in names:
             if n2 in acts:
                 for link in m.tool(bm.DEVICE, "ListEventBindings", devicePath={"refPath": acts[n2]["actorPath"]}) or []:
@@ -99,6 +103,7 @@ def main():
         yaw = round(t["rotation"]["yaw"] / 90.0) * 90.0 % 360          # the base facing, ignoring an old mirror
         cell = next((v for k, v in CELL_MAX.items() if label.startswith(k)), hitbox.CELL_MAX)
         paths = hitbox.place_grid(b, label, c, w, h, yaw, (loc["x"], loc["y"]), targets, cell)
+        made.update(paths)
         total += len(paths)
         if n % 10 == 0:
             print(f"  {n}/{len(jobs)} buttons, {total} dummies", flush=True)

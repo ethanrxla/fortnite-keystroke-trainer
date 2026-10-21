@@ -33,12 +33,17 @@ PREFIX = "KT39_RoomReset_"
 TIMER = "/CreativeCoreDevices/SetupAssets/PID_Device_Timer.PID_Device_Timer"
 GRID_CM = 3000.0
 LOW_CM, HIGH_CM, TALL_CM = 700.0, 1900.0, 1700.0
+# Player 2026-10-20: ramp rush and box up kept their builds ("clear builds from the build maybe on the floor too").
+# The grid assumed every floor at z 0, but sunken rooms (P2's KT_RoomFloor top is -385) left the low layer 11 m up, so
+# floor pieces sat at the edge of the blast. Layers now measure from the room's own floor, plus one just above it.
+FLOOR_CM = 250.0
 INSET_CM = 300.0
 START_CLEAR_CM = 450.0
 BARREL = {"blast Radius": 4.75, "player Damage": 0, "structure Damage": 10000, "visible During Game": False,
           "collision During Games": "Off", "requires Line of Sight": False, "play Audio": False,
           "time Until Reset Allowed": 0, "knockbackPlayer": 0, "damage Indestructible Buildings": False,
-          "display Damage Numbers": False, "blastLineOfSight": False}
+          "display Damage Numbers": False, "blastLineOfSight": False,
+          "play Audio / VFX": False}  # the explosion effect; "play Audio" alone left it visible (player 2026-10-20)
 # room -> (lanes whose start must stay clear, existing clear triggers to wire)
 ROOMS = {"B5": (["B5"], ["KT3_Clear_B5"]), "P2": (["P2"], ["KT3_Clear_P2"]),
          "P6": (["P6", "P4"], ["KT34_Reset_P6_Trigger", "KT34_Reset_P4_Trigger"]),
@@ -61,7 +66,7 @@ def room_box(acts, code):
 def grid(lo, hi, floor, starts):
     xs = max(1, math.ceil((hi["x"] - lo["x"] - 2 * INSET_CM) / GRID_CM))
     ys = max(1, math.ceil((hi["y"] - lo["y"] - 2 * INSET_CM) / GRID_CM))
-    layers = [floor + LOW_CM] + ([floor + HIGH_CM] if hi["z"] - floor > TALL_CM else [])
+    layers = [floor + FLOOR_CM, floor + LOW_CM] + ([floor + HIGH_CM] if hi["z"] - floor > TALL_CM else [])
     out = []
     for i in range(xs + 1):
         for j in range(ys + 1):
@@ -97,7 +102,8 @@ def main():
             if a:
                 starts.append(((a["bounds"]["min"]["x"] + a["bounds"]["max"]["x"]) / 2,
                                (a["bounds"]["min"]["y"] + a["bounds"]["max"]["y"]) / 2))
-        plan[code] = grid(lo, hi, 0.0, starts)
+        floors = [a["bounds"]["max"]["z"] for l, a in by.items() if l == f"KT_RoomFloor_{code}"]
+        plan[code] = grid(lo, hi, min(floors + [0.0]), starts)
         print(f"  {code}: x {lo['x']:.0f}..{hi['x']:.0f} y {lo['y']:.0f}..{hi['y']:.0f} top {hi['z']:.0f} -> {len(plan[code])} barrels")
     if args.dry_run:
         return

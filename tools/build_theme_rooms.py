@@ -1,7 +1,7 @@
 """Mount the theme-room art from tools/render_theme_art.py (KT23_Theme_*).
 
     python tools/build_theme_rooms.py                  # everything
-    python tools/build_theme_rooms.py --only heroes    # heroes | cross | 67
+    python tools/build_theme_rooms.py --only heroes    # heroes | cross | 67 | flags | movement | verses
 
 Player 2026-10-11:
   * heroes: Jamaica's National Heroes, Haile Selassie and a Rasta tribute panel on the armory's east wall (where the old
@@ -10,6 +10,10 @@ Player 2026-10-11:
   * 67: the build wing is the "67 room": 67 all over its walls and ceiling. Graffiti (KT19_Graf_) stays; 67 pieces keep
     clear of it, of signs and of devices.
 Every piece is an unlit plane with no collision that does not light the room. Only KT23_Theme_* actors are replaced.
+
+Player 2026-10-20: the armory's heroes and faith-and-roots pictures now carry the heritage-and-faith paintings, applied in
+place by tools/swap_armory_art.py. `--only heroes` / `--only cross` rebuild the old 2026-10-11 art; run
+swap_armory_art.py again afterwards.
 """
 import argparse
 import json
@@ -231,14 +235,20 @@ def ceiling_free(actors, x, y, size, margin=150.0, depth=None):
                    for a in actors)
 
 
-def scatter(b, actors, rect, pieces, tag, sizes, rows, ceil_spacing, seed, weights=None):
-    """Random pieces over a room's walls (and ceiling when ceil_spacing): pieces = [(material, width / height)]."""
+def scatter(b, actors, rect, pieces, tag, sizes, rows, ceil_spacing, seed, weights=None, required=()):
+    """Random pieces over a room's walls (and ceiling when ceil_spacing): pieces = [(material, width / height)].
+    `required` pieces are placed first (each at least once), then the weighted random pick takes over."""
     x0, x1, y0, y1 = rect
     rng = random.Random(seed)
     placed = 0
+    queue = list(required)
 
     def pick():
-        return rng.choices(pieces, weights=weights)[0]
+        return queue[0] if queue else rng.choices(pieces, weights=weights)[0]
+
+    def used(mat):
+        if queue and queue[0][0] == mat:
+            queue.pop(0)
 
     for (fx, fy, normal, along, lo, hi, top) in wing_faces(actors, rect):
         for _ in range(int((hi - lo) / SPACING_67 * rows + rng.random())):
@@ -256,6 +266,7 @@ def scatter(b, actors, rect, pieces, tag, sizes, rows, ceil_spacing, seed, weigh
             label = f"{PREFIX}{tag}{placed:03d}"
             remember(actors, label, mount(b, label, mat, x, y, z, w, h, normal), x, y, z, w, h, normal)
             placed += 1
+            used(mat)
     if ceil_spacing:
         for _ in range(int((x1 - x0) * (y1 - y0) / (ceil_spacing * ceil_spacing))):
             mat, aspect = pick()
@@ -267,6 +278,7 @@ def scatter(b, actors, rect, pieces, tag, sizes, rows, ceil_spacing, seed, weigh
             label = f"{PREFIX}{tag}C{placed:03d}"
             remember(actors, label, mount(b, label, mat, x, y, 1533.0, w, h, None), x, y, 1536.0, max(w, h), 0, None)
             placed += 1
+            used(mat)
     return placed
 
 
@@ -276,7 +288,9 @@ def sixty_seven(b, actors):
     pieces = [(material(b, p, True), png_aspect(p)) for p in pngs]
     # Plain 67s are most of the room; words and characters are rarer so they stand out.
     weights = [3.0 if p.stem.startswith("sixty_seven") else 1.5 for p in pngs]
-    n = scatter(b, actors, BUILD_RECT, pieces, "67_", (220.0, 280.0, 340.0, 420.0), 3, 900.0, SEED, weights)
+    # Every drawn character at least once (player 2026-10-20: two of the four never came up in the random pick).
+    chars = [piece for piece, png in zip(pieces, pngs) if png.stem.startswith("character")]
+    n = scatter(b, actors, BUILD_RECT, pieces, "67_", (220.0, 280.0, 340.0, 420.0), 3, 900.0, SEED, weights, chars)
     print("67 room pieces:", n)
 
 
@@ -334,14 +348,80 @@ def movement(b, actors):
     print("movement room pieces:", n)
 
 
+HUB_RECT = (-2048.0, 2560.0, -61952.0, -57344.0)     # the hub's inner wall faces (lobby_boards.HUB)
+VERSE_W = 560.0
+VERSE_EYE = 330.0           # card centre above the room's own floor: reading height
+VERSE_STEP = 900.0          # candidate spots along a wall
+
+
+def verses(b, actors):
+    """Bible verses (shared/bible-verses.json, KJV; cards from render_theme_art.py) on free wall space across the map:
+    the hub, the three themed wings, every drill room and the Piece Lab, each verse once, at reading height. A spot that
+    would cover graffiti, signs, devices or other theme art is skipped (player 2026-10-20: "scatter bible verses across
+    the map in free space")."""
+    import build_room_resets as rr
+    pngs = sorted((ART / "verses").glob("verse_*.png"))
+    rooms = {"HUB": (HUB_RECT, 0.0), "BUILD": (BUILD_RECT, 0.0), "EDIT": (EDIT_RECT, 0.0), "PIECE": (PIECE_RECT, 0.0)}
+    for code in list(rr.ROOMS) + ["LAB"]:
+        box = rr.room_box(actors, code)
+        if box:
+            lo, hi = box
+            floors = [a["bounds"]["max"]["z"] for a in actors if a["label"] == f"KT_RoomFloor_{code}"]
+            rooms[code] = ((lo["x"], hi["x"], lo["y"], hi["y"]), min(floors + [0.0]))
+    spots = []
+    for room, ((x0, x1, y0, y1), floor) in rooms.items():
+        for (fx, fy, normal, along, length, top) in graf.faces(actors):
+            ix, iy = fx + normal[0] * 50, fy + normal[1] * 50
+            if not (x0 < ix < x1 and y0 < iy < y1) or top < max(floor, 0.0) + VERSE_EYE + 250:
+                continue
+            centre = fx if along[0] else fy
+            lo, hi = (max(centre - length / 2, x0), min(centre + length / 2, x1)) if along[0] else \
+                     (max(centre - length / 2, y0), min(centre + length / 2, y1))
+            c = lo + VERSE_W / 2 + 60
+            while c <= hi - VERSE_W / 2 - 60:
+                x = c if along[0] else fx + normal[0] * 3.0
+                y = fy + normal[1] * 3.0 if along[0] else c
+                # Reading height from where the player stands: the ledge (z 0) in sunken drill rooms.
+                spots.append((room, x, y, max(floor, 0.0) + VERSE_EYE, normal))
+                c += VERSE_STEP
+    # Round-robin over the rooms (each room's spots shuffled), so the verses spread across the map.
+    rng = random.Random(316)
+    queues = {}
+    for spot in spots:
+        queues.setdefault(spot[0], []).append(spot)
+    for q in queues.values():
+        rng.shuffle(q)
+    order = list(queues)
+    rng.shuffle(order)
+    placed, turn = 0, 0
+    for png in pngs:
+        mat, aspect = material(b, png, False), png_aspect(png)
+        w, h = VERSE_W, VERSE_W / aspect
+        while any(queues.values()):
+            room = order[turn % len(order)]
+            turn += 1
+            if not queues[room]:
+                continue
+            _, x, y, z, normal = queues[room].pop()
+            if blocked(actors, x, y, z, w / 2 + 40, normal, h / 2 + 40):
+                turn -= 1                   # stay on this room until it yields a free spot or runs out
+                continue
+            label = f"{PREFIX}Verse_{png.stem}"
+            remember(actors, label, mount(b, label, mat, x, y, z, w, h, normal), x, y, z, w, h, normal)
+            placed += 1
+            print(f"  {png.stem} -> {room} ({x:.0f}, {y:.0f}, {z:.0f})")
+            break
+    print("verse cards:", placed, "of", len(pngs))
+
+
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--only", choices=("heroes", "cross", "67", "flags", "movement"))
+    ap.add_argument("--only", choices=("heroes", "cross", "67", "flags", "movement", "verses"))
     args = ap.parse_args()
     b = bm.Builder()
     actors = b.m.tool(bm.SCENE, "find_actors", collision_channels=[]) or []
-    want = {args.only} if args.only else {"heroes", "cross", "67", "flags", "movement"}
-    tags = {"heroes": "Hero_", "cross": "Cross", "67": "67_", "flags": "Flags_", "movement": "Move_"}
+    want = {args.only} if args.only else {"heroes", "cross", "67", "flags", "movement", "verses"}
+    tags = {"heroes": "Hero_", "cross": "Cross", "67": "67_", "flags": "Flags_", "movement": "Move_", "verses": "Verse_"}
     for a in actors:
         if a["label"].startswith(PREFIX) and any(a["label"].startswith(PREFIX + tags[w]) for w in want):
             b.m.tool(bm.SCENE, "remove_from_scene", actor={"refPath": a["actorPath"]})
@@ -356,6 +436,8 @@ def main():
         flags(b, actors)
     if "movement" in want:
         movement(b, actors)
+    if "verses" in want:
+        verses(b, actors)
     found = json.loads(b.m.tool(AS, "find_assets", name="_KT_Theme_") or "[]") if isinstance(b.m.tool(AS, "find_assets", name="_KT_Theme_"), str) \
         else (b.m.tool(AS, "find_assets", name="_KT_Theme_") or [])
     b.m.tool(AS, "save_assets", asset_paths=[p for p in found if "_KT_Theme_" in p])

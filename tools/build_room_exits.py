@@ -34,6 +34,9 @@ EXITS = {
     "Arena": (-35840.0, 1, [-78592.0, -75008.0], EXIT_Z),        # staging side (rift at -76544)
     "Lab": (-16384.0, -1, [-101120.0, -98560.0], EXIT_Z),        # KT12_Room_Wall_E
     "Sky": (20992.0 - 700.0, 1, [-44032.0], 7698.0 + 300.0),      # free-standing, behind the start platform's rift
+    # free-standing past the end landing (KT18_Sky_End, east edge x 28416) and its rift, facing back down the strip
+    # (player 2026-10-20: "add a rift and shoot to exit at the end of skybox")
+    "SkyEnd": (28416.0 + 444.0, -1, [-44032.0], 7698.0 + 300.0),
     "Free": (7166.0 - 200.0, 1, [-34816.0], EXIT_Z),             # free-standing at the free build's west edge
 }
 

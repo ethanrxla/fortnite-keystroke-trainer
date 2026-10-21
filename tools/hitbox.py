@@ -106,6 +106,10 @@ def place_grid(b, label, centre, face_w, face_h, yaw, depth_xy, targets, cell_ma
             b.bind(d, "On Hit", path, fn)
         m.tool(bm.SCENE, "save_actor", actor={"refPath": d})
         paths.append(d)
+    # The links are listed on the target device; save it too, or they can be lost when UEFN closes (2026-10-20: the
+    # Operation and 1v1 sign targets and the range tiles came back from a restart unwired).
+    for path, _fn in targets:
+        m.tool(bm.SCENE, "save_actor", actor={"refPath": path})
     return paths
 
 

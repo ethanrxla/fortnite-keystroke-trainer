@@ -10,7 +10,7 @@ forward or fall off, restricted to one level so building ramps is pointless, wit
 y -44800..-43264 (high above empty ground):
   tile 0  exit rift back to the court        tile 1   your closed box (start rift inside it, loadout granted)
   tile 6  wave 1: one bot box                tile 10  wave 2: two bot boxes (north and south rows)
-  tile 13 wave 3: one bot box
+  tile 13 wave 3: one bot box                tile 14  end landing: exit rift to the lobby, EXIT plate past it
 Bot boxes are open on your side (west) with a cone roof; pre-built pieces are invulnerable and forcibly supported.
 A translucent ceiling 300 cm above the first level stops anyone gaining height. Bots: Guard Spawners, team 2,
 low accuracy, tagged kt_sky_bot_tag, spawned per wave by the Verse device (not at game start).
@@ -25,6 +25,7 @@ sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
 import build_map as bm  # noqa: E402
 
 PREFIX = "KT18_Sky_"
+ENEMY_TEAM = {"Team": "HumanPvP_Team2", "TeamIndex": 4}     # Creative team 2, the bots' team (EFortTeam HumanPvP_Team2)
 C, H = bm.CELL, bm.LEVEL_H
 # Player build grid (AGENTS.md "Coordinates"): cell centres on multiples of 512, so the strip sits half a cell over
 # from the old world-grid numbers (the live Sky Box was moved by tools/shift_to_player_grid.py logic on 2026-10-13).
@@ -42,11 +43,14 @@ CLS = {k: f"{PIECES}PBWA_W1_{n}.PBWA_W1_{n}_C" for k, n in (("wall", "Solid"), (
 # floor"). Each bot box stands on a floor piece of its own.
 STRIP_TILES = 2
 BOT_BOXES = [(6, 0), (10, -1), (10, 1), (13, 0)]       # (tile east of X0, row: -1 south, 0 middle, 1 north)
+# Past the last bot (player 2026-10-20: "add a rift and shoot to exit at the end of skybox"): a one-tile landing with a
+# rift to the lobby (routed by tools/install_rift_router.py) and, beyond it, the EXIT plate (tools/build_room_exits.py).
+END_TILE = 14
 LOADOUT = ("SHOTGUN", "AR")
 COURT_HOME = "KT14_Rebox_Rift_Home"
 COURT_SIGN = "KT14_Rebox_Sign_Court"
 SIGN = ("SKY BOX\nBox forward to each bot. One level only: ramps get you nothing.\n"
-        "Off the edge and you start again in your box. Exit rift behind you.")
+        "Off the edge and you start again in your box. Exit rifts behind you and past the last bot.")
 
 
 def cell(t, row):
@@ -82,13 +86,24 @@ def bot_props():
     return {"guardTeamOption": "Team Index", "guard Team Index": {"teamType": "TeamIndex", "teamIndex": 2},
             "enabledAtGameStart": False, "spawnOnTimer": False, "allowInfiniteSpawn": True, "spawnCount": 1,
             "showHealthBar": True, "startingHealth": 100, "max Health": 100, "startingShield": 0,
-            "accuracy": "HIGH", "enablePatrol": False, "useDeviceSpawnLocation": True}
+            "accuracy": "HIGH", "enablePatrol": False, "useDeviceSpawnLocation": True,
+            "spawnRadius_InMeter": 0}  # spawn inside the box, not up to 10 m away (player 2026-10-20)
 
 
 def rift_props(walk_in):
     return {"knob_TeleporterGroup": "Group_None", "knob_TargetTeleporterGroup": "Group_None",
             "teleporter Rift Visible": walk_in, "enabledDuringPhase": "Always", "maintain Relative Position": False,
             "conserve Momentum": False, "play Sound Effects": walk_in}
+
+
+def end_slab():
+    return {"label": PREFIX + "End", "bounds": (X0 + END_TILE * C, X0 + (END_TILE + 1) * C, YC - 1.5 * C, YC + 1.5 * C),
+            "top": TOP, "thick": 100.0, "mat": "Arena"}
+
+
+def end_rift():
+    x, y = cell(END_TILE, 0)
+    return dict(label="Rift_End", asset=bm.TELEPORTER, pos=(x, y, TOP), props=rift_props(True))
 
 
 def plan():
@@ -105,6 +120,8 @@ def plan():
     ex, ey = cell(0, 0)
     p.devices.append(dict(label="Rift_Start", asset=bm.TELEPORTER, pos=(sx, sy, TOP), props=rift_props(False)))
     p.devices.append(dict(label="Rift_Exit", asset=bm.TELEPORTER, pos=(ex, ey, TOP), props=rift_props(True)))
+    p.slabs.append(end_slab())
+    p.devices.append(end_rift())
     p.devices.append(dict(label="Loadout", asset=GRANTER, pos=(sx, sy, TOP - 400.0), props={}, tag="kt_sky_loadout_tag", grant=True))
     p.devices.append(dict(label="Device", asset=DEVICE, pos=(X0, YC, TOP - DEVICE_DEPTH), props={}, tag="kt_sky_device_tag"))
     p.devices.append(dict(label="Sign", asset=bm.BILLBOARD, pos=(ex - 150, ey, TOP + 200), props={}, sign=True))
@@ -134,6 +151,8 @@ def place(b, p):
         ref = b.m.tool(bm.SCENE, "add_to_scene_from_class", actor_type={"refPath": CLS[kind]}, name=label, xform=bm.xform(x, y, z, yaw=yaw))
         path = b.labelled(ref["refPath"], label)
         b.props(path, {"bForciblyStructurallySupported": True, "bIsInvulnerable": True, "bCanBeDamaged": False})
+        if "_Bot" in label:     # the bots' boxes are enemy builds: team 2, not editable (player 2026-10-20)
+            b.props(path, ENEMY_TEAM)
         saved.append(path)
     refused, paths = [], {}
     for d in p.devices:
@@ -179,10 +198,33 @@ def place(b, p):
         print("not accepted (set by hand):", refused)
 
 
+def place_end(b):
+    for a in b.m.tool(bm.SCENE, "find_actors", name=PREFIX, collision_channels=[]) or []:
+        if a["label"] in (PREFIX + "End", PREFIX + "Rift_End"):
+            b.m.tool(bm.SCENE, "remove_from_scene", actor={"refPath": a["actorPath"]})
+    paths = [b.slab(end_slab())]
+    d = end_rift()
+    x, y, z = d["pos"]
+    path = b.device(d["asset"], PREFIX + d["label"], x, y, z)
+    for key, value in d["props"].items():
+        try:
+            b.props(path, {key: value})
+        except RuntimeError:
+            print("rift setting not accepted:", key)
+    paths.append(path)
+    for path in paths:
+        b.m.tool(bm.SCENE, "save_actor", actor={"refPath": path})
+    print("placed", PREFIX + "End", "and", PREFIX + "Rift_End", "at", d["pos"])
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--dry-run", action="store_true")
+    ap.add_argument("--end-only", action="store_true", help="only (re)place the end landing and its rift (KT18_Sky_End, _Rift_End)")
     args = ap.parse_args()
+    if args.end_only:
+        place_end(bm.Builder())
+        return
     p = plan()
     print(f"plan: strip x {X0:.0f}..{X0 + LENGTH * C:.0f}, y {YC - 1.5 * C:.0f}..{YC + 1.5 * C:.0f}, top z {TOP:.0f}; "
           f"{len(p.pieces)} pieces, {len(p.devices)} devices")

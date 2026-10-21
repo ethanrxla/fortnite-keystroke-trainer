@@ -300,6 +300,21 @@
     "walk": true
   },
   {
+    "source": "KT18_Sky_Rift_End",
+    "destination": "KT2_HubArrival",
+    "entry": {
+      "x": 28160,
+      "y": -44032,
+      "z": 7680
+    },
+    "exit": {
+      "x": -256,
+      "y": -59648,
+      "z": 15
+    },
+    "walk": true
+  },
+  {
     "source": "KT30_Drill_LAB_Exit",
     "destination": "KT2_HubArrival",
     "entry": {

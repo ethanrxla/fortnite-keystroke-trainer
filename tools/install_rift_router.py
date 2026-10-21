@@ -12,7 +12,8 @@ LAB_RIFTS=[(f'KT7_Lab_Rift_{r}_In',f'KT7_Lab_Rift_{r}_Start') for r in 'ABCD']+[
 # Court bay 02's rift goes to the Sky Box (tools/build_sky_box.py; player 2026-10-10: boxing high up, not the ground
 # arena), and the Sky Box exit comes back beside it. The Rebox Arena's own way back stays.
 # Player 2026-10-13: the Sky Box and Rebox Arena exits go to the main lobby, not back to the court.
-REBOX_RIFTS=[('KT14_Rebox_Rift_In','KT18_Sky_Rift_Start'),('KT18_Sky_Rift_Exit','KT2_HubArrival')]
+REBOX_RIFTS=[('KT14_Rebox_Rift_In','KT18_Sky_Rift_Start'),('KT18_Sky_Rift_Exit','KT2_HubArrival'),
+             ('KT18_Sky_Rift_End','KT2_HubArrival')]  # 2026-10-20: a way out past the last bot (build_sky_box.py --end-only)
 # Ways back (tools/build_returns.py): the tunnel goal to the hub, and the 90s room's top level to the lane start.
 # A source listed in shared/return-zones.json is an invisible box, not a portal.
 # The tunnel run lane (P5) was consolidated into P7 on 2026-10-13; its goal rift went with it.

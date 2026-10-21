@@ -38,6 +38,10 @@ FACE_X = FIRE_X - 70.0          # player side of the counter
 Z = 58.0                         # tile centre (counter top is 110)
 SIZE = 95.0   # fits under the 110 cm counter top (player 2026-10-12: "a little smaller cause they go over the short wall")
 PITCH = 160.0
+# A second, bigger set of the same buttons above each counter (player 2026-10-20: "put another button so its easier to
+# hit"). Same trigger as the counter tile, so GunRange.verse sees one button; high enough to stay clear of the sight
+# line to the targets.
+BIG_SIZE, BIG_PITCH, BIG_Z = 150.0, 165.0, 650.0
 # Range targets never pop back up by themselves: GunRange.verse raises them (rounds, and free fire 2 s after a hit).
 # The 2 s default reset brought knocked targets back mid-round and the round counted real hits as misses.
 NO_AUTO_RESET = {"resetDelaySetting": 9999}
@@ -105,9 +109,14 @@ def main():
     ap.add_argument("--dry-run", action="store_true")
     ap.add_argument("--tiles-only", action="store_true", help="rebuild the shootable tiles, keep the hidden targets")
     ap.add_argument("--hidden-only", action="store_true", help="rebuild the hidden side targets, keep the tiles")
+    ap.add_argument("--big-only", action="store_true", help="(re)place only the big copies above the counters")
     args = ap.parse_args()
     targets = hidden()
     print(f"{POPUP_LANES} lanes x {len(TILES)} tiles, {len(targets)} hidden targets")
+    if args.big_only and not args.dry_run:
+        g = ag.Grid()
+        place_big(g, g.m)
+        return
     if args.dry_run:
         for t in targets[:6]:
             print(" ", t)
@@ -178,10 +187,48 @@ def main():
         if start:
             b.props(start, {"interaction Text": f"Start pop-up round, lane {n + 1}"})
             m.tool(bm.SCENE, "save_actor", actor={"refPath": start})
+    place_big(g, m)
     if args.tiles_only:
         print("tiles rebuilt; hidden targets kept")
         return
     place_hidden(b, m, targets)
+
+
+def place_big(g, m):
+    """The big copies: plate and hit dummy only, the dummy firing the counter tile's own trigger. Run
+    tools/refit_hitboxes.py --only KT26_RangeMode_ afterwards (the whole plate becomes the hitbox)."""
+    b = g.b
+    acts = {a["label"]: a["actorPath"] for a in (m.tool(bm.SCENE, "find_actors", name=PREFIX, collision_channels=[]) or [])}
+    for l, p in acts.items():
+        if "_Big_" in l:
+            m.tool(bm.SCENE, "remove_from_scene", actor={"refPath": p})
+    sy, sz = BIG_SIZE / W_UNIT, BIG_SIZE / H_UNIT
+    placed = 0
+    for n in range(POPUP_LANES):
+        yc = lane_centre(n)
+        for k, (name, *_rest) in enumerate(TILES):
+            trig = acts.get(f"{PREFIX}{n}_{name}_Trigger")
+            if not trig:
+                print(f"  lane {n + 1} {name}: no counter tile trigger, skipped")
+                continue
+            y = yc + (k - (len(TILES) - 1) / 2) * BIG_PITCH
+            label = f"{PREFIX}{n}_{name}_Big"
+            tex = f"{TEX_FOLDER}/T_KT_RangeTile_{name}.T_KT_RangeTile_{name}"
+            plate = g.plane(label + "_Plate", FACE_X - 45.0, y, BIG_Z, BIG_SIZE, 90.0, g.icon_material(tex))
+            dz = BIG_Z - H_UNIT * sz / 2
+            dummy = b.device(bm.DUMMY, label + "_Hit", FACE_X - 22.0, y, dz)
+            m.tool(bm.ACTOR, "set_actor_transform", actor={"refPath": dummy},
+                   xform=bm.xform(FACE_X - 22.0, y, dz, 0.15, sy, sz, yaw=180.0))
+            b.props(dummy, {"infiniteHealth": True})
+            try:
+                b.props(dummy, {"showHealthBar": False})
+            except RuntimeError:
+                pass
+            b.bind(dummy, "On Hit", trig, "Trigger")
+            for p in (plate, dummy):
+                m.tool(bm.SCENE, "save_actor", actor={"refPath": p})
+            placed += 1
+    print(f"placed {placed} big copies")
 
 
 def place_hidden(b, m, targets):

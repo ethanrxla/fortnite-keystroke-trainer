@@ -25,6 +25,7 @@ sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
 import build_map as bm  # noqa: E402
 
 PREFIX = "KT38_Tunnel_"
+ENEMY_TEAM = {"Team": "HumanPvP_Team2", "TeamIndex": 4}     # Creative team 2, the bots' team (EFortTeam HumanPvP_Team2)
 C, H = bm.CELL, bm.LEVEL_H
 METAL = "/Game/Building/ActorBlueprints/Player/Metal/L1/"
 CLS = {k: f"{METAL}PBWA_M1_{n}.PBWA_M1_{n}_C" for k, n in (("wall", "Solid"), ("cone", "RoofC"))}
@@ -37,8 +38,13 @@ COVER = [(43008.0 + 256.0, -40960.0), (44032.0 + 256.0, -39936.0), (45056.0 - 25
 BOT = {"guardTeamOption": "Team Index", "guard Team Index": {"teamType": "TeamIndex", "teamIndex": 2},
        "enabledAtGameStart": False, "allowInfiniteSpawn": True, "spawnCount": 1, "spawnOnTimer": False,
        "accuracy": "HIGH", "enablePatrol": False, "useDeviceSpawnLocation": True, "useDeviceSpawnRotation": True,
-       "spawnRadius": 0.0, "despawnGuardsWhenDisabled": True, "showHealthBar": True}
-LANE = {"abandonDistance": 9000.0, "botsToClear": 5, "clearEachRep": True}
+       "spawnRadius_InMeter": 0, "despawnGuardsWhenDisabled": True, "showHealthBar": True}
+# The spawner's default spawnRadius_InMeter is 10 (its derived spawnRadius 1000 cannot be set): with it bots appeared anywhere around their box, not inside it
+# (player 2026-10-20: "bots dont spawn inside boxes"). main() prints it back after placing.
+# Five manned-able boxes; the lane spawns BOTS of them (player 2026-10-20: "there should be just 2 bots", and later a
+# player choice of how many).
+BOTS = 2
+LANE = {"abandonDistance": 9000.0, "botsToClear": BOTS, "clearEachRep": True}
 
 
 def pieces():
@@ -79,6 +85,8 @@ def main():
                      xform=bm.xform(x, y, z, yaw=yaw))
         path = b.labelled(ref["refPath"], label)
         b.props(path, {"bForciblyStructurallySupported": True, "bIsInvulnerable": True, "bCanBeDamaged": False})
+        if name.startswith("Box"):      # the bots' boxes are enemy builds: team 2, not editable (player 2026-10-20)
+            b.props(path, ENEMY_TEAM)
         m.tool(bm.SCENE, "save_actor", actor={"refPath": path})
     refused = set()
     for i, (cx, cy) in enumerate(BOXES):
@@ -96,6 +104,9 @@ def main():
                if isinstance(value, bool) else str(value))
     m.tool(bm.SCENE, "save_actor", actor={"refPath": lane})
     print("lane:", m.tool(bm.DEVICE, "GetDeviceProperties", device={"refPath": lane}, propertyNames=list(LANE)))
+    radii = [m.tool(bm.OBJ, "get_properties", instance={"refPath": a["actorPath"]}, properties=["spawnRadius_InMeter"])
+             for a in (m.tool(bm.SCENE, "find_actors", name=PREFIX + "Bot", collision_channels=[]) or [])]
+    print("bot spawn radius:", radii)
     print(f"placed {len(plan)} pieces and {len(BOXES)} bots; refused bot settings: {sorted(refused)}")
 
 

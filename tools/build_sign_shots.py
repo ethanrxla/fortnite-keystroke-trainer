@@ -25,6 +25,7 @@ sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
 import build_map as bm  # noqa: E402
 
 PREFIX = "KT25_SignShot_"
+RANDOM_DEVICE = "KT43_RandomDrill"
 BACK = "KT25_SignBack_"
 ART = "KT20_SignArt_"
 PLANE = "/Engine/BasicShapes/Plane.Plane"
@@ -38,6 +39,9 @@ SIGNS = {
     "KT_Sign_Gate_Edit": "KT3_05_Dest",
     "KT_Sign_Gate_Piece": "KT3_04_Dest",
     "KT2_QuickLabel": "KT2_CourtArrival",
+    # RXLA TRAINING GROUND / START HERE: a random drill (player 2026-10-20: "that one could transport you to a random
+    # drill"). Its trigger is caught by RandomDrill.verse, which fires one drill plate's start trigger for the shooter.
+    "KT_Sign_Title": ("trigger", "kt_random_drill_tag"),
     "KT2_FreeLabel": "KT2_FreeArrival",
     "KT9_EditGuide_Sign": ("trigger", "kt_edit_guide_toggle_tag"),
 }
@@ -194,6 +198,11 @@ def main():
                     except RuntimeError:
                         pass
         m.tool(bm.SCENE, "save_actor", actor={"refPath": ref})
+    # The title sign's random drill (RandomDrill.verse) needs its device once; a Verse device is drawn in game, so it sits
+    # under the hub floor. Its own prefix: a rerun of this script removes every KT25_ actor.
+    if not m.tool(bm.SCENE, "find_actors", name=RANDOM_DEVICE, collision_channels=[]):
+        dev = b.device(bm.MODULE + "/_Verse.KeystrokeTrainer-kt_random_drill_device", RANDOM_DEVICE, 256.0, -59648.0, -1500.0)
+        m.tool(bm.SCENE, "save_actor", actor={"refPath": dev})
     print(f"placed {len(shots)} sign targets and {len(backs)} back panels")
 
 
