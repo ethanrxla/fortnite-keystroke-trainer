@@ -12,6 +12,18 @@ import cv2
 
 DETECT_WIDTH=640.   # px the live detectors work at (see VisualObserver.observe)
 import numpy as np
+UPRIGHT_DEG=5.      # VisualObserver._classify: a 3x3 grid's side edges must meet within this of the centre line
+
+def _upright_offset(q,width):
+    """Degrees between where a grid's two side edges (quad 0-3, 1-2) meet and the screen's vertical centre line, seen
+    from the grid's centre. 0 for parallel vertical sides. World-vertical edges read 0 when the camera has no roll."""
+    q=np.asarray(q,float)
+    line=lambda a,b:np.cross([a[0],a[1],1.],[b[0],b[1],1.])
+    v=np.cross(line(q[0],q[3]),line(q[1],q[2]))
+    if abs(v[2])<1e-9:   # parallel: compare their direction with straight down the screen
+        d=q[3]-q[0];return abs(math.degrees(math.atan2(d[0],abs(d[1])+1e-9)))
+    p=v[:2]/v[2];m=q.mean(0)
+    return abs(math.degrees(math.atan2(p[0]-width/2,abs(p[1]-m[1])+1e-6)))
 
 @dataclass(frozen=True)
 class PieceObservation:
@@ -105,6 +117,11 @@ class VisualObserver:
         vertical=abs((q[3][1]+q[2][1]-q[0][1]-q[1][1])/2)
         if height<.6*width or vertical<.65*height:
             return PieceObservation(now,reason='piece_topology_ambiguous')
+        # A wall's side edges are world-vertical, so (no camera roll) they meet on the screen's vertical centre line; a
+        # ramp's, floor's or cone's do not (player 2026-10-21: ramps read as walls). Over 5 deg off: no wall lost on 161
+        # recorded walls, 17 of 22 other pieces named wall rejected (tools/eval_frames.py).
+        if _upright_offset(q,frame.shape[1])>UPRIGHT_DEG:
+            return PieceObservation(now,reason='grid_not_upright')
         return PieceObservation(now,'wall',q,wall.aim_uv,wall.selected_tiles,'screen_front',wall.confidence,
                                 wall.supported_cells,'native_edit_grid_observed',context=context)
 
