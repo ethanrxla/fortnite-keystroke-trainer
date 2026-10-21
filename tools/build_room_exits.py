@@ -39,6 +39,8 @@ EXITS = {
     "SkyEnd": (28416.0 + 444.0, -1, [-44032.0], 7698.0 + 300.0),
     # the Operation's extraction corner (bombsite A, tools/build_operation.py EXTRACT): on the site's west wall
     "OpExtract": (-25600.0, 1, [-74240.0], EXIT_Z),
+    # the crawl room, where an Operation run starts: its west wall (player 2026-10-21, one way in, so a way out here)
+    "OpStart": (-35840.0, 1, [-69120.0], EXIT_Z),
     "Free": (7166.0 - 200.0, 1, [-34816.0], EXIT_Z),             # free-standing at the free build's west edge
 }
 

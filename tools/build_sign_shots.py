@@ -26,12 +26,13 @@ import build_map as bm  # noqa: E402
 
 PREFIX = "KT25_SignShot_"
 RANDOM_DEVICE = "KT43_RandomDrill"
+DIRECT = {"KT16_Op_Arrive"}
 BACK = "KT25_SignBack_"
 ART = "KT20_SignArt_"
 PLANE = "/Engine/BasicShapes/Plane.Plane"
 # sign billboard label -> receiving teleporter whose floor the arrival pad goes on, or ("trigger", tag)
 SIGNS = {
-    "KT_Sign_Gate_Scenario": "KT_Portal_Scenario_Return",
+    "KT_Sign_Gate_Scenario": "KT16_Op_Arrive",      # the Operation's crawl room (player 2026-10-21)
     "KT_Sign_Gate_Aim": "KT_Portal_Aim_Return",
     "KT_Sign_Gate_Arena": "KT_Portal_Arena_Return",
     "KT_Sign_Gate_Armory": "KT3_06_Dest",
@@ -155,7 +156,8 @@ def main():
             saved.append(trig)
         else:
             loc = m.tool(bm.ACTOR, "get_actor_transform", actor={"refPath": acts[s["dest"]]["actorPath"]})["location"]
-            spot = clear_spot(acts, loc["x"], loc["y"])
+            # A destination in DIRECT is itself the arrival (the Operation starts a run there).
+            spot = None if s["dest"] in DIRECT else clear_spot(acts, loc["x"], loc["y"])
             if spot is None:
                 b.bind(d, "On Hit", acts[s["dest"]]["actorPath"], "Teleport")
                 print(f"  {s['sign']}: no clear floor, uses {s['dest']} itself")

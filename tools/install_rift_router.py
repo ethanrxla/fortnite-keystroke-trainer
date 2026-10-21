@@ -4,11 +4,12 @@ import datetime
 from pathlib import Path
 import build_map as b
 ROOT=Path(__file__).resolve().parent.parent
-PAIRS=[('KT2_QuickStart','KT2_CourtArrival'),('KT2_FreeStart','KT2_FreeArrival'),('KT2_CourtReturn','KT2_HubArrival')]+[(f'KT3_0{i}_Src',f'KT3_0{i}_Dest') for i in range(3,7)]+[(f'KT_Portal_{n}',f'KT_Portal_{n}_Return') for n in ['Aim','Arena','Scenario']]+[(f'KT_Portal_{n}_Return',f'KT_Portal_{n}') for n in ['Aim','Arena','Scenario']]
+PAIRS=[('KT2_QuickStart','KT2_CourtArrival'),('KT2_FreeStart','KT2_FreeArrival'),('KT2_CourtReturn','KT2_HubArrival')]+[(f'KT3_0{i}_Src',f'KT3_0{i}_Dest') for i in range(3,7)]+[(f'KT_Portal_{n}',f'KT_Portal_{n}_Return') for n in ['Aim','Arena']]+[('KT_Portal_Scenario','KT16_Op_Arrive')]+[(f'KT_Portal_{n}_Return',f'KT_Portal_{n}') for n in ['Aim','Arena','Scenario']]
 # Fight Lab start rifts (tools/build_fight_lab.py start_rifts): each room's doorway pad to where its exercise begins,
 # and room A's loop from the climb tower roof back to the top of the drop tower. Appended, so the button indices
 # below still name the same pairs.
-LAB_RIFTS=[(f'KT7_Lab_Rift_{r}_In',f'KT7_Lab_Rift_{r}_Start') for r in 'ABCD']+[('KT7_Lab_Rift_A_Loop','KT7_Lab_Rift_A_Start')]
+# 2026-10-21: removed with the rifts; the Fight Lab rooms are stages of the Operation, entered only through it.
+LAB_RIFTS=[]
 # Court bay 02's rift goes to the Sky Box (tools/build_sky_box.py; player 2026-10-10: boxing high up, not the ground
 # arena), and the Sky Box exit comes back beside it. The Rebox Arena's own way back stays.
 # Player 2026-10-13: the Sky Box and Rebox Arena exits go to the main lobby, not back to the court.

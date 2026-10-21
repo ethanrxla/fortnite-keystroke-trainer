@@ -11,6 +11,10 @@ ceiling, room A has no outer walls (the wall to room B stays, it blocks B's bots
 beside its doorway (out of the walking line, so leaving the room never sends you back in). Room A loops: the top of
 the climb tower has a rift back to the top of the drop tower. Rifts are routed by the Verse rift router
 (tools/install_rift_router.py, LAB_RIFTS).
+2026-10-21 (player: "one long pipeline"): the rooms are stages of the Operation (tools/build_operation.py), entered
+in the order A, C, D, B through doorways the Operation gates. So this builder no longer places the start rifts, the
+always-on bots (the Operation places its own, KT16_Op_*_Bot) or the title sign, and the enemy's pieces are team 2
+(build_operation.py LAB_ENEMY); the spine's west end is closed (KT16_Op_SpineEnd).
 Room A's west wall now belongs to the Operation (tools/build_operation.py, KT16_Op_LabWall_*): it carries the door from
 the Operation's compound into the towers, so this builder must not place a Wall_W_S again.
 
@@ -159,7 +163,7 @@ def plan_lab():
     room_b(p)
     room_c(p)
     room_d(p)
-    start_rifts(p)
+    p.rifts = []                  # start_rifts(p) retired 2026-10-21
 
     # Signs beside each doorway, facing into the spine; a title at the entrance facing the Scenario plate.
     for room in "ABCD":
@@ -169,9 +173,7 @@ def plan_lab():
         sy = ys0 + 60 if south else ys1 - 60
         p.signs.append({"label": f"{PREFIX}Sign_{room}", "pos": (sx, sy, 180), "yaw": 90 if south else 270,
                         "text": SIGNS[room], "size": 26, "zone": ROOM_ZONE[room]})
-    p.signs.append({"label": f"{PREFIX}Sign_Title", "pos": (x0 - 60, ys0 - 700, 180), "yaw": 180,
-                    "text": "FIGHT LAB  >>\nA edit towers   B peek and reset\nC retake   D box fight\nlive bots: bring a gun from the Armory",
-                    "size": 34, "zone": "Scenario"})
+    # No title sign: it stood in what is now the Operation's breach room (retired 2026-10-21).
     return p
 
 
@@ -209,8 +211,7 @@ def room_b(p):
     # Bot side (east): cover with a gap, two bots behind it.
     for n, jj in enumerate((-135, -133)):
         p.wall(f"B_BotCover_{n}", -33, jj, 0, "W")
-        x, y = cell(-32, jj)
-        p.device(f"B_Bot_{n}", bm.GUARD, x, y, 0.0, bot_props(patrol=4), yaw=180.0)
+        # bots: the Operation's KT16_Op_B_Bot_*
     p.reset_cells["B"] = [(-37, -134), (-34, -134)]
 
 
@@ -225,8 +226,7 @@ def room_c(p):
     p.ramp("C_EnemyRamp0", -45, -127, 0, "E")
     p.ramp("C_EnemyRamp1", -44, -127, 1, "E")
     p.flat("C_EnemyCone", "cone", -46, -127, H)
-    x, y = cell(-42, -127)
-    p.device("C_Bot", bm.GUARD, x, y, 2 * H + 20, bot_props(patrol=0), yaw=180.0)
+    # bot: the Operation's KT16_Op_C_Bot
     p.reset_cells["C"] = [(-47, -127), (-44, -127)]
 
 
@@ -240,8 +240,7 @@ def room_d(p):
     p.flat("D_BotBox_Cone", "cone", -33, -127, H)
     for jj in (-128, -126):
         p.wall(f"D_Mid_{jj}", -35, jj, 0, "E")
-    x, y = cell(-33, -127)
-    p.device("D_Bot", bm.GUARD, x, y, 0.0, bot_props(patrol=0), yaw=180.0)
+    # bot: the Operation's KT16_Op_D_Bot
     p.reset_cells["D"] = [(-37, -127), (-34, -127)]
 
 

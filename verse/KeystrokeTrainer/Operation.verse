@@ -1,25 +1,30 @@
 # Operation: the island's one game level (design/operation-level-design.md), laid out by tools/build_operation.py.
 #
-# START OPERATION (by the Scenario portal) closes every gate, clears the bots, grants the loadout and puts you at the
-# east end of L1. Rooms run in the order of KTOpStages (OperationLayout.verse, generated with the layout):
+# One long run (player 2026-10-21: "one long pipeline"): L1 compound (5 rooms), L2 Fight Lab (rooms A, C, D, B), L3
+# bombsite A. Arriving in the crawl room (the hub portal or the OPERATION sign, KT16_Op_Arrive) or standing in it
+# starts a run: every gate closes, the bots clear, the loadout and grenades are granted. Rooms run in the order of
+# KTOpStages (OperationLayout.verse, generated with the layout):
 #   * a room's bots spawn when you walk into its box (the first room on START);
 #   * when every bot of the room is eliminated its gate (a blue barrier) opens and the HUD points to the next room;
-#   * L1 has a storm: an edge that moves west from the east wall; east of it you take damage;
+#   * a room with Pick > 0 spawns only that many of its bots, chosen at random (the peek room: left or right);
+#   * a Kind 1 room would have a storm (unused since the storm strip went on 2026-10-21);
 #   * the grenade room grants two grenades on entry;
 #   * if you are eliminated you come back at the start of the room you were in, its bots respawn, loadout re-granted;
-#   * L4 bombsite A (player 2026-10-20, Counter-Strike style): clear the site's three defenders, then the stages that
-#     follow need no walking into a new room: Kind 3 plant (stand in the A plate box PlantSeconds; stepping off
-#     resets it), Kind 4 hold (the retake bots, tagged kt_op_retake_tag, spawn; the bomb timer runs HoldSeconds and
+#   * L3 bombsite A (player 2026-10-20, Counter-Strike style): clear the site's three defenders, then the stages that
+#     follow need no walking into a new room: Kind 3 plant (hold the bomb console's button, kt_op_plant_tag, which
+#     only works in this stage; without a console, stand in the A plate box PlantSeconds), Kind 4 hold (the retake bots, tagged kt_op_retake_tag, spawn; the bomb timer runs HoldSeconds and
 #     the stage clears when it blows, not when they are down), Kind 5 extract (reach the extraction box);
 #   * reaching extraction finishes the run: time, deaths, a medal from the par times, best time this session, and every
 #     gate opens again. The first BriefingSeconds of a run show the mission briefing.
-# Outside a run the whole level is open with no bots, so it can be walked. One runner at a time.
-# Bots are assigned to a room by the room's box, gates by the room's Gate point (nearest barrier within 4 m).
+# Outside a run the whole level is open with no bots, so it can be walked. One runner at a time; anyone else can
+# follow behind through the doors the runner opens (player 2026-10-21).
+# Bots are assigned to a room by the room's box, gates by the room's Gates points (nearest barrier within 4 m).
 # Logs KT|op_stage|operation|... per room and KT|op_summary|operation|... per run (pairs only after t=).
 
 using { /Fortnite.com/Devices }
 using { /Fortnite.com/Characters }
 using { /Fortnite.com/UI }
+using { /Verse.org/Random }
 using { /Verse.org/Simulation }
 using { /Verse.org/Simulation/Tags }
 using { /Verse.org/Colors }
@@ -30,11 +35,29 @@ kt_op_device_tag<public> := class(tag){}
 kt_op_bot_tag<public> := class(tag){}
 kt_op_gate_tag<public> := class(tag){}
 kt_op_start_tag<public> := class(tag){}
+# The Operation's arrival pad in the crawl room (player 2026-10-21: "they should spawn in that room to the left where
+# you have to crouch"): arriving there starts a run at StartStage.
+kt_op_arrive_tag<public> := class(tag){}
 kt_op_loadout_tag<public> := class(tag){}
 kt_op_grenade_tag<public> := class(tag){}
 kt_op_retake_tag<public> := class(tag){}
+# The bomb console's hold-to-plant button on the A plate (tools/build_operation.py Site_PlantButton).
+kt_op_plant_tag<public> := class(tag){}
 
-KTOpBriefing<public>:string = "BRIEFING: break in, take bombsite A, plant, hold it until it blows, then extract. Gold: under 6:00, no deaths."
+KTOpBriefing<public>:string = "BRIEFING: through the compound and the Fight Lab, take bombsite A, plant, hold it until it blows, extract. Gold: under 6:00, no deaths."
+
+# N of the bots, chosen at random (all of them when N is 0 or not less than their number).
+KTOpPick<public>(All:[]guard_spawner_device, N:int)<transacts>:[]guard_spawner_device =
+    if (N <= 0 or N >= All.Length):
+        return All
+    var Left:[]guard_spawner_device = All
+    var Out:[]guard_spawner_device = array{}
+    for (K := 1..N):
+        I := GetRandomInt(0, Left.Length - 1)
+        if (S := Left[I], Rest := Left.RemoveElement[I]):
+            set Out += array{S}
+            set Left = Rest
+    Out
 
 # Which room box holds a point, or -1. Plant / hold / extract boxes (Kind 3..5) are zones inside the site, not rooms.
 KTOpStageAt<public>(Pos:vector3)<transacts>:int =
@@ -71,6 +94,8 @@ kt_op_bot_listener := class:
     OnEliminated(R:device_ai_interaction_result):void = Owner.BotDown(Stage)
 
 kt_operation_device<public> := class(creative_device):
+    # The stage a run starts in: 0 = the crawl room.
+    @editable StartStage:int = 0
     @editable PlantSeconds:float = 5.0
     @editable HoldSeconds:float = 40.0
     @editable BriefingSeconds:float = 6.0
@@ -81,6 +106,9 @@ kt_operation_device<public> := class(creative_device):
     var Gates:[]barrier_device = array{}
     var GateStage:[]int = array{}
     var StartButton:?button_device = false
+    var PlantButton:?button_device = false
+    # The bots of the current stage that were spawned (all of them, or Pick of them).
+    var Active:[]guard_spawner_device = array{}
     var Loadout:?item_granter_device = false
     var Grenades:?item_granter_device = false
 
@@ -133,8 +161,8 @@ kt_operation_device<public> := class(creative_device):
             Pos := B.GetTransform().Translation
             var Nearest:int = -1
             var Dist:float = 400.0
-            for (I -> S : KTOpStages, S.HasGate?):
-                D := Distance(vector3{X := Pos.X, Y := Pos.Y, Z := 0.0}, vector3{X := S.Gate.X, Y := S.Gate.Y, Z := 0.0})
+            for (I -> S : KTOpStages, G : S.Gates):
+                D := Distance(vector3{X := Pos.X, Y := Pos.Y, Z := 0.0}, vector3{X := G.X, Y := G.Y, Z := 0.0})
                 if (D < Dist):
                     set Dist = D
                     set Nearest = I
@@ -144,6 +172,11 @@ kt_operation_device<public> := class(creative_device):
         for (O : FindCreativeObjectsWithTag(kt_op_start_tag), B := button_device[O]):
             set StartButton = option{B}
             B.InteractedWithEvent.Subscribe(OnStart)
+        for (O : FindCreativeObjectsWithTag(kt_op_arrive_tag), T := teleporter_device[O]):
+            T.TeleportedEvent.Subscribe(OnStart)
+        for (O : FindCreativeObjectsWithTag(kt_op_plant_tag), B := button_device[O]):
+            set PlantButton = option{B}
+            B.InteractedWithEvent.Subscribe(OnPlant)
         for (O : FindCreativeObjectsWithTag(kt_op_loadout_tag), G := item_granter_device[O]):
             set Loadout = option{G}
         for (O : FindCreativeObjectsWithTag(kt_op_grenade_tag), G := item_granter_device[O]):
@@ -151,11 +184,15 @@ kt_operation_device<public> := class(creative_device):
         BuildHud()
         FreePlay()
         KTLog("setup", "operation", 0, 0, 0, rep_result.Unchecked,
-            "stages={KTOpStages.Length}|bots={Bots.Length}|gates={Gates.Length}|start={if (StartButton?) then 1 else 0}")
+            "stages={KTOpStages.Length}|bots={Bots.Length}|gates={Gates.Length}|start={if (StartButton?) then 1 else 0}|plant={if (PlantButton?) then 1 else 0}")
         loop:
             Sleep(0.25)
             if (Running?):
                 Tick()
+            else:
+                # Walking or teleporting into the crawl room starts a run (every way in: sign, portal, on foot).
+                for (P : GetPlayspace().GetPlayers(), not Running?, C := P.GetFortCharacter[], C.IsActive[], KTOpStageAt(C.GetTransform().Translation) = StartStage):
+                    OnStart(P)
 
     # Between runs: no bots, every gate open, so the level can be walked.
     FreePlay():void =
@@ -164,8 +201,17 @@ kt_operation_device<public> := class(creative_device):
             S.Disable()
         for (G : Gates):
             G.Disable()
+        if (B := PlantButton?):
+            B.Disable()
         if (B := StartButton?):
             B.SetInteractionText(OpText(if (Running?) then "Operation in progress" else "START OPERATION"))
+
+    # The bomb console: plants the bomb in the plant stage (the button is disabled at any other time).
+    OnPlant(A:agent):void =
+        if (Running?, S := KTOpStages[Stage], S.Kind = 3, not Cleared?):
+            if (B := PlantButton?):
+                B.Disable()
+            ClearStage()
 
     OnStart(A:agent):void =
         if (not Running?, P := player[A], C := P.GetFortCharacter[]):
@@ -181,7 +227,7 @@ kt_operation_device<public> := class(creative_device):
                 S.Despawn()
             ShowHud(P)
             set RunStart = GetSimulationElapsedTime()
-            EnterStage(0)
+            EnterStage(StartStage)
             Respawn(C)
             if (B := StartButton?):
                 B.SetInteractionText(OpText("Operation in progress"))
@@ -224,11 +270,14 @@ kt_operation_device<public> := class(creative_device):
         set StageStart = GetSimulationElapsedTime()
         if (S := KTOpStages[Index], S.Kind = 1):
             set StormStart = StageStart
-        for (S : StageBots(Index)):
+        set Active = if (S := KTOpStages[Index]) then KTOpPick(StageBots(Index), S.Pick) else StageBots(Index)
+        for (S : Active):
             S.Enable()
             S.Spawn()
+        if (B := PlantButton?):
+            if (S := KTOpStages[Index], S.Kind = 3) then B.Enable() else B.Disable()
         GrantStageItems()
-        if (StageBots(Index).Length = 0, S := KTOpStages[Index], S.Kind < 3):
+        if (Active.Length = 0, S := KTOpStages[Index], S.Kind < 3):
             ClearStage()
 
     GrantStageItems():void =
@@ -239,7 +288,7 @@ kt_operation_device<public> := class(creative_device):
         if (Running?, Index = Stage, not Cleared?):
             set Down += 1
             # The hold stage ends when the bomb blows, not when the retake is down.
-            if (Down >= StageBots(Index).Length, S := KTOpStages[Index], S.Kind <> 4):
+            if (Down >= Active.Length, S := KTOpStages[Index], S.Kind <> 4):
                 ClearStage()
 
     ClearStage():void =
@@ -264,7 +313,7 @@ kt_operation_device<public> := class(creative_device):
             else if (C := P.GetFortCharacter[], C.IsActive[]):
                 Pos := C.GetTransform().Translation
                 Here := KTOpStageAt(Pos)
-                # Away from every room (the walkway between L1 and L2 takes seconds) for 20 s ends the run.
+                # Away from every room (the Fight Lab's spine takes seconds) for 20 s ends the run.
                 set Outside = if (Here < 0) then Outside + 0.25 else 0.0
                 if (Outside > 20.0):
                     Abort("left the level")
@@ -278,7 +327,7 @@ kt_operation_device<public> := class(creative_device):
                         set InStorm = true
                         C.Damage(KTOpStormDamage * 0.5)
                 if (S := KTOpStages[Stage], not Cleared?):
-                    if (S.Kind = 3):
+                    if (S.Kind = 3, not PlantButton?):
                         set Planting = if (KTOpInBox(Pos, S)?) then Planting + 0.25 else 0.0
                         if (Planting >= PlantSeconds):
                             ClearStage()
@@ -321,12 +370,16 @@ kt_operation_device<public> := class(creative_device):
         if (S := KTOpStages[Stage], C.TeleportTo[S.Checkpoint + vector3{Z := 60.0}, C.GetTransform().Rotation]) {}
         if (P := Runner?, G := Loadout?):
             G.GrantItem(P)
+        # Grenades from the start of the run and after every death (player 2026-10-21: "some grenades ... at the
+        # start"). After the loadout, which clears the inventory first.
+        if (P := Runner?, G := Grenades?):
+            G.GrantItem(P)
         GrantStageItems()
 
     UpdateHud(InStorm:logic):void =
         if (S := KTOpStages[Stage]):
             Clock := KTOpClock(GetSimulationElapsedTime() - RunStart)
-            Left := StageBots(Stage).Length - Down
+            Left := Active.Length - Down
             ClockText.SetText(OpText(Clock))
             LevelText.SetText(OpText(S.Level))
             RoomText.SetText(OpText("room {Stage + 1}/{KTOpStages.Length}"))
@@ -383,14 +436,15 @@ kt_operation_device<public> := class(creative_device):
 
     # Runtime checks for the playtest runner (AutoTestDevice): every room has its bots and its gate.
     RunSmokeTests<public>(P:player, Report:autotest_report)<suspends>:void =
-        Report.Check("OP01-stages", logic{KTOpStages.Length = 11}, "eleven stages in the layout")
-        # L1 4, grenade 3, peek 2, high ground 2, breach 2, towers 2, site 3, retake 3 (tools/build_operation.py).
-        Report.Check("OP02-bots", logic{Bots.Length = 21}, "operation bots found: {Bots.Length} (want 21)")
+        Report.Check("OP01-stages", logic{KTOpStages.Length = 13}, "thirteen stages in the layout")
+        # Grenade 2, peek 2 (1 spawns), high ground 2, breach 2, towers 2, retake 1, box fight 1, peek and reset 2,
+        # site 3, retake wave 3 (tools/build_operation.py).
+        Report.Check("OP02-bots", logic{Bots.Length = 20}, "operation bots found: {Bots.Length} (want 20)")
         var Missing:int = 0
-        for (I -> S : KTOpStages, S.HasGate?):
+        for (I -> S : KTOpStages, S.Gates.Length > 0):
             if ((for (G -> St : GateStage, St = I) { G }).Length = 0):
                 set Missing += 1
-        Report.Check("OP03-gates", logic{Missing = 0 and Gates.Length >= 5}, "every gated room has a barrier ({Gates.Length} found)")
-        Report.Check("OP04-start", logic{StartButton? and Loadout? and Grenades?}, "start button, loadout and grenade granters")
+        Report.Check("OP03-gates", logic{Missing = 0 and Gates.Length >= 10}, "every gated room has a barrier ({Gates.Length} found)")
+        Report.Check("OP04-start", logic{PlantButton? and Loadout? and Grenades?}, "plant console, loadout and grenade granters")
 
 OpText<localizes>(S:string):message = "{S}"
