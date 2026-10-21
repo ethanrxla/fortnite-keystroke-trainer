@@ -538,7 +538,9 @@ def place(b, p, only=None):
                     b.props(path, {key: value})
                 except RuntimeError as exc:
                     refused.append(f"{d['label']}: {key} ({str(exc)[-50:]})")
-            bm.fill_item_list(b, path, [loadout[d["spawn"]]])
+            # Item Spawner V3 keeps its items in Creative_ItemPreview_Component "items to Load", which the MCP refuses
+            # to set (2026-10-21; pickupItemList is null on a new spawner). Add the item in UEFN by hand.
+            refused.append(f"{d['label']}: Item List -> add {loadout[d['spawn']].rsplit('.', 1)[-1]} in UEFN")
         if d["tag"]:
             b.tag(path, d["tag"])
         saved.append(path)

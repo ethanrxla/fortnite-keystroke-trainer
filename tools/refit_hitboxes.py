@@ -75,7 +75,8 @@ def main():
         base = label[:-4] if label.endswith("_Hit") else label
         names = [base + s for s in ("_Granter", "_Track", "_Trigger", "_Arrive")]
 
-        names += ["KT_Portal_Scenario_Return", "KT_Portal_Arena_Return"] if label.startswith("KT25_") else []
+        # KT16_Op_Arrive: the OPERATION sign lands in the crawl room (build_sign_shots.py DIRECT, 2026-10-21).
+        names += ["KT_Portal_Scenario_Return", "KT_Portal_Arena_Return", "KT16_Op_Arrive"] if label.startswith("KT25_") else []
         targets = hitbox.on_hit_targets(m, path, [acts[n]["actorPath"] for n in names if n in acts])
         if not targets:
             print(f"  skip {label}: no On Hit binding")
