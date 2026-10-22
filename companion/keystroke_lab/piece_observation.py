@@ -174,6 +174,9 @@ class VisualObserver:
         # full detection replaces it; a wrongly dropped grid only costs that detection. Together with the 6-tile minimum
         # this drops 61% of grids slid by a tile on 143 recorded walls, and 6% of correct ones.
         if n==3 and _wall_fit(image,H,selected=wall.selected_tiles)[1]>=2:return None
+        # A carried wall that no longer stands upright is not this wall any more (live 2026-10-22: the track of a wall
+        # followed the view onto a ramp and kept calling it a wall); drop it so a full detection decides.
+        if tracked.piece=='wall' and _upright_offset(wall.wall_quad,frame.shape[1])>UPRIGHT_DEG:return None
         ctx=piece_context(wall,frame.shape[1],frame.shape[0])
         return PieceObservation(now,tracked.piece,wall.wall_quad,wall.aim_uv,wall.selected_tiles,tracked.orientation,
                                 wall.confidence,wall.supported_cells,'native_edit_grid_observed','tracked_refined',
@@ -238,6 +241,7 @@ class GridMotionTracker:
         area=abs(cv2.contourArea(quad));oldarea=abs(cv2.contourArea(old))
         if not .65*oldarea<area<1.5*oldarea:return None
         quad=quad/self.scale
+        if self.observation.piece=='wall' and _upright_offset(quad,frame.shape[1])>UPRIGHT_DEG:return None
         cross=_crosshair(frame)
         if cv2.pointPolygonTest(quad,cross,True)<-min(frame.shape[:2])*.025:return None
         n=3 if self.observation.piece=='wall' else 2
