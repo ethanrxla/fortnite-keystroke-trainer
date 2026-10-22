@@ -14,6 +14,7 @@ from .overlay_layout import edit_guide_lift
 from .bind_profiles import ProfileStore
 from .drills import BINDS_FILE
 from .edit_observation import observe_mode,EditGridObserver,cue_scores
+from .pieces import cells,flat_name,FLOOR_OR_CONE
 from .edit_advisor import EditAdvisor,EditContext,safe_path
 from .edit_telemetry import TelemetryReader
 from .jev_client import JevClient
@@ -122,7 +123,7 @@ class ContextPipeline:
         held=self.held
         if held is None or held.piece!=det.piece or det.captured_at-held.captured_at>.5:
             self.shift_vote=None;return det
-        n=3 if det.piece=='wall' else 2
+        n=cells(det.piece)          # walls and ramps 3 x 3, floors and cones 2 x 2
         off=lattice_offset(held.quad,det.quad,n)
         if off is None or off==(0,0):
             self.shift_vote=None;return det
@@ -426,8 +427,12 @@ def run(profile_path=None):
         if not edit:return
         visual=layout(edit,observation['aim_uv'],data.get('guide_strokes'));unit=114;x=12;y=40
         piece=(data.get('piece_context') or {}).get('kind','')
+        title=visual.title
+        if observation.get('orientation')==FLOOR_OR_CONE:
+            # Floor or cone, the screen cannot tell which: name the piece and the edit by its tiles (pieces.flat_name).
+            piece='floor / cone';title=flat_name(edit.get('tiles',[]))
         side=['left','centre','right'][(data.get('piece_context') or {}).get('side',1)]
-        canvas.itemconfig(heading,text=f"{piece.upper()} | {visual.title.upper()}")
+        canvas.itemconfig(heading,text=f"{piece.upper()} | {title.upper()}")
         canvas.itemconfig(status_id,text=f"you: {side} side, {'far' if (data.get('piece_context') or {}).get('far') else 'close'}" + ('' if data.get('verified') else ' | unverified'))
         for i,region in enumerate(visual.regions):
             l,b,r,t=region;item=cells[0][i]

@@ -54,6 +54,7 @@ class EditAdvice:
     def to_dict(self):return asdict(self)
 
 from .edit_dictionary import EditDictionary, RoutePlanner
+from .pieces import cells
 
 def intersect_wall(view_origin,view_direction,pose):
     """Verified XYZ wall pose: origin is lower-left; right/up are unit axes.
@@ -121,7 +122,7 @@ class EditAdvisor:
         if c.mode not in ('building','editing','editable'):return self._abstain(c,'build_or_edit_mode_unverified')
         if not c.target_verified or not c.target_id:return self._abstain(c,'target_wall_unverified')
         if not c.geometry_verified:return self._abstain(c,'wall_projection_unverified')
-        if len(c.aim_uv)!=2 or not all(math.isfinite(v) and 0<=v<(3 if c.piece=='wall' else 1 if c.piece=='ramp' else 2) for v in c.aim_uv):return self._abstain(c,'crosshair_off_target')
+        if len(c.aim_uv)!=2 or not all(math.isfinite(v) and 0<=v<cells(c.piece) for v in c.aim_uv):return self._abstain(c,'crosshair_off_target')
         if c.wall_pose is not None:
             measured=intersect_wall(c.view_origin,c.view_direction,c.wall_pose)
             if measured is None or math.dist(measured,c.aim_uv)>.08:return self._abstain(c,'screen_world_projection_disagreement')

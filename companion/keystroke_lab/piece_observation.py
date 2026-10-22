@@ -8,12 +8,13 @@ from dataclasses import dataclass, asdict, replace
 import math
 from .edit_observation import EditGridObserver, _line_projection, _crosshair, _general_grid, _partial_grid, _lattice_shift, _tile_support, _segments, downscale, _wall_fit, _vp_grid
 from .edit_geometry import piece_context
+from .pieces import FLOOR_OR_CONE
 import cv2
 
 DETECT_WIDTH=640.   # px the live detectors work at (see VisualObserver.observe)
 import numpy as np
 UPRIGHT_DEG=5.      # VisualObserver._classify: a 3x3 grid's side edges must meet within this of the centre line
-RAMP_DEG=10.        # VisualObserver._tile_ramp: a tile-found 3x3 leaning at least this far is a ramp (walls lean <= 6.4)
+RAMP_DEG=10.        # VisualObserver._tile_piece: a tile-found 3x3 leaning at least this far is a ramp (walls lean <= 6.4)
 RAMP_GAP=.12        # ... and real gaps between its tiles (split floor tiles: 0.03-0.12; ramps from 0.107)
 from .tile_grid import find_tile_grid
 
@@ -95,14 +96,17 @@ class VisualObserver:
         # Last: the tile finder (tile_grid.py) for grids the line finders miss at steep angles, ramps only: a 3x3 that
         # leans well away from upright, with real gaps between its tiles. Floors and cones (2x2) still abstain
         # (tools/eval_frames.py, player-labelled frames 2026-10-22).
-        ramp=self._tile_ramp(image,frame,aim,now,scale)
-        if ramp is not None:return ramp
+        tiled=self._tile_piece(image,frame,aim,now,scale)
+        if tiled is not None:return tiled
         return result or PieceObservation(now,reason='bounded_detector_abstained')
 
-    def _tile_ramp(self,image,frame,aim,now,scale):
+    def _tile_piece(self,image,frame,aim,now,scale):
+        """Ramp (3x3) or floor / cone (2x2) from the tile finder, or None."""
         found=find_tile_grid(image,aim)
-        if found is None or found[0]!=3 or found[3]<RAMP_GAP:return None
-        n,q,count,_=found
+        if found is None:return None
+        n,q,count,gap=found
+        if n==3 and gap<RAMP_GAP:return None
+        if n==2 and count<4:return None                  # a partial 3x3 ramp shows 3 tiles of a 2x2; a floor all 4
         quad=np.float32([q[3],q[2],q[1],q[0]])          # the other finders' corner order: top-left first
         H=cv2.getPerspectiveTransform(np.float32([[0,0],[n,0],[n,n],[0,n]]),quad)
         wall=self.wall._from_projection(image,H,quad,now,scale,count,.88,n)
@@ -110,12 +114,13 @@ class VisualObserver:
         q=wall.wall_quad
         near=math.dist(q[2],q[3]);far=math.dist(q[0],q[1])
         side=(math.dist(q[0],q[3])+math.dist(q[1],q[2]))/2
-        # A sane grid (no edge many times another, far edge not longer than near), leaning at least RAMP_DEG; grids
-        # between UPRIGHT_DEG and RAMP_DEG abstain.
+        # A sane grid (no edge many times another, far edge not longer than near), leaning at least RAMP_DEG away from
+        # upright (a wall); grids between UPRIGHT_DEG and RAMP_DEG abstain.
         if not (.2<far/max(near,1)<1.2 and .15<side/max(near,1)<2) or _upright_offset(q,frame.shape[1])<RAMP_DEG:
             return None
         ctx=piece_context(wall,frame.shape[1],frame.shape[0])
-        return PieceObservation(now,'ramp',q,wall.aim_uv,wall.selected_tiles,'screen_tile_lattice',wall.confidence,
+        piece,orientation=('ramp','screen_tile_lattice') if n==3 else ('floor',FLOOR_OR_CONE)
+        return PieceObservation(now,piece,q,wall.aim_uv,wall.selected_tiles,orientation,wall.confidence,
                                 wall.supported_cells,'native_edit_grid_observed',context=ctx.to_dict() if ctx else None)
 
     def _classify(self,image,frame,wall,H,now):
@@ -129,10 +134,9 @@ class VisualObserver:
             # hypothesis when native grid tiles continue beyond its boundary.
             if self._continues(image,H):return PieceObservation(now,reason='partial_wall_not_flat_piece')
             if wall.supported_cells<4 or ctx is None:return PieceObservation(now,reason='piece_topology_ambiguous')
-            # Floor below the camera / cone overhead, from the pose. A cone at floor height reads as a floor: the
-            # orientation says it is an estimate and the UI labels it so.
-            piece='floor' if ctx.kind=='floor' else 'cone'
-            return PieceObservation(now,piece,q,wall.aim_uv,wall.selected_tiles,'screen_pose_estimate',wall.confidence,
+            # Floor or cone: the pose guessed (19 of 73 recorded cones read as floors), and both have the same 14 tile
+            # selections, so a 2x2 is one "floor / cone" piece (player 2026-10-22; pieces.FLOOR_OR_CONE).
+            return PieceObservation(now,'floor',q,wall.aim_uv,wall.selected_tiles,FLOOR_OR_CONE,wall.confidence,
                                     wall.supported_cells,'native_edit_grid_observed',context=context)
         if wall.supported_cells<6 or wall.confidence<.88:
             return PieceObservation(now,reason=wall.reason)

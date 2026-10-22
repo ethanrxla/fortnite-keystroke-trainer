@@ -5,6 +5,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / '.vision_packages'))
 import numpy as np  # noqa: E402
 
+from keystroke_lab.pieces import cells, flat_name  # noqa: E402
 from keystroke_lab.tile_grid import find_tile_grid  # noqa: E402
 
 
@@ -40,6 +41,18 @@ class TileGridTests(unittest.TestCase):
 
     def test_crosshair_far_from_the_grid_finds_nothing(self):
         self.assertIsNone(find_tile_grid(tiles_image(3), (620, 340)))
+
+
+class FloorOrConeNameTests(unittest.TestCase):
+    # A 2x2 is shown as "floor / cone" (player 2026-10-22): edits are named by their tiles, the same on either piece.
+    def test_names(self):
+        self.assertEqual(flat_name([0]), "1 tile (near left)")
+        self.assertEqual(flat_name([2, 3]), "2 tiles (far side)")
+        self.assertEqual(flat_name([3, 0]), "2 tiles (diagonal)")
+        self.assertEqual(flat_name([0, 1, 2]), "3 tiles (far right kept)")
+
+    def test_grid_sizes(self):
+        self.assertEqual([cells(p) for p in ("wall", "ramp", "floor", "cone")], [3, 3, 2, 2])
 
 
 if __name__ == "__main__":

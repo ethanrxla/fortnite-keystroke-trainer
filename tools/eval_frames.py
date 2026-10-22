@@ -23,6 +23,8 @@ sys.path.insert(0, str(COMPANION / ".vision_packages"))
 sys.path.insert(0, str(COMPANION))
 import cv2  # noqa: E402
 from keystroke_lab.piece_observation import VisualObserver  # noqa: E402
+import keystroke_lab.pieces as pieces  # noqa: E402
+FLOOR_OR_CONE = getattr(pieces, "FLOOR_OR_CONE", None)   # older detectors (scored with --save) have none
 
 FRAMES = COMPANION / "data" / "frames"
 EVAL = COMPANION / "data" / "eval"
@@ -60,7 +62,10 @@ def main():
         if image is None:
             continue
         start = time.perf_counter()
-        got = VisualObserver().observe(image, time.time()).piece
+        seen = VisualObserver().observe(image, time.time())
+        got = seen.piece
+        if seen.orientation == FLOOR_OR_CONE and want in ("floor", "cone"):
+            got = want              # a 2x2 shown as "floor / cone": right for either (player 2026-10-22)
         spent += time.perf_counter() - start
         table[want][got] += 1
         per[path] = got
