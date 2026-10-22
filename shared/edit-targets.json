@@ -1,21 +1,21 @@
 [
   {
-    "label": "KT16_Op_L1_Cover_3",
-    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92F00903_1904209989",
+    "label": "KT31_EnemyBox_E7_N",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F929D0A03_1614563160",
     "kind": "wall",
     "centre": {
-      "x": -28160,
-      "y": -63744,
+      "x": 54528,
+      "y": -56832,
       "z": 0
     },
     "right": {
-      "x": 2.83276944882399e-16,
-      "y": 1.0,
+      "x": 1.0,
+      "y": 0.0,
       "z": 0.0
     },
     "normal": {
-      "x": -1.0,
-      "y": 2.83276944882399e-16,
+      "x": -0.0,
+      "y": 1.0,
       "z": 0.0
     },
     "width": 512.0,
@@ -54,9 +54,34 @@
     "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92870903_1691794261",
     "kind": "wall",
     "centre": {
-      "x": -21504,
-      "y": -68864,
+      "x": -21760,
+      "y": -69120,
       "z": 384
+    },
+    "right": {
+      "x": 2.83276944882399e-16,
+      "y": 1.0,
+      "z": 0.0
+    },
+    "normal": {
+      "x": -1.0,
+      "y": 2.83276944882399e-16,
+      "z": 0.0
+    },
+    "width": 512.0,
+    "height": 384.0,
+    "depth": 512.0,
+    "rise": 0.0,
+    "goal": ""
+  },
+  {
+    "label": "KT38_Tunnel_Cover1",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_M1_Solid_C_UAID_30560F202F92FE0C03_1872180054",
+    "kind": "wall",
+    "centre": {
+      "x": 44288,
+      "y": -39936,
+      "z": 0
     },
     "right": {
       "x": 2.83276944882399e-16,
@@ -79,8 +104,8 @@
     "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92870903_1694691290",
     "kind": "wall",
     "centre": {
-      "x": -18944,
-      "y": -64768,
+      "x": -19200,
+      "y": -65024,
       "z": 0
     },
     "right": {
@@ -125,37 +150,12 @@
     "goal": ""
   },
   {
-    "label": "KT16_Op_L3_Perch1_1W",
-    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92F00903_1910330031",
-    "kind": "wall",
-    "centre": {
-      "x": -22528,
-      "y": -67328,
-      "z": 384
-    },
-    "right": {
-      "x": 2.83276944882399e-16,
-      "y": 1.0,
-      "z": 0.0
-    },
-    "normal": {
-      "x": -1.0,
-      "y": 2.83276944882399e-16,
-      "z": 0.0
-    },
-    "width": 512.0,
-    "height": 384.0,
-    "depth": 512.0,
-    "rise": 0.0,
-    "goal": ""
-  },
-  {
     "label": "KT7_Lab_A_Climb_2S",
     "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92870903_1689749241",
     "kind": "wall",
     "centre": {
-      "x": -22784,
-      "y": -69120,
+      "x": -23040,
+      "y": -69376,
       "z": 768
     },
     "right": {
@@ -229,8 +229,8 @@
     "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92870903_1690427248",
     "kind": "wall",
     "centre": {
-      "x": -22528,
-      "y": -68864,
+      "x": -22784,
+      "y": -69120,
       "z": 1152
     },
     "right": {
@@ -250,37 +250,12 @@
     "goal": ""
   },
   {
-    "label": "KT16_Op_L3_Perch0_1N",
-    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92F00903_1908519018",
-    "kind": "wall",
-    "centre": {
-      "x": -24832,
-      "y": -67072,
-      "z": 384
-    },
-    "right": {
-      "x": 1.0,
-      "y": 0.0,
-      "z": 0.0
-    },
-    "normal": {
-      "x": -0.0,
-      "y": 1.0,
-      "z": 0.0
-    },
-    "width": 512.0,
-    "height": 384.0,
-    "depth": 512.0,
-    "rise": 0.0,
-    "goal": ""
-  },
-  {
     "label": "KT7_Lab_A_Climb_2W",
     "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92870903_1689944243",
     "kind": "wall",
     "centre": {
-      "x": -23040,
-      "y": -68864,
+      "x": -23296,
+      "y": -69120,
       "z": 768
     },
     "right": {
@@ -304,8 +279,8 @@
     "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92870903_1691886262",
     "kind": "wall",
     "centre": {
-      "x": -21248,
-      "y": -68608,
+      "x": -21504,
+      "y": -68864,
       "z": 768
     },
     "right": {
@@ -329,8 +304,8 @@
     "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92870903_1688765231",
     "kind": "wall",
     "centre": {
-      "x": -23040,
-      "y": -68864,
+      "x": -23296,
+      "y": -69120,
       "z": 0
     },
     "right": {
@@ -341,6 +316,31 @@
     "normal": {
       "x": -1.0,
       "y": 2.83276944882399e-16,
+      "z": 0.0
+    },
+    "width": 512.0,
+    "height": 384.0,
+    "depth": 512.0,
+    "rise": 0.0,
+    "goal": ""
+  },
+  {
+    "label": "KT38_Tunnel_Box1_S",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_M1_Solid_C_UAID_30560F202F92FE0C03_1861498038",
+    "kind": "wall",
+    "centre": {
+      "x": 43520,
+      "y": -41728,
+      "z": 0
+    },
+    "right": {
+      "x": 1.0,
+      "y": 0.0,
+      "z": 0.0
+    },
+    "normal": {
+      "x": -0.0,
+      "y": 1.0,
       "z": 0.0
     },
     "width": 512.0,
@@ -373,106 +373,6 @@
     "depth": 512.0,
     "rise": 0.0,
     "goal": "side_peek_right"
-  },
-  {
-    "label": "KT16_Op_R5_Box0_E",
-    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92F00903_1906666006",
-    "kind": "wall",
-    "centre": {
-      "x": -26112,
-      "y": -68864,
-      "z": 0
-    },
-    "right": {
-      "x": 2.83276944882399e-16,
-      "y": 1.0,
-      "z": 0.0
-    },
-    "normal": {
-      "x": -1.0,
-      "y": 2.83276944882399e-16,
-      "z": 0.0
-    },
-    "width": 512.0,
-    "height": 384.0,
-    "depth": 512.0,
-    "rise": 0.0,
-    "goal": ""
-  },
-  {
-    "label": "KT16_Op_R5_Box1_W",
-    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92F00903_1907583012",
-    "kind": "wall",
-    "centre": {
-      "x": -26624,
-      "y": -67840,
-      "z": 0
-    },
-    "right": {
-      "x": 2.83276944882399e-16,
-      "y": 1.0,
-      "z": 0.0
-    },
-    "normal": {
-      "x": -1.0,
-      "y": 2.83276944882399e-16,
-      "z": 0.0
-    },
-    "width": 512.0,
-    "height": 384.0,
-    "depth": 512.0,
-    "rise": 0.0,
-    "goal": ""
-  },
-  {
-    "label": "KT16_Op_L3_Perch0_1E",
-    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92F00903_1908791020",
-    "kind": "wall",
-    "centre": {
-      "x": -24576,
-      "y": -67328,
-      "z": 384
-    },
-    "right": {
-      "x": 2.83276944882399e-16,
-      "y": 1.0,
-      "z": 0.0
-    },
-    "normal": {
-      "x": -1.0,
-      "y": 2.83276944882399e-16,
-      "z": 0.0
-    },
-    "width": 512.0,
-    "height": 384.0,
-    "depth": 512.0,
-    "rise": 0.0,
-    "goal": ""
-  },
-  {
-    "label": "KT_EditWall_E4_0",
-    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92E60803_1812978424",
-    "kind": "wall",
-    "centre": {
-      "x": 51712,
-      "y": -80640,
-      "z": 0
-    },
-    "right": {
-      "x": 2.83276944882399e-16,
-      "y": 1.0,
-      "z": 0.0
-    },
-    "normal": {
-      "x": -1.0,
-      "y": 2.83276944882399e-16,
-      "z": 0.0
-    },
-    "width": 512.0,
-    "height": 384.0,
-    "depth": 512.0,
-    "rise": 0.0,
-    "goal": "half_wall"
   },
   {
     "label": "KT18_Sky_Bot3_N",
@@ -554,8 +454,33 @@
     "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92870903_1694505288",
     "kind": "wall",
     "centre": {
-      "x": -19200,
-      "y": -64512,
+      "x": -19456,
+      "y": -64768,
+      "z": 0
+    },
+    "right": {
+      "x": 1.0,
+      "y": 0.0,
+      "z": 0.0
+    },
+    "normal": {
+      "x": -0.0,
+      "y": 1.0,
+      "z": 0.0
+    },
+    "width": 512.0,
+    "height": 384.0,
+    "depth": 512.0,
+    "rise": 0.0,
+    "goal": ""
+  },
+  {
+    "label": "KT31_EnemyBox_E7_S",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F929D0A03_1615119161",
+    "kind": "wall",
+    "centre": {
+      "x": 54528,
+      "y": -57344,
       "z": 0
     },
     "right": {
@@ -579,8 +504,8 @@
     "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92870903_1688292226",
     "kind": "wall",
     "centre": {
-      "x": -24320,
-      "y": -69120,
+      "x": -24576,
+      "y": -69376,
       "z": 0
     },
     "right": {
@@ -604,8 +529,8 @@
     "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92870903_1689250236",
     "kind": "wall",
     "centre": {
-      "x": -22528,
-      "y": -68864,
+      "x": -22784,
+      "y": -69120,
       "z": 384
     },
     "right": {
@@ -616,6 +541,31 @@
     "normal": {
       "x": -1.0,
       "y": 2.83276944882399e-16,
+      "z": 0.0
+    },
+    "width": 512.0,
+    "height": 384.0,
+    "depth": 512.0,
+    "rise": 0.0,
+    "goal": ""
+  },
+  {
+    "label": "KT38_Tunnel_Box2_S",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_M1_Solid_C_UAID_30560F202F92FE0C03_1864201042",
+    "kind": "wall",
+    "centre": {
+      "x": 44544,
+      "y": -39680,
+      "z": 0
+    },
+    "right": {
+      "x": 1.0,
+      "y": 0.0,
+      "z": 0.0
+    },
+    "normal": {
+      "x": -0.0,
+      "y": 1.0,
       "z": 0.0
     },
     "width": 512.0,
@@ -650,88 +600,13 @@
     "goal": ""
   },
   {
-    "label": "KT_EditWall_E4_8",
-    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92E60803_1813546432",
-    "kind": "wall",
-    "centre": {
-      "x": 51712,
-      "y": -76544,
-      "z": 0
-    },
-    "right": {
-      "x": 2.83276944882399e-16,
-      "y": 1.0,
-      "z": 0.0
-    },
-    "normal": {
-      "x": -1.0,
-      "y": 2.83276944882399e-16,
-      "z": 0.0
-    },
-    "width": 512.0,
-    "height": 384.0,
-    "depth": 512.0,
-    "rise": 0.0,
-    "goal": "half_wall"
-  },
-  {
-    "label": "KT16_Op_L3_Perch0_1W",
-    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92F00903_1908926021",
-    "kind": "wall",
-    "centre": {
-      "x": -25088,
-      "y": -67328,
-      "z": 384
-    },
-    "right": {
-      "x": 2.83276944882399e-16,
-      "y": 1.0,
-      "z": 0.0
-    },
-    "normal": {
-      "x": -1.0,
-      "y": 2.83276944882399e-16,
-      "z": 0.0
-    },
-    "width": 512.0,
-    "height": 384.0,
-    "depth": 512.0,
-    "rise": 0.0,
-    "goal": ""
-  },
-  {
     "label": "KT7_Lab_A_Drop_2E",
     "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92870903_1692089264",
     "kind": "wall",
     "centre": {
-      "x": -20992,
-      "y": -68864,
+      "x": -21248,
+      "y": -69120,
       "z": 768
-    },
-    "right": {
-      "x": 2.83276944882399e-16,
-      "y": 1.0,
-      "z": 0.0
-    },
-    "normal": {
-      "x": -1.0,
-      "y": 2.83276944882399e-16,
-      "z": 0.0
-    },
-    "width": 512.0,
-    "height": 384.0,
-    "depth": 512.0,
-    "rise": 0.0,
-    "goal": ""
-  },
-  {
-    "label": "KT16_Op_L1_BotCover_3",
-    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92F00903_1904795993",
-    "kind": "wall",
-    "centre": {
-      "x": -33792,
-      "y": -63744,
-      "z": 0
     },
     "right": {
       "x": 2.83276944882399e-16,
@@ -829,8 +704,8 @@
     "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92870903_1694031283",
     "kind": "wall",
     "centre": {
-      "x": -22016,
-      "y": -65280,
+      "x": -22272,
+      "y": -65536,
       "z": 768
     },
     "right": {
@@ -850,12 +725,37 @@
     "goal": ""
   },
   {
+    "label": "KT38_Tunnel_Box4_N",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_M1_Solid_C_UAID_30560F202F92FE0C03_1868915049",
+    "kind": "wall",
+    "centre": {
+      "x": 45568,
+      "y": -40192,
+      "z": 0
+    },
+    "right": {
+      "x": 1.0,
+      "y": 0.0,
+      "z": 0.0
+    },
+    "normal": {
+      "x": -0.0,
+      "y": 1.0,
+      "z": 0.0
+    },
+    "width": 512.0,
+    "height": 384.0,
+    "depth": 512.0,
+    "rise": 0.0,
+    "goal": ""
+  },
+  {
     "label": "KT7_Lab_B_Cover_2",
     "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92870903_1693115274",
     "kind": "wall",
     "centre": {
-      "x": -18944,
-      "y": -67840,
+      "x": -19200,
+      "y": -68096,
       "z": 0
     },
     "right": {
@@ -879,8 +779,8 @@
     "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92870903_1688578229",
     "kind": "wall",
     "centre": {
-      "x": -22784,
-      "y": -69120,
+      "x": -23040,
+      "y": -69376,
       "z": 0
     },
     "right": {
@@ -904,8 +804,8 @@
     "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92870903_1692893272",
     "kind": "wall",
     "centre": {
-      "x": -18944,
-      "y": -68864,
+      "x": -19200,
+      "y": -69120,
       "z": 0
     },
     "right": {
@@ -954,8 +854,8 @@
     "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92870903_1690220246",
     "kind": "wall",
     "centre": {
-      "x": -22784,
-      "y": -68608,
+      "x": -23040,
+      "y": -68864,
       "z": 1152
     },
     "right": {
@@ -1000,37 +900,37 @@
     "goal": ""
   },
   {
-    "label": "KT_EditWall_E4_7",
-    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92E60803_1813496431",
+    "label": "KT38_Tunnel_Box2_N",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_M1_Solid_C_UAID_30560F202F92FE0C03_1863581041",
     "kind": "wall",
     "centre": {
-      "x": 51712,
-      "y": -77056,
+      "x": 44544,
+      "y": -39168,
       "z": 0
     },
     "right": {
-      "x": 2.83276944882399e-16,
-      "y": 1.0,
+      "x": 1.0,
+      "y": 0.0,
       "z": 0.0
     },
     "normal": {
-      "x": -1.0,
-      "y": 2.83276944882399e-16,
+      "x": -0.0,
+      "y": 1.0,
       "z": 0.0
     },
     "width": 512.0,
     "height": 384.0,
     "depth": 512.0,
     "rise": 0.0,
-    "goal": "half_wall"
+    "goal": ""
   },
   {
     "label": "KT7_Lab_B_BotCover_1",
     "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92870903_1693297276",
     "kind": "wall",
     "centre": {
-      "x": -16896,
-      "y": -67840,
+      "x": -17152,
+      "y": -68096,
       "z": 0
     },
     "right": {
@@ -1079,8 +979,8 @@
     "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92870903_1691702260",
     "kind": "wall",
     "centre": {
-      "x": -20992,
-      "y": -68864,
+      "x": -21248,
+      "y": -69120,
       "z": 384
     },
     "right": {
@@ -1100,12 +1000,37 @@
     "goal": ""
   },
   {
+    "label": "KT38_Tunnel_Box4_S",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_M1_Solid_C_UAID_30560F202F92FE0C03_1869578050",
+    "kind": "wall",
+    "centre": {
+      "x": 45568,
+      "y": -40704,
+      "z": 0
+    },
+    "right": {
+      "x": 1.0,
+      "y": 0.0,
+      "z": 0.0
+    },
+    "normal": {
+      "x": -0.0,
+      "y": 1.0,
+      "z": 0.0
+    },
+    "width": 512.0,
+    "height": 384.0,
+    "depth": 512.0,
+    "rise": 0.0,
+    "goal": ""
+  },
+  {
     "label": "KT7_Lab_C_PlatWall_-126",
     "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92870903_1694121284",
     "kind": "wall",
     "centre": {
-      "x": -22016,
-      "y": -64256,
+      "x": -22272,
+      "y": -64512,
       "z": 768
     },
     "right": {
@@ -1125,22 +1050,22 @@
     "goal": ""
   },
   {
-    "label": "KT16_Op_L3_Perch1_Cover",
-    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92F00903_1910596033",
+    "label": "KT38_Tunnel_Box0_N",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_M1_Solid_C_UAID_30560F202F92FE0C03_1857731033",
     "kind": "wall",
     "centre": {
-      "x": -22528,
-      "y": -67328,
-      "z": 768
+      "x": 42496,
+      "y": -39168,
+      "z": 0
     },
     "right": {
-      "x": 2.83276944882399e-16,
-      "y": 1.0,
+      "x": 1.0,
+      "y": 0.0,
       "z": 0.0
     },
     "normal": {
-      "x": -1.0,
-      "y": 2.83276944882399e-16,
+      "x": -0.0,
+      "y": 1.0,
       "z": 0.0
     },
     "width": 512.0,
@@ -1154,8 +1079,8 @@
     "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92870903_1689656240",
     "kind": "wall",
     "centre": {
-      "x": -22784,
-      "y": -68608,
+      "x": -23040,
+      "y": -68864,
       "z": 768
     },
     "right": {
@@ -1179,8 +1104,8 @@
     "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92870903_1689342237",
     "kind": "wall",
     "centre": {
-      "x": -23040,
-      "y": -68864,
+      "x": -23296,
+      "y": -69120,
       "z": 384
     },
     "right": {
@@ -1250,12 +1175,37 @@
     "goal": "roof_two_near"
   },
   {
+    "label": "KT38_Tunnel_Box1_N",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_M1_Solid_C_UAID_30560F202F92FE0C03_1860713037",
+    "kind": "wall",
+    "centre": {
+      "x": 43520,
+      "y": -41216,
+      "z": 0
+    },
+    "right": {
+      "x": 1.0,
+      "y": 0.0,
+      "z": 0.0
+    },
+    "normal": {
+      "x": -0.0,
+      "y": 1.0,
+      "z": 0.0
+    },
+    "width": 512.0,
+    "height": 384.0,
+    "depth": 512.0,
+    "rise": 0.0,
+    "goal": ""
+  },
+  {
     "label": "KT7_Lab_A_Drop_1S",
     "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92870903_1691595259",
     "kind": "wall",
     "centre": {
-      "x": -21248,
-      "y": -69120,
+      "x": -21504,
+      "y": -69376,
       "z": 384
     },
     "right": {
@@ -1325,6 +1275,31 @@
     "goal": "corner_upper_left"
   },
   {
+    "label": "KT38_Tunnel_Cover2",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_M1_Solid_C_UAID_30560F202F92FE0C03_1872820055",
+    "kind": "wall",
+    "centre": {
+      "x": 44800,
+      "y": -40960,
+      "z": 0
+    },
+    "right": {
+      "x": 2.83276944882399e-16,
+      "y": 1.0,
+      "z": 0.0
+    },
+    "normal": {
+      "x": -1.0,
+      "y": 2.83276944882399e-16,
+      "z": 0.0
+    },
+    "width": 512.0,
+    "height": 384.0,
+    "depth": 512.0,
+    "rise": 0.0,
+    "goal": ""
+  },
+  {
     "label": "KT18_Sky_Bot2_N",
     "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92F10903_1986966451",
     "kind": "wall",
@@ -1379,8 +1354,8 @@
     "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92870903_1688672230",
     "kind": "wall",
     "centre": {
-      "x": -22528,
-      "y": -68864,
+      "x": -22784,
+      "y": -69120,
       "z": 0
     },
     "right": {
@@ -1429,8 +1404,8 @@
     "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92870903_1692381267",
     "kind": "wall",
     "centre": {
-      "x": -20992,
-      "y": -68864,
+      "x": -21248,
+      "y": -69120,
       "z": 1152
     },
     "right": {
@@ -1454,8 +1429,8 @@
     "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92870903_1694992293",
     "kind": "wall",
     "centre": {
-      "x": -16640,
-      "y": -64512,
+      "x": -16896,
+      "y": -64768,
       "z": 0
     },
     "right": {
@@ -1504,83 +1479,8 @@
     "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92870903_1695183295",
     "kind": "wall",
     "centre": {
-      "x": -16384,
-      "y": -64768,
-      "z": 0
-    },
-    "right": {
-      "x": 2.83276944882399e-16,
-      "y": 1.0,
-      "z": 0.0
-    },
-    "normal": {
-      "x": -1.0,
-      "y": 2.83276944882399e-16,
-      "z": 0.0
-    },
-    "width": 512.0,
-    "height": 384.0,
-    "depth": 512.0,
-    "rise": 0.0,
-    "goal": ""
-  },
-  {
-    "label": "KT16_Op_L3_Perch0_0E",
-    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92F00903_1908240016",
-    "kind": "wall",
-    "centre": {
-      "x": -24576,
-      "y": -67328,
-      "z": 0
-    },
-    "right": {
-      "x": 2.83276944882399e-16,
-      "y": 1.0,
-      "z": 0.0
-    },
-    "normal": {
-      "x": -1.0,
-      "y": 2.83276944882399e-16,
-      "z": 0.0
-    },
-    "width": 512.0,
-    "height": 384.0,
-    "depth": 512.0,
-    "rise": 0.0,
-    "goal": ""
-  },
-  {
-    "label": "KT16_Op_L3_Perch1_0E",
-    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92F00903_1909685026",
-    "kind": "wall",
-    "centre": {
-      "x": -22016,
-      "y": -67328,
-      "z": 0
-    },
-    "right": {
-      "x": 2.83276944882399e-16,
-      "y": 1.0,
-      "z": 0.0
-    },
-    "normal": {
-      "x": -1.0,
-      "y": 2.83276944882399e-16,
-      "z": 0.0
-    },
-    "width": 512.0,
-    "height": 384.0,
-    "depth": 512.0,
-    "rise": 0.0,
-    "goal": ""
-  },
-  {
-    "label": "KT16_Op_L1_Cover_0",
-    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92F00903_1903369986",
-    "kind": "wall",
-    "centre": {
-      "x": -28160,
-      "y": -64768,
+      "x": -16640,
+      "y": -65024,
       "z": 0
     },
     "right": {
@@ -1604,8 +1504,8 @@
     "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92870903_1693206275",
     "kind": "wall",
     "centre": {
-      "x": -16896,
-      "y": -68864,
+      "x": -17152,
+      "y": -69120,
       "z": 0
     },
     "right": {
@@ -1629,8 +1529,8 @@
     "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92870903_1690531249",
     "kind": "wall",
     "centre": {
-      "x": -23040,
-      "y": -68864,
+      "x": -23296,
+      "y": -69120,
       "z": 1152
     },
     "right": {
@@ -1679,8 +1579,8 @@
     "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92870903_1695361297",
     "kind": "wall",
     "centre": {
-      "x": -17408,
-      "y": -65280,
+      "x": -17664,
+      "y": -65536,
       "z": 0
     },
     "right": {
@@ -1729,8 +1629,8 @@
     "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92870903_1691976263",
     "kind": "wall",
     "centre": {
-      "x": -21248,
-      "y": -69120,
+      "x": -21504,
+      "y": -69376,
       "z": 768
     },
     "right": {
@@ -1775,31 +1675,6 @@
     "goal": ""
   },
   {
-    "label": "KT16_Op_L3_Perch1_0S",
-    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92F00903_1909533025",
-    "kind": "wall",
-    "centre": {
-      "x": -22272,
-      "y": -67584,
-      "z": 0
-    },
-    "right": {
-      "x": 1.0,
-      "y": 0.0,
-      "z": 0.0
-    },
-    "normal": {
-      "x": -0.0,
-      "y": 1.0,
-      "z": 0.0
-    },
-    "width": 512.0,
-    "height": 384.0,
-    "depth": 512.0,
-    "rise": 0.0,
-    "goal": ""
-  },
-  {
     "label": "KT_EditWall_E7_7",
     "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92E60803_1814658451",
     "kind": "wall",
@@ -1829,34 +1704,9 @@
     "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92870903_1689054234",
     "kind": "wall",
     "centre": {
-      "x": -22784,
-      "y": -68608,
+      "x": -23040,
+      "y": -68864,
       "z": 384
-    },
-    "right": {
-      "x": 1.0,
-      "y": 0.0,
-      "z": 0.0
-    },
-    "normal": {
-      "x": -0.0,
-      "y": 1.0,
-      "z": 0.0
-    },
-    "width": 512.0,
-    "height": 384.0,
-    "depth": 512.0,
-    "rise": 0.0,
-    "goal": ""
-  },
-  {
-    "label": "KT16_Op_R4_Wall_N54",
-    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92F00903_1906109002",
-    "kind": "wall",
-    "centre": {
-      "x": -27392,
-      "y": -67584,
-      "z": 768
     },
     "right": {
       "x": 1.0,
@@ -1879,8 +1729,8 @@
     "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92870903_1694596289",
     "kind": "wall",
     "centre": {
-      "x": -19200,
-      "y": -65024,
+      "x": -19456,
+      "y": -65280,
       "z": 0
     },
     "right": {
@@ -1950,12 +1800,12 @@
     "goal": "side_peek_right"
   },
   {
-    "label": "KT16_Op_L1_BotCover_1",
-    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92F00903_1904501991",
+    "label": "KT38_Tunnel_Box2_E",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_M1_Solid_C_UAID_30560F202F92FE0C03_1864864043",
     "kind": "wall",
     "centre": {
-      "x": -29696,
-      "y": -64256,
+      "x": 44800,
+      "y": -39424,
       "z": 0
     },
     "right": {
@@ -1966,56 +1816,6 @@
     "normal": {
       "x": -1.0,
       "y": 2.83276944882399e-16,
-      "z": 0.0
-    },
-    "width": 512.0,
-    "height": 384.0,
-    "depth": 512.0,
-    "rise": 0.0,
-    "goal": ""
-  },
-  {
-    "label": "KT16_Op_R4_Wall_N55",
-    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92F00903_1905687999",
-    "kind": "wall",
-    "centre": {
-      "x": -27904,
-      "y": -67584,
-      "z": 768
-    },
-    "right": {
-      "x": 1.0,
-      "y": 0.0,
-      "z": 0.0
-    },
-    "normal": {
-      "x": -0.0,
-      "y": 1.0,
-      "z": 0.0
-    },
-    "width": 512.0,
-    "height": 384.0,
-    "depth": 512.0,
-    "rise": 0.0,
-    "goal": ""
-  },
-  {
-    "label": "KT16_Op_L3_Perch0_0S",
-    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92F00903_1908074015",
-    "kind": "wall",
-    "centre": {
-      "x": -24832,
-      "y": -67584,
-      "z": 0
-    },
-    "right": {
-      "x": 1.0,
-      "y": 0.0,
-      "z": 0.0
-    },
-    "normal": {
-      "x": -0.0,
-      "y": 1.0,
       "z": 0.0
     },
     "width": 512.0,
@@ -2029,8 +1829,8 @@
     "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92870903_1693006273",
     "kind": "wall",
     "centre": {
-      "x": -18432,
-      "y": -68352,
+      "x": -18688,
+      "y": -68608,
       "z": 0
     },
     "right": {
@@ -2050,37 +1850,12 @@
     "goal": ""
   },
   {
-    "label": "KT_EditWall_E4_9",
-    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92E60803_1813612433",
-    "kind": "wall",
-    "centre": {
-      "x": 51712,
-      "y": -76032,
-      "z": 0
-    },
-    "right": {
-      "x": 2.83276944882399e-16,
-      "y": 1.0,
-      "z": 0.0
-    },
-    "normal": {
-      "x": -1.0,
-      "y": 2.83276944882399e-16,
-      "z": 0.0
-    },
-    "width": 512.0,
-    "height": 384.0,
-    "depth": 512.0,
-    "rise": 0.0,
-    "goal": "half_wall"
-  },
-  {
     "label": "KT7_Lab_A_Drop_3S",
     "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92870903_1692286266",
     "kind": "wall",
     "centre": {
-      "x": -21248,
-      "y": -69120,
+      "x": -21504,
+      "y": -69376,
       "z": 1152
     },
     "right": {
@@ -2100,62 +1875,12 @@
     "goal": ""
   },
   {
-    "label": "KT_EditWall_E4_6",
-    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92E60803_1813412430",
-    "kind": "wall",
-    "centre": {
-      "x": 51712,
-      "y": -77568,
-      "z": 0
-    },
-    "right": {
-      "x": 2.83276944882399e-16,
-      "y": 1.0,
-      "z": 0.0
-    },
-    "normal": {
-      "x": -1.0,
-      "y": 2.83276944882399e-16,
-      "z": 0.0
-    },
-    "width": 512.0,
-    "height": 384.0,
-    "depth": 512.0,
-    "rise": 0.0,
-    "goal": "half_wall"
-  },
-  {
-    "label": "KT_EditWall_E4_1",
-    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92E60803_1813038425",
-    "kind": "wall",
-    "centre": {
-      "x": 51712,
-      "y": -80128,
-      "z": 0
-    },
-    "right": {
-      "x": 2.83276944882399e-16,
-      "y": 1.0,
-      "z": 0.0
-    },
-    "normal": {
-      "x": -1.0,
-      "y": 2.83276944882399e-16,
-      "z": 0.0
-    },
-    "width": 512.0,
-    "height": 384.0,
-    "depth": 512.0,
-    "rise": 0.0,
-    "goal": "half_wall"
-  },
-  {
     "label": "KT7_Lab_A_Drop_0S",
     "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92870903_1691168255",
     "kind": "wall",
     "centre": {
-      "x": -21248,
-      "y": -69120,
+      "x": -21504,
+      "y": -69376,
       "z": 0
     },
     "right": {
@@ -2175,13 +1900,13 @@
     "goal": ""
   },
   {
-    "label": "KT16_Op_L1_Cover_2",
-    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92F00903_1903643988",
+    "label": "KT7_Lab_A_Drop_2W",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92870903_1692192265",
     "kind": "wall",
     "centre": {
-      "x": -32256,
-      "y": -65280,
-      "z": 0
+      "x": -21760,
+      "y": -69120,
+      "z": 768
     },
     "right": {
       "x": 2.83276944882399e-16,
@@ -2200,13 +1925,13 @@
     "goal": ""
   },
   {
-    "label": "KT7_Lab_A_Drop_2W",
-    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92870903_1692192265",
+    "label": "KT38_Tunnel_Box4_E",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_M1_Solid_C_UAID_30560F202F92FE0C03_1870174051",
     "kind": "wall",
     "centre": {
-      "x": -21504,
-      "y": -68864,
-      "z": 768
+      "x": 45824,
+      "y": -40448,
+      "z": 0
     },
     "right": {
       "x": 2.83276944882399e-16,
@@ -2300,37 +2025,12 @@
     "goal": ""
   },
   {
-    "label": "KT16_Op_L3_Perch1_1S",
-    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92F00903_1910074029",
-    "kind": "wall",
-    "centre": {
-      "x": -22272,
-      "y": -67584,
-      "z": 384
-    },
-    "right": {
-      "x": 1.0,
-      "y": 0.0,
-      "z": 0.0
-    },
-    "normal": {
-      "x": -0.0,
-      "y": 1.0,
-      "z": 0.0
-    },
-    "width": 512.0,
-    "height": 384.0,
-    "depth": 512.0,
-    "rise": 0.0,
-    "goal": ""
-  },
-  {
     "label": "KT7_Lab_A_Drop_3W",
     "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92870903_1692488268",
     "kind": "wall",
     "centre": {
-      "x": -21504,
-      "y": -68864,
+      "x": -21760,
+      "y": -69120,
       "z": 1152
     },
     "right": {
@@ -2354,8 +2054,8 @@
     "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92870903_1691297256",
     "kind": "wall",
     "centre": {
-      "x": -20992,
-      "y": -68864,
+      "x": -21248,
+      "y": -69120,
       "z": 0
     },
     "right": {
@@ -2366,31 +2066,6 @@
     "normal": {
       "x": -1.0,
       "y": 2.83276944882399e-16,
-      "z": 0.0
-    },
-    "width": 512.0,
-    "height": 384.0,
-    "depth": 512.0,
-    "rise": 0.0,
-    "goal": ""
-  },
-  {
-    "label": "KT16_Op_R5_Box0_S",
-    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92F00903_1906515005",
-    "kind": "wall",
-    "centre": {
-      "x": -26368,
-      "y": -69120,
-      "z": 0
-    },
-    "right": {
-      "x": 1.0,
-      "y": 0.0,
-      "z": 0.0
-    },
-    "normal": {
-      "x": -0.0,
-      "y": 1.0,
       "z": 0.0
     },
     "width": 512.0,
@@ -2416,6 +2091,31 @@
     "normal": {
       "x": -1.0,
       "y": 2.83276944882399e-16,
+      "z": 0.0
+    },
+    "width": 512.0,
+    "height": 384.0,
+    "depth": 512.0,
+    "rise": 0.0,
+    "goal": ""
+  },
+  {
+    "label": "KT38_Tunnel_Box0_S",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_M1_Solid_C_UAID_30560F202F92FE0C03_1858413034",
+    "kind": "wall",
+    "centre": {
+      "x": 42496,
+      "y": -39680,
+      "z": 0
+    },
+    "right": {
+      "x": 1.0,
+      "y": 0.0,
+      "z": 0.0
+    },
+    "normal": {
+      "x": -0.0,
+      "y": 1.0,
       "z": 0.0
     },
     "width": 512.0,
@@ -2504,58 +2204,8 @@
     "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92870903_1694783291",
     "kind": "wall",
     "centre": {
-      "x": -19456,
-      "y": -64768,
-      "z": 0
-    },
-    "right": {
-      "x": 2.83276944882399e-16,
-      "y": 1.0,
-      "z": 0.0
-    },
-    "normal": {
-      "x": -1.0,
-      "y": 2.83276944882399e-16,
-      "z": 0.0
-    },
-    "width": 512.0,
-    "height": 384.0,
-    "depth": 512.0,
-    "rise": 0.0,
-    "goal": ""
-  },
-  {
-    "label": "KT_EditWall_E4_3",
-    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92E60803_1813198427",
-    "kind": "wall",
-    "centre": {
-      "x": 51712,
-      "y": -79104,
-      "z": 0
-    },
-    "right": {
-      "x": 2.83276944882399e-16,
-      "y": 1.0,
-      "z": 0.0
-    },
-    "normal": {
-      "x": -1.0,
-      "y": 2.83276944882399e-16,
-      "z": 0.0
-    },
-    "width": 512.0,
-    "height": 384.0,
-    "depth": 512.0,
-    "rise": 0.0,
-    "goal": "half_wall"
-  },
-  {
-    "label": "KT16_Op_L1_Cover_1",
-    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92F00903_1903503987",
-    "kind": "wall",
-    "centre": {
-      "x": -31744,
-      "y": -64256,
+      "x": -19712,
+      "y": -65024,
       "z": 0
     },
     "right": {
@@ -2579,58 +2229,8 @@
     "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92870903_1688483228",
     "kind": "wall",
     "centre": {
-      "x": -24576,
-      "y": -68864,
-      "z": 0
-    },
-    "right": {
-      "x": 2.83276944882399e-16,
-      "y": 1.0,
-      "z": 0.0
-    },
-    "normal": {
-      "x": -1.0,
-      "y": 2.83276944882399e-16,
-      "z": 0.0
-    },
-    "width": 512.0,
-    "height": 384.0,
-    "depth": 512.0,
-    "rise": 0.0,
-    "goal": ""
-  },
-  {
-    "label": "KT16_Op_L3_Perch0_0N",
-    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92F00903_1907906014",
-    "kind": "wall",
-    "centre": {
       "x": -24832,
-      "y": -67072,
-      "z": 0
-    },
-    "right": {
-      "x": 1.0,
-      "y": 0.0,
-      "z": 0.0
-    },
-    "normal": {
-      "x": -0.0,
-      "y": 1.0,
-      "z": 0.0
-    },
-    "width": 512.0,
-    "height": 384.0,
-    "depth": 512.0,
-    "rise": 0.0,
-    "goal": ""
-  },
-  {
-    "label": "KT16_Op_L1_BotCover_0",
-    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92F00903_1904361990",
-    "kind": "wall",
-    "centre": {
-      "x": -29696,
-      "y": -65280,
+      "y": -69120,
       "z": 0
     },
     "right": {
@@ -2648,114 +2248,14 @@
     "depth": 512.0,
     "rise": 0.0,
     "goal": ""
-  },
-  {
-    "label": "KT16_Op_L3_Perch1_0N",
-    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92F00903_1909380024",
-    "kind": "wall",
-    "centre": {
-      "x": -22272,
-      "y": -67072,
-      "z": 0
-    },
-    "right": {
-      "x": 1.0,
-      "y": 0.0,
-      "z": 0.0
-    },
-    "normal": {
-      "x": -0.0,
-      "y": 1.0,
-      "z": 0.0
-    },
-    "width": 512.0,
-    "height": 384.0,
-    "depth": 512.0,
-    "rise": 0.0,
-    "goal": ""
-  },
-  {
-    "label": "KT_EditWall_E4_4",
-    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92E60803_1813272428",
-    "kind": "wall",
-    "centre": {
-      "x": 51712,
-      "y": -78592,
-      "z": 0
-    },
-    "right": {
-      "x": 2.83276944882399e-16,
-      "y": 1.0,
-      "z": 0.0
-    },
-    "normal": {
-      "x": -1.0,
-      "y": 2.83276944882399e-16,
-      "z": 0.0
-    },
-    "width": 512.0,
-    "height": 384.0,
-    "depth": 512.0,
-    "rise": 0.0,
-    "goal": "half_wall"
-  },
-  {
-    "label": "KT16_Op_L3_Perch0_1S",
-    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92F00903_1908641019",
-    "kind": "wall",
-    "centre": {
-      "x": -24832,
-      "y": -67584,
-      "z": 384
-    },
-    "right": {
-      "x": 1.0,
-      "y": 0.0,
-      "z": 0.0
-    },
-    "normal": {
-      "x": -0.0,
-      "y": 1.0,
-      "z": 0.0
-    },
-    "width": 512.0,
-    "height": 384.0,
-    "depth": 512.0,
-    "rise": 0.0,
-    "goal": ""
-  },
-  {
-    "label": "KT_EditWall_E4_5",
-    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92E60803_1813338429",
-    "kind": "wall",
-    "centre": {
-      "x": 51712,
-      "y": -78080,
-      "z": 0
-    },
-    "right": {
-      "x": 2.83276944882399e-16,
-      "y": 1.0,
-      "z": 0.0
-    },
-    "normal": {
-      "x": -1.0,
-      "y": 2.83276944882399e-16,
-      "z": 0.0
-    },
-    "width": 512.0,
-    "height": 384.0,
-    "depth": 512.0,
-    "rise": 0.0,
-    "goal": "half_wall"
   },
   {
     "label": "KT7_Lab_D_BotBox_S",
     "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92870903_1695083294",
     "kind": "wall",
     "centre": {
-      "x": -16640,
-      "y": -65024,
+      "x": -16896,
+      "y": -65280,
       "z": 0
     },
     "right": {
@@ -2775,37 +2275,12 @@
     "goal": ""
   },
   {
-    "label": "KT16_Op_R5_Box0_N",
-    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92F00903_1906387004",
+    "label": "KT38_Tunnel_Box0_E",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_M1_Solid_C_UAID_30560F202F92FE0C03_1859067035",
     "kind": "wall",
     "centre": {
-      "x": -26368,
-      "y": -68608,
-      "z": 0
-    },
-    "right": {
-      "x": 1.0,
-      "y": 0.0,
-      "z": 0.0
-    },
-    "normal": {
-      "x": -0.0,
-      "y": 1.0,
-      "z": 0.0
-    },
-    "width": 512.0,
-    "height": 384.0,
-    "depth": 512.0,
-    "rise": 0.0,
-    "goal": ""
-  },
-  {
-    "label": "KT16_Op_R5_Box0_W",
-    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92F00903_1906798007",
-    "kind": "wall",
-    "centre": {
-      "x": -26624,
-      "y": -68864,
+      "x": 42752,
+      "y": -39424,
       "z": 0
     },
     "right": {
@@ -2875,113 +2350,13 @@
     "goal": ""
   },
   {
-    "label": "KT16_Op_L3_Perch1_1E",
-    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92F00903_1910212030",
-    "kind": "wall",
-    "centre": {
-      "x": -22016,
-      "y": -67328,
-      "z": 384
-    },
-    "right": {
-      "x": 2.83276944882399e-16,
-      "y": 1.0,
-      "z": 0.0
-    },
-    "normal": {
-      "x": -1.0,
-      "y": 2.83276944882399e-16,
-      "z": 0.0
-    },
-    "width": 512.0,
-    "height": 384.0,
-    "depth": 512.0,
-    "rise": 0.0,
-    "goal": ""
-  },
-  {
     "label": "KT7_Lab_D_Mid_-126",
     "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92870903_1695465298",
     "kind": "wall",
     "centre": {
-      "x": -17408,
-      "y": -64256,
+      "x": -17664,
+      "y": -64512,
       "z": 0
-    },
-    "right": {
-      "x": 2.83276944882399e-16,
-      "y": 1.0,
-      "z": 0.0
-    },
-    "normal": {
-      "x": -1.0,
-      "y": 2.83276944882399e-16,
-      "z": 0.0
-    },
-    "width": 512.0,
-    "height": 384.0,
-    "depth": 512.0,
-    "rise": 0.0,
-    "goal": ""
-  },
-  {
-    "label": "KT16_Op_R5_Box1_E",
-    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92F00903_1907428011",
-    "kind": "wall",
-    "centre": {
-      "x": -26112,
-      "y": -67840,
-      "z": 0
-    },
-    "right": {
-      "x": 2.83276944882399e-16,
-      "y": 1.0,
-      "z": 0.0
-    },
-    "normal": {
-      "x": -1.0,
-      "y": 2.83276944882399e-16,
-      "z": 0.0
-    },
-    "width": 512.0,
-    "height": 384.0,
-    "depth": 512.0,
-    "rise": 0.0,
-    "goal": ""
-  },
-  {
-    "label": "KT16_Op_L3_Perch1_0W",
-    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92F00903_1909798027",
-    "kind": "wall",
-    "centre": {
-      "x": -22528,
-      "y": -67328,
-      "z": 0
-    },
-    "right": {
-      "x": 2.83276944882399e-16,
-      "y": 1.0,
-      "z": 0.0
-    },
-    "normal": {
-      "x": -1.0,
-      "y": 2.83276944882399e-16,
-      "z": 0.0
-    },
-    "width": 512.0,
-    "height": 384.0,
-    "depth": 512.0,
-    "rise": 0.0,
-    "goal": ""
-  },
-  {
-    "label": "KT16_Op_L3_Perch0_Cover",
-    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92F00903_1909234023",
-    "kind": "wall",
-    "centre": {
-      "x": -25088,
-      "y": -67328,
-      "z": 768
     },
     "right": {
       "x": 2.83276944882399e-16,
@@ -3004,8 +2379,8 @@
     "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92870903_1688382227",
     "kind": "wall",
     "centre": {
-      "x": -24064,
-      "y": -68864,
+      "x": -24320,
+      "y": -69120,
       "z": 0
     },
     "right": {
@@ -3025,12 +2400,12 @@
     "goal": ""
   },
   {
-    "label": "KT16_Op_R5_Box1_N",
-    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92F00903_1907128009",
+    "label": "KT38_Tunnel_Box3_N",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_M1_Solid_C_UAID_30560F202F92FE0C03_1866437045",
     "kind": "wall",
     "centre": {
-      "x": -26368,
-      "y": -67584,
+      "x": 45568,
+      "y": -41216,
       "z": 0
     },
     "right": {
@@ -3041,31 +2416,6 @@
     "normal": {
       "x": -0.0,
       "y": 1.0,
-      "z": 0.0
-    },
-    "width": 512.0,
-    "height": 384.0,
-    "depth": 512.0,
-    "rise": 0.0,
-    "goal": ""
-  },
-  {
-    "label": "KT16_Op_R4_Wall_Front",
-    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92F00903_1906241003",
-    "kind": "wall",
-    "centre": {
-      "x": -28160,
-      "y": -67840,
-      "z": 768
-    },
-    "right": {
-      "x": 2.83276944882399e-16,
-      "y": 1.0,
-      "z": 0.0
-    },
-    "normal": {
-      "x": -1.0,
-      "y": 2.83276944882399e-16,
       "z": 0.0
     },
     "width": 512.0,
@@ -3125,31 +2475,6 @@
     "goal": "side_peek_right"
   },
   {
-    "label": "KT16_Op_L3_Perch1_1N",
-    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92F00903_1909939028",
-    "kind": "wall",
-    "centre": {
-      "x": -22272,
-      "y": -67072,
-      "z": 384
-    },
-    "right": {
-      "x": 1.0,
-      "y": 0.0,
-      "z": 0.0
-    },
-    "normal": {
-      "x": -0.0,
-      "y": 1.0,
-      "z": 0.0
-    },
-    "width": 512.0,
-    "height": 384.0,
-    "depth": 512.0,
-    "rise": 0.0,
-    "goal": ""
-  },
-  {
     "label": "KT12_Lab_wall_quarter_wall_6",
     "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F929A0903_1595789921",
     "kind": "wall",
@@ -3173,31 +2498,6 @@
     "depth": 512.0,
     "rise": 0.0,
     "goal": "quarter_wall"
-  },
-  {
-    "label": "KT16_Op_L3_Perch0_0W",
-    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92F00903_1908373017",
-    "kind": "wall",
-    "centre": {
-      "x": -25088,
-      "y": -67328,
-      "z": 0
-    },
-    "right": {
-      "x": 2.83276944882399e-16,
-      "y": 1.0,
-      "z": 0.0
-    },
-    "normal": {
-      "x": -1.0,
-      "y": 2.83276944882399e-16,
-      "z": 0.0
-    },
-    "width": 512.0,
-    "height": 384.0,
-    "depth": 512.0,
-    "rise": 0.0,
-    "goal": ""
   },
   {
     "label": "KT4_Arena_Wall_1",
@@ -3229,8 +2529,8 @@
     "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92870903_1691497258",
     "kind": "wall",
     "centre": {
-      "x": -21248,
-      "y": -68608,
+      "x": -21504,
+      "y": -68864,
       "z": 384
     },
     "right": {
@@ -3254,8 +2554,33 @@
     "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92870903_1691391257",
     "kind": "wall",
     "centre": {
-      "x": -21504,
-      "y": -68864,
+      "x": -21760,
+      "y": -69120,
+      "z": 0
+    },
+    "right": {
+      "x": 2.83276944882399e-16,
+      "y": 1.0,
+      "z": 0.0
+    },
+    "normal": {
+      "x": -1.0,
+      "y": 2.83276944882399e-16,
+      "z": 0.0
+    },
+    "width": 512.0,
+    "height": 384.0,
+    "depth": 512.0,
+    "rise": 0.0,
+    "goal": ""
+  },
+  {
+    "label": "KT31_EnemyBox_E7_E",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F929D0A03_1615684162",
+    "kind": "wall",
+    "centre": {
+      "x": 54784,
+      "y": -57088,
       "z": 0
     },
     "right": {
@@ -3300,12 +2625,37 @@
     "goal": ""
   },
   {
-    "label": "KT16_Op_L1_BotCover_2",
-    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92F00903_1904669992",
+    "label": "KT38_Tunnel_Box3_S",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_M1_Solid_C_UAID_30560F202F92FE0C03_1867051046",
     "kind": "wall",
     "centre": {
-      "x": -33792,
-      "y": -64768,
+      "x": 45568,
+      "y": -41728,
+      "z": 0
+    },
+    "right": {
+      "x": 1.0,
+      "y": 0.0,
+      "z": 0.0
+    },
+    "normal": {
+      "x": -0.0,
+      "y": 1.0,
+      "z": 0.0
+    },
+    "width": 512.0,
+    "height": 384.0,
+    "depth": 512.0,
+    "rise": 0.0,
+    "goal": ""
+  },
+  {
+    "label": "KT38_Tunnel_Box1_E",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_M1_Solid_C_UAID_30560F202F92FE0C03_1862285039",
+    "kind": "wall",
+    "centre": {
+      "x": 43776,
+      "y": -41472,
       "z": 0
     },
     "right": {
@@ -3354,34 +2704,9 @@
     "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92870903_1690311247",
     "kind": "wall",
     "centre": {
-      "x": -22784,
-      "y": -69120,
+      "x": -23040,
+      "y": -69376,
       "z": 1152
-    },
-    "right": {
-      "x": 1.0,
-      "y": 0.0,
-      "z": 0.0
-    },
-    "normal": {
-      "x": -0.0,
-      "y": 1.0,
-      "z": 0.0
-    },
-    "width": 512.0,
-    "height": 384.0,
-    "depth": 512.0,
-    "rise": 0.0,
-    "goal": ""
-  },
-  {
-    "label": "KT16_Op_R5_Box1_S",
-    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92F00903_1907280010",
-    "kind": "wall",
-    "centre": {
-      "x": -26368,
-      "y": -68096,
-      "z": 0
     },
     "right": {
       "x": 1.0,
@@ -3404,8 +2729,8 @@
     "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92870903_1689159235",
     "kind": "wall",
     "centre": {
-      "x": -22784,
-      "y": -69120,
+      "x": -23040,
+      "y": -69376,
       "z": 384
     },
     "right": {
@@ -3450,31 +2775,6 @@
     "goal": "floor_hole_far_left"
   },
   {
-    "label": "KT16_Op_R3_EditWall",
-    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92F00903_1904952994",
-    "kind": "wall",
-    "centre": {
-      "x": -30720,
-      "y": -68352,
-      "z": 0
-    },
-    "right": {
-      "x": 2.83276944882399e-16,
-      "y": 1.0,
-      "z": 0.0
-    },
-    "normal": {
-      "x": -1.0,
-      "y": 2.83276944882399e-16,
-      "z": 0.0
-    },
-    "width": 512.0,
-    "height": 384.0,
-    "depth": 512.0,
-    "rise": 0.0,
-    "goal": ""
-  },
-  {
     "label": "KT12_Lab_roof_roof_diagonal_b_5",
     "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_RoofC_C_UAID_30560F202F929A0903_1592411912",
     "kind": "roof",
@@ -3500,12 +2800,12 @@
     "goal": "roof_diagonal_b"
   },
   {
-    "label": "KT_EditWall_E4_2",
-    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92E60803_1813122426",
+    "label": "KT38_Tunnel_Cover0",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_M1_Solid_C_UAID_30560F202F92FE0C03_1871568053",
     "kind": "wall",
     "centre": {
-      "x": 51712,
-      "y": -79616,
+      "x": 43264,
+      "y": -40960,
       "z": 0
     },
     "right": {
@@ -3522,15 +2822,15 @@
     "height": 384.0,
     "depth": 512.0,
     "rise": 0.0,
-    "goal": "half_wall"
+    "goal": ""
   },
   {
     "label": "KT7_Lab_A_Climb_2E",
     "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92870903_1689847242",
     "kind": "wall",
     "centre": {
-      "x": -22528,
-      "y": -68864,
+      "x": -22784,
+      "y": -69120,
       "z": 768
     },
     "right": {
@@ -3625,6 +2925,31 @@
     "goal": ""
   },
   {
+    "label": "KT38_Tunnel_Box3_E",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_M1_Solid_C_UAID_30560F202F92FE0C03_1867635047",
+    "kind": "wall",
+    "centre": {
+      "x": 45824,
+      "y": -41472,
+      "z": 0
+    },
+    "right": {
+      "x": 2.83276944882399e-16,
+      "y": 1.0,
+      "z": 0.0
+    },
+    "normal": {
+      "x": -1.0,
+      "y": 2.83276944882399e-16,
+      "z": 0.0
+    },
+    "width": 512.0,
+    "height": 384.0,
+    "depth": 512.0,
+    "rise": 0.0,
+    "goal": ""
+  },
+  {
     "label": "KT18_Sky_Bot3_E",
     "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92F10903_1987790457",
     "kind": "wall",
@@ -3675,208 +3000,8 @@
     "goal": ""
   },
   {
-    "label": "KT31_EnemyBox_P7_N",
-    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F929D0A03_1609388152",
-    "kind": "wall",
-    "centre": {
-      "x": 44544,
-      "y": -35584,
-      "z": 0
-    },
-    "right": {
-      "x": 1.0,
-      "y": 0.0,
-      "z": 0.0
-    },
-    "normal": {
-      "x": -0.0,
-      "y": 1.0,
-      "z": 0.0
-    },
-    "width": 512.0,
-    "height": 384.0,
-    "depth": 512.0,
-    "rise": 0.0,
-    "goal": ""
-  },
-  {
-    "label": "KT31_EnemyBox_P7_S",
-    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F929D0A03_1609935153",
-    "kind": "wall",
-    "centre": {
-      "x": 44544,
-      "y": -36096,
-      "z": 0
-    },
-    "right": {
-      "x": 1.0,
-      "y": 0.0,
-      "z": 0.0
-    },
-    "normal": {
-      "x": -0.0,
-      "y": 1.0,
-      "z": 0.0
-    },
-    "width": 512.0,
-    "height": 384.0,
-    "depth": 512.0,
-    "rise": 0.0,
-    "goal": ""
-  },
-  {
-    "label": "KT31_EnemyBox_P7_E",
-    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F929D0A03_1610495154",
-    "kind": "wall",
-    "centre": {
-      "x": 44800,
-      "y": -35840,
-      "z": 0
-    },
-    "right": {
-      "x": 2.83276944882399e-16,
-      "y": 1.0,
-      "z": 0.0
-    },
-    "normal": {
-      "x": -1.0,
-      "y": 2.83276944882399e-16,
-      "z": 0.0
-    },
-    "width": 512.0,
-    "height": 384.0,
-    "depth": 512.0,
-    "rise": 0.0,
-    "goal": ""
-  },
-  {
-    "label": "KT31_EnemyBox_E7_N",
-    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F929D0A03_1614563160",
-    "kind": "wall",
-    "centre": {
-      "x": 54528,
-      "y": -56832,
-      "z": 0
-    },
-    "right": {
-      "x": 1.0,
-      "y": 0.0,
-      "z": 0.0
-    },
-    "normal": {
-      "x": -0.0,
-      "y": 1.0,
-      "z": 0.0
-    },
-    "width": 512.0,
-    "height": 384.0,
-    "depth": 512.0,
-    "rise": 0.0,
-    "goal": ""
-  },
-  {
-    "label": "KT31_EnemyBox_E7_S",
-    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F929D0A03_1615119161",
-    "kind": "wall",
-    "centre": {
-      "x": 54528,
-      "y": -57344,
-      "z": 0
-    },
-    "right": {
-      "x": 1.0,
-      "y": 0.0,
-      "z": 0.0
-    },
-    "normal": {
-      "x": -0.0,
-      "y": 1.0,
-      "z": 0.0
-    },
-    "width": 512.0,
-    "height": 384.0,
-    "depth": 512.0,
-    "rise": 0.0,
-    "goal": ""
-  },
-  {
-    "label": "KT31_EnemyBox_E7_E",
-    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F929D0A03_1615684162",
-    "kind": "wall",
-    "centre": {
-      "x": 54784,
-      "y": -57088,
-      "z": 0
-    },
-    "right": {
-      "x": 2.83276944882399e-16,
-      "y": 1.0,
-      "z": 0.0
-    },
-    "normal": {
-      "x": -1.0,
-      "y": 2.83276944882399e-16,
-      "z": 0.0
-    },
-    "width": 512.0,
-    "height": 384.0,
-    "depth": 512.0,
-    "rise": 0.0,
-    "goal": ""
-  },
-  {
-    "label": "KT32_GridTest_A",
-    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92CA0A03_2052299708",
-    "kind": "wall",
-    "centre": {
-      "x": -1280,
-      "y": -61440,
-      "z": 0
-    },
-    "right": {
-      "x": 1.0,
-      "y": 0.0,
-      "z": 0.0
-    },
-    "normal": {
-      "x": -0.0,
-      "y": 1.0,
-      "z": 0.0
-    },
-    "width": 512.0,
-    "height": 384.0,
-    "depth": 512.0,
-    "rise": 0.0,
-    "goal": ""
-  },
-  {
-    "label": "KT32_GridTest_B",
-    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92CA0A03_2053864710",
-    "kind": "wall",
-    "centre": {
-      "x": -1536,
-      "y": -60672,
-      "z": 0
-    },
-    "right": {
-      "x": 1.0,
-      "y": 0.0,
-      "z": 0.0
-    },
-    "normal": {
-      "x": -0.0,
-      "y": 1.0,
-      "z": 0.0
-    },
-    "width": 512.0,
-    "height": 384.0,
-    "depth": 512.0,
-    "rise": 0.0,
-    "goal": ""
-  },
-  {
     "label": "KT33_WallTake_Enemy_N",
-    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_M1_Solid_C_UAID_30560F202F92CB0A03_1610712045",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_M1_Solid_C_UAID_30560F202F92430D03_1922970742",
     "kind": "wall",
     "centre": {
       "x": 61952,
@@ -3900,33 +3025,8 @@
     "goal": ""
   },
   {
-    "label": "KT33_WallTake_Enemy_S",
-    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_M1_Solid_C_UAID_30560F202F92CB0A03_1611327046",
-    "kind": "wall",
-    "centre": {
-      "x": 61952,
-      "y": -92416,
-      "z": 0
-    },
-    "right": {
-      "x": 1.0,
-      "y": 0.0,
-      "z": 0.0
-    },
-    "normal": {
-      "x": -0.0,
-      "y": 1.0,
-      "z": 0.0
-    },
-    "width": 512.0,
-    "height": 384.0,
-    "depth": 512.0,
-    "rise": 0.0,
-    "goal": ""
-  },
-  {
     "label": "KT33_WallTake_Enemy_E",
-    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_M1_Solid_C_UAID_30560F202F92CB0A03_1611953047",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_M1_Solid_C_UAID_30560F202F92430D03_1925635743",
     "kind": "wall",
     "centre": {
       "x": 62208,
@@ -3950,13 +3050,1113 @@
     "goal": ""
   },
   {
+    "label": "KT33_WallTake_Enemy_S",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_M1_Solid_C_UAID_30560F202F92430D03_1928303744",
+    "kind": "wall",
+    "centre": {
+      "x": 61952,
+      "y": -92416,
+      "z": 0
+    },
+    "right": {
+      "x": 1.0,
+      "y": 0.0,
+      "z": 0.0
+    },
+    "normal": {
+      "x": -0.0,
+      "y": 1.0,
+      "z": 0.0
+    },
+    "width": 512.0,
+    "height": 384.0,
+    "depth": 512.0,
+    "rise": 0.0,
+    "goal": ""
+  },
+  {
     "label": "KT33_WallTake_Enemy_W",
-    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_M1_Solid_C_UAID_30560F202F92CB0A03_1612584048",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_M1_Solid_C_UAID_30560F202F92430D03_1930967745",
     "kind": "wall",
     "centre": {
       "x": 61696,
       "y": -92160,
       "z": 0
+    },
+    "right": {
+      "x": 2.83276944882399e-16,
+      "y": 1.0,
+      "z": 0.0
+    },
+    "normal": {
+      "x": -1.0,
+      "y": 2.83276944882399e-16,
+      "z": 0.0
+    },
+    "width": 512.0,
+    "height": 384.0,
+    "depth": 512.0,
+    "rise": 0.0,
+    "goal": ""
+  },
+  {
+    "label": "KT16_Op_R3_EditWall",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92920D03_1281013083",
+    "kind": "wall",
+    "centre": {
+      "x": -30720,
+      "y": -68352,
+      "z": 0
+    },
+    "right": {
+      "x": 2.83276944882399e-16,
+      "y": 1.0,
+      "z": 0.0
+    },
+    "normal": {
+      "x": -1.0,
+      "y": 2.83276944882399e-16,
+      "z": 0.0
+    },
+    "width": 512.0,
+    "height": 384.0,
+    "depth": 512.0,
+    "rise": 0.0,
+    "goal": ""
+  },
+  {
+    "label": "KT16_Op_R4_Wall_N55",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92920D03_1288020088",
+    "kind": "wall",
+    "centre": {
+      "x": -28160,
+      "y": -67328,
+      "z": 768
+    },
+    "right": {
+      "x": 1.0,
+      "y": 0.0,
+      "z": 0.0
+    },
+    "normal": {
+      "x": -0.0,
+      "y": 1.0,
+      "z": 0.0
+    },
+    "width": 512.0,
+    "height": 384.0,
+    "depth": 512.0,
+    "rise": 0.0,
+    "goal": ""
+  },
+  {
+    "label": "KT16_Op_R4_Wall_N54",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92920D03_1292021091",
+    "kind": "wall",
+    "centre": {
+      "x": -27648,
+      "y": -67328,
+      "z": 768
+    },
+    "right": {
+      "x": 1.0,
+      "y": 0.0,
+      "z": 0.0
+    },
+    "normal": {
+      "x": -0.0,
+      "y": 1.0,
+      "z": 0.0
+    },
+    "width": 512.0,
+    "height": 384.0,
+    "depth": 512.0,
+    "rise": 0.0,
+    "goal": ""
+  },
+  {
+    "label": "KT16_Op_R4_Wall_Front",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92920D03_1293355092",
+    "kind": "wall",
+    "centre": {
+      "x": -28416,
+      "y": -67584,
+      "z": 768
+    },
+    "right": {
+      "x": 2.83276944882399e-16,
+      "y": 1.0,
+      "z": 0.0
+    },
+    "normal": {
+      "x": -1.0,
+      "y": 2.83276944882399e-16,
+      "z": 0.0
+    },
+    "width": 512.0,
+    "height": 384.0,
+    "depth": 512.0,
+    "rise": 0.0,
+    "goal": ""
+  },
+  {
+    "label": "KT16_Op_R5_Box0_N",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92920D03_1294689093",
+    "kind": "wall",
+    "centre": {
+      "x": -26624,
+      "y": -68352,
+      "z": 0
+    },
+    "right": {
+      "x": 1.0,
+      "y": 0.0,
+      "z": 0.0
+    },
+    "normal": {
+      "x": -0.0,
+      "y": 1.0,
+      "z": 0.0
+    },
+    "width": 512.0,
+    "height": 384.0,
+    "depth": 512.0,
+    "rise": 0.0,
+    "goal": ""
+  },
+  {
+    "label": "KT16_Op_R5_Box0_S",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92920D03_1296022094",
+    "kind": "wall",
+    "centre": {
+      "x": -26624,
+      "y": -68864,
+      "z": 0
+    },
+    "right": {
+      "x": 1.0,
+      "y": 0.0,
+      "z": 0.0
+    },
+    "normal": {
+      "x": -0.0,
+      "y": 1.0,
+      "z": 0.0
+    },
+    "width": 512.0,
+    "height": 384.0,
+    "depth": 512.0,
+    "rise": 0.0,
+    "goal": ""
+  },
+  {
+    "label": "KT16_Op_R5_Box0_E",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92920D03_1297354095",
+    "kind": "wall",
+    "centre": {
+      "x": -26368,
+      "y": -68608,
+      "z": 0
+    },
+    "right": {
+      "x": 2.83276944882399e-16,
+      "y": 1.0,
+      "z": 0.0
+    },
+    "normal": {
+      "x": -1.0,
+      "y": 2.83276944882399e-16,
+      "z": 0.0
+    },
+    "width": 512.0,
+    "height": 384.0,
+    "depth": 512.0,
+    "rise": 0.0,
+    "goal": ""
+  },
+  {
+    "label": "KT16_Op_R5_Box0_W",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92920D03_1298686096",
+    "kind": "wall",
+    "centre": {
+      "x": -26880,
+      "y": -68608,
+      "z": 0
+    },
+    "right": {
+      "x": 2.83276944882399e-16,
+      "y": 1.0,
+      "z": 0.0
+    },
+    "normal": {
+      "x": -1.0,
+      "y": 2.83276944882399e-16,
+      "z": 0.0
+    },
+    "width": 512.0,
+    "height": 384.0,
+    "depth": 512.0,
+    "rise": 0.0,
+    "goal": ""
+  },
+  {
+    "label": "KT16_Op_R5_Box1_N",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92920D03_1301356098",
+    "kind": "wall",
+    "centre": {
+      "x": -26624,
+      "y": -67328,
+      "z": 0
+    },
+    "right": {
+      "x": 1.0,
+      "y": 0.0,
+      "z": 0.0
+    },
+    "normal": {
+      "x": -0.0,
+      "y": 1.0,
+      "z": 0.0
+    },
+    "width": 512.0,
+    "height": 384.0,
+    "depth": 512.0,
+    "rise": 0.0,
+    "goal": ""
+  },
+  {
+    "label": "KT16_Op_R5_Box1_S",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92920D03_1302688099",
+    "kind": "wall",
+    "centre": {
+      "x": -26624,
+      "y": -67840,
+      "z": 0
+    },
+    "right": {
+      "x": 1.0,
+      "y": 0.0,
+      "z": 0.0
+    },
+    "normal": {
+      "x": -0.0,
+      "y": 1.0,
+      "z": 0.0
+    },
+    "width": 512.0,
+    "height": 384.0,
+    "depth": 512.0,
+    "rise": 0.0,
+    "goal": ""
+  },
+  {
+    "label": "KT16_Op_R5_Box1_E",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92920D03_1304022100",
+    "kind": "wall",
+    "centre": {
+      "x": -26368,
+      "y": -67584,
+      "z": 0
+    },
+    "right": {
+      "x": 2.83276944882399e-16,
+      "y": 1.0,
+      "z": 0.0
+    },
+    "normal": {
+      "x": -1.0,
+      "y": 2.83276944882399e-16,
+      "z": 0.0
+    },
+    "width": 512.0,
+    "height": 384.0,
+    "depth": 512.0,
+    "rise": 0.0,
+    "goal": ""
+  },
+  {
+    "label": "KT16_Op_R5_Box1_W",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_W1_Solid_C_UAID_30560F202F92920D03_1305355101",
+    "kind": "wall",
+    "centre": {
+      "x": -26880,
+      "y": -67584,
+      "z": 0
+    },
+    "right": {
+      "x": 2.83276944882399e-16,
+      "y": 1.0,
+      "z": 0.0
+    },
+    "normal": {
+      "x": -1.0,
+      "y": 2.83276944882399e-16,
+      "z": 0.0
+    },
+    "width": 512.0,
+    "height": 384.0,
+    "depth": 512.0,
+    "rise": 0.0,
+    "goal": ""
+  },
+  {
+    "label": "KT16_Op_Site_Mid_138",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_M1_Solid_C_UAID_30560F202F92920D03_1308020103",
+    "kind": "wall",
+    "centre": {
+      "x": -22784,
+      "y": -70656,
+      "z": 0
+    },
+    "right": {
+      "x": 2.83276944882399e-16,
+      "y": 1.0,
+      "z": 0.0
+    },
+    "normal": {
+      "x": -1.0,
+      "y": 2.83276944882399e-16,
+      "z": 0.0
+    },
+    "width": 512.0,
+    "height": 384.0,
+    "depth": 512.0,
+    "rise": 0.0,
+    "goal": ""
+  },
+  {
+    "label": "KT16_Op_Site_Mid_139",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_M1_Solid_C_UAID_30560F202F92920D03_1309354104",
+    "kind": "wall",
+    "centre": {
+      "x": -22784,
+      "y": -71168,
+      "z": 0
+    },
+    "right": {
+      "x": 2.83276944882399e-16,
+      "y": 1.0,
+      "z": 0.0
+    },
+    "normal": {
+      "x": -1.0,
+      "y": 2.83276944882399e-16,
+      "z": 0.0
+    },
+    "width": 512.0,
+    "height": 384.0,
+    "depth": 512.0,
+    "rise": 0.0,
+    "goal": ""
+  },
+  {
+    "label": "KT16_Op_Site_Mid_140",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_M1_Solid_C_UAID_30560F202F92920D03_1310687105",
+    "kind": "wall",
+    "centre": {
+      "x": -22784,
+      "y": -71680,
+      "z": 0
+    },
+    "right": {
+      "x": 2.83276944882399e-16,
+      "y": 1.0,
+      "z": 0.0
+    },
+    "normal": {
+      "x": -1.0,
+      "y": 2.83276944882399e-16,
+      "z": 0.0
+    },
+    "width": 512.0,
+    "height": 384.0,
+    "depth": 512.0,
+    "rise": 0.0,
+    "goal": ""
+  },
+  {
+    "label": "KT16_Op_Site_Crate_Main_0N",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_M1_Solid_C_UAID_30560F202F92920D03_1312020106",
+    "kind": "wall",
+    "centre": {
+      "x": -24064,
+      "y": -71424,
+      "z": 0
+    },
+    "right": {
+      "x": 1.0,
+      "y": 0.0,
+      "z": 0.0
+    },
+    "normal": {
+      "x": -0.0,
+      "y": 1.0,
+      "z": 0.0
+    },
+    "width": 512.0,
+    "height": 384.0,
+    "depth": 512.0,
+    "rise": 0.0,
+    "goal": ""
+  },
+  {
+    "label": "KT16_Op_Site_Crate_Main_0S",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_M1_Solid_C_UAID_30560F202F92920D03_1313355107",
+    "kind": "wall",
+    "centre": {
+      "x": -24064,
+      "y": -71936,
+      "z": 0
+    },
+    "right": {
+      "x": 1.0,
+      "y": 0.0,
+      "z": 0.0
+    },
+    "normal": {
+      "x": -0.0,
+      "y": 1.0,
+      "z": 0.0
+    },
+    "width": 512.0,
+    "height": 384.0,
+    "depth": 512.0,
+    "rise": 0.0,
+    "goal": ""
+  },
+  {
+    "label": "KT16_Op_Site_Crate_Main_0E",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_M1_Solid_C_UAID_30560F202F92920D03_1314688108",
+    "kind": "wall",
+    "centre": {
+      "x": -23808,
+      "y": -71680,
+      "z": 0
+    },
+    "right": {
+      "x": 2.83276944882399e-16,
+      "y": 1.0,
+      "z": 0.0
+    },
+    "normal": {
+      "x": -1.0,
+      "y": 2.83276944882399e-16,
+      "z": 0.0
+    },
+    "width": 512.0,
+    "height": 384.0,
+    "depth": 512.0,
+    "rise": 0.0,
+    "goal": ""
+  },
+  {
+    "label": "KT16_Op_Site_Crate_Main_0W",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_M1_Solid_C_UAID_30560F202F92920D03_1316023109",
+    "kind": "wall",
+    "centre": {
+      "x": -24320,
+      "y": -71680,
+      "z": 0
+    },
+    "right": {
+      "x": 2.83276944882399e-16,
+      "y": 1.0,
+      "z": 0.0
+    },
+    "normal": {
+      "x": -1.0,
+      "y": 2.83276944882399e-16,
+      "z": 0.0
+    },
+    "width": 512.0,
+    "height": 384.0,
+    "depth": 512.0,
+    "rise": 0.0,
+    "goal": ""
+  },
+  {
+    "label": "KT16_Op_Site_Crate_Mid_0N",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_M1_Solid_C_UAID_30560F202F92920D03_1318688111",
+    "kind": "wall",
+    "centre": {
+      "x": -22528,
+      "y": -72448,
+      "z": 0
+    },
+    "right": {
+      "x": 1.0,
+      "y": 0.0,
+      "z": 0.0
+    },
+    "normal": {
+      "x": -0.0,
+      "y": 1.0,
+      "z": 0.0
+    },
+    "width": 512.0,
+    "height": 384.0,
+    "depth": 512.0,
+    "rise": 0.0,
+    "goal": ""
+  },
+  {
+    "label": "KT16_Op_Site_Crate_Mid_0S",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_M1_Solid_C_UAID_30560F202F92920D03_1320020112",
+    "kind": "wall",
+    "centre": {
+      "x": -22528,
+      "y": -72960,
+      "z": 0
+    },
+    "right": {
+      "x": 1.0,
+      "y": 0.0,
+      "z": 0.0
+    },
+    "normal": {
+      "x": -0.0,
+      "y": 1.0,
+      "z": 0.0
+    },
+    "width": 512.0,
+    "height": 384.0,
+    "depth": 512.0,
+    "rise": 0.0,
+    "goal": ""
+  },
+  {
+    "label": "KT16_Op_Site_Crate_Mid_0E",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_M1_Solid_C_UAID_30560F202F92920D03_1321354113",
+    "kind": "wall",
+    "centre": {
+      "x": -22272,
+      "y": -72704,
+      "z": 0
+    },
+    "right": {
+      "x": 2.83276944882399e-16,
+      "y": 1.0,
+      "z": 0.0
+    },
+    "normal": {
+      "x": -1.0,
+      "y": 2.83276944882399e-16,
+      "z": 0.0
+    },
+    "width": 512.0,
+    "height": 384.0,
+    "depth": 512.0,
+    "rise": 0.0,
+    "goal": ""
+  },
+  {
+    "label": "KT16_Op_Site_Crate_Mid_0W",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_M1_Solid_C_UAID_30560F202F92920D03_1322688114",
+    "kind": "wall",
+    "centre": {
+      "x": -22784,
+      "y": -72704,
+      "z": 0
+    },
+    "right": {
+      "x": 2.83276944882399e-16,
+      "y": 1.0,
+      "z": 0.0
+    },
+    "normal": {
+      "x": -1.0,
+      "y": 2.83276944882399e-16,
+      "z": 0.0
+    },
+    "width": 512.0,
+    "height": 384.0,
+    "depth": 512.0,
+    "rise": 0.0,
+    "goal": ""
+  },
+  {
+    "label": "KT16_Op_Site_Crate_Front_0N",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_M1_Solid_C_UAID_30560F202F92920D03_1325354116",
+    "kind": "wall",
+    "centre": {
+      "x": -20480,
+      "y": -70912,
+      "z": 0
+    },
+    "right": {
+      "x": 1.0,
+      "y": 0.0,
+      "z": 0.0
+    },
+    "normal": {
+      "x": -0.0,
+      "y": 1.0,
+      "z": 0.0
+    },
+    "width": 512.0,
+    "height": 384.0,
+    "depth": 512.0,
+    "rise": 0.0,
+    "goal": ""
+  },
+  {
+    "label": "KT16_Op_Site_Crate_Front_0S",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_M1_Solid_C_UAID_30560F202F92920D03_1326687117",
+    "kind": "wall",
+    "centre": {
+      "x": -20480,
+      "y": -71424,
+      "z": 0
+    },
+    "right": {
+      "x": 1.0,
+      "y": 0.0,
+      "z": 0.0
+    },
+    "normal": {
+      "x": -0.0,
+      "y": 1.0,
+      "z": 0.0
+    },
+    "width": 512.0,
+    "height": 384.0,
+    "depth": 512.0,
+    "rise": 0.0,
+    "goal": ""
+  },
+  {
+    "label": "KT16_Op_Site_Crate_Front_0E",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_M1_Solid_C_UAID_30560F202F92920D03_1328021118",
+    "kind": "wall",
+    "centre": {
+      "x": -20224,
+      "y": -71168,
+      "z": 0
+    },
+    "right": {
+      "x": 2.83276944882399e-16,
+      "y": 1.0,
+      "z": 0.0
+    },
+    "normal": {
+      "x": -1.0,
+      "y": 2.83276944882399e-16,
+      "z": 0.0
+    },
+    "width": 512.0,
+    "height": 384.0,
+    "depth": 512.0,
+    "rise": 0.0,
+    "goal": ""
+  },
+  {
+    "label": "KT16_Op_Site_Crate_Front_0W",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_M1_Solid_C_UAID_30560F202F92920D03_1329353119",
+    "kind": "wall",
+    "centre": {
+      "x": -20736,
+      "y": -71168,
+      "z": 0
+    },
+    "right": {
+      "x": 2.83276944882399e-16,
+      "y": 1.0,
+      "z": 0.0
+    },
+    "normal": {
+      "x": -1.0,
+      "y": 2.83276944882399e-16,
+      "z": 0.0
+    },
+    "width": 512.0,
+    "height": 384.0,
+    "depth": 512.0,
+    "rise": 0.0,
+    "goal": ""
+  },
+  {
+    "label": "KT16_Op_Site_Crate_Default_0N",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_M1_Solid_C_UAID_30560F202F92920D03_1332025121",
+    "kind": "wall",
+    "centre": {
+      "x": -18944,
+      "y": -71936,
+      "z": 0
+    },
+    "right": {
+      "x": 1.0,
+      "y": 0.0,
+      "z": 0.0
+    },
+    "normal": {
+      "x": -0.0,
+      "y": 1.0,
+      "z": 0.0
+    },
+    "width": 512.0,
+    "height": 384.0,
+    "depth": 512.0,
+    "rise": 0.0,
+    "goal": ""
+  },
+  {
+    "label": "KT16_Op_Site_Crate_Default_0S",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_M1_Solid_C_UAID_30560F202F92920D03_1333356122",
+    "kind": "wall",
+    "centre": {
+      "x": -18944,
+      "y": -72448,
+      "z": 0
+    },
+    "right": {
+      "x": 1.0,
+      "y": 0.0,
+      "z": 0.0
+    },
+    "normal": {
+      "x": -0.0,
+      "y": 1.0,
+      "z": 0.0
+    },
+    "width": 512.0,
+    "height": 384.0,
+    "depth": 512.0,
+    "rise": 0.0,
+    "goal": ""
+  },
+  {
+    "label": "KT16_Op_Site_Crate_Default_0E",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_M1_Solid_C_UAID_30560F202F92920D03_1334689123",
+    "kind": "wall",
+    "centre": {
+      "x": -18688,
+      "y": -72192,
+      "z": 0
+    },
+    "right": {
+      "x": 2.83276944882399e-16,
+      "y": 1.0,
+      "z": 0.0
+    },
+    "normal": {
+      "x": -1.0,
+      "y": 2.83276944882399e-16,
+      "z": 0.0
+    },
+    "width": 512.0,
+    "height": 384.0,
+    "depth": 512.0,
+    "rise": 0.0,
+    "goal": ""
+  },
+  {
+    "label": "KT16_Op_Site_Crate_Default_0W",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_M1_Solid_C_UAID_30560F202F92920D03_1336021124",
+    "kind": "wall",
+    "centre": {
+      "x": -19200,
+      "y": -72192,
+      "z": 0
+    },
+    "right": {
+      "x": 2.83276944882399e-16,
+      "y": 1.0,
+      "z": 0.0
+    },
+    "normal": {
+      "x": -1.0,
+      "y": 2.83276944882399e-16,
+      "z": 0.0
+    },
+    "width": 512.0,
+    "height": 384.0,
+    "depth": 512.0,
+    "rise": 0.0,
+    "goal": ""
+  },
+  {
+    "label": "KT16_Op_Site_Crate_Back_0N",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_M1_Solid_C_UAID_30560F202F92920D03_1338687126",
+    "kind": "wall",
+    "centre": {
+      "x": -17920,
+      "y": -73472,
+      "z": 0
+    },
+    "right": {
+      "x": 1.0,
+      "y": 0.0,
+      "z": 0.0
+    },
+    "normal": {
+      "x": -0.0,
+      "y": 1.0,
+      "z": 0.0
+    },
+    "width": 512.0,
+    "height": 384.0,
+    "depth": 512.0,
+    "rise": 0.0,
+    "goal": ""
+  },
+  {
+    "label": "KT16_Op_Site_Crate_Back_0S",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_M1_Solid_C_UAID_30560F202F92920D03_1340021127",
+    "kind": "wall",
+    "centre": {
+      "x": -17920,
+      "y": -73984,
+      "z": 0
+    },
+    "right": {
+      "x": 1.0,
+      "y": 0.0,
+      "z": 0.0
+    },
+    "normal": {
+      "x": -0.0,
+      "y": 1.0,
+      "z": 0.0
+    },
+    "width": 512.0,
+    "height": 384.0,
+    "depth": 512.0,
+    "rise": 0.0,
+    "goal": ""
+  },
+  {
+    "label": "KT16_Op_Site_Crate_Back_0E",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_M1_Solid_C_UAID_30560F202F92920D03_1341353128",
+    "kind": "wall",
+    "centre": {
+      "x": -17664,
+      "y": -73728,
+      "z": 0
+    },
+    "right": {
+      "x": 2.83276944882399e-16,
+      "y": 1.0,
+      "z": 0.0
+    },
+    "normal": {
+      "x": -1.0,
+      "y": 2.83276944882399e-16,
+      "z": 0.0
+    },
+    "width": 512.0,
+    "height": 384.0,
+    "depth": 512.0,
+    "rise": 0.0,
+    "goal": ""
+  },
+  {
+    "label": "KT16_Op_Site_Crate_Back_0W",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_M1_Solid_C_UAID_30560F202F92920D03_1342689129",
+    "kind": "wall",
+    "centre": {
+      "x": -18176,
+      "y": -73728,
+      "z": 0
+    },
+    "right": {
+      "x": 2.83276944882399e-16,
+      "y": 1.0,
+      "z": 0.0
+    },
+    "normal": {
+      "x": -1.0,
+      "y": 2.83276944882399e-16,
+      "z": 0.0
+    },
+    "width": 512.0,
+    "height": 384.0,
+    "depth": 512.0,
+    "rise": 0.0,
+    "goal": ""
+  },
+  {
+    "label": "KT16_Op_Site_Crate_Stack_0N",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_M1_Solid_C_UAID_30560F202F92920D03_1345687131",
+    "kind": "wall",
+    "centre": {
+      "x": -17408,
+      "y": -70912,
+      "z": 0
+    },
+    "right": {
+      "x": 1.0,
+      "y": 0.0,
+      "z": 0.0
+    },
+    "normal": {
+      "x": -0.0,
+      "y": 1.0,
+      "z": 0.0
+    },
+    "width": 512.0,
+    "height": 384.0,
+    "depth": 512.0,
+    "rise": 0.0,
+    "goal": ""
+  },
+  {
+    "label": "KT16_Op_Site_Crate_Stack_0S",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_M1_Solid_C_UAID_30560F202F92920D03_1347023132",
+    "kind": "wall",
+    "centre": {
+      "x": -17408,
+      "y": -71424,
+      "z": 0
+    },
+    "right": {
+      "x": 1.0,
+      "y": 0.0,
+      "z": 0.0
+    },
+    "normal": {
+      "x": -0.0,
+      "y": 1.0,
+      "z": 0.0
+    },
+    "width": 512.0,
+    "height": 384.0,
+    "depth": 512.0,
+    "rise": 0.0,
+    "goal": ""
+  },
+  {
+    "label": "KT16_Op_Site_Crate_Stack_0E",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_M1_Solid_C_UAID_30560F202F92920D03_1348354133",
+    "kind": "wall",
+    "centre": {
+      "x": -17152,
+      "y": -71168,
+      "z": 0
+    },
+    "right": {
+      "x": 2.83276944882399e-16,
+      "y": 1.0,
+      "z": 0.0
+    },
+    "normal": {
+      "x": -1.0,
+      "y": 2.83276944882399e-16,
+      "z": 0.0
+    },
+    "width": 512.0,
+    "height": 384.0,
+    "depth": 512.0,
+    "rise": 0.0,
+    "goal": ""
+  },
+  {
+    "label": "KT16_Op_Site_Crate_Stack_0W",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_M1_Solid_C_UAID_30560F202F92920D03_1349687134",
+    "kind": "wall",
+    "centre": {
+      "x": -17664,
+      "y": -71168,
+      "z": 0
+    },
+    "right": {
+      "x": 2.83276944882399e-16,
+      "y": 1.0,
+      "z": 0.0
+    },
+    "normal": {
+      "x": -1.0,
+      "y": 2.83276944882399e-16,
+      "z": 0.0
+    },
+    "width": 512.0,
+    "height": 384.0,
+    "depth": 512.0,
+    "rise": 0.0,
+    "goal": ""
+  },
+  {
+    "label": "KT16_Op_Site_Crate_Stack_1N",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_M1_Solid_C_UAID_30560F202F92920D03_1352353136",
+    "kind": "wall",
+    "centre": {
+      "x": -17408,
+      "y": -70912,
+      "z": 384
+    },
+    "right": {
+      "x": 1.0,
+      "y": 0.0,
+      "z": 0.0
+    },
+    "normal": {
+      "x": -0.0,
+      "y": 1.0,
+      "z": 0.0
+    },
+    "width": 512.0,
+    "height": 384.0,
+    "depth": 512.0,
+    "rise": 0.0,
+    "goal": ""
+  },
+  {
+    "label": "KT16_Op_Site_Crate_Stack_1S",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_M1_Solid_C_UAID_30560F202F92920D03_1353688137",
+    "kind": "wall",
+    "centre": {
+      "x": -17408,
+      "y": -71424,
+      "z": 384
+    },
+    "right": {
+      "x": 1.0,
+      "y": 0.0,
+      "z": 0.0
+    },
+    "normal": {
+      "x": -0.0,
+      "y": 1.0,
+      "z": 0.0
+    },
+    "width": 512.0,
+    "height": 384.0,
+    "depth": 512.0,
+    "rise": 0.0,
+    "goal": ""
+  },
+  {
+    "label": "KT16_Op_Site_Crate_Stack_1E",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_M1_Solid_C_UAID_30560F202F92920D03_1355020138",
+    "kind": "wall",
+    "centre": {
+      "x": -17152,
+      "y": -71168,
+      "z": 384
+    },
+    "right": {
+      "x": 2.83276944882399e-16,
+      "y": 1.0,
+      "z": 0.0
+    },
+    "normal": {
+      "x": -1.0,
+      "y": 2.83276944882399e-16,
+      "z": 0.0
+    },
+    "width": 512.0,
+    "height": 384.0,
+    "depth": 512.0,
+    "rise": 0.0,
+    "goal": ""
+  },
+  {
+    "label": "KT16_Op_Site_Crate_Stack_1W",
+    "path": "/1f1b8d9c-3e3a-4bb9-b226-03d38d86582e/KeystrokeTrainer.KeystrokeTrainer:PersistentLevel.PBWA_M1_Solid_C_UAID_30560F202F92920D03_1356353139",
+    "kind": "wall",
+    "centre": {
+      "x": -17664,
+      "y": -71168,
+      "z": 384
     },
     "right": {
       "x": 2.83276944882399e-16,
