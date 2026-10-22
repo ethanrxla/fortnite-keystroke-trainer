@@ -12,7 +12,7 @@
   "companion/keystroke_lab/edit_advisor.py": "9fada7ca1bb11484e29f23ef8720fc5a18d284fac9291bccfafc67a1a17f2da8",
   "companion/keystroke_lab/edit_ranker.py": "5aa7bb9c0e3c5e1bd87f4f233833bcff90fe803db5134cd24d6cc66e9af6e17f",
   "companion/keystroke_lab/edit_geometry.py": "205ec42fd97c899c5153368cfec39b11b8cc0b0aae9a2a19c66f860326583251",
-  "companion/keystroke_lab/piece_observation.py": "ba63853730edffcc724b1cac04ff96bcad1de26b730d0e3e50aca7768a54bda4",
+  "companion/keystroke_lab/piece_observation.py": "b0e931c48811e54f4ed9ac12896cd68475eeca0d5d7484d0ed97a04556f6b861",
   "companion/keystroke_lab/edit_dictionary.py": "ce086871f63462dcfaa0658056b01b7b37d633f11df1d1f15f843de96e78b5d7",
   "companion/keystroke_lab/guide_visuals.py": "ca0a8a5ceec03285ef2a27f5174a14616361ab35e8169d5efc3b2e5174505051",
   "companion/keystroke_lab/guide_layers.py": "c723791ee7eb30b116459b7b9d906dbb242028230a6eb892c34c46da447c5961",

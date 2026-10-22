@@ -6,7 +6,8 @@ strongly saturated blue panel, separated from its neighbours by a rim and a gap,
 that blue, and the grid is the lattice the tiles around the crosshair form:
 
     found = find_tile_grid(image, aim)      # image: BGR at detector width; aim: crosshair (x, y) in that image
-    if found: n, quad, tiles = found        # n 2 (floor, cone) or 3 (ramp, wall); quad as edit_observation's grids
+    if found: n, quad, tiles, gap = found   # n 2 (floor, cone) or 3 (ramp, wall); gap: the narrowest space between
+                                            # two neighbouring tiles, as a fraction of a tile
 
 quad corners follow the other finders: [bottom-left, bottom-right, top-right, top-left] of the grid as seen, so
 cv2.getPerspectiveTransform([[0,0],[n,0],[n,n],[0,n]] -> quad) maps tile coordinates to the image. Tiles the player
@@ -87,6 +88,7 @@ def find_tile_grid(image, aim, max_n=3):
     sides = [((t[1] - t[0] + t[2] - t[3]) / 2, (t[3] - t[0] + t[2] - t[1]) / 2) for t in tiles]   # (u, v) per tile
     pos = {seed: (0, 0)}
     queue = [seed]
+    gaps = []
     while queue:
         k = queue.pop()
         i, j = pos[k]
@@ -98,6 +100,10 @@ def find_tile_grid(image, aim, max_n=3):
                 if np.linalg.norm(centres[m] - centres[k] - step) <= STEP_TOL * np.linalg.norm(step):
                     pos[m] = (i + di, j + dj)
                     queue.append(m)
+                    # Space between their facing edges: real neighbours have a gap and rims between them; the two halves
+                    # of a tile split by its markings only a thin line.
+                    side = (np.linalg.norm(sides[k][axis]) + np.linalg.norm(sides[m][axis])) / 2
+                    gaps.append((np.linalg.norm(centres[m] - centres[k]) - side) / side)
     cells = set(pos.values())
     if len(cells) != len(pos) or len(pos) < 3:
         return None                                    # two tiles on one cell, or too few to fix a grid
@@ -110,13 +116,17 @@ def find_tile_grid(image, aim, max_n=3):
     at = {c: tiles[k] for k, c in pos.items()}
     if n == 2 and (i1 - i0, j1 - j0) != (1, 1):
         return None                                    # a 2-wide strip: cannot tell 2 x 2 from part of a 3 x 3
+    # A tile is its cell less the gap around it: pin each tile's corners inside its cell by half the typical gap, so
+    # the grid's outline lands on the cell boundaries (a tile pinned to a whole cell stretches the fit ~5%).
+    g = float(np.median(gaps))
+    e = g / (2 * (1 + g))
     src, dst = [], []
     for (i, j), t in at.items():
-        for corner, (di, dj) in enumerate(((0, 0), (1, 0), (1, 1), (0, 1))):
+        for corner, (di, dj) in enumerate(((e, e), (1 - e, e), (1 - e, 1 - e), (e, 1 - e))):
             src.append((i - i0 + di, j - j0 + dj))
             dst.append(t[corner])
     H, _ = cv2.findHomography(np.float32(src), np.float32(dst), cv2.RANSAC, 0.12 * size)
     if H is None:
         return None
     quad = cv2.perspectiveTransform(np.float32([[[0, 0], [n, 0], [n, n], [0, n]]]), H)[0]
-    return n, quad, len(pos)
+    return n, quad, len(pos), min(gaps)

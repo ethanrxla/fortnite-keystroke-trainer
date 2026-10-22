@@ -13,6 +13,9 @@ import cv2
 DETECT_WIDTH=640.   # px the live detectors work at (see VisualObserver.observe)
 import numpy as np
 UPRIGHT_DEG=5.      # VisualObserver._classify: a 3x3 grid's side edges must meet within this of the centre line
+RAMP_DEG=10.        # VisualObserver._tile_ramp: a tile-found 3x3 leaning at least this far is a ramp (walls lean <= 6.4)
+RAMP_GAP=.12        # ... and real gaps between its tiles (split floor tiles: 0.03-0.12; ramps from 0.107)
+from .tile_grid import find_tile_grid
 
 def _upright_offset(q,width):
     """Degrees between where a grid's two side edges (quad 0-3, 1-2) meet and the screen's vertical centre line, seen
@@ -89,7 +92,31 @@ class VisualObserver:
                 wall=self.wall._from_projection(image,H,quad,now,scale,count,.92 if count>=n*n-1 else .88,n)
                 result=self._classify(image,frame,wall,H,now)
                 if result.piece!='unknown':return result
+        # Last: the tile finder (tile_grid.py) for grids the line finders miss at steep angles, ramps only: a 3x3 that
+        # leans well away from upright, with real gaps between its tiles. Floors and cones (2x2) still abstain
+        # (tools/eval_frames.py, player-labelled frames 2026-10-22).
+        ramp=self._tile_ramp(image,frame,aim,now,scale)
+        if ramp is not None:return ramp
         return result or PieceObservation(now,reason='bounded_detector_abstained')
+
+    def _tile_ramp(self,image,frame,aim,now,scale):
+        found=find_tile_grid(image,aim)
+        if found is None or found[0]!=3 or found[3]<RAMP_GAP:return None
+        n,q,count,_=found
+        quad=np.float32([q[3],q[2],q[1],q[0]])          # the other finders' corner order: top-left first
+        H=cv2.getPerspectiveTransform(np.float32([[0,0],[n,0],[n,n],[0,n]]),quad)
+        wall=self.wall._from_projection(image,H,quad,now,scale,count,.88,n)
+        if wall.reason!='native_edit_grid_observed':return None
+        q=wall.wall_quad
+        near=math.dist(q[2],q[3]);far=math.dist(q[0],q[1])
+        side=(math.dist(q[0],q[3])+math.dist(q[1],q[2]))/2
+        # A sane grid (no edge many times another, far edge not longer than near), leaning at least RAMP_DEG; grids
+        # between UPRIGHT_DEG and RAMP_DEG abstain.
+        if not (.2<far/max(near,1)<1.2 and .15<side/max(near,1)<2) or _upright_offset(q,frame.shape[1])<RAMP_DEG:
+            return None
+        ctx=piece_context(wall,frame.shape[1],frame.shape[0])
+        return PieceObservation(now,'ramp',q,wall.aim_uv,wall.selected_tiles,'screen_tile_lattice',wall.confidence,
+                                wall.supported_cells,'native_edit_grid_observed',context=ctx.to_dict() if ctx else None)
 
     def _classify(self,image,frame,wall,H,now):
         """Wall / floor / cone from one grid hypothesis, or an 'unknown' observation with the reason."""
