@@ -8,7 +8,7 @@ back. Everything new (attempt records, Supabase rows, the ranker's public API) u
 CANONICAL = ("wall", "floor", "cone", "ramp")
 _TO_CANONICAL = {"wall": "wall", "floor": "floor", "cone": "cone", "roof": "cone", "ramp": "ramp", "stairs": "ramp"}
 _TO_CATALOG = {"wall": "wall", "floor": "floor", "cone": "roof", "ramp": "stairs"}
-GRID = {"wall": 3, "floor": 2, "cone": 2, "ramp": 2}
+GRID = {"wall": 3, "floor": 2, "cone": 2, "ramp": 3}   # ramps 3 x 3 on the slope (player 2026-10-22)
 
 
 def canonical(name):
@@ -23,5 +23,5 @@ def catalog_key(name):
 
 
 def cells(name):
-    """Edit grid size: 3 for walls (3x3), 2 for floors, cones and ramps (2x2)."""
+    """Edit grid size: 3 for walls and ramps (3x3), 2 for floors and cones (2x2)."""
     return GRID.get(canonical(name), 3)

@@ -2,8 +2,8 @@
 # Python twin: companion/keystroke_lab/build_pieces.py (keep the rules in step). The pattern table KTEditPatterns is
 # generated into EditPatterns.verse by tools/gen_edits.py from shared/edits.json; add edits there, never here.
 #
-# Tiles: walls 0..8 row-major from the bottom-left as the player sees the wall; floors, cones and ramps 0..3
-# (0 near-left, 1 near-right, 2 far-left, 3 far-right; for a ramp far = the high end).
+# Tiles: walls 0..8 row-major from the bottom-left as the player sees the wall; ramps 0..8 the same way as seen from the
+# low end (3 x 3 on the slope, player 2026-10-22); floors and cones 0..3 (0 near-left, 1 near-right, 2 far-left, 3 far-right).
 # Walls, floors and cones cut out the selected tiles. A ramp keeps the stairs dragged through: one or more strokes,
 # each bottom tile first; every tile points at the next tile of its stroke and ramps are matched on those arrows
 # (half ramp, turn, L, wrap-around, or the whole ramp turned with two strokes).
@@ -210,8 +210,8 @@ kt_stair_piece<public> := class(kt_build_piece):
     var Strokes<public>:[][]int = array{}
 
     Kind<override>()<computes>:string = "ramp"
-    Cols<override>()<computes>:int = 2
-    Rows<override>()<computes>:int = 2
+    Cols<override>()<computes>:int = 3
+    Rows<override>()<computes>:int = 3
     BaseClass<override>()<computes>:string = "StairW"
     KeepsPath<override>()<computes>:logic = true
 
@@ -243,7 +243,7 @@ kt_stair_piece<public> := class(kt_build_piece):
         set Strokes = array{}
         Outcome
 
-    Arrows<override>()<transacts>:[]int = KTRampArrows(Strokes, TileCount())
+    Arrows<override>()<transacts>:[]int = KTRampArrows(Strokes, TileCount(), Cols())
 
     KeptTiles<override>(Sel:[]int)<transacts>:[]logic =
         for (T := 0..TileCount() - 1) { if (Sel.Length = 0) then true else KTContains(Sel, T) }
@@ -267,15 +267,15 @@ kt_stair_piece<public> := class(kt_build_piece):
             ""
 
 # Per tile, which way its stairs climb: towards the next tile of its stroke (the last tile keeps the last step).
-# 0 none, 1 away (+2), 2 right (+1), 3 toward you (-2), 4 left (-1). Same rule as tools/gen_edits.py ramp_arrows.
-KTRampArrows<public>(Strokes:[][]int, Tiles:int)<transacts>:[]int =
+# 0 none, 1 away (+Cols), 2 right (+1), 3 toward you (-Cols), 4 left (-1). Same rule as tools/gen_edits.py ramp_arrows.
+KTRampArrows<public>(Strokes:[][]int, Tiles:int, Cols:int)<transacts>:[]int =
     var Arrows:[]int = for (T := 0..Tiles - 1) { 0 }
     for (S : Strokes, S.Length >= 2):
         for (I -> T : S):
             From := if (I + 1 < S.Length) then I else I - 1
             if (X := S[From], Y := S[From + 1]):
                 D := Y - X
-                Dir := if (D = 2) then 1 else if (D = 1) then 2 else if (D = -2) then 3 else if (D = -1) then 4 else 0
+                Dir := if (D = Cols) then 1 else if (D = 1) then 2 else if (D = -Cols) then 3 else if (D = -1) then 4 else 0
                 set Arrows = for (J -> V : Arrows) { if (J = T) then Dir else V }
     Arrows
 

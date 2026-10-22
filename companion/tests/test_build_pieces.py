@@ -92,17 +92,17 @@ class PatternTableTests(unittest.TestCase):
         self.assertEqual(self.confirm(ConePiece(), [2, 3]).pattern.result_class, "RoofS")
         self.assertEqual(self.confirm(ConePiece(), [0, 1, 2]).pattern.result_class, "RoofO")
 
+    # Ramps are 3 x 3 (player 2026-10-22): tile = numpad digit - 1, seen from the bottom of the ramp.
     def test_ramps_match_by_path_and_order(self):
         r = StairPiece()
-        for t in (0, 2):
+        for t in (0, 3, 6):
             r.select(t)
         out = r.confirm(self.table)
         self.assertTrue(out.valid)
-        self.assertEqual(out.pattern.id, "ramp_half_nl_fl")
-        self.assertEqual(r.visual().visible, (0, 2))
-        self.assertEqual(self.confirm(StairPiece(), [2, 0]).pattern.id, "ramp_half_fl_nl")
-        self.assertEqual(self.confirm(StairPiece(), [0, 1, 3, 2]).pattern.result_class, "StairSpiral")
-        self.assertEqual(self.confirm(StairPiece(), [0, 3]).reason, "broken_path")     # diagonal step
+        self.assertEqual(out.pattern.id, "ramp_half_left_away")
+        self.assertEqual(r.visual().visible, (0, 3, 6))
+        self.assertEqual(self.confirm(StairPiece(), [6, 3, 0]).pattern.id, "ramp_half_left_toward")
+        self.assertEqual(self.confirm(StairPiece(), [0, 4]).reason, "broken_path")     # diagonal step
         self.assertEqual(self.confirm(StairPiece(), [0]).reason, "broken_path")
 
     def test_ramp_drag_back_undoes_a_step(self):
@@ -112,27 +112,22 @@ class PatternTableTests(unittest.TestCase):
         self.assertEqual(r.selection, (0, 1))
 
     def test_all_ramp_edits_have_distinct_arrows(self):
-        ramps = [p for p in self.table.patterns("ramp") if p.id.startswith("ramp_")]
-        self.assertEqual(len(ramps), 28)            # 8 half, 8 L, 8 spiral, 4 full-ramp directions
+        ramps = self.table.patterns("ramp")
+        self.assertEqual(len(ramps), 28)            # 4 full, 8 half, 8 L, 8 U (the player's list)
         self.assertEqual(len({p.arrows for p in ramps}), 28)
 
-    def test_ramp_turned_with_two_strokes(self):
+    def test_full_ramp_turns_with_the_middle_stroke(self):
         r = StairPiece()
-        r.select(0), r.select(1)
-        r.end_stroke()
-        r.select(2), r.select(3)
-        self.assertEqual(r.arrows(), (2, 2, 2, 2))
-        out = r.confirm(self.table)
-        self.assertTrue(out.valid)
-        self.assertEqual(out.pattern.id, "ramp_full_right")
-        self.assertEqual(r.visual().visible, (0, 1, 2, 3))
-        r.set_strokes([[2, 0], [3, 1]])
-        self.assertEqual(r.confirm(self.table).pattern.id, "ramp_full_down")
+        for t in (3, 4, 5):
+            r.select(t)
+        self.assertEqual(r.arrows(), (0, 0, 0, 2, 2, 2, 0, 0, 0))
+        self.assertEqual(r.confirm(self.table).pattern.id, "ramp_full_right")
+        self.assertEqual(self.confirm(StairPiece(), [7, 4, 1]).pattern.id, "ramp_full_toward")
 
-    def test_ramp_sideways_half_and_l_turn(self):
-        self.assertEqual(self.confirm(StairPiece(), [0, 1]).pattern.id, "ramp_half_nl_nr")
-        out = self.confirm(StairPiece(), [0, 2, 3])
-        self.assertEqual((out.pattern.id, out.pattern.result_class), ("ramp_l_nl_fl_fr", "StairR"))
+    def test_ramp_sideways_half_l_and_u(self):
+        self.assertEqual(self.confirm(StairPiece(), [0, 1, 2]).pattern.id, "ramp_half_near_right")
+        self.assertEqual(self.confirm(StairPiece(), [0, 3, 6, 7, 8]).pattern.id, "stair_l_away_right")
+        self.assertEqual(self.confirm(StairPiece(), [0, 3, 6, 7, 8, 5, 2]).pattern.id, "stair_u_away_right_toward")
 
     def test_ramp_strokes_cannot_share_tiles_or_be_single(self):
         r = StairPiece()

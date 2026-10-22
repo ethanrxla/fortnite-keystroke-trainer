@@ -171,6 +171,11 @@ def main():
         jev = JevClient(max_calls=120, broker=False, domain="offline_policy")   # offline batch: not the live 30 s broker
         for piece in pieces:
             edits = suggested(data, piece)
+            if data["pieces"][piece]["cols"] != COLS:
+                # Ramps are 3 x 3 since 2026-10-22; this builder's questions describe a 2 x 2 grid. Ramps keep no table,
+                # so the guide ranks their edits on crosshair travel alone.
+                print(f"{piece}: {data['pieces'][piece]['cols']} x {data['pieces'][piece]['rows']} grid, not scored here")
+                continue
             if not edits:
                 print(f"{piece}: no confirmed edits, skipped (no recommendation will be shown)")
                 continue

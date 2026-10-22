@@ -1,10 +1,10 @@
 {
-  "verse/KeystrokeTrainer/EditGuide.verse": "15c974521a18681030756b191196e49992072b5f7510f5f38644f964dfc35a19",
+  "verse/KeystrokeTrainer/EditGuide.verse": "def12cc9dc78fa449262885849e233bb2d0bd570be3ba4f9b08277e5d617f95b",
   "verse/KeystrokeTrainer/EditPolicy.verse": "656b05d0246c6929525d898e58e0889755afffd881e82a8ca17c28be910cdbcc",
   "verse/KeystrokeTrainer/EditPolicyPieces.verse": "e44b95d4d93afdd6ab044a658fbc735520705635d99d1f1b07d2f655cb371995",
   "verse/KeystrokeTrainer/EditIntent.verse": "42c22883dcf03f56c6c9b77a2bdcc9adff15cc711132923e0b800f6b6da09532",
-  "verse/KeystrokeTrainer/EditCatalog.verse": "5bd2a6548ef6b9016f7a13b085d5b24a470b835d1aa533f17aeb4e032ca9a296",
-  "verse/KeystrokeTrainer/EditPatterns.verse": "bd125de2c118916d331ab5856cb8ac029aa1fe25e580c60902f8cdef62feff87",
+  "verse/KeystrokeTrainer/EditCatalog.verse": "73adc4183c4419a910e092b8d0f68a3ef7ed7b58d201e21bf9ac1fe393a93c98",
+  "verse/KeystrokeTrainer/EditPatterns.verse": "0108c0e8eca80123a07c6382835657a7b11723e3a3553df47fb2a690b7393739",
   "verse/KeystrokeTrainer/EditTargets.verse": "16068cac9318205403a36356b25ac29f06286ab984412ccdaa27c3680d2ec268",
   "verse/KeystrokeTrainer/EditObservation.verse": "d5f81da0ef5a174d3ffd03f467ea84bff3336fd96fd6fcb421fca04b83eaf407",
   "companion/keystroke_lab/edit_window.py": "1107b16b7f7bac509556f996f3716288d448023d32643b5ce37ccdb1952fc25a",
@@ -19,6 +19,6 @@
   "companion/keystroke_lab/autostart.py": "5e3e5767438584ae0a7663fa1a8c673793222ef0001bb5a39f0bfc368e1f1a70",
   "companion/autostart.pyw": "c98465c0eb28cfe6f54d50e7f36e1f172f253d31c32d848226e66004fe80220d",
   "shared/edit-policy.json": "3b9eef9e6000a76e855d627721c5e058c0bc9694552ba988e42f754f1b04f27c",
-  "shared/edits.json": "f42dfd8b72fd0dc90ac7e35c54bb98572e7c4ea1e644ff849a6f19f6598dbe03",
+  "shared/edits.json": "428fb2d28a23f945859014d305967cd02def46c6bc6169f26a3f03bb765e2902",
   "shared/edit-intent.json": "9080c5062b46420ac6402fa5b35f515acca9c6e2ac3fef2cc6d5401b70463ae2"
 }

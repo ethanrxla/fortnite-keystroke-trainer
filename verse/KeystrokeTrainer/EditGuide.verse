@@ -23,9 +23,10 @@ kt_edit_shape<public> := struct<computes>:
 
 # KTWallEdits (the dictionary of real wall edits) is generated into EditCatalog.verse by tools/gen_edits.py.
 
-# Columns of a piece's tile grid: walls are 3 x 3, floors, stairs and roofs 2 x 2.
+# Columns of a piece's tile grid: walls and stairs (ramps, on the slope; player 2026-10-22) are 3 x 3, floors and
+# roofs 2 x 2.
 KTCols<public>(Kind:string)<computes>:int =
-    if (Kind = "wall") then 3 else 2
+    if (Kind = "wall" or Kind = "stairs") then 3 else 2
 
 KTEditsFor<public>(Kind:string)<computes>:[]kt_edit_shape =
     if (Kind = "floor") then KTFloorEdits else if (Kind = "stairs") then KTStairsEdits else if (Kind = "roof") then KTRoofEdits else KTWallEdits
@@ -214,12 +215,13 @@ KTProjectAuthoredPlane<public>(View:vector3, Aim:vector3, Body:vector3, Piece:kt
                 Away := if (Abs(AcrossDot) > Abs(AlongDot)) then (if (AcrossDot >= 0.0) then Piece.Right else -Piece.Right) else (if (AlongDot >= 0.0) then Piece.Normal else -Piece.Normal)
                 Across := vector3{X := -Away.Y, Y := Away.X, Z := 0.0}
                 Rel := H - PlaneC
-                U := (DotProduct(Rel, Across) / Piece.Width + 0.5) * 2.0
-                V := (DotProduct(Rel, Away) / Piece.Depth + 0.5) * 2.0
-                PU := (DotProduct(Body - PlaneC, Across) / Piece.Width + 0.5) * 2.0
-                if (U >= 0.0, U < 2.0, V >= 0.0, V < 2.0):
+                N := KTCols(Piece.Kind) * 1.0
+                U := (DotProduct(Rel, Across) / Piece.Width + 0.5) * N
+                V := (DotProduct(Rel, Away) / Piece.Depth + 0.5) * N
+                PU := (DotProduct(Body - PlaneC, Across) / Piece.Width + 0.5) * N
+                if (U >= 0.0, U < N, V >= 0.0, V < N):
                     return kt_edit_face{Valid := true, Kind := Piece.Kind, Key := Piece.Id, U := U, V := V,
-                        Side := if (PU < 0.8) then 0 else if (PU < 1.2) then 1 else 2,
+                        Side := if (PU < N * 0.4) then 0 else if (PU < N * 0.6) then 1 else 2,
                         Far := logic{Distance(H, Body) > 256.0}, GoalId := Piece.Goal, Source := "authored_{Piece.Kind}_reference"}
     kt_edit_face{}
 

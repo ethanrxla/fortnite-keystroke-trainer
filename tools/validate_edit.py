@@ -10,7 +10,7 @@ from datetime import datetime,timezone
 from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1]
 
-def ramp_gesture_recorded(edit, cols=2, rows=2):
+def ramp_gesture_recorded(edit, cols=3, rows=3):   # ramps are 3 x 3 (player 2026-10-22)
     """Check ordered gesture data, not whether Fortnite accepts the result."""
     strokes=edit.get('strokes')
     if strokes:
@@ -35,7 +35,7 @@ def main():
     matches=[(piece,e) for piece,meta in data['pieces'].items() for e in data[meta['list']] if e['id']==a.edit_id]
     if len(matches)!=1:p.error('Unknown edit ID')
     piece,e=matches[0]
-    if piece=='stairs' and a.result_confirmed and not ramp_gesture_recorded(e):p.error('Record a valid ordered ramp gesture before validating it')
+    if piece=='stairs' and a.result_confirmed and not ramp_gesture_recorded(e,data['pieces']['stairs']['cols'],data['pieces']['stairs']['rows']):p.error('Record a valid ordered ramp gesture before validating it')
     e['validation']={'status':'game_verified' if a.result_confirmed else 'invalid','game_version':a.game_version,
         'evidence':[str(evidence)],'result_confirmed':a.result_confirmed,'reviewer':a.reviewer,
         'recorded_at':datetime.now(timezone.utc).isoformat(),

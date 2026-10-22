@@ -9,15 +9,14 @@ class PieceRouteTests(unittest.TestCase):
     def setUp(self):
         self.edits = EditDictionary().all
 
-    def test_ramp_preserves_release_between_two_drags(self):
-        edit = self.edits['ramp_full_down']
-        paths = RoutePlanner().strokes((1., 1.), edit)
-        self.assertEqual(paths, (((.5, 1.5), (.5, .5)), ((1.5, 1.5), (1.5, .5))))
-        visual = layout(edit, (1., 1.))
-        self.assertEqual(len(visual.strokes), 2)
-        self.assertEqual(len(visual.approaches), 2)
-        self.assertEqual(len(visual.labels), 4)
-        self.assertEqual(len(visual.regions), 4)
+    # Ramps are 3 x 3 (player 2026-10-22); a ramp edit is one drag through tile centres, bottom tile of the climb first.
+    def test_ramp_route_follows_the_drag(self):
+        paths = RoutePlanner().strokes((1.5, 1.5), self.edits['ramp_full_toward'])
+        self.assertEqual(paths, (((1.5, 2.5), (1.5, 1.5), (1.5, .5)),))
+        visual = layout(self.edits['ramp_full_toward'], (1.5, 1.5))
+        self.assertEqual((len(visual.strokes), len(visual.approaches), len(visual.labels), len(visual.regions)), (1, 1, 3, 9))
+        self.assertEqual(RoutePlanner().strokes((.5, .5), self.edits['stair_l_away_right']),
+                         (((.5, .5), (.5, 1.5), (.5, 2.5), (1.5, 2.5), (2.5, 2.5)),))
 
     def test_diagonal_floor_is_two_taps_not_one_drag(self):
         edit = self.edits['floor_diagonal_b']
@@ -38,7 +37,7 @@ class PieceRouteTests(unittest.TestCase):
         self.assertEqual(tracker.update('wall:2', (2.7, 1.5), edit, (5,)), first)
 
     def test_invalid_ramp_stroke_is_not_drawn(self):
-        edit = dict(self.edits['ramp_full_down'], strokes=[[0, 3]])
+        edit = dict(self.edits['ramp_full_toward'], strokes=[[0, 4]])     # diagonal step
         self.assertEqual(RoutePlanner().strokes((1., 1.), edit), ())
 
 

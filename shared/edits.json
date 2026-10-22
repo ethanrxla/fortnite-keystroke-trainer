@@ -2279,11 +2279,11 @@
       "edit_semantics": "remove_selected"
     },
     "stairs": {
-      "cols": 2,
-      "rows": 2,
+      "cols": 3,
+      "rows": 3,
       "list": "stairs_edits",
       "build_slot": 2,
-      "tile_order": "same as floor; far = the high end of the ramp or stairs",
+      "tile_order": "3 x 3 like a wall, on the slope: tile 0 bottom-left .. 8 top-right as seen from the bottom of the ramp (player 2026-10-22); the tiles dragged through, bottom first, become the stairs",
       "class": "Stair",
       "canonical": "ramp",
       "base_class": "StairW",
@@ -2301,7 +2301,7 @@
       "edit_semantics": "remove_selected"
     }
   },
-  "_pieces_note": "build_slot is the piece's position in the player's build hotbar (wall, floor, stairs/ramp, roof), which is how the map knows what piece the player is placing: EditGuide.verse reads the equipped slot. VERIFY the slot order in a playtest; the guide logs KT|gate|...|slot=N. Non-wall pieces are 2x2 and indexed so mirror = column c -> 1 - c.",
+  "_pieces_note": "build_slot is the piece's position in the player's build hotbar (wall, floor, stairs/ramp, roof), which is how the map knows what piece the player is placing: EditGuide.verse reads the equipped slot. VERIFY the slot order in a playtest; the guide logs KT|gate|...|slot=N. Floors and roofs/cones are 2x2 (mirror = column c -> 1 - c); walls and ramps are 3x3 (mirror = column c -> 2 - c).",
   "floor_edits": [
     {
       "id": "floor_hole_near_left",
@@ -3026,2660 +3026,44 @@
   ],
   "stairs_edits": [
     {
-      "id": "stairs_open_left",
-      "name": "Stairs (left open)",
-      "tiles": [
-        0,
-        2
-      ],
-      "kind": "grid",
-      "mirror_of": "stairs_open_right",
-      "suggest": false,
-      "confirmed": false,
-      "purpose": [
-        "enter",
-        "pass_through"
-      ],
-      "exposure": "high",
-      "cover_left": 2,
-      "difficulty": 2,
-      "when_to_use": "House stairs: leave one side open so you or teammates can pass through. Tile set unconfirmed.",
-      "source": "gamewith.net (house stairs)",
-      "validation": {
-        "status": "unverified",
-        "game_version": null,
-        "evidence": [],
-        "result_confirmed": false,
-        "reason": "Legacy confirmed flag is not recorded in-game verification."
-      },
-      "topology": "gesture_graph",
-      "mask": null,
-      "result_shape": "Stairs (left open)",
-      "preconditions": [
-        "editable_target",
-        "standard_editing"
-      ],
-      "reset": "native_reset",
-      "transforms": {
-        "mirror": "stairs_open_right",
-        "rotations": []
-      },
-      "gesture": {
-        "nodes": {
-          "near_left": [
-            0.0,
-            0.0
-          ],
-          "near_middle": [
-            0.5,
-            0.0
-          ],
-          "near_right": [
-            1.0,
-            0.0
-          ],
-          "left_middle": [
-            0.0,
-            0.5
-          ],
-          "right_middle": [
-            1.0,
-            0.5
-          ],
-          "far_left": [
-            0.0,
-            1.0
-          ],
-          "far_middle": [
-            0.5,
-            1.0
-          ],
-          "far_right": [
-            1.0,
-            1.0
-          ]
-        },
-        "edges": [],
-        "routes": [],
-        "status": "requires_recorded_gesture"
-      },
-      "result_class": "StairF",
-      "result_class_status": "probe_inferred",
-      "tier": "situational"
-    },
-    {
-      "id": "stairs_open_right",
-      "name": "Stairs (right open)",
+      "id": "ramp_full_away",
+      "name": "Full ramp, rising away",
       "tiles": [
         1,
-        3
+        4,
+        7
       ],
-      "kind": "grid",
-      "mirror_of": "stairs_open_left",
-      "suggest": false,
-      "confirmed": false,
-      "purpose": [
-        "enter",
-        "pass_through"
-      ],
-      "exposure": "high",
-      "cover_left": 2,
-      "difficulty": 2,
-      "when_to_use": "Mirror of stairs open left.",
-      "source": "gamewith.net",
-      "validation": {
-        "status": "unverified",
-        "game_version": null,
-        "evidence": [],
-        "result_confirmed": false,
-        "reason": "Legacy confirmed flag is not recorded in-game verification."
-      },
-      "topology": "gesture_graph",
-      "mask": null,
-      "result_shape": "Stairs (right open)",
-      "preconditions": [
-        "editable_target",
-        "standard_editing"
-      ],
-      "reset": "native_reset",
-      "transforms": {
-        "mirror": "stairs_open_left",
-        "rotations": []
-      },
-      "gesture": {
-        "nodes": {
-          "near_left": [
-            0.0,
-            0.0
-          ],
-          "near_middle": [
-            0.5,
-            0.0
-          ],
-          "near_right": [
-            1.0,
-            0.0
-          ],
-          "left_middle": [
-            0.0,
-            0.5
-          ],
-          "right_middle": [
-            1.0,
-            0.5
-          ],
-          "far_left": [
-            0.0,
-            1.0
-          ],
-          "far_middle": [
-            0.5,
-            1.0
-          ],
-          "far_right": [
-            1.0,
-            1.0
-          ]
-        },
-        "edges": [],
-        "routes": [],
-        "status": "requires_recorded_gesture"
-      },
-      "result_class": "StairF",
-      "result_class_status": "probe_inferred",
-      "tier": "situational"
-    },
-    {
-      "id": "stairs_l_left",
-      "name": "L-shaped stairs (left)",
-      "tiles": [
-        0,
-        2,
-        3
-      ],
-      "kind": "grid",
-      "mirror_of": "stairs_l_right",
-      "suggest": false,
-      "confirmed": false,
-      "purpose": [
-        "turn",
-        "climb"
-      ],
-      "exposure": "medium",
-      "cover_left": 1,
-      "difficulty": 3,
-      "when_to_use": "Change the direction the stairs connect: drag from one corner tile to another. Tile set unconfirmed.",
-      "source": "gamewith.net (L-shaped stairs)",
-      "validation": {
-        "status": "unverified",
-        "game_version": null,
-        "evidence": [],
-        "result_confirmed": false,
-        "reason": "Legacy confirmed flag is not recorded in-game verification."
-      },
-      "topology": "gesture_graph",
-      "mask": null,
-      "result_shape": "L-shaped stairs (left)",
-      "preconditions": [
-        "editable_target",
-        "standard_editing"
-      ],
-      "reset": "native_reset",
-      "transforms": {
-        "mirror": "stairs_l_right",
-        "rotations": []
-      },
-      "gesture": {
-        "nodes": {
-          "near_left": [
-            0.0,
-            0.0
-          ],
-          "near_middle": [
-            0.5,
-            0.0
-          ],
-          "near_right": [
-            1.0,
-            0.0
-          ],
-          "left_middle": [
-            0.0,
-            0.5
-          ],
-          "right_middle": [
-            1.0,
-            0.5
-          ],
-          "far_left": [
-            0.0,
-            1.0
-          ],
-          "far_middle": [
-            0.5,
-            1.0
-          ],
-          "far_right": [
-            1.0,
-            1.0
-          ]
-        },
-        "edges": [],
-        "routes": [],
-        "status": "requires_recorded_gesture"
-      },
-      "result_class": "StairR",
-      "result_class_status": "probe_inferred",
-      "tier": "situational"
-    },
-    {
-      "id": "stairs_l_right",
-      "name": "L-shaped stairs (right)",
-      "tiles": [
-        1,
-        3,
-        2
-      ],
-      "kind": "grid",
-      "mirror_of": "stairs_l_left",
-      "suggest": false,
-      "confirmed": false,
-      "purpose": [
-        "turn",
-        "climb"
-      ],
-      "exposure": "medium",
-      "cover_left": 1,
-      "difficulty": 3,
-      "when_to_use": "Mirror of the left L-shaped stairs.",
-      "source": "gamewith.net",
-      "validation": {
-        "status": "unverified",
-        "game_version": null,
-        "evidence": [],
-        "result_confirmed": false,
-        "reason": "Legacy confirmed flag is not recorded in-game verification."
-      },
-      "topology": "gesture_graph",
-      "mask": null,
-      "result_shape": "L-shaped stairs (right)",
-      "preconditions": [
-        "editable_target",
-        "standard_editing"
-      ],
-      "reset": "native_reset",
-      "transforms": {
-        "mirror": "stairs_l_left",
-        "rotations": []
-      },
-      "gesture": {
-        "nodes": {
-          "near_left": [
-            0.0,
-            0.0
-          ],
-          "near_middle": [
-            0.5,
-            0.0
-          ],
-          "near_right": [
-            1.0,
-            0.0
-          ],
-          "left_middle": [
-            0.0,
-            0.5
-          ],
-          "right_middle": [
-            1.0,
-            0.5
-          ],
-          "far_left": [
-            0.0,
-            1.0
-          ],
-          "far_middle": [
-            0.5,
-            1.0
-          ],
-          "far_right": [
-            1.0,
-            1.0
-          ]
-        },
-        "edges": [],
-        "routes": [],
-        "status": "requires_recorded_gesture"
-      },
-      "result_class": "StairR",
-      "result_class_status": "probe_inferred",
-      "tier": "situational"
-    },
-    {
-      "id": "ramp_half_nl_nr",
-      "name": "Half ramp (near left up to near right)",
-      "tiles": [
-        0,
-        1
-      ],
-      "path": [
-        0,
-        1
-      ],
-      "kind": "grid",
-      "mirror_of": "ramp_half_nr_nl",
-      "suggest": false,
-      "confirmed": false,
-      "purpose": [
-        "climb",
-        "pass_through"
-      ],
-      "exposure": "high",
-      "cover_left": 2,
-      "difficulty": 1,
-      "when_to_use": "A one-tile-wide ramp: half the material face, the other half open to walk or shoot past.",
-      "source": "UEFN build-class probe 2026-10-10 (PBWA_W1_* placed and photographed); unconfirmed tile set",
-      "result_class": "StairF",
-      "result_class_status": "probe_inferred",
-      "validation": {
-        "status": "unverified",
-        "game_version": null,
-        "evidence": [],
-        "result_confirmed": false,
-        "reason": "Ramp path from the build-class probe; confirm through recorded and reviewed attempts."
-      },
-      "topology": "gesture_graph",
-      "mask": null,
-      "result_shape": "Half ramp (near left up to near right)",
-      "preconditions": [
-        "editable_target",
-        "standard_editing"
-      ],
-      "reset": "native_reset",
-      "transforms": {
-        "mirror": "ramp_half_nr_nl",
-        "rotations": []
-      },
-      "gesture": {
-        "nodes": {
-          "near_left": [
-            0.0,
-            0.0
-          ],
-          "near_middle": [
-            0.5,
-            0.0
-          ],
-          "near_right": [
-            1.0,
-            0.0
-          ],
-          "left_middle": [
-            0.0,
-            0.5
-          ],
-          "right_middle": [
-            1.0,
-            0.5
-          ],
-          "far_left": [
-            0.0,
-            1.0
-          ],
-          "far_middle": [
-            0.5,
-            1.0
-          ],
-          "far_right": [
-            1.0,
-            1.0
-          ]
-        },
-        "edges": [],
-        "routes": [],
-        "status": "requires_recorded_gesture"
-      },
-      "strokes": [
-        [
-          0,
-          1
-        ]
-      ],
-      "tier": "common"
-    },
-    {
-      "id": "ramp_half_nl_fl",
-      "name": "Half ramp (near left up to far left)",
-      "tiles": [
-        0,
-        2
-      ],
-      "path": [
-        0,
-        2
-      ],
-      "kind": "grid",
-      "mirror_of": "ramp_half_nr_fr",
-      "suggest": false,
-      "confirmed": false,
-      "purpose": [
-        "climb",
-        "pass_through"
-      ],
-      "exposure": "high",
-      "cover_left": 2,
-      "difficulty": 1,
-      "when_to_use": "A one-tile-wide ramp: half the material face, the other half open to walk or shoot past.",
-      "source": "UEFN build-class probe 2026-10-10 (PBWA_W1_* placed and photographed); unconfirmed tile set",
-      "result_class": "StairF",
-      "result_class_status": "probe_inferred",
-      "validation": {
-        "status": "unverified",
-        "game_version": null,
-        "evidence": [],
-        "result_confirmed": false,
-        "reason": "Ramp path from the build-class probe; confirm through recorded and reviewed attempts."
-      },
-      "topology": "gesture_graph",
-      "mask": null,
-      "result_shape": "Half ramp (near left up to far left)",
-      "preconditions": [
-        "editable_target",
-        "standard_editing"
-      ],
-      "reset": "native_reset",
-      "transforms": {
-        "mirror": "ramp_half_nr_fr",
-        "rotations": []
-      },
-      "gesture": {
-        "nodes": {
-          "near_left": [
-            0.0,
-            0.0
-          ],
-          "near_middle": [
-            0.5,
-            0.0
-          ],
-          "near_right": [
-            1.0,
-            0.0
-          ],
-          "left_middle": [
-            0.0,
-            0.5
-          ],
-          "right_middle": [
-            1.0,
-            0.5
-          ],
-          "far_left": [
-            0.0,
-            1.0
-          ],
-          "far_middle": [
-            0.5,
-            1.0
-          ],
-          "far_right": [
-            1.0,
-            1.0
-          ]
-        },
-        "edges": [],
-        "routes": [],
-        "status": "requires_recorded_gesture"
-      },
-      "strokes": [
-        [
-          0,
-          2
-        ]
-      ],
-      "tier": "common"
-    },
-    {
-      "id": "ramp_half_nr_fr",
-      "name": "Half ramp (near right up to far right)",
-      "tiles": [
-        1,
-        3
-      ],
-      "path": [
-        1,
-        3
-      ],
-      "kind": "grid",
-      "mirror_of": "ramp_half_nl_fl",
-      "suggest": false,
-      "confirmed": false,
-      "purpose": [
-        "climb",
-        "pass_through"
-      ],
-      "exposure": "high",
-      "cover_left": 2,
-      "difficulty": 1,
-      "when_to_use": "A one-tile-wide ramp: half the material face, the other half open to walk or shoot past.",
-      "source": "UEFN build-class probe 2026-10-10 (PBWA_W1_* placed and photographed); unconfirmed tile set",
-      "result_class": "StairF",
-      "result_class_status": "probe_inferred",
-      "validation": {
-        "status": "unverified",
-        "game_version": null,
-        "evidence": [],
-        "result_confirmed": false,
-        "reason": "Ramp path from the build-class probe; confirm through recorded and reviewed attempts."
-      },
-      "topology": "gesture_graph",
-      "mask": null,
-      "result_shape": "Half ramp (near right up to far right)",
-      "preconditions": [
-        "editable_target",
-        "standard_editing"
-      ],
-      "reset": "native_reset",
-      "transforms": {
-        "mirror": "ramp_half_nl_fl",
-        "rotations": []
-      },
-      "gesture": {
-        "nodes": {
-          "near_left": [
-            0.0,
-            0.0
-          ],
-          "near_middle": [
-            0.5,
-            0.0
-          ],
-          "near_right": [
-            1.0,
-            0.0
-          ],
-          "left_middle": [
-            0.0,
-            0.5
-          ],
-          "right_middle": [
-            1.0,
-            0.5
-          ],
-          "far_left": [
-            0.0,
-            1.0
-          ],
-          "far_middle": [
-            0.5,
-            1.0
-          ],
-          "far_right": [
-            1.0,
-            1.0
-          ]
-        },
-        "edges": [],
-        "routes": [],
-        "status": "requires_recorded_gesture"
-      },
       "strokes": [
         [
           1,
-          3
-        ]
-      ],
-      "tier": "common"
-    },
-    {
-      "id": "ramp_half_nr_nl",
-      "name": "Half ramp (near right up to near left)",
-      "tiles": [
-        1,
-        0
-      ],
-      "path": [
-        1,
-        0
-      ],
-      "kind": "grid",
-      "mirror_of": "ramp_half_nl_nr",
-      "suggest": false,
-      "confirmed": false,
-      "purpose": [
-        "climb",
-        "pass_through"
-      ],
-      "exposure": "high",
-      "cover_left": 2,
-      "difficulty": 1,
-      "when_to_use": "A one-tile-wide ramp: half the material face, the other half open to walk or shoot past.",
-      "source": "UEFN build-class probe 2026-10-10 (PBWA_W1_* placed and photographed); unconfirmed tile set",
-      "result_class": "StairF",
-      "result_class_status": "probe_inferred",
-      "validation": {
-        "status": "unverified",
-        "game_version": null,
-        "evidence": [],
-        "result_confirmed": false,
-        "reason": "Ramp path from the build-class probe; confirm through recorded and reviewed attempts."
-      },
-      "topology": "gesture_graph",
-      "mask": null,
-      "result_shape": "Half ramp (near right up to near left)",
-      "preconditions": [
-        "editable_target",
-        "standard_editing"
-      ],
-      "reset": "native_reset",
-      "transforms": {
-        "mirror": "ramp_half_nl_nr",
-        "rotations": []
-      },
-      "gesture": {
-        "nodes": {
-          "near_left": [
-            0.0,
-            0.0
-          ],
-          "near_middle": [
-            0.5,
-            0.0
-          ],
-          "near_right": [
-            1.0,
-            0.0
-          ],
-          "left_middle": [
-            0.0,
-            0.5
-          ],
-          "right_middle": [
-            1.0,
-            0.5
-          ],
-          "far_left": [
-            0.0,
-            1.0
-          ],
-          "far_middle": [
-            0.5,
-            1.0
-          ],
-          "far_right": [
-            1.0,
-            1.0
-          ]
-        },
-        "edges": [],
-        "routes": [],
-        "status": "requires_recorded_gesture"
-      },
-      "strokes": [
-        [
-          1,
-          0
-        ]
-      ],
-      "tier": "common"
-    },
-    {
-      "id": "ramp_half_fr_fl",
-      "name": "Half ramp (far right up to far left)",
-      "tiles": [
-        3,
-        2
-      ],
-      "path": [
-        3,
-        2
-      ],
-      "kind": "grid",
-      "mirror_of": "ramp_half_fl_fr",
-      "suggest": false,
-      "confirmed": false,
-      "purpose": [
-        "climb",
-        "pass_through"
-      ],
-      "exposure": "high",
-      "cover_left": 2,
-      "difficulty": 1,
-      "when_to_use": "A one-tile-wide ramp: half the material face, the other half open to walk or shoot past.",
-      "source": "UEFN build-class probe 2026-10-10 (PBWA_W1_* placed and photographed); unconfirmed tile set",
-      "result_class": "StairF",
-      "result_class_status": "probe_inferred",
-      "validation": {
-        "status": "unverified",
-        "game_version": null,
-        "evidence": [],
-        "result_confirmed": false,
-        "reason": "Ramp path from the build-class probe; confirm through recorded and reviewed attempts."
-      },
-      "topology": "gesture_graph",
-      "mask": null,
-      "result_shape": "Half ramp (far right up to far left)",
-      "preconditions": [
-        "editable_target",
-        "standard_editing"
-      ],
-      "reset": "native_reset",
-      "transforms": {
-        "mirror": "ramp_half_fl_fr",
-        "rotations": []
-      },
-      "gesture": {
-        "nodes": {
-          "near_left": [
-            0.0,
-            0.0
-          ],
-          "near_middle": [
-            0.5,
-            0.0
-          ],
-          "near_right": [
-            1.0,
-            0.0
-          ],
-          "left_middle": [
-            0.0,
-            0.5
-          ],
-          "right_middle": [
-            1.0,
-            0.5
-          ],
-          "far_left": [
-            0.0,
-            1.0
-          ],
-          "far_middle": [
-            0.5,
-            1.0
-          ],
-          "far_right": [
-            1.0,
-            1.0
-          ]
-        },
-        "edges": [],
-        "routes": [],
-        "status": "requires_recorded_gesture"
-      },
-      "strokes": [
-        [
-          3,
-          2
-        ]
-      ],
-      "tier": "common"
-    },
-    {
-      "id": "ramp_half_fr_nr",
-      "name": "Half ramp (far right up to near right)",
-      "tiles": [
-        3,
-        1
-      ],
-      "path": [
-        3,
-        1
-      ],
-      "kind": "grid",
-      "mirror_of": "ramp_half_fl_nl",
-      "suggest": false,
-      "confirmed": false,
-      "purpose": [
-        "climb",
-        "pass_through"
-      ],
-      "exposure": "high",
-      "cover_left": 2,
-      "difficulty": 1,
-      "when_to_use": "A one-tile-wide ramp: half the material face, the other half open to walk or shoot past.",
-      "source": "UEFN build-class probe 2026-10-10 (PBWA_W1_* placed and photographed); unconfirmed tile set",
-      "result_class": "StairF",
-      "result_class_status": "probe_inferred",
-      "validation": {
-        "status": "unverified",
-        "game_version": null,
-        "evidence": [],
-        "result_confirmed": false,
-        "reason": "Ramp path from the build-class probe; confirm through recorded and reviewed attempts."
-      },
-      "topology": "gesture_graph",
-      "mask": null,
-      "result_shape": "Half ramp (far right up to near right)",
-      "preconditions": [
-        "editable_target",
-        "standard_editing"
-      ],
-      "reset": "native_reset",
-      "transforms": {
-        "mirror": "ramp_half_fl_nl",
-        "rotations": []
-      },
-      "gesture": {
-        "nodes": {
-          "near_left": [
-            0.0,
-            0.0
-          ],
-          "near_middle": [
-            0.5,
-            0.0
-          ],
-          "near_right": [
-            1.0,
-            0.0
-          ],
-          "left_middle": [
-            0.0,
-            0.5
-          ],
-          "right_middle": [
-            1.0,
-            0.5
-          ],
-          "far_left": [
-            0.0,
-            1.0
-          ],
-          "far_middle": [
-            0.5,
-            1.0
-          ],
-          "far_right": [
-            1.0,
-            1.0
-          ]
-        },
-        "edges": [],
-        "routes": [],
-        "status": "requires_recorded_gesture"
-      },
-      "strokes": [
-        [
-          3,
-          1
-        ]
-      ],
-      "tier": "common"
-    },
-    {
-      "id": "ramp_half_fl_nl",
-      "name": "Half ramp (far left up to near left)",
-      "tiles": [
-        2,
-        0
-      ],
-      "path": [
-        2,
-        0
-      ],
-      "kind": "grid",
-      "mirror_of": "ramp_half_fr_nr",
-      "suggest": false,
-      "confirmed": false,
-      "purpose": [
-        "climb",
-        "pass_through"
-      ],
-      "exposure": "high",
-      "cover_left": 2,
-      "difficulty": 1,
-      "when_to_use": "A one-tile-wide ramp: half the material face, the other half open to walk or shoot past.",
-      "source": "UEFN build-class probe 2026-10-10 (PBWA_W1_* placed and photographed); unconfirmed tile set",
-      "result_class": "StairF",
-      "result_class_status": "probe_inferred",
-      "validation": {
-        "status": "unverified",
-        "game_version": null,
-        "evidence": [],
-        "result_confirmed": false,
-        "reason": "Ramp path from the build-class probe; confirm through recorded and reviewed attempts."
-      },
-      "topology": "gesture_graph",
-      "mask": null,
-      "result_shape": "Half ramp (far left up to near left)",
-      "preconditions": [
-        "editable_target",
-        "standard_editing"
-      ],
-      "reset": "native_reset",
-      "transforms": {
-        "mirror": "ramp_half_fr_nr",
-        "rotations": []
-      },
-      "gesture": {
-        "nodes": {
-          "near_left": [
-            0.0,
-            0.0
-          ],
-          "near_middle": [
-            0.5,
-            0.0
-          ],
-          "near_right": [
-            1.0,
-            0.0
-          ],
-          "left_middle": [
-            0.0,
-            0.5
-          ],
-          "right_middle": [
-            1.0,
-            0.5
-          ],
-          "far_left": [
-            0.0,
-            1.0
-          ],
-          "far_middle": [
-            0.5,
-            1.0
-          ],
-          "far_right": [
-            1.0,
-            1.0
-          ]
-        },
-        "edges": [],
-        "routes": [],
-        "status": "requires_recorded_gesture"
-      },
-      "strokes": [
-        [
-          2,
-          0
-        ]
-      ],
-      "tier": "common"
-    },
-    {
-      "id": "ramp_half_fl_fr",
-      "name": "Half ramp (far left up to far right)",
-      "tiles": [
-        2,
-        3
-      ],
-      "path": [
-        2,
-        3
-      ],
-      "kind": "grid",
-      "mirror_of": "ramp_half_fr_fl",
-      "suggest": false,
-      "confirmed": false,
-      "purpose": [
-        "climb",
-        "pass_through"
-      ],
-      "exposure": "high",
-      "cover_left": 2,
-      "difficulty": 1,
-      "when_to_use": "A one-tile-wide ramp: half the material face, the other half open to walk or shoot past.",
-      "source": "UEFN build-class probe 2026-10-10 (PBWA_W1_* placed and photographed); unconfirmed tile set",
-      "result_class": "StairF",
-      "result_class_status": "probe_inferred",
-      "validation": {
-        "status": "unverified",
-        "game_version": null,
-        "evidence": [],
-        "result_confirmed": false,
-        "reason": "Ramp path from the build-class probe; confirm through recorded and reviewed attempts."
-      },
-      "topology": "gesture_graph",
-      "mask": null,
-      "result_shape": "Half ramp (far left up to far right)",
-      "preconditions": [
-        "editable_target",
-        "standard_editing"
-      ],
-      "reset": "native_reset",
-      "transforms": {
-        "mirror": "ramp_half_fr_fl",
-        "rotations": []
-      },
-      "gesture": {
-        "nodes": {
-          "near_left": [
-            0.0,
-            0.0
-          ],
-          "near_middle": [
-            0.5,
-            0.0
-          ],
-          "near_right": [
-            1.0,
-            0.0
-          ],
-          "left_middle": [
-            0.0,
-            0.5
-          ],
-          "right_middle": [
-            1.0,
-            0.5
-          ],
-          "far_left": [
-            0.0,
-            1.0
-          ],
-          "far_middle": [
-            0.5,
-            1.0
-          ],
-          "far_right": [
-            1.0,
-            1.0
-          ]
-        },
-        "edges": [],
-        "routes": [],
-        "status": "requires_recorded_gesture"
-      },
-      "strokes": [
-        [
-          2,
-          3
-        ]
-      ],
-      "tier": "common"
-    },
-    {
-      "id": "ramp_l_nl_nr_fr",
-      "name": "L ramp (near left up to far right)",
-      "tiles": [
-        0,
-        1,
-        3
-      ],
-      "path": [
-        0,
-        1,
-        3
-      ],
-      "kind": "grid",
-      "mirror_of": "ramp_l_nr_nl_fl",
-      "suggest": false,
-      "confirmed": false,
-      "purpose": [
-        "climb",
-        "protect"
-      ],
-      "exposure": "medium",
-      "cover_left": 3,
-      "difficulty": 2,
-      "when_to_use": "Stairs that turn a corner: climb while turning, keeping cover on the turn.",
-      "source": "UEFN build-class probe 2026-10-10 (PBWA_W1_* placed and photographed); unconfirmed tile set",
-      "result_class": "StairR",
-      "result_class_status": "probe_inferred",
-      "validation": {
-        "status": "unverified",
-        "game_version": null,
-        "evidence": [],
-        "result_confirmed": false,
-        "reason": "Ramp path from the build-class probe; confirm through recorded and reviewed attempts."
-      },
-      "topology": "gesture_graph",
-      "mask": null,
-      "result_shape": "L ramp (near left up to far right)",
-      "preconditions": [
-        "editable_target",
-        "standard_editing"
-      ],
-      "reset": "native_reset",
-      "transforms": {
-        "mirror": "ramp_l_nr_nl_fl",
-        "rotations": []
-      },
-      "gesture": {
-        "nodes": {
-          "near_left": [
-            0.0,
-            0.0
-          ],
-          "near_middle": [
-            0.5,
-            0.0
-          ],
-          "near_right": [
-            1.0,
-            0.0
-          ],
-          "left_middle": [
-            0.0,
-            0.5
-          ],
-          "right_middle": [
-            1.0,
-            0.5
-          ],
-          "far_left": [
-            0.0,
-            1.0
-          ],
-          "far_middle": [
-            0.5,
-            1.0
-          ],
-          "far_right": [
-            1.0,
-            1.0
-          ]
-        },
-        "edges": [],
-        "routes": [],
-        "status": "requires_recorded_gesture"
-      },
-      "strokes": [
-        [
-          0,
-          1,
-          3
-        ]
-      ],
-      "tier": "common"
-    },
-    {
-      "id": "ramp_l_nl_fl_fr",
-      "name": "L ramp (near left up to far right)",
-      "tiles": [
-        0,
-        2,
-        3
-      ],
-      "path": [
-        0,
-        2,
-        3
-      ],
-      "kind": "grid",
-      "mirror_of": "ramp_l_nr_fr_fl",
-      "suggest": false,
-      "confirmed": false,
-      "purpose": [
-        "climb",
-        "protect"
-      ],
-      "exposure": "medium",
-      "cover_left": 3,
-      "difficulty": 2,
-      "when_to_use": "Stairs that turn a corner: climb while turning, keeping cover on the turn.",
-      "source": "UEFN build-class probe 2026-10-10 (PBWA_W1_* placed and photographed); unconfirmed tile set",
-      "result_class": "StairR",
-      "result_class_status": "probe_inferred",
-      "validation": {
-        "status": "unverified",
-        "game_version": null,
-        "evidence": [],
-        "result_confirmed": false,
-        "reason": "Ramp path from the build-class probe; confirm through recorded and reviewed attempts."
-      },
-      "topology": "gesture_graph",
-      "mask": null,
-      "result_shape": "L ramp (near left up to far right)",
-      "preconditions": [
-        "editable_target",
-        "standard_editing"
-      ],
-      "reset": "native_reset",
-      "transforms": {
-        "mirror": "ramp_l_nr_fr_fl",
-        "rotations": []
-      },
-      "gesture": {
-        "nodes": {
-          "near_left": [
-            0.0,
-            0.0
-          ],
-          "near_middle": [
-            0.5,
-            0.0
-          ],
-          "near_right": [
-            1.0,
-            0.0
-          ],
-          "left_middle": [
-            0.0,
-            0.5
-          ],
-          "right_middle": [
-            1.0,
-            0.5
-          ],
-          "far_left": [
-            0.0,
-            1.0
-          ],
-          "far_middle": [
-            0.5,
-            1.0
-          ],
-          "far_right": [
-            1.0,
-            1.0
-          ]
-        },
-        "edges": [],
-        "routes": [],
-        "status": "requires_recorded_gesture"
-      },
-      "strokes": [
-        [
-          0,
-          2,
-          3
-        ]
-      ],
-      "tier": "common"
-    },
-    {
-      "id": "ramp_l_nr_fr_fl",
-      "name": "L ramp (near right up to far left)",
-      "tiles": [
-        1,
-        3,
-        2
-      ],
-      "path": [
-        1,
-        3,
-        2
-      ],
-      "kind": "grid",
-      "mirror_of": "ramp_l_nl_fl_fr",
-      "suggest": false,
-      "confirmed": false,
-      "purpose": [
-        "climb",
-        "protect"
-      ],
-      "exposure": "medium",
-      "cover_left": 3,
-      "difficulty": 2,
-      "when_to_use": "Stairs that turn a corner: climb while turning, keeping cover on the turn.",
-      "source": "UEFN build-class probe 2026-10-10 (PBWA_W1_* placed and photographed); unconfirmed tile set",
-      "result_class": "StairR",
-      "result_class_status": "probe_inferred",
-      "validation": {
-        "status": "unverified",
-        "game_version": null,
-        "evidence": [],
-        "result_confirmed": false,
-        "reason": "Ramp path from the build-class probe; confirm through recorded and reviewed attempts."
-      },
-      "topology": "gesture_graph",
-      "mask": null,
-      "result_shape": "L ramp (near right up to far left)",
-      "preconditions": [
-        "editable_target",
-        "standard_editing"
-      ],
-      "reset": "native_reset",
-      "transforms": {
-        "mirror": "ramp_l_nl_fl_fr",
-        "rotations": []
-      },
-      "gesture": {
-        "nodes": {
-          "near_left": [
-            0.0,
-            0.0
-          ],
-          "near_middle": [
-            0.5,
-            0.0
-          ],
-          "near_right": [
-            1.0,
-            0.0
-          ],
-          "left_middle": [
-            0.0,
-            0.5
-          ],
-          "right_middle": [
-            1.0,
-            0.5
-          ],
-          "far_left": [
-            0.0,
-            1.0
-          ],
-          "far_middle": [
-            0.5,
-            1.0
-          ],
-          "far_right": [
-            1.0,
-            1.0
-          ]
-        },
-        "edges": [],
-        "routes": [],
-        "status": "requires_recorded_gesture"
-      },
-      "strokes": [
-        [
-          1,
-          3,
-          2
-        ]
-      ],
-      "tier": "common"
-    },
-    {
-      "id": "ramp_l_nr_nl_fl",
-      "name": "L ramp (near right up to far left)",
-      "tiles": [
-        1,
-        0,
-        2
-      ],
-      "path": [
-        1,
-        0,
-        2
-      ],
-      "kind": "grid",
-      "mirror_of": "ramp_l_nl_nr_fr",
-      "suggest": false,
-      "confirmed": false,
-      "purpose": [
-        "climb",
-        "protect"
-      ],
-      "exposure": "medium",
-      "cover_left": 3,
-      "difficulty": 2,
-      "when_to_use": "Stairs that turn a corner: climb while turning, keeping cover on the turn.",
-      "source": "UEFN build-class probe 2026-10-10 (PBWA_W1_* placed and photographed); unconfirmed tile set",
-      "result_class": "StairR",
-      "result_class_status": "probe_inferred",
-      "validation": {
-        "status": "unverified",
-        "game_version": null,
-        "evidence": [],
-        "result_confirmed": false,
-        "reason": "Ramp path from the build-class probe; confirm through recorded and reviewed attempts."
-      },
-      "topology": "gesture_graph",
-      "mask": null,
-      "result_shape": "L ramp (near right up to far left)",
-      "preconditions": [
-        "editable_target",
-        "standard_editing"
-      ],
-      "reset": "native_reset",
-      "transforms": {
-        "mirror": "ramp_l_nl_nr_fr",
-        "rotations": []
-      },
-      "gesture": {
-        "nodes": {
-          "near_left": [
-            0.0,
-            0.0
-          ],
-          "near_middle": [
-            0.5,
-            0.0
-          ],
-          "near_right": [
-            1.0,
-            0.0
-          ],
-          "left_middle": [
-            0.0,
-            0.5
-          ],
-          "right_middle": [
-            1.0,
-            0.5
-          ],
-          "far_left": [
-            0.0,
-            1.0
-          ],
-          "far_middle": [
-            0.5,
-            1.0
-          ],
-          "far_right": [
-            1.0,
-            1.0
-          ]
-        },
-        "edges": [],
-        "routes": [],
-        "status": "requires_recorded_gesture"
-      },
-      "strokes": [
-        [
-          1,
-          0,
-          2
-        ]
-      ],
-      "tier": "common"
-    },
-    {
-      "id": "ramp_l_fr_fl_nl",
-      "name": "L ramp (far right up to near left)",
-      "tiles": [
-        3,
-        2,
-        0
-      ],
-      "path": [
-        3,
-        2,
-        0
-      ],
-      "kind": "grid",
-      "mirror_of": "ramp_l_fl_fr_nr",
-      "suggest": false,
-      "confirmed": false,
-      "purpose": [
-        "climb",
-        "protect"
-      ],
-      "exposure": "medium",
-      "cover_left": 3,
-      "difficulty": 2,
-      "when_to_use": "Stairs that turn a corner: climb while turning, keeping cover on the turn.",
-      "source": "UEFN build-class probe 2026-10-10 (PBWA_W1_* placed and photographed); unconfirmed tile set",
-      "result_class": "StairR",
-      "result_class_status": "probe_inferred",
-      "validation": {
-        "status": "unverified",
-        "game_version": null,
-        "evidence": [],
-        "result_confirmed": false,
-        "reason": "Ramp path from the build-class probe; confirm through recorded and reviewed attempts."
-      },
-      "topology": "gesture_graph",
-      "mask": null,
-      "result_shape": "L ramp (far right up to near left)",
-      "preconditions": [
-        "editable_target",
-        "standard_editing"
-      ],
-      "reset": "native_reset",
-      "transforms": {
-        "mirror": "ramp_l_fl_fr_nr",
-        "rotations": []
-      },
-      "gesture": {
-        "nodes": {
-          "near_left": [
-            0.0,
-            0.0
-          ],
-          "near_middle": [
-            0.5,
-            0.0
-          ],
-          "near_right": [
-            1.0,
-            0.0
-          ],
-          "left_middle": [
-            0.0,
-            0.5
-          ],
-          "right_middle": [
-            1.0,
-            0.5
-          ],
-          "far_left": [
-            0.0,
-            1.0
-          ],
-          "far_middle": [
-            0.5,
-            1.0
-          ],
-          "far_right": [
-            1.0,
-            1.0
-          ]
-        },
-        "edges": [],
-        "routes": [],
-        "status": "requires_recorded_gesture"
-      },
-      "strokes": [
-        [
-          3,
-          2,
-          0
-        ]
-      ],
-      "tier": "common"
-    },
-    {
-      "id": "ramp_l_fr_nr_nl",
-      "name": "L ramp (far right up to near left)",
-      "tiles": [
-        3,
-        1,
-        0
-      ],
-      "path": [
-        3,
-        1,
-        0
-      ],
-      "kind": "grid",
-      "mirror_of": "ramp_l_fl_nl_nr",
-      "suggest": false,
-      "confirmed": false,
-      "purpose": [
-        "climb",
-        "protect"
-      ],
-      "exposure": "medium",
-      "cover_left": 3,
-      "difficulty": 2,
-      "when_to_use": "Stairs that turn a corner: climb while turning, keeping cover on the turn.",
-      "source": "UEFN build-class probe 2026-10-10 (PBWA_W1_* placed and photographed); unconfirmed tile set",
-      "result_class": "StairR",
-      "result_class_status": "probe_inferred",
-      "validation": {
-        "status": "unverified",
-        "game_version": null,
-        "evidence": [],
-        "result_confirmed": false,
-        "reason": "Ramp path from the build-class probe; confirm through recorded and reviewed attempts."
-      },
-      "topology": "gesture_graph",
-      "mask": null,
-      "result_shape": "L ramp (far right up to near left)",
-      "preconditions": [
-        "editable_target",
-        "standard_editing"
-      ],
-      "reset": "native_reset",
-      "transforms": {
-        "mirror": "ramp_l_fl_nl_nr",
-        "rotations": []
-      },
-      "gesture": {
-        "nodes": {
-          "near_left": [
-            0.0,
-            0.0
-          ],
-          "near_middle": [
-            0.5,
-            0.0
-          ],
-          "near_right": [
-            1.0,
-            0.0
-          ],
-          "left_middle": [
-            0.0,
-            0.5
-          ],
-          "right_middle": [
-            1.0,
-            0.5
-          ],
-          "far_left": [
-            0.0,
-            1.0
-          ],
-          "far_middle": [
-            0.5,
-            1.0
-          ],
-          "far_right": [
-            1.0,
-            1.0
-          ]
-        },
-        "edges": [],
-        "routes": [],
-        "status": "requires_recorded_gesture"
-      },
-      "strokes": [
-        [
-          3,
-          1,
-          0
-        ]
-      ],
-      "tier": "common"
-    },
-    {
-      "id": "ramp_l_fl_nl_nr",
-      "name": "L ramp (far left up to near right)",
-      "tiles": [
-        2,
-        0,
-        1
-      ],
-      "path": [
-        2,
-        0,
-        1
-      ],
-      "kind": "grid",
-      "mirror_of": "ramp_l_fr_nr_nl",
-      "suggest": false,
-      "confirmed": false,
-      "purpose": [
-        "climb",
-        "protect"
-      ],
-      "exposure": "medium",
-      "cover_left": 3,
-      "difficulty": 2,
-      "when_to_use": "Stairs that turn a corner: climb while turning, keeping cover on the turn.",
-      "source": "UEFN build-class probe 2026-10-10 (PBWA_W1_* placed and photographed); unconfirmed tile set",
-      "result_class": "StairR",
-      "result_class_status": "probe_inferred",
-      "validation": {
-        "status": "unverified",
-        "game_version": null,
-        "evidence": [],
-        "result_confirmed": false,
-        "reason": "Ramp path from the build-class probe; confirm through recorded and reviewed attempts."
-      },
-      "topology": "gesture_graph",
-      "mask": null,
-      "result_shape": "L ramp (far left up to near right)",
-      "preconditions": [
-        "editable_target",
-        "standard_editing"
-      ],
-      "reset": "native_reset",
-      "transforms": {
-        "mirror": "ramp_l_fr_nr_nl",
-        "rotations": []
-      },
-      "gesture": {
-        "nodes": {
-          "near_left": [
-            0.0,
-            0.0
-          ],
-          "near_middle": [
-            0.5,
-            0.0
-          ],
-          "near_right": [
-            1.0,
-            0.0
-          ],
-          "left_middle": [
-            0.0,
-            0.5
-          ],
-          "right_middle": [
-            1.0,
-            0.5
-          ],
-          "far_left": [
-            0.0,
-            1.0
-          ],
-          "far_middle": [
-            0.5,
-            1.0
-          ],
-          "far_right": [
-            1.0,
-            1.0
-          ]
-        },
-        "edges": [],
-        "routes": [],
-        "status": "requires_recorded_gesture"
-      },
-      "strokes": [
-        [
-          2,
-          0,
-          1
-        ]
-      ],
-      "tier": "common"
-    },
-    {
-      "id": "ramp_l_fl_fr_nr",
-      "name": "L ramp (far left up to near right)",
-      "tiles": [
-        2,
-        3,
-        1
-      ],
-      "path": [
-        2,
-        3,
-        1
-      ],
-      "kind": "grid",
-      "mirror_of": "ramp_l_fr_fl_nl",
-      "suggest": false,
-      "confirmed": false,
-      "purpose": [
-        "climb",
-        "protect"
-      ],
-      "exposure": "medium",
-      "cover_left": 3,
-      "difficulty": 2,
-      "when_to_use": "Stairs that turn a corner: climb while turning, keeping cover on the turn.",
-      "source": "UEFN build-class probe 2026-10-10 (PBWA_W1_* placed and photographed); unconfirmed tile set",
-      "result_class": "StairR",
-      "result_class_status": "probe_inferred",
-      "validation": {
-        "status": "unverified",
-        "game_version": null,
-        "evidence": [],
-        "result_confirmed": false,
-        "reason": "Ramp path from the build-class probe; confirm through recorded and reviewed attempts."
-      },
-      "topology": "gesture_graph",
-      "mask": null,
-      "result_shape": "L ramp (far left up to near right)",
-      "preconditions": [
-        "editable_target",
-        "standard_editing"
-      ],
-      "reset": "native_reset",
-      "transforms": {
-        "mirror": "ramp_l_fr_fl_nl",
-        "rotations": []
-      },
-      "gesture": {
-        "nodes": {
-          "near_left": [
-            0.0,
-            0.0
-          ],
-          "near_middle": [
-            0.5,
-            0.0
-          ],
-          "near_right": [
-            1.0,
-            0.0
-          ],
-          "left_middle": [
-            0.0,
-            0.5
-          ],
-          "right_middle": [
-            1.0,
-            0.5
-          ],
-          "far_left": [
-            0.0,
-            1.0
-          ],
-          "far_middle": [
-            0.5,
-            1.0
-          ],
-          "far_right": [
-            1.0,
-            1.0
-          ]
-        },
-        "edges": [],
-        "routes": [],
-        "status": "requires_recorded_gesture"
-      },
-      "strokes": [
-        [
-          2,
-          3,
-          1
-        ]
-      ],
-      "tier": "common"
-    },
-    {
-      "id": "ramp_spiral_nl_nr_fr_fl",
-      "name": "Spiral ramp (near left up to far left)",
-      "tiles": [
-        0,
-        1,
-        3,
-        2
-      ],
-      "path": [
-        0,
-        1,
-        3,
-        2
-      ],
-      "kind": "grid",
-      "mirror_of": "ramp_spiral_nr_nl_fl_fr",
-      "suggest": false,
-      "confirmed": false,
-      "purpose": [
-        "climb",
-        "protect"
-      ],
-      "exposure": "low",
-      "cover_left": 4,
-      "difficulty": 3,
-      "when_to_use": "Stairs that wind round all four tiles: climb a full storey inside one cell.",
-      "source": "UEFN build-class probe 2026-10-10 (PBWA_W1_* placed and photographed); unconfirmed tile set",
-      "result_class": "StairSpiral",
-      "result_class_status": "probe_inferred",
-      "validation": {
-        "status": "unverified",
-        "game_version": null,
-        "evidence": [],
-        "result_confirmed": false,
-        "reason": "Ramp path from the build-class probe; confirm through recorded and reviewed attempts."
-      },
-      "topology": "gesture_graph",
-      "mask": null,
-      "result_shape": "Spiral ramp (near left up to far left)",
-      "preconditions": [
-        "editable_target",
-        "standard_editing"
-      ],
-      "reset": "native_reset",
-      "transforms": {
-        "mirror": "ramp_spiral_nr_nl_fl_fr",
-        "rotations": []
-      },
-      "gesture": {
-        "nodes": {
-          "near_left": [
-            0.0,
-            0.0
-          ],
-          "near_middle": [
-            0.5,
-            0.0
-          ],
-          "near_right": [
-            1.0,
-            0.0
-          ],
-          "left_middle": [
-            0.0,
-            0.5
-          ],
-          "right_middle": [
-            1.0,
-            0.5
-          ],
-          "far_left": [
-            0.0,
-            1.0
-          ],
-          "far_middle": [
-            0.5,
-            1.0
-          ],
-          "far_right": [
-            1.0,
-            1.0
-          ]
-        },
-        "edges": [],
-        "routes": [],
-        "status": "requires_recorded_gesture"
-      },
-      "strokes": [
-        [
-          0,
-          1,
-          3,
-          2
-        ]
-      ],
-      "tier": "situational"
-    },
-    {
-      "id": "ramp_spiral_nl_fl_fr_nr",
-      "name": "Spiral ramp (near left up to near right)",
-      "tiles": [
-        0,
-        2,
-        3,
-        1
-      ],
-      "path": [
-        0,
-        2,
-        3,
-        1
-      ],
-      "kind": "grid",
-      "mirror_of": "ramp_spiral_nr_fr_fl_nl",
-      "suggest": false,
-      "confirmed": false,
-      "purpose": [
-        "climb",
-        "protect"
-      ],
-      "exposure": "low",
-      "cover_left": 4,
-      "difficulty": 3,
-      "when_to_use": "Stairs that wind round all four tiles: climb a full storey inside one cell.",
-      "source": "UEFN build-class probe 2026-10-10 (PBWA_W1_* placed and photographed); unconfirmed tile set",
-      "result_class": "StairSpiral",
-      "result_class_status": "probe_inferred",
-      "validation": {
-        "status": "unverified",
-        "game_version": null,
-        "evidence": [],
-        "result_confirmed": false,
-        "reason": "Ramp path from the build-class probe; confirm through recorded and reviewed attempts."
-      },
-      "topology": "gesture_graph",
-      "mask": null,
-      "result_shape": "Spiral ramp (near left up to near right)",
-      "preconditions": [
-        "editable_target",
-        "standard_editing"
-      ],
-      "reset": "native_reset",
-      "transforms": {
-        "mirror": "ramp_spiral_nr_fr_fl_nl",
-        "rotations": []
-      },
-      "gesture": {
-        "nodes": {
-          "near_left": [
-            0.0,
-            0.0
-          ],
-          "near_middle": [
-            0.5,
-            0.0
-          ],
-          "near_right": [
-            1.0,
-            0.0
-          ],
-          "left_middle": [
-            0.0,
-            0.5
-          ],
-          "right_middle": [
-            1.0,
-            0.5
-          ],
-          "far_left": [
-            0.0,
-            1.0
-          ],
-          "far_middle": [
-            0.5,
-            1.0
-          ],
-          "far_right": [
-            1.0,
-            1.0
-          ]
-        },
-        "edges": [],
-        "routes": [],
-        "status": "requires_recorded_gesture"
-      },
-      "strokes": [
-        [
-          0,
-          2,
-          3,
-          1
-        ]
-      ],
-      "tier": "situational"
-    },
-    {
-      "id": "ramp_spiral_nr_fr_fl_nl",
-      "name": "Spiral ramp (near right up to near left)",
-      "tiles": [
-        1,
-        3,
-        2,
-        0
-      ],
-      "path": [
-        1,
-        3,
-        2,
-        0
-      ],
-      "kind": "grid",
-      "mirror_of": "ramp_spiral_nl_fl_fr_nr",
-      "suggest": false,
-      "confirmed": false,
-      "purpose": [
-        "climb",
-        "protect"
-      ],
-      "exposure": "low",
-      "cover_left": 4,
-      "difficulty": 3,
-      "when_to_use": "Stairs that wind round all four tiles: climb a full storey inside one cell.",
-      "source": "UEFN build-class probe 2026-10-10 (PBWA_W1_* placed and photographed); unconfirmed tile set",
-      "result_class": "StairSpiral",
-      "result_class_status": "probe_inferred",
-      "validation": {
-        "status": "unverified",
-        "game_version": null,
-        "evidence": [],
-        "result_confirmed": false,
-        "reason": "Ramp path from the build-class probe; confirm through recorded and reviewed attempts."
-      },
-      "topology": "gesture_graph",
-      "mask": null,
-      "result_shape": "Spiral ramp (near right up to near left)",
-      "preconditions": [
-        "editable_target",
-        "standard_editing"
-      ],
-      "reset": "native_reset",
-      "transforms": {
-        "mirror": "ramp_spiral_nl_fl_fr_nr",
-        "rotations": []
-      },
-      "gesture": {
-        "nodes": {
-          "near_left": [
-            0.0,
-            0.0
-          ],
-          "near_middle": [
-            0.5,
-            0.0
-          ],
-          "near_right": [
-            1.0,
-            0.0
-          ],
-          "left_middle": [
-            0.0,
-            0.5
-          ],
-          "right_middle": [
-            1.0,
-            0.5
-          ],
-          "far_left": [
-            0.0,
-            1.0
-          ],
-          "far_middle": [
-            0.5,
-            1.0
-          ],
-          "far_right": [
-            1.0,
-            1.0
-          ]
-        },
-        "edges": [],
-        "routes": [],
-        "status": "requires_recorded_gesture"
-      },
-      "strokes": [
-        [
-          1,
-          3,
-          2,
-          0
-        ]
-      ],
-      "tier": "situational"
-    },
-    {
-      "id": "ramp_spiral_nr_nl_fl_fr",
-      "name": "Spiral ramp (near right up to far right)",
-      "tiles": [
-        1,
-        0,
-        2,
-        3
-      ],
-      "path": [
-        1,
-        0,
-        2,
-        3
-      ],
-      "kind": "grid",
-      "mirror_of": "ramp_spiral_nl_nr_fr_fl",
-      "suggest": false,
-      "confirmed": false,
-      "purpose": [
-        "climb",
-        "protect"
-      ],
-      "exposure": "low",
-      "cover_left": 4,
-      "difficulty": 3,
-      "when_to_use": "Stairs that wind round all four tiles: climb a full storey inside one cell.",
-      "source": "UEFN build-class probe 2026-10-10 (PBWA_W1_* placed and photographed); unconfirmed tile set",
-      "result_class": "StairSpiral",
-      "result_class_status": "probe_inferred",
-      "validation": {
-        "status": "unverified",
-        "game_version": null,
-        "evidence": [],
-        "result_confirmed": false,
-        "reason": "Ramp path from the build-class probe; confirm through recorded and reviewed attempts."
-      },
-      "topology": "gesture_graph",
-      "mask": null,
-      "result_shape": "Spiral ramp (near right up to far right)",
-      "preconditions": [
-        "editable_target",
-        "standard_editing"
-      ],
-      "reset": "native_reset",
-      "transforms": {
-        "mirror": "ramp_spiral_nl_nr_fr_fl",
-        "rotations": []
-      },
-      "gesture": {
-        "nodes": {
-          "near_left": [
-            0.0,
-            0.0
-          ],
-          "near_middle": [
-            0.5,
-            0.0
-          ],
-          "near_right": [
-            1.0,
-            0.0
-          ],
-          "left_middle": [
-            0.0,
-            0.5
-          ],
-          "right_middle": [
-            1.0,
-            0.5
-          ],
-          "far_left": [
-            0.0,
-            1.0
-          ],
-          "far_middle": [
-            0.5,
-            1.0
-          ],
-          "far_right": [
-            1.0,
-            1.0
-          ]
-        },
-        "edges": [],
-        "routes": [],
-        "status": "requires_recorded_gesture"
-      },
-      "strokes": [
-        [
-          1,
-          0,
-          2,
-          3
-        ]
-      ],
-      "tier": "situational"
-    },
-    {
-      "id": "ramp_spiral_fr_fl_nl_nr",
-      "name": "Spiral ramp (far right up to near right)",
-      "tiles": [
-        3,
-        2,
-        0,
-        1
-      ],
-      "path": [
-        3,
-        2,
-        0,
-        1
-      ],
-      "kind": "grid",
-      "mirror_of": "ramp_spiral_fl_fr_nr_nl",
-      "suggest": false,
-      "confirmed": false,
-      "purpose": [
-        "climb",
-        "protect"
-      ],
-      "exposure": "low",
-      "cover_left": 4,
-      "difficulty": 3,
-      "when_to_use": "Stairs that wind round all four tiles: climb a full storey inside one cell.",
-      "source": "UEFN build-class probe 2026-10-10 (PBWA_W1_* placed and photographed); unconfirmed tile set",
-      "result_class": "StairSpiral",
-      "result_class_status": "probe_inferred",
-      "validation": {
-        "status": "unverified",
-        "game_version": null,
-        "evidence": [],
-        "result_confirmed": false,
-        "reason": "Ramp path from the build-class probe; confirm through recorded and reviewed attempts."
-      },
-      "topology": "gesture_graph",
-      "mask": null,
-      "result_shape": "Spiral ramp (far right up to near right)",
-      "preconditions": [
-        "editable_target",
-        "standard_editing"
-      ],
-      "reset": "native_reset",
-      "transforms": {
-        "mirror": "ramp_spiral_fl_fr_nr_nl",
-        "rotations": []
-      },
-      "gesture": {
-        "nodes": {
-          "near_left": [
-            0.0,
-            0.0
-          ],
-          "near_middle": [
-            0.5,
-            0.0
-          ],
-          "near_right": [
-            1.0,
-            0.0
-          ],
-          "left_middle": [
-            0.0,
-            0.5
-          ],
-          "right_middle": [
-            1.0,
-            0.5
-          ],
-          "far_left": [
-            0.0,
-            1.0
-          ],
-          "far_middle": [
-            0.5,
-            1.0
-          ],
-          "far_right": [
-            1.0,
-            1.0
-          ]
-        },
-        "edges": [],
-        "routes": [],
-        "status": "requires_recorded_gesture"
-      },
-      "strokes": [
-        [
-          3,
-          2,
-          0,
-          1
-        ]
-      ],
-      "tier": "situational"
-    },
-    {
-      "id": "ramp_spiral_fr_nr_nl_fl",
-      "name": "Spiral ramp (far right up to far left)",
-      "tiles": [
-        3,
-        1,
-        0,
-        2
-      ],
-      "path": [
-        3,
-        1,
-        0,
-        2
-      ],
-      "kind": "grid",
-      "mirror_of": "ramp_spiral_fl_nl_nr_fr",
-      "suggest": false,
-      "confirmed": false,
-      "purpose": [
-        "climb",
-        "protect"
-      ],
-      "exposure": "low",
-      "cover_left": 4,
-      "difficulty": 3,
-      "when_to_use": "Stairs that wind round all four tiles: climb a full storey inside one cell.",
-      "source": "UEFN build-class probe 2026-10-10 (PBWA_W1_* placed and photographed); unconfirmed tile set",
-      "result_class": "StairSpiral",
-      "result_class_status": "probe_inferred",
-      "validation": {
-        "status": "unverified",
-        "game_version": null,
-        "evidence": [],
-        "result_confirmed": false,
-        "reason": "Ramp path from the build-class probe; confirm through recorded and reviewed attempts."
-      },
-      "topology": "gesture_graph",
-      "mask": null,
-      "result_shape": "Spiral ramp (far right up to far left)",
-      "preconditions": [
-        "editable_target",
-        "standard_editing"
-      ],
-      "reset": "native_reset",
-      "transforms": {
-        "mirror": "ramp_spiral_fl_nl_nr_fr",
-        "rotations": []
-      },
-      "gesture": {
-        "nodes": {
-          "near_left": [
-            0.0,
-            0.0
-          ],
-          "near_middle": [
-            0.5,
-            0.0
-          ],
-          "near_right": [
-            1.0,
-            0.0
-          ],
-          "left_middle": [
-            0.0,
-            0.5
-          ],
-          "right_middle": [
-            1.0,
-            0.5
-          ],
-          "far_left": [
-            0.0,
-            1.0
-          ],
-          "far_middle": [
-            0.5,
-            1.0
-          ],
-          "far_right": [
-            1.0,
-            1.0
-          ]
-        },
-        "edges": [],
-        "routes": [],
-        "status": "requires_recorded_gesture"
-      },
-      "strokes": [
-        [
-          3,
-          1,
-          0,
-          2
-        ]
-      ],
-      "tier": "situational"
-    },
-    {
-      "id": "ramp_spiral_fl_nl_nr_fr",
-      "name": "Spiral ramp (far left up to far right)",
-      "tiles": [
-        2,
-        0,
-        1,
-        3
-      ],
-      "path": [
-        2,
-        0,
-        1,
-        3
-      ],
-      "kind": "grid",
-      "mirror_of": "ramp_spiral_fr_nr_nl_fl",
-      "suggest": false,
-      "confirmed": false,
-      "purpose": [
-        "climb",
-        "protect"
-      ],
-      "exposure": "low",
-      "cover_left": 4,
-      "difficulty": 3,
-      "when_to_use": "Stairs that wind round all four tiles: climb a full storey inside one cell.",
-      "source": "UEFN build-class probe 2026-10-10 (PBWA_W1_* placed and photographed); unconfirmed tile set",
-      "result_class": "StairSpiral",
-      "result_class_status": "probe_inferred",
-      "validation": {
-        "status": "unverified",
-        "game_version": null,
-        "evidence": [],
-        "result_confirmed": false,
-        "reason": "Ramp path from the build-class probe; confirm through recorded and reviewed attempts."
-      },
-      "topology": "gesture_graph",
-      "mask": null,
-      "result_shape": "Spiral ramp (far left up to far right)",
-      "preconditions": [
-        "editable_target",
-        "standard_editing"
-      ],
-      "reset": "native_reset",
-      "transforms": {
-        "mirror": "ramp_spiral_fr_nr_nl_fl",
-        "rotations": []
-      },
-      "gesture": {
-        "nodes": {
-          "near_left": [
-            0.0,
-            0.0
-          ],
-          "near_middle": [
-            0.5,
-            0.0
-          ],
-          "near_right": [
-            1.0,
-            0.0
-          ],
-          "left_middle": [
-            0.0,
-            0.5
-          ],
-          "right_middle": [
-            1.0,
-            0.5
-          ],
-          "far_left": [
-            0.0,
-            1.0
-          ],
-          "far_middle": [
-            0.5,
-            1.0
-          ],
-          "far_right": [
-            1.0,
-            1.0
-          ]
-        },
-        "edges": [],
-        "routes": [],
-        "status": "requires_recorded_gesture"
-      },
-      "strokes": [
-        [
-          2,
-          0,
-          1,
-          3
-        ]
-      ],
-      "tier": "situational"
-    },
-    {
-      "id": "ramp_spiral_fl_fr_nr_nl",
-      "name": "Spiral ramp (far left up to near left)",
-      "tiles": [
-        2,
-        3,
-        1,
-        0
-      ],
-      "path": [
-        2,
-        3,
-        1,
-        0
-      ],
-      "kind": "grid",
-      "mirror_of": "ramp_spiral_fr_fl_nl_nr",
-      "suggest": false,
-      "confirmed": false,
-      "purpose": [
-        "climb",
-        "protect"
-      ],
-      "exposure": "low",
-      "cover_left": 4,
-      "difficulty": 3,
-      "when_to_use": "Stairs that wind round all four tiles: climb a full storey inside one cell.",
-      "source": "UEFN build-class probe 2026-10-10 (PBWA_W1_* placed and photographed); unconfirmed tile set",
-      "result_class": "StairSpiral",
-      "result_class_status": "probe_inferred",
-      "validation": {
-        "status": "unverified",
-        "game_version": null,
-        "evidence": [],
-        "result_confirmed": false,
-        "reason": "Ramp path from the build-class probe; confirm through recorded and reviewed attempts."
-      },
-      "topology": "gesture_graph",
-      "mask": null,
-      "result_shape": "Spiral ramp (far left up to near left)",
-      "preconditions": [
-        "editable_target",
-        "standard_editing"
-      ],
-      "reset": "native_reset",
-      "transforms": {
-        "mirror": "ramp_spiral_fr_fl_nl_nr",
-        "rotations": []
-      },
-      "gesture": {
-        "nodes": {
-          "near_left": [
-            0.0,
-            0.0
-          ],
-          "near_middle": [
-            0.5,
-            0.0
-          ],
-          "near_right": [
-            1.0,
-            0.0
-          ],
-          "left_middle": [
-            0.0,
-            0.5
-          ],
-          "right_middle": [
-            1.0,
-            0.5
-          ],
-          "far_left": [
-            0.0,
-            1.0
-          ],
-          "far_middle": [
-            0.5,
-            1.0
-          ],
-          "far_right": [
-            1.0,
-            1.0
-          ]
-        },
-        "edges": [],
-        "routes": [],
-        "status": "requires_recorded_gesture"
-      },
-      "strokes": [
-        [
-          2,
-          3,
-          1,
-          0
-        ]
-      ],
-      "tier": "situational"
-    },
-    {
-      "id": "ramp_full_up",
-      "name": "Full ramp (facing away, as placed)",
-      "tiles": [
-        0,
-        2,
-        1,
-        3
-      ],
-      "strokes": [
-        [
-          0,
-          2
-        ],
-        [
-          1,
-          3
+          4,
+          7
         ]
       ],
       "kind": "grid",
       "mirror_of": null,
-      "suggest": false,
+      "suggest": true,
       "confirmed": false,
       "purpose": [
         "climb",
         "protect"
       ],
       "exposure": "low",
-      "cover_left": 4,
-      "difficulty": 2,
-      "when_to_use": "Turn a placed ramp to climb another way without replacing it: drag both columns (or rows) the new way.",
-      "source": "UEFN build-class probe 2026-10-10 (PBWA_W1_* placed and photographed); unconfirmed tile set",
-      "result_class": "StairW",
-      "result_class_status": "probe_inferred",
+      "cover_left": 0,
+      "difficulty": 1,
+      "when_to_use": "Turn the whole ramp to climb another way: drag the middle column or row the new way. Reset, then confirm, returns the ramp as placed.",
+      "source": "player 2026-10-22: ramp edit grid is 3 x 3; drag paths as listed (numpad digits from the bottom)",
       "validation": {
-        "status": "unverified",
+        "status": "player_described",
         "game_version": null,
         "evidence": [],
         "result_confirmed": false,
-        "reason": "Ramp rotation; confirm through recorded and reviewed attempts."
+        "reason": "Listed by the player; not yet recorded and reviewed in game."
       },
       "tier": "common",
       "topology": "gesture_graph",
       "mask": null,
-      "result_shape": "Full ramp (facing away, as placed)",
+      "result_shape": "Full ramp, rising away",
       "preconditions": [
         "editable_target",
         "standard_editing"
@@ -5689,279 +3073,48 @@
         "mirror": null,
         "rotations": []
       },
-      "gesture": {
-        "nodes": {
-          "near_left": [
-            0.0,
-            0.0
-          ],
-          "near_middle": [
-            0.5,
-            0.0
-          ],
-          "near_right": [
-            1.0,
-            0.0
-          ],
-          "left_middle": [
-            0.0,
-            0.5
-          ],
-          "right_middle": [
-            1.0,
-            0.5
-          ],
-          "far_left": [
-            0.0,
-            1.0
-          ],
-          "far_middle": [
-            0.5,
-            1.0
-          ],
-          "far_right": [
-            1.0,
-            1.0
-          ]
-        },
-        "edges": [],
-        "routes": [],
-        "status": "requires_recorded_gesture"
-      }
+      "result_class": "",
+      "result_class_status": "unknown"
     },
     {
       "id": "ramp_full_right",
-      "name": "Full ramp turned right",
+      "name": "Full ramp, rising right",
       "tiles": [
-        0,
-        1,
-        2,
-        3
-      ],
-      "strokes": [
-        [
-          0,
-          1
-        ],
-        [
-          2,
-          3
-        ]
-      ],
-      "kind": "grid",
-      "mirror_of": "ramp_full_left",
-      "suggest": false,
-      "confirmed": false,
-      "purpose": [
-        "climb",
-        "protect"
-      ],
-      "exposure": "low",
-      "cover_left": 4,
-      "difficulty": 2,
-      "when_to_use": "Turn a placed ramp to climb another way without replacing it: drag both columns (or rows) the new way.",
-      "source": "UEFN build-class probe 2026-10-10 (PBWA_W1_* placed and photographed); unconfirmed tile set",
-      "result_class": "StairW",
-      "result_class_status": "probe_inferred",
-      "validation": {
-        "status": "unverified",
-        "game_version": null,
-        "evidence": [],
-        "result_confirmed": false,
-        "reason": "Ramp rotation; confirm through recorded and reviewed attempts."
-      },
-      "tier": "common",
-      "topology": "gesture_graph",
-      "mask": null,
-      "result_shape": "Full ramp turned right",
-      "preconditions": [
-        "editable_target",
-        "standard_editing"
-      ],
-      "reset": "native_reset",
-      "transforms": {
-        "mirror": "ramp_full_left",
-        "rotations": []
-      },
-      "gesture": {
-        "nodes": {
-          "near_left": [
-            0.0,
-            0.0
-          ],
-          "near_middle": [
-            0.5,
-            0.0
-          ],
-          "near_right": [
-            1.0,
-            0.0
-          ],
-          "left_middle": [
-            0.0,
-            0.5
-          ],
-          "right_middle": [
-            1.0,
-            0.5
-          ],
-          "far_left": [
-            0.0,
-            1.0
-          ],
-          "far_middle": [
-            0.5,
-            1.0
-          ],
-          "far_right": [
-            1.0,
-            1.0
-          ]
-        },
-        "edges": [],
-        "routes": [],
-        "status": "requires_recorded_gesture"
-      }
-    },
-    {
-      "id": "ramp_full_left",
-      "name": "Full ramp turned left",
-      "tiles": [
-        1,
-        0,
         3,
-        2
+        4,
+        5
       ],
       "strokes": [
-        [
-          1,
-          0
-        ],
         [
           3,
-          2
-        ]
-      ],
-      "kind": "grid",
-      "mirror_of": "ramp_full_right",
-      "suggest": false,
-      "confirmed": false,
-      "purpose": [
-        "climb",
-        "protect"
-      ],
-      "exposure": "low",
-      "cover_left": 4,
-      "difficulty": 2,
-      "when_to_use": "Turn a placed ramp to climb another way without replacing it: drag both columns (or rows) the new way.",
-      "source": "UEFN build-class probe 2026-10-10 (PBWA_W1_* placed and photographed); unconfirmed tile set",
-      "result_class": "StairW",
-      "result_class_status": "probe_inferred",
-      "validation": {
-        "status": "unverified",
-        "game_version": null,
-        "evidence": [],
-        "result_confirmed": false,
-        "reason": "Ramp rotation; confirm through recorded and reviewed attempts."
-      },
-      "tier": "common",
-      "topology": "gesture_graph",
-      "mask": null,
-      "result_shape": "Full ramp turned left",
-      "preconditions": [
-        "editable_target",
-        "standard_editing"
-      ],
-      "reset": "native_reset",
-      "transforms": {
-        "mirror": "ramp_full_right",
-        "rotations": []
-      },
-      "gesture": {
-        "nodes": {
-          "near_left": [
-            0.0,
-            0.0
-          ],
-          "near_middle": [
-            0.5,
-            0.0
-          ],
-          "near_right": [
-            1.0,
-            0.0
-          ],
-          "left_middle": [
-            0.0,
-            0.5
-          ],
-          "right_middle": [
-            1.0,
-            0.5
-          ],
-          "far_left": [
-            0.0,
-            1.0
-          ],
-          "far_middle": [
-            0.5,
-            1.0
-          ],
-          "far_right": [
-            1.0,
-            1.0
-          ]
-        },
-        "edges": [],
-        "routes": [],
-        "status": "requires_recorded_gesture"
-      }
-    },
-    {
-      "id": "ramp_full_down",
-      "name": "Full ramp turned round (facing you)",
-      "tiles": [
-        2,
-        0,
-        3,
-        1
-      ],
-      "strokes": [
-        [
-          2,
-          0
-        ],
-        [
-          3,
-          1
+          4,
+          5
         ]
       ],
       "kind": "grid",
       "mirror_of": null,
-      "suggest": false,
+      "suggest": true,
       "confirmed": false,
       "purpose": [
         "climb",
         "protect"
       ],
       "exposure": "low",
-      "cover_left": 4,
-      "difficulty": 2,
-      "when_to_use": "Turn a placed ramp to climb another way without replacing it: drag both columns (or rows) the new way.",
-      "source": "UEFN build-class probe 2026-10-10 (PBWA_W1_* placed and photographed); unconfirmed tile set",
-      "result_class": "StairW",
-      "result_class_status": "probe_inferred",
+      "cover_left": 0,
+      "difficulty": 1,
+      "when_to_use": "Turn the whole ramp to climb another way: drag the middle column or row the new way. Reset, then confirm, returns the ramp as placed.",
+      "source": "player 2026-10-22: ramp edit grid is 3 x 3; drag paths as listed (numpad digits from the bottom)",
       "validation": {
-        "status": "unverified",
+        "status": "player_described",
         "game_version": null,
         "evidence": [],
         "result_confirmed": false,
-        "reason": "Ramp rotation; confirm through recorded and reviewed attempts."
+        "reason": "Listed by the player; not yet recorded and reviewed in game."
       },
       "tier": "common",
       "topology": "gesture_graph",
       "mask": null,
-      "result_shape": "Full ramp turned round (facing you)",
+      "result_shape": "Full ramp, rising right",
       "preconditions": [
         "editable_target",
         "standard_editing"
@@ -5971,45 +3124,1430 @@
         "mirror": null,
         "rotations": []
       },
-      "gesture": {
-        "nodes": {
-          "near_left": [
-            0.0,
-            0.0
-          ],
-          "near_middle": [
-            0.5,
-            0.0
-          ],
-          "near_right": [
-            1.0,
-            0.0
-          ],
-          "left_middle": [
-            0.0,
-            0.5
-          ],
-          "right_middle": [
-            1.0,
-            0.5
-          ],
-          "far_left": [
-            0.0,
-            1.0
-          ],
-          "far_middle": [
-            0.5,
-            1.0
-          ],
-          "far_right": [
-            1.0,
-            1.0
-          ]
-        },
-        "edges": [],
-        "routes": [],
-        "status": "requires_recorded_gesture"
-      }
+      "result_class": "",
+      "result_class_status": "unknown"
+    },
+    {
+      "id": "ramp_full_toward",
+      "name": "Full ramp, rising toward you",
+      "tiles": [
+        7,
+        4,
+        1
+      ],
+      "strokes": [
+        [
+          7,
+          4,
+          1
+        ]
+      ],
+      "kind": "grid",
+      "mirror_of": null,
+      "suggest": true,
+      "confirmed": false,
+      "purpose": [
+        "climb",
+        "protect"
+      ],
+      "exposure": "low",
+      "cover_left": 0,
+      "difficulty": 1,
+      "when_to_use": "Turn the whole ramp to climb another way: drag the middle column or row the new way. Reset, then confirm, returns the ramp as placed.",
+      "source": "player 2026-10-22: ramp edit grid is 3 x 3; drag paths as listed (numpad digits from the bottom)",
+      "validation": {
+        "status": "player_described",
+        "game_version": null,
+        "evidence": [],
+        "result_confirmed": false,
+        "reason": "Listed by the player; not yet recorded and reviewed in game."
+      },
+      "tier": "common",
+      "topology": "gesture_graph",
+      "mask": null,
+      "result_shape": "Full ramp, rising toward you",
+      "preconditions": [
+        "editable_target",
+        "standard_editing"
+      ],
+      "reset": "native_reset",
+      "transforms": {
+        "mirror": null,
+        "rotations": []
+      },
+      "result_class": "",
+      "result_class_status": "unknown"
+    },
+    {
+      "id": "ramp_full_left",
+      "name": "Full ramp, rising left",
+      "tiles": [
+        5,
+        4,
+        3
+      ],
+      "strokes": [
+        [
+          5,
+          4,
+          3
+        ]
+      ],
+      "kind": "grid",
+      "mirror_of": null,
+      "suggest": true,
+      "confirmed": false,
+      "purpose": [
+        "climb",
+        "protect"
+      ],
+      "exposure": "low",
+      "cover_left": 0,
+      "difficulty": 1,
+      "when_to_use": "Turn the whole ramp to climb another way: drag the middle column or row the new way. Reset, then confirm, returns the ramp as placed.",
+      "source": "player 2026-10-22: ramp edit grid is 3 x 3; drag paths as listed (numpad digits from the bottom)",
+      "validation": {
+        "status": "player_described",
+        "game_version": null,
+        "evidence": [],
+        "result_confirmed": false,
+        "reason": "Listed by the player; not yet recorded and reviewed in game."
+      },
+      "tier": "common",
+      "topology": "gesture_graph",
+      "mask": null,
+      "result_shape": "Full ramp, rising left",
+      "preconditions": [
+        "editable_target",
+        "standard_editing"
+      ],
+      "reset": "native_reset",
+      "transforms": {
+        "mirror": null,
+        "rotations": []
+      },
+      "result_class": "",
+      "result_class_status": "unknown"
+    },
+    {
+      "id": "ramp_half_left_away",
+      "name": "Half ramp left, rising away",
+      "tiles": [
+        0,
+        3,
+        6
+      ],
+      "strokes": [
+        [
+          0,
+          3,
+          6
+        ]
+      ],
+      "kind": "grid",
+      "mirror_of": "ramp_half_right_away",
+      "suggest": true,
+      "confirmed": false,
+      "purpose": [
+        "climb",
+        "pass_through"
+      ],
+      "exposure": "medium",
+      "cover_left": 0,
+      "difficulty": 1,
+      "when_to_use": "A half-width ramp along one edge: leaves the other side open to walk or shoot past.",
+      "source": "player 2026-10-22: ramp edit grid is 3 x 3; drag paths as listed (numpad digits from the bottom)",
+      "validation": {
+        "status": "player_described",
+        "game_version": null,
+        "evidence": [],
+        "result_confirmed": false,
+        "reason": "Listed by the player; not yet recorded and reviewed in game."
+      },
+      "tier": "common",
+      "topology": "gesture_graph",
+      "mask": null,
+      "result_shape": "Half ramp left, rising away",
+      "preconditions": [
+        "editable_target",
+        "standard_editing"
+      ],
+      "reset": "native_reset",
+      "transforms": {
+        "mirror": "ramp_half_right_away",
+        "rotations": []
+      },
+      "result_class": "",
+      "result_class_status": "unknown"
+    },
+    {
+      "id": "ramp_half_right_away",
+      "name": "Half ramp right, rising away",
+      "tiles": [
+        2,
+        5,
+        8
+      ],
+      "strokes": [
+        [
+          2,
+          5,
+          8
+        ]
+      ],
+      "kind": "grid",
+      "mirror_of": "ramp_half_left_away",
+      "suggest": true,
+      "confirmed": false,
+      "purpose": [
+        "climb",
+        "pass_through"
+      ],
+      "exposure": "medium",
+      "cover_left": 0,
+      "difficulty": 1,
+      "when_to_use": "A half-width ramp along one edge: leaves the other side open to walk or shoot past.",
+      "source": "player 2026-10-22: ramp edit grid is 3 x 3; drag paths as listed (numpad digits from the bottom)",
+      "validation": {
+        "status": "player_described",
+        "game_version": null,
+        "evidence": [],
+        "result_confirmed": false,
+        "reason": "Listed by the player; not yet recorded and reviewed in game."
+      },
+      "tier": "common",
+      "topology": "gesture_graph",
+      "mask": null,
+      "result_shape": "Half ramp right, rising away",
+      "preconditions": [
+        "editable_target",
+        "standard_editing"
+      ],
+      "reset": "native_reset",
+      "transforms": {
+        "mirror": "ramp_half_left_away",
+        "rotations": []
+      },
+      "result_class": "",
+      "result_class_status": "unknown"
+    },
+    {
+      "id": "ramp_half_left_toward",
+      "name": "Half ramp left, rising toward you",
+      "tiles": [
+        6,
+        3,
+        0
+      ],
+      "strokes": [
+        [
+          6,
+          3,
+          0
+        ]
+      ],
+      "kind": "grid",
+      "mirror_of": "ramp_half_right_toward",
+      "suggest": true,
+      "confirmed": false,
+      "purpose": [
+        "climb",
+        "pass_through"
+      ],
+      "exposure": "medium",
+      "cover_left": 0,
+      "difficulty": 1,
+      "when_to_use": "A half-width ramp along one edge: leaves the other side open to walk or shoot past.",
+      "source": "player 2026-10-22: ramp edit grid is 3 x 3; drag paths as listed (numpad digits from the bottom)",
+      "validation": {
+        "status": "player_described",
+        "game_version": null,
+        "evidence": [],
+        "result_confirmed": false,
+        "reason": "Listed by the player; not yet recorded and reviewed in game."
+      },
+      "tier": "common",
+      "topology": "gesture_graph",
+      "mask": null,
+      "result_shape": "Half ramp left, rising toward you",
+      "preconditions": [
+        "editable_target",
+        "standard_editing"
+      ],
+      "reset": "native_reset",
+      "transforms": {
+        "mirror": "ramp_half_right_toward",
+        "rotations": []
+      },
+      "result_class": "",
+      "result_class_status": "unknown"
+    },
+    {
+      "id": "ramp_half_right_toward",
+      "name": "Half ramp right, rising toward you",
+      "tiles": [
+        8,
+        5,
+        2
+      ],
+      "strokes": [
+        [
+          8,
+          5,
+          2
+        ]
+      ],
+      "kind": "grid",
+      "mirror_of": "ramp_half_left_toward",
+      "suggest": true,
+      "confirmed": false,
+      "purpose": [
+        "climb",
+        "pass_through"
+      ],
+      "exposure": "medium",
+      "cover_left": 0,
+      "difficulty": 1,
+      "when_to_use": "A half-width ramp along one edge: leaves the other side open to walk or shoot past.",
+      "source": "player 2026-10-22: ramp edit grid is 3 x 3; drag paths as listed (numpad digits from the bottom)",
+      "validation": {
+        "status": "player_described",
+        "game_version": null,
+        "evidence": [],
+        "result_confirmed": false,
+        "reason": "Listed by the player; not yet recorded and reviewed in game."
+      },
+      "tier": "common",
+      "topology": "gesture_graph",
+      "mask": null,
+      "result_shape": "Half ramp right, rising toward you",
+      "preconditions": [
+        "editable_target",
+        "standard_editing"
+      ],
+      "reset": "native_reset",
+      "transforms": {
+        "mirror": "ramp_half_left_toward",
+        "rotations": []
+      },
+      "result_class": "",
+      "result_class_status": "unknown"
+    },
+    {
+      "id": "ramp_half_near_right",
+      "name": "Half ramp near, rising right",
+      "tiles": [
+        0,
+        1,
+        2
+      ],
+      "strokes": [
+        [
+          0,
+          1,
+          2
+        ]
+      ],
+      "kind": "grid",
+      "mirror_of": null,
+      "suggest": true,
+      "confirmed": false,
+      "purpose": [
+        "climb",
+        "pass_through"
+      ],
+      "exposure": "medium",
+      "cover_left": 0,
+      "difficulty": 1,
+      "when_to_use": "A half-width ramp along one edge: leaves the other side open to walk or shoot past.",
+      "source": "player 2026-10-22: ramp edit grid is 3 x 3; drag paths as listed (numpad digits from the bottom)",
+      "validation": {
+        "status": "player_described",
+        "game_version": null,
+        "evidence": [],
+        "result_confirmed": false,
+        "reason": "Listed by the player; not yet recorded and reviewed in game."
+      },
+      "tier": "common",
+      "topology": "gesture_graph",
+      "mask": null,
+      "result_shape": "Half ramp near, rising right",
+      "preconditions": [
+        "editable_target",
+        "standard_editing"
+      ],
+      "reset": "native_reset",
+      "transforms": {
+        "mirror": null,
+        "rotations": []
+      },
+      "result_class": "",
+      "result_class_status": "unknown"
+    },
+    {
+      "id": "ramp_half_far_right",
+      "name": "Half ramp far, rising right",
+      "tiles": [
+        6,
+        7,
+        8
+      ],
+      "strokes": [
+        [
+          6,
+          7,
+          8
+        ]
+      ],
+      "kind": "grid",
+      "mirror_of": null,
+      "suggest": true,
+      "confirmed": false,
+      "purpose": [
+        "climb",
+        "pass_through"
+      ],
+      "exposure": "medium",
+      "cover_left": 0,
+      "difficulty": 1,
+      "when_to_use": "A half-width ramp along one edge: leaves the other side open to walk or shoot past.",
+      "source": "player 2026-10-22: ramp edit grid is 3 x 3; drag paths as listed (numpad digits from the bottom)",
+      "validation": {
+        "status": "player_described",
+        "game_version": null,
+        "evidence": [],
+        "result_confirmed": false,
+        "reason": "Listed by the player; not yet recorded and reviewed in game."
+      },
+      "tier": "common",
+      "topology": "gesture_graph",
+      "mask": null,
+      "result_shape": "Half ramp far, rising right",
+      "preconditions": [
+        "editable_target",
+        "standard_editing"
+      ],
+      "reset": "native_reset",
+      "transforms": {
+        "mirror": null,
+        "rotations": []
+      },
+      "result_class": "",
+      "result_class_status": "unknown"
+    },
+    {
+      "id": "ramp_half_near_left",
+      "name": "Half ramp near, rising left",
+      "tiles": [
+        2,
+        1,
+        0
+      ],
+      "strokes": [
+        [
+          2,
+          1,
+          0
+        ]
+      ],
+      "kind": "grid",
+      "mirror_of": null,
+      "suggest": true,
+      "confirmed": false,
+      "purpose": [
+        "climb",
+        "pass_through"
+      ],
+      "exposure": "medium",
+      "cover_left": 0,
+      "difficulty": 1,
+      "when_to_use": "A half-width ramp along one edge: leaves the other side open to walk or shoot past.",
+      "source": "player 2026-10-22: ramp edit grid is 3 x 3; drag paths as listed (numpad digits from the bottom)",
+      "validation": {
+        "status": "player_described",
+        "game_version": null,
+        "evidence": [],
+        "result_confirmed": false,
+        "reason": "Listed by the player; not yet recorded and reviewed in game."
+      },
+      "tier": "common",
+      "topology": "gesture_graph",
+      "mask": null,
+      "result_shape": "Half ramp near, rising left",
+      "preconditions": [
+        "editable_target",
+        "standard_editing"
+      ],
+      "reset": "native_reset",
+      "transforms": {
+        "mirror": null,
+        "rotations": []
+      },
+      "result_class": "",
+      "result_class_status": "unknown"
+    },
+    {
+      "id": "ramp_half_far_left",
+      "name": "Half ramp far, rising left",
+      "tiles": [
+        8,
+        7,
+        6
+      ],
+      "strokes": [
+        [
+          8,
+          7,
+          6
+        ]
+      ],
+      "kind": "grid",
+      "mirror_of": null,
+      "suggest": true,
+      "confirmed": false,
+      "purpose": [
+        "climb",
+        "pass_through"
+      ],
+      "exposure": "medium",
+      "cover_left": 0,
+      "difficulty": 1,
+      "when_to_use": "A half-width ramp along one edge: leaves the other side open to walk or shoot past.",
+      "source": "player 2026-10-22: ramp edit grid is 3 x 3; drag paths as listed (numpad digits from the bottom)",
+      "validation": {
+        "status": "player_described",
+        "game_version": null,
+        "evidence": [],
+        "result_confirmed": false,
+        "reason": "Listed by the player; not yet recorded and reviewed in game."
+      },
+      "tier": "common",
+      "topology": "gesture_graph",
+      "mask": null,
+      "result_shape": "Half ramp far, rising left",
+      "preconditions": [
+        "editable_target",
+        "standard_editing"
+      ],
+      "reset": "native_reset",
+      "transforms": {
+        "mirror": null,
+        "rotations": []
+      },
+      "result_class": "",
+      "result_class_status": "unknown"
+    },
+    {
+      "id": "stair_l_away_right",
+      "name": "L stair, away then right",
+      "tiles": [
+        0,
+        3,
+        6,
+        7,
+        8
+      ],
+      "strokes": [
+        [
+          0,
+          3,
+          6,
+          7,
+          8
+        ]
+      ],
+      "kind": "grid",
+      "mirror_of": "stair_l_away_left",
+      "suggest": true,
+      "confirmed": false,
+      "purpose": [
+        "climb",
+        "turn"
+      ],
+      "exposure": "medium",
+      "cover_left": 0,
+      "difficulty": 2,
+      "when_to_use": "Stairs that turn a corner: climb one way, then turn at the top edge.",
+      "source": "player 2026-10-22: ramp edit grid is 3 x 3; drag paths as listed (numpad digits from the bottom)",
+      "validation": {
+        "status": "player_described",
+        "game_version": null,
+        "evidence": [],
+        "result_confirmed": false,
+        "reason": "Listed by the player; not yet recorded and reviewed in game."
+      },
+      "tier": "situational",
+      "topology": "gesture_graph",
+      "mask": null,
+      "result_shape": "L stair, away then right",
+      "preconditions": [
+        "editable_target",
+        "standard_editing"
+      ],
+      "reset": "native_reset",
+      "transforms": {
+        "mirror": "stair_l_away_left",
+        "rotations": []
+      },
+      "result_class": "",
+      "result_class_status": "unknown"
+    },
+    {
+      "id": "stair_l_away_left",
+      "name": "L stair, away then left",
+      "tiles": [
+        2,
+        5,
+        8,
+        7,
+        6
+      ],
+      "strokes": [
+        [
+          2,
+          5,
+          8,
+          7,
+          6
+        ]
+      ],
+      "kind": "grid",
+      "mirror_of": "stair_l_away_right",
+      "suggest": true,
+      "confirmed": false,
+      "purpose": [
+        "climb",
+        "turn"
+      ],
+      "exposure": "medium",
+      "cover_left": 0,
+      "difficulty": 2,
+      "when_to_use": "Stairs that turn a corner: climb one way, then turn at the top edge.",
+      "source": "player 2026-10-22: ramp edit grid is 3 x 3; drag paths as listed (numpad digits from the bottom)",
+      "validation": {
+        "status": "player_described",
+        "game_version": null,
+        "evidence": [],
+        "result_confirmed": false,
+        "reason": "Listed by the player; not yet recorded and reviewed in game."
+      },
+      "tier": "situational",
+      "topology": "gesture_graph",
+      "mask": null,
+      "result_shape": "L stair, away then left",
+      "preconditions": [
+        "editable_target",
+        "standard_editing"
+      ],
+      "reset": "native_reset",
+      "transforms": {
+        "mirror": "stair_l_away_right",
+        "rotations": []
+      },
+      "result_class": "",
+      "result_class_status": "unknown"
+    },
+    {
+      "id": "stair_l_right_away",
+      "name": "L stair, right then away",
+      "tiles": [
+        0,
+        1,
+        2,
+        5,
+        8
+      ],
+      "strokes": [
+        [
+          0,
+          1,
+          2,
+          5,
+          8
+        ]
+      ],
+      "kind": "grid",
+      "mirror_of": "stair_l_left_away",
+      "suggest": true,
+      "confirmed": false,
+      "purpose": [
+        "climb",
+        "turn"
+      ],
+      "exposure": "medium",
+      "cover_left": 0,
+      "difficulty": 2,
+      "when_to_use": "Stairs that turn a corner: climb one way, then turn at the top edge.",
+      "source": "player 2026-10-22: ramp edit grid is 3 x 3; drag paths as listed (numpad digits from the bottom)",
+      "validation": {
+        "status": "player_described",
+        "game_version": null,
+        "evidence": [],
+        "result_confirmed": false,
+        "reason": "Listed by the player; not yet recorded and reviewed in game."
+      },
+      "tier": "situational",
+      "topology": "gesture_graph",
+      "mask": null,
+      "result_shape": "L stair, right then away",
+      "preconditions": [
+        "editable_target",
+        "standard_editing"
+      ],
+      "reset": "native_reset",
+      "transforms": {
+        "mirror": "stair_l_left_away",
+        "rotations": []
+      },
+      "result_class": "",
+      "result_class_status": "unknown"
+    },
+    {
+      "id": "stair_l_left_away",
+      "name": "L stair, left then away",
+      "tiles": [
+        2,
+        1,
+        0,
+        3,
+        6
+      ],
+      "strokes": [
+        [
+          2,
+          1,
+          0,
+          3,
+          6
+        ]
+      ],
+      "kind": "grid",
+      "mirror_of": "stair_l_right_away",
+      "suggest": true,
+      "confirmed": false,
+      "purpose": [
+        "climb",
+        "turn"
+      ],
+      "exposure": "medium",
+      "cover_left": 0,
+      "difficulty": 2,
+      "when_to_use": "Stairs that turn a corner: climb one way, then turn at the top edge.",
+      "source": "player 2026-10-22: ramp edit grid is 3 x 3; drag paths as listed (numpad digits from the bottom)",
+      "validation": {
+        "status": "player_described",
+        "game_version": null,
+        "evidence": [],
+        "result_confirmed": false,
+        "reason": "Listed by the player; not yet recorded and reviewed in game."
+      },
+      "tier": "situational",
+      "topology": "gesture_graph",
+      "mask": null,
+      "result_shape": "L stair, left then away",
+      "preconditions": [
+        "editable_target",
+        "standard_editing"
+      ],
+      "reset": "native_reset",
+      "transforms": {
+        "mirror": "stair_l_right_away",
+        "rotations": []
+      },
+      "result_class": "",
+      "result_class_status": "unknown"
+    },
+    {
+      "id": "stair_l_toward_right",
+      "name": "L stair, toward you then right",
+      "tiles": [
+        6,
+        3,
+        0,
+        1,
+        2
+      ],
+      "strokes": [
+        [
+          6,
+          3,
+          0,
+          1,
+          2
+        ]
+      ],
+      "kind": "grid",
+      "mirror_of": "stair_l_toward_left",
+      "suggest": true,
+      "confirmed": false,
+      "purpose": [
+        "climb",
+        "turn"
+      ],
+      "exposure": "medium",
+      "cover_left": 0,
+      "difficulty": 2,
+      "when_to_use": "Stairs that turn a corner: climb one way, then turn at the top edge.",
+      "source": "player 2026-10-22: ramp edit grid is 3 x 3; drag paths as listed (numpad digits from the bottom)",
+      "validation": {
+        "status": "player_described",
+        "game_version": null,
+        "evidence": [],
+        "result_confirmed": false,
+        "reason": "Listed by the player; not yet recorded and reviewed in game."
+      },
+      "tier": "situational",
+      "topology": "gesture_graph",
+      "mask": null,
+      "result_shape": "L stair, toward you then right",
+      "preconditions": [
+        "editable_target",
+        "standard_editing"
+      ],
+      "reset": "native_reset",
+      "transforms": {
+        "mirror": "stair_l_toward_left",
+        "rotations": []
+      },
+      "result_class": "",
+      "result_class_status": "unknown"
+    },
+    {
+      "id": "stair_l_toward_left",
+      "name": "L stair, toward you then left",
+      "tiles": [
+        8,
+        5,
+        2,
+        1,
+        0
+      ],
+      "strokes": [
+        [
+          8,
+          5,
+          2,
+          1,
+          0
+        ]
+      ],
+      "kind": "grid",
+      "mirror_of": "stair_l_toward_right",
+      "suggest": true,
+      "confirmed": false,
+      "purpose": [
+        "climb",
+        "turn"
+      ],
+      "exposure": "medium",
+      "cover_left": 0,
+      "difficulty": 2,
+      "when_to_use": "Stairs that turn a corner: climb one way, then turn at the top edge.",
+      "source": "player 2026-10-22: ramp edit grid is 3 x 3; drag paths as listed (numpad digits from the bottom)",
+      "validation": {
+        "status": "player_described",
+        "game_version": null,
+        "evidence": [],
+        "result_confirmed": false,
+        "reason": "Listed by the player; not yet recorded and reviewed in game."
+      },
+      "tier": "situational",
+      "topology": "gesture_graph",
+      "mask": null,
+      "result_shape": "L stair, toward you then left",
+      "preconditions": [
+        "editable_target",
+        "standard_editing"
+      ],
+      "reset": "native_reset",
+      "transforms": {
+        "mirror": "stair_l_toward_right",
+        "rotations": []
+      },
+      "result_class": "",
+      "result_class_status": "unknown"
+    },
+    {
+      "id": "stair_l_right_toward",
+      "name": "L stair, right then toward you",
+      "tiles": [
+        6,
+        7,
+        8,
+        5,
+        2
+      ],
+      "strokes": [
+        [
+          6,
+          7,
+          8,
+          5,
+          2
+        ]
+      ],
+      "kind": "grid",
+      "mirror_of": "stair_l_left_toward",
+      "suggest": true,
+      "confirmed": false,
+      "purpose": [
+        "climb",
+        "turn"
+      ],
+      "exposure": "medium",
+      "cover_left": 0,
+      "difficulty": 2,
+      "when_to_use": "Stairs that turn a corner: climb one way, then turn at the top edge.",
+      "source": "player 2026-10-22: ramp edit grid is 3 x 3; drag paths as listed (numpad digits from the bottom)",
+      "validation": {
+        "status": "player_described",
+        "game_version": null,
+        "evidence": [],
+        "result_confirmed": false,
+        "reason": "Listed by the player; not yet recorded and reviewed in game."
+      },
+      "tier": "situational",
+      "topology": "gesture_graph",
+      "mask": null,
+      "result_shape": "L stair, right then toward you",
+      "preconditions": [
+        "editable_target",
+        "standard_editing"
+      ],
+      "reset": "native_reset",
+      "transforms": {
+        "mirror": "stair_l_left_toward",
+        "rotations": []
+      },
+      "result_class": "",
+      "result_class_status": "unknown"
+    },
+    {
+      "id": "stair_l_left_toward",
+      "name": "L stair, left then toward you",
+      "tiles": [
+        8,
+        7,
+        6,
+        3,
+        0
+      ],
+      "strokes": [
+        [
+          8,
+          7,
+          6,
+          3,
+          0
+        ]
+      ],
+      "kind": "grid",
+      "mirror_of": "stair_l_right_toward",
+      "suggest": true,
+      "confirmed": false,
+      "purpose": [
+        "climb",
+        "turn"
+      ],
+      "exposure": "medium",
+      "cover_left": 0,
+      "difficulty": 2,
+      "when_to_use": "Stairs that turn a corner: climb one way, then turn at the top edge.",
+      "source": "player 2026-10-22: ramp edit grid is 3 x 3; drag paths as listed (numpad digits from the bottom)",
+      "validation": {
+        "status": "player_described",
+        "game_version": null,
+        "evidence": [],
+        "result_confirmed": false,
+        "reason": "Listed by the player; not yet recorded and reviewed in game."
+      },
+      "tier": "situational",
+      "topology": "gesture_graph",
+      "mask": null,
+      "result_shape": "L stair, left then toward you",
+      "preconditions": [
+        "editable_target",
+        "standard_editing"
+      ],
+      "reset": "native_reset",
+      "transforms": {
+        "mirror": "stair_l_right_toward",
+        "rotations": []
+      },
+      "result_class": "",
+      "result_class_status": "unknown"
+    },
+    {
+      "id": "stair_u_away_right_toward",
+      "name": "U stair, away, right, toward you",
+      "tiles": [
+        0,
+        3,
+        6,
+        7,
+        8,
+        5,
+        2
+      ],
+      "strokes": [
+        [
+          0,
+          3,
+          6,
+          7,
+          8,
+          5,
+          2
+        ]
+      ],
+      "kind": "grid",
+      "mirror_of": null,
+      "suggest": true,
+      "confirmed": false,
+      "purpose": [
+        "climb",
+        "turn"
+      ],
+      "exposure": "medium",
+      "cover_left": 0,
+      "difficulty": 3,
+      "when_to_use": "Switchback stairs around three edges: a long climb in a single tile.",
+      "source": "player 2026-10-22: ramp edit grid is 3 x 3; drag paths as listed (numpad digits from the bottom)",
+      "validation": {
+        "status": "player_described",
+        "game_version": null,
+        "evidence": [],
+        "result_confirmed": false,
+        "reason": "Listed by the player; not yet recorded and reviewed in game."
+      },
+      "tier": "situational",
+      "topology": "gesture_graph",
+      "mask": null,
+      "result_shape": "U stair, away, right, toward you",
+      "preconditions": [
+        "editable_target",
+        "standard_editing"
+      ],
+      "reset": "native_reset",
+      "transforms": {
+        "mirror": null,
+        "rotations": []
+      },
+      "result_class": "",
+      "result_class_status": "unknown"
+    },
+    {
+      "id": "stair_u_away_left_toward",
+      "name": "U stair, away, left, toward you",
+      "tiles": [
+        2,
+        5,
+        8,
+        7,
+        6,
+        3,
+        0
+      ],
+      "strokes": [
+        [
+          2,
+          5,
+          8,
+          7,
+          6,
+          3,
+          0
+        ]
+      ],
+      "kind": "grid",
+      "mirror_of": null,
+      "suggest": true,
+      "confirmed": false,
+      "purpose": [
+        "climb",
+        "turn"
+      ],
+      "exposure": "medium",
+      "cover_left": 0,
+      "difficulty": 3,
+      "when_to_use": "Switchback stairs around three edges: a long climb in a single tile.",
+      "source": "player 2026-10-22: ramp edit grid is 3 x 3; drag paths as listed (numpad digits from the bottom)",
+      "validation": {
+        "status": "player_described",
+        "game_version": null,
+        "evidence": [],
+        "result_confirmed": false,
+        "reason": "Listed by the player; not yet recorded and reviewed in game."
+      },
+      "tier": "situational",
+      "topology": "gesture_graph",
+      "mask": null,
+      "result_shape": "U stair, away, left, toward you",
+      "preconditions": [
+        "editable_target",
+        "standard_editing"
+      ],
+      "reset": "native_reset",
+      "transforms": {
+        "mirror": null,
+        "rotations": []
+      },
+      "result_class": "",
+      "result_class_status": "unknown"
+    },
+    {
+      "id": "stair_u_toward_right_away",
+      "name": "U stair, toward you, right, away",
+      "tiles": [
+        6,
+        3,
+        0,
+        1,
+        2,
+        5,
+        8
+      ],
+      "strokes": [
+        [
+          6,
+          3,
+          0,
+          1,
+          2,
+          5,
+          8
+        ]
+      ],
+      "kind": "grid",
+      "mirror_of": null,
+      "suggest": true,
+      "confirmed": false,
+      "purpose": [
+        "climb",
+        "turn"
+      ],
+      "exposure": "medium",
+      "cover_left": 0,
+      "difficulty": 3,
+      "when_to_use": "Switchback stairs around three edges: a long climb in a single tile.",
+      "source": "player 2026-10-22: ramp edit grid is 3 x 3; drag paths as listed (numpad digits from the bottom)",
+      "validation": {
+        "status": "player_described",
+        "game_version": null,
+        "evidence": [],
+        "result_confirmed": false,
+        "reason": "Listed by the player; not yet recorded and reviewed in game."
+      },
+      "tier": "situational",
+      "topology": "gesture_graph",
+      "mask": null,
+      "result_shape": "U stair, toward you, right, away",
+      "preconditions": [
+        "editable_target",
+        "standard_editing"
+      ],
+      "reset": "native_reset",
+      "transforms": {
+        "mirror": null,
+        "rotations": []
+      },
+      "result_class": "",
+      "result_class_status": "unknown"
+    },
+    {
+      "id": "stair_u_toward_left_away",
+      "name": "U stair, toward you, left, away",
+      "tiles": [
+        8,
+        5,
+        2,
+        1,
+        0,
+        3,
+        6
+      ],
+      "strokes": [
+        [
+          8,
+          5,
+          2,
+          1,
+          0,
+          3,
+          6
+        ]
+      ],
+      "kind": "grid",
+      "mirror_of": null,
+      "suggest": true,
+      "confirmed": false,
+      "purpose": [
+        "climb",
+        "turn"
+      ],
+      "exposure": "medium",
+      "cover_left": 0,
+      "difficulty": 3,
+      "when_to_use": "Switchback stairs around three edges: a long climb in a single tile.",
+      "source": "player 2026-10-22: ramp edit grid is 3 x 3; drag paths as listed (numpad digits from the bottom)",
+      "validation": {
+        "status": "player_described",
+        "game_version": null,
+        "evidence": [],
+        "result_confirmed": false,
+        "reason": "Listed by the player; not yet recorded and reviewed in game."
+      },
+      "tier": "situational",
+      "topology": "gesture_graph",
+      "mask": null,
+      "result_shape": "U stair, toward you, left, away",
+      "preconditions": [
+        "editable_target",
+        "standard_editing"
+      ],
+      "reset": "native_reset",
+      "transforms": {
+        "mirror": null,
+        "rotations": []
+      },
+      "result_class": "",
+      "result_class_status": "unknown"
+    },
+    {
+      "id": "stair_u_right_away_left",
+      "name": "U stair, right, away, left",
+      "tiles": [
+        0,
+        1,
+        2,
+        5,
+        8,
+        7,
+        6
+      ],
+      "strokes": [
+        [
+          0,
+          1,
+          2,
+          5,
+          8,
+          7,
+          6
+        ]
+      ],
+      "kind": "grid",
+      "mirror_of": "stair_u_left_away_right",
+      "suggest": true,
+      "confirmed": false,
+      "purpose": [
+        "climb",
+        "turn"
+      ],
+      "exposure": "medium",
+      "cover_left": 0,
+      "difficulty": 3,
+      "when_to_use": "Switchback stairs around three edges: a long climb in a single tile.",
+      "source": "player 2026-10-22: ramp edit grid is 3 x 3; drag paths as listed (numpad digits from the bottom)",
+      "validation": {
+        "status": "player_described",
+        "game_version": null,
+        "evidence": [],
+        "result_confirmed": false,
+        "reason": "Listed by the player; not yet recorded and reviewed in game."
+      },
+      "tier": "situational",
+      "topology": "gesture_graph",
+      "mask": null,
+      "result_shape": "U stair, right, away, left",
+      "preconditions": [
+        "editable_target",
+        "standard_editing"
+      ],
+      "reset": "native_reset",
+      "transforms": {
+        "mirror": "stair_u_left_away_right",
+        "rotations": []
+      },
+      "result_class": "",
+      "result_class_status": "unknown"
+    },
+    {
+      "id": "stair_u_right_toward_left",
+      "name": "U stair, right, toward you, left",
+      "tiles": [
+        6,
+        7,
+        8,
+        5,
+        2,
+        1,
+        0
+      ],
+      "strokes": [
+        [
+          6,
+          7,
+          8,
+          5,
+          2,
+          1,
+          0
+        ]
+      ],
+      "kind": "grid",
+      "mirror_of": "stair_u_left_toward_right",
+      "suggest": true,
+      "confirmed": false,
+      "purpose": [
+        "climb",
+        "turn"
+      ],
+      "exposure": "medium",
+      "cover_left": 0,
+      "difficulty": 3,
+      "when_to_use": "Switchback stairs around three edges: a long climb in a single tile.",
+      "source": "player 2026-10-22: ramp edit grid is 3 x 3; drag paths as listed (numpad digits from the bottom)",
+      "validation": {
+        "status": "player_described",
+        "game_version": null,
+        "evidence": [],
+        "result_confirmed": false,
+        "reason": "Listed by the player; not yet recorded and reviewed in game."
+      },
+      "tier": "situational",
+      "topology": "gesture_graph",
+      "mask": null,
+      "result_shape": "U stair, right, toward you, left",
+      "preconditions": [
+        "editable_target",
+        "standard_editing"
+      ],
+      "reset": "native_reset",
+      "transforms": {
+        "mirror": "stair_u_left_toward_right",
+        "rotations": []
+      },
+      "result_class": "",
+      "result_class_status": "unknown"
+    },
+    {
+      "id": "stair_u_left_away_right",
+      "name": "U stair, left, away, right",
+      "tiles": [
+        2,
+        1,
+        0,
+        3,
+        6,
+        7,
+        8
+      ],
+      "strokes": [
+        [
+          2,
+          1,
+          0,
+          3,
+          6,
+          7,
+          8
+        ]
+      ],
+      "kind": "grid",
+      "mirror_of": "stair_u_right_away_left",
+      "suggest": true,
+      "confirmed": false,
+      "purpose": [
+        "climb",
+        "turn"
+      ],
+      "exposure": "medium",
+      "cover_left": 0,
+      "difficulty": 3,
+      "when_to_use": "Switchback stairs around three edges: a long climb in a single tile.",
+      "source": "player 2026-10-22: ramp edit grid is 3 x 3; drag paths as listed (numpad digits from the bottom)",
+      "validation": {
+        "status": "player_described",
+        "game_version": null,
+        "evidence": [],
+        "result_confirmed": false,
+        "reason": "Listed by the player; not yet recorded and reviewed in game."
+      },
+      "tier": "situational",
+      "topology": "gesture_graph",
+      "mask": null,
+      "result_shape": "U stair, left, away, right",
+      "preconditions": [
+        "editable_target",
+        "standard_editing"
+      ],
+      "reset": "native_reset",
+      "transforms": {
+        "mirror": "stair_u_right_away_left",
+        "rotations": []
+      },
+      "result_class": "",
+      "result_class_status": "unknown"
+    },
+    {
+      "id": "stair_u_left_toward_right",
+      "name": "U stair, left, toward you, right",
+      "tiles": [
+        8,
+        7,
+        6,
+        3,
+        0,
+        1,
+        2
+      ],
+      "strokes": [
+        [
+          8,
+          7,
+          6,
+          3,
+          0,
+          1,
+          2
+        ]
+      ],
+      "kind": "grid",
+      "mirror_of": "stair_u_right_toward_left",
+      "suggest": true,
+      "confirmed": false,
+      "purpose": [
+        "climb",
+        "turn"
+      ],
+      "exposure": "medium",
+      "cover_left": 0,
+      "difficulty": 3,
+      "when_to_use": "Switchback stairs around three edges: a long climb in a single tile.",
+      "source": "player 2026-10-22: ramp edit grid is 3 x 3; drag paths as listed (numpad digits from the bottom)",
+      "validation": {
+        "status": "player_described",
+        "game_version": null,
+        "evidence": [],
+        "result_confirmed": false,
+        "reason": "Listed by the player; not yet recorded and reviewed in game."
+      },
+      "tier": "situational",
+      "topology": "gesture_graph",
+      "mask": null,
+      "result_shape": "U stair, left, toward you, right",
+      "preconditions": [
+        "editable_target",
+        "standard_editing"
+      ],
+      "reset": "native_reset",
+      "transforms": {
+        "mirror": "stair_u_right_toward_left",
+        "rotations": []
+      },
+      "result_class": "",
+      "result_class_status": "unknown"
     }
   ],
   "roof_edits": [

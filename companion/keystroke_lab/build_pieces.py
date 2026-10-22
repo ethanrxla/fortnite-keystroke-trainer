@@ -10,7 +10,8 @@ shapes), so a new edit is a data change, never a new class. The same model is in
 generated into EditPatterns.verse by tools/gen_edits.py).
 
 Tile order (as everywhere else in this repo): walls 0..8 row-major from the bottom-left as the player sees the wall;
-2 x 2 pieces 0 near-left, 1 near-right, 2 far-left, 3 far-right (for a ramp, far = the high end).
+ramps 0..8 the same way as seen from the low end (3 x 3 since 2026-10-22, player); floors and cones (2 x 2)
+0 near-left, 1 near-right, 2 far-left, 3 far-right.
 
 Edit semantics:
   remove_selected (wall, floor, cone)  the selected tiles are cut out; what is left must be one connected part unless
@@ -36,11 +37,13 @@ MATERIALS = {"wood": "W1", "stone": "S1", "metal": "M1"}            # PBWA_<code
 MAX_HEALTH = {"wood": 150, "stone": 300, "metal": 500}             # fully built wall, BR values (VERIFY per piece)
 CLASS_ROOT = "/Game/Building/ActorBlueprints/Player/{folder}/L1/PBWA_{code}_{name}.PBWA_{code}_{name}_C"
 FOLDER = {"W1": "Wood", "S1": "Stone", "M1": "Metal"}
-# Ramp arrow per tile: 0 none, 1 away (far), 2 right, 3 toward the player (near), 4 left. tools/gen_edits.py STEP_DIR.
-STEP_DIR = {2: 1, 1: 2, -2: 3, -1: 4}
+# Ramp arrow per tile: 0 none, 1 away (far), 2 right, 3 toward the player (near), 4 left; one row is +cols.
+# tools/gen_edits.py step_dir.
+def step_dir(cols):
+    return {cols: 1, 1: 2, -cols: 3, -1: 4}
 
 
-def ramp_arrows(strokes, tiles=4):
+def ramp_arrows(strokes, tiles=9, cols=3):
     """Per tile, which way its stairs climb: towards the next tile of its stroke (the last tile keeps the last step)."""
     arrows = [0] * tiles
     for stroke in strokes:
@@ -48,7 +51,7 @@ def ramp_arrows(strokes, tiles=4):
             if len(stroke) < 2:
                 continue
             a, b = (stroke[i], stroke[i + 1]) if i + 1 < len(stroke) else (stroke[i - 1], stroke[i])
-            arrows[t] = STEP_DIR.get(b - a, 0)
+            arrows[t] = step_dir(cols).get(b - a, 0)
     return tuple(arrows)
 
 
@@ -245,9 +248,10 @@ class ConePiece(TwoByTwoPiece):
     kind, base_class = "cone", "RoofC"
 
 
-class StairPiece(TwoByTwoPiece):
-    """A ramp keeps the drawn stairs. Its state is a list of strokes (one per drag), each bottom tile first."""
-    kind, base_class, semantics = "ramp", "StairW", "keep_path"
+class StairPiece(BuildPiece):
+    """A ramp keeps the drawn stairs. Its state is a list of strokes (one per drag), each bottom tile first. Its edit grid
+    is 3 x 3 on the slope (player 2026-10-22)."""
+    kind, cols, rows, base_class, semantics = "ramp", 3, 3, "StairW", "keep_path"
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -263,7 +267,7 @@ class StairPiece(TwoByTwoPiece):
     def select(self, tile):
         """Drag onto a tile: extends the current stroke; stepping back onto the previous tile undoes the last step."""
         if type(tile) is not int or not 0 <= tile < self.tiles:
-            raise ValueError(f"tile {tile} outside a 2 x 2 ramp")
+            raise ValueError(f"tile {tile} outside a {self.cols} x {self.rows} ramp")
         if not self.strokes:
             self.strokes = [[]]
         cur = self.strokes[-1]
@@ -298,7 +302,7 @@ class StairPiece(TwoByTwoPiece):
         return outcome
 
     def arrows(self):
-        return ramp_arrows([s for s in self.strokes if s], self.tiles)
+        return ramp_arrows([s for s in self.strokes if s], self.tiles, self.cols)
 
     def check(self, selection):
         strokes = [s for s in self.strokes if s]
@@ -340,7 +344,7 @@ class PatternTable:
                 p = EditPattern(e["id"], kind, BuildPiece.mask_of(tiles), tiles, e.get("name", ""),
                                 e.get("result_class"), bool(e.get("suggest")),
                                 (e.get("validation") or {}).get("status", "unverified"),
-                                ramp_arrows(strokes, meta["cols"] * meta["rows"]) if ramp else (),
+                                ramp_arrows(strokes, meta["cols"] * meta["rows"], meta["cols"]) if ramp else (),
                                 e.get("tier", "situational"), e.get("prefer"))
                 self.all[p.id] = p
                 if ramp:
