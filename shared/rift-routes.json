@@ -136,7 +136,7 @@
   },
   {
     "source": "KT_Portal_Scenario",
-    "destination": "KT_Portal_Scenario_Return",
+    "destination": "KT16_Op_Arrive",
     "entry": {
       "x": -1280,
       "y": -61184,
@@ -144,8 +144,8 @@
     },
     "exit": {
       "x": -35072,
-      "y": -66304,
-      "z": 0
+      "y": -67584,
+      "z": 15
     },
     "walk": true
   },
@@ -191,81 +191,6 @@
       "x": -1280,
       "y": -61184,
       "z": 15
-    },
-    "walk": true
-  },
-  {
-    "source": "KT7_Lab_Rift_A_In",
-    "destination": "KT7_Lab_Rift_A_Start",
-    "entry": {
-      "x": -23772,
-      "y": -66912,
-      "z": 0
-    },
-    "exit": {
-      "x": -21248,
-      "y": -68864,
-      "z": 1152
-    },
-    "walk": true
-  },
-  {
-    "source": "KT7_Lab_Rift_B_In",
-    "destination": "KT7_Lab_Rift_B_Start",
-    "entry": {
-      "x": -18652,
-      "y": -66912,
-      "z": 0
-    },
-    "exit": {
-      "x": -19712,
-      "y": -68352,
-      "z": 0
-    },
-    "walk": true
-  },
-  {
-    "source": "KT7_Lab_Rift_C_In",
-    "destination": "KT7_Lab_Rift_C_Start",
-    "entry": {
-      "x": -23772,
-      "y": -66208,
-      "z": 0
-    },
-    "exit": {
-      "x": -24320,
-      "y": -64768,
-      "z": 0
-    },
-    "walk": true
-  },
-  {
-    "source": "KT7_Lab_Rift_D_In",
-    "destination": "KT7_Lab_Rift_D_Start",
-    "entry": {
-      "x": -18652,
-      "y": -66208,
-      "z": 0
-    },
-    "exit": {
-      "x": -19200,
-      "y": -64768,
-      "z": 0
-    },
-    "walk": true
-  },
-  {
-    "source": "KT7_Lab_Rift_A_Loop",
-    "destination": "KT7_Lab_Rift_A_Start",
-    "entry": {
-      "x": -22784,
-      "y": -68864,
-      "z": 1536
-    },
-    "exit": {
-      "x": -21248,
-      "y": -68864,
-      "z": 1152
     },
     "walk": true
   },
