@@ -498,7 +498,7 @@ kt_edit_guide_device := class(creative_device):
             "face={Face.Key}|piece={Face.Kind}|edit={Pick.Shape.Id}|u_h={Hund(Face.U)}|v_h={Hund(Face.V)}|side={Face.Side}|far={if (Face.Far?) then 1 else 0}|px={Hund(Pos.X)}|py={Hund(Pos.Y)}|pz={Hund(Pos.Z)}|ax_h={Hund(AimVec.X)}|ay_h={Hund(AimVec.Y)}|az_h={Hund(AimVec.Z)}|source={Face.Source}|objective={Objective}")
 
 KindLabel(Kind:string):string =
-    if (Kind = "floor") then "FLOOR" else if (Kind = "stairs") then "STAIRS" else if (Kind = "roof") then "ROOF / CONE" else "WALL"
+    if (Kind = "floor") then "FLOOR" else if (Kind = "stairs") then "RAMP" else if (Kind = "roof") then "ROOF / CONE" else "WALL"
 
 # Hundredths as an int (positions in cm come out as cm x 100; aim components as hundredths of a unit).
 Hund(X:float)<transacts>:int =

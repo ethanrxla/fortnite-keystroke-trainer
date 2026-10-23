@@ -426,7 +426,8 @@ def run(profile_path=None):
         edit=data.get('display_edit')
         if not edit:return
         visual=layout(edit,observation['aim_uv'],data.get('guide_strokes'));unit=114;x=12;y=40
-        piece=(data.get('piece_context') or {}).get('kind','')
+        # The detected piece names the heading; piece_context.kind only knows wall (any 3x3, so ramps too) and floor/roof.
+        piece=observation.get('piece') or (data.get('piece_context') or {}).get('kind','')
         title=visual.title
         if observation.get('orientation')==FLOOR_OR_CONE:
             # Floor or cone, the screen cannot tell which: name the piece and the edit by its tiles (pieces.flat_name).

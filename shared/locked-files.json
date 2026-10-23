@@ -1,5 +1,5 @@
 {
-  "verse/KeystrokeTrainer/EditGuide.verse": "def12cc9dc78fa449262885849e233bb2d0bd570be3ba4f9b08277e5d617f95b",
+  "verse/KeystrokeTrainer/EditGuide.verse": "ba69c2a8faa87048b663fa30db39b25f6c2f4bf40920c16e2bfd1d12db2d4542",
   "verse/KeystrokeTrainer/EditPolicy.verse": "656b05d0246c6929525d898e58e0889755afffd881e82a8ca17c28be910cdbcc",
   "verse/KeystrokeTrainer/EditPolicyPieces.verse": "e44b95d4d93afdd6ab044a658fbc735520705635d99d1f1b07d2f655cb371995",
   "verse/KeystrokeTrainer/EditIntent.verse": "42c22883dcf03f56c6c9b77a2bdcc9adff15cc711132923e0b800f6b6da09532",
@@ -7,7 +7,7 @@
   "verse/KeystrokeTrainer/EditPatterns.verse": "0108c0e8eca80123a07c6382835657a7b11723e3a3553df47fb2a690b7393739",
   "verse/KeystrokeTrainer/EditTargets.verse": "52c9b31603cda9d5ad886fc454f55f26dc0cb7234b92a79a336328e9efd23c41",
   "verse/KeystrokeTrainer/EditObservation.verse": "d5f81da0ef5a174d3ffd03f467ea84bff3336fd96fd6fcb421fca04b83eaf407",
-  "companion/keystroke_lab/edit_window.py": "22f574bb83252310b48b4f210e71f42f8f0c905af8df33ffd74f02834158697d",
+  "companion/keystroke_lab/edit_window.py": "7182196c189ac3ab3e76cabb1917710e9203c9f4f8c5279c7afc062e85c26ca0",
   "companion/keystroke_lab/edit_observation.py": "7f2951b5c22945d204b8dddd7ebc6bb98d533ff116f37bcd2aeb0675a990feba",
   "companion/keystroke_lab/edit_advisor.py": "9969be8ceeba7da17e8157f18543de460f347bd4f8a31c6724f172308363e688",
   "companion/keystroke_lab/edit_ranker.py": "5aa7bb9c0e3c5e1bd87f4f233833bcff90fe803db5134cd24d6cc66e9af6e17f",
