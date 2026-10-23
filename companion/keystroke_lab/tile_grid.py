@@ -30,14 +30,31 @@ SAT_MIN = 200
 VAL_MIN = 90
 MIN_AREA = 250.          # px at 640 wide
 MAX_AREA_FRAC = 0.09     # of the image: anything bigger is sky or a wall face, not one tile
+EDGES = True             # selected (grey) tiles cut out along their bright rims (2026-10-22: +4 ramps, +1 floor/cone, no new wrong)
+RIM_TOPHAT, RIM_SAT, RIM_GROW = 25, 120, 3
 STEP_TOL = 0.38          # a neighbour's centre is one tile step away, within this fraction of the step
 
 
 def _tiles(image):
+    """Candidate tiles: (corners, is_blue). By colour (unselected blue panels), or with EDGES by the bright rims that
+    frame every tile, blue or selected grey."""
     hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
-    mask = ((hsv[:, :, 0] >= HUE[0]) & (hsv[:, :, 0] <= HUE[1]) & (hsv[:, :, 1] > SAT_MIN) &
-            (hsv[:, :, 2] > VAL_MIN)).astype(np.uint8) * 255
-    mask = cv2.morphologyEx(mask, cv2.MORPH_OPEN, np.ones((3, 3), np.uint8))
+    h, s, v = hsv[:, :, 0], hsv[:, :, 1], hsv[:, :, 2]
+    blue = (h >= HUE[0]) & (h <= HUE[1]) & (s > SAT_MIN) & (v > VAL_MIN)
+    if not EDGES:
+        return [(q, True) for q in _panels(image, blue)]
+    # Rims: thin lines brighter than their surroundings and not strongly coloured. Cutting the edit grid's area along
+    # them separates every tile, selected grey ones included (they merge by colour alone).
+    top = cv2.morphologyEx(v, cv2.MORPH_TOPHAT, cv2.getStructuringElement(cv2.MORPH_RECT, (9, 9)))
+    rim = ((top > RIM_TOPHAT) & (s < RIM_SAT)).astype(np.uint8)
+    rim = cv2.dilate(rim, np.ones((RIM_GROW, RIM_GROW), np.uint8)) > 0
+    grey = (((h >= HUE[0]) & (h <= HUE[1]) & (s >= 55) & (s <= 170)) | (s < 55)) & (v >= 70) & (v <= 235)
+    # Blue tiles as by colour (they already separate); the rims only add the selected grey ones.
+    return [(q, True) for q in _panels(image, blue)] + [(q, False) for q in _panels(image, grey & ~blue & ~rim)]
+
+
+def _panels(image, mask):
+    mask = cv2.morphologyEx(mask.astype(np.uint8) * 255, cv2.MORPH_OPEN, np.ones((3, 3), np.uint8))
     n, lab, stats, _ = cv2.connectedComponentsWithStats(mask, connectivity=4)
     limit = MAX_AREA_FRAC * image.shape[0] * image.shape[1]
     out = []
@@ -72,13 +89,18 @@ def _order(q):
 
 
 def find_tile_grid(image, aim, max_n=3):
-    tiles = _tiles(image)
-    if len(tiles) < 2:
+    found = _tiles(image)
+    tiles = [t for t, _ in found]
+    blue = [b for _, b in found]
+    if len(tiles) < 2 or not any(blue):
         return None
     centres = np.array([t.mean(0) for t in tiles])
     aim = np.asarray(aim, np.float32)
     inside = [i for i, t in enumerate(tiles) if cv2.pointPolygonTest(t, tuple(map(float, aim)), False) >= 0]
-    seed = inside[0] if inside else int(np.argmin(np.linalg.norm(centres - aim, axis=1)))
+    if inside:
+        seed = inside[0]
+    else:                                              # nearest blue tile: a grey region alone proves nothing
+        seed = min((i for i in range(len(tiles)) if blue[i]), key=lambda i: np.linalg.norm(centres[i] - aim))
     t0 = tiles[seed]
     size = math.sqrt(cv2.contourArea(t0))
     if not inside and np.linalg.norm(centres[seed] - aim) > 1.5 * size:
@@ -105,8 +127,8 @@ def find_tile_grid(image, aim, max_n=3):
                     side = (np.linalg.norm(sides[k][axis]) + np.linalg.norm(sides[m][axis])) / 2
                     gaps.append((np.linalg.norm(centres[m] - centres[k]) - side) / side)
     cells = set(pos.values())
-    if len(cells) != len(pos) or len(pos) < 3:
-        return None                                    # two tiles on one cell, or too few to fix a grid
+    if len(cells) != len(pos) or len(pos) < 3 or not any(blue[k] for k in pos):
+        return None                                    # two tiles on one cell, too few to fix a grid, or no blue tile
     i0, i1 = min(c[0] for c in cells), max(c[0] for c in cells)
     j0, j1 = min(c[1] for c in cells), max(c[1] for c in cells)
     n = max(i1 - i0, j1 - j0) + 1
