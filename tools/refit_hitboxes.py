@@ -32,6 +32,9 @@ FAMILIES = [
 CELL_MAX = {"KT25_": 270.0}
 
 
+HIT_INSET = 3.0     # cm the expanded hit areas stay inside the tile's top and bottom (place_grid sizes cells x1.01)
+
+
 def centre_size(bounds):
     mn, mx = bounds["min"], bounds["max"]
     c = tuple((mn[k] + mx[k]) / 2 for k in "xyz")
@@ -102,9 +105,10 @@ def main():
         c, w, h = centre_size(face["bounds"])
         expanded = label.startswith(("KT26_RangeMode_", "KT15_SkillsTile_"))
         if expanded:
-            # Wider than the tile, and a little above and below it, but no higher: a 2 m tall hit area stood in the
-            # line of fire over the range counter and stopped shots at the lane targets (player 2026-10-23).
-            zb, zt = face["bounds"]["min"]["z"] - 10.0, face["bounds"]["max"]["z"] + 20.0
+            # Wider than the tile, but never taller (player 2026-10-24: "the height of the button should be less than or
+            # equal to the height of the tile"): a hit area above the tile stood in the line of fire over the range
+            # counter and stopped shots at the lane targets. HIT_INSET keeps the dummies' own spill inside the tile.
+            zb, zt = face["bounds"]["min"]["z"] + HIT_INSET, face["bounds"]["max"]["z"] - HIT_INSET
             c, w, h = (c[0], c[1], (zb + zt) / 2), 150.0, zt - zb
         loc = t["location"]
         yaw = round(t["rotation"]["yaw"] / 90.0) * 90.0 % 360          # the base facing, ignoring an old mirror

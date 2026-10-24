@@ -105,8 +105,8 @@ def main():
         b.tag(trig, tag)
         saved = [path, trig]
         centre = tuple((bounds["min"][k] + bounds["max"][k]) / 2 for k in "xyz")
-        # Hit area: wider than the plate, a little above and below it (tools/refit_hitboxes.py uses the same rule).
-        zb, zt = bounds["min"]["z"] - 10.0, bounds["max"]["z"] + 20.0
+        # Hit area: wider than the plate, never taller (tools/refit_hitboxes.py uses the same rule, HIT_INSET).
+        zb, zt = bounds["min"]["z"] + 3.0, bounds["max"]["z"] - 3.0
         dummies = hitbox.place_grid(b, label + "_Hit", (centre[0], centre[1], (zb + zt) / 2), 150.0, zt - zb, 0.0,
                                     (BACK_WALL_X + DUMMY_OFF, y), [(trig, "Trigger")])
         for dummy in dummies:
