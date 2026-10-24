@@ -20,9 +20,8 @@ sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
 import build_map as bm  # noqa: E402
 import build_operation as op  # noqa: E402
 
-# Their wall in the peek room fills a fixed gap in the cover line (a slab wall on the room grid); it is shot out, not
-# built against.
-GRID_EXEMPT = {"KT16_Op_R3_EditWall"}
+# Pieces allowed off the player grid (none since 2026-10-24: the peek room's wall and gap moved onto it).
+GRID_EXEMPT = set()
 ASSIGN_CM = 400.0         # Operation.verse: a barrier belongs to the stage with the nearest Gates point within 4 m
 
 
@@ -63,7 +62,7 @@ def main():
     # Bots: placed in the box of their stage (retake wave: the hold stage).
     inside = lambda pos, box: all(box[0][k] <= pos[k] <= box[1][k] for k in range(3))
     for label, d in planned.items():
-        if d["tag"] not in ("kt_op_bot_tag", "kt_op_retake_tag") or label not in acts:
+        if d["tag"] not in ("kt_op_bot_tag", "kt_op_retake_tag", "kt_op_retake2_tag") or label not in acts:
             continue
         at = loc(acts[label])
         pos = (at["x"], at["y"], at["z"])
@@ -103,7 +102,7 @@ def main():
     if op.OUT_VERSE.read_text(encoding="utf-8") != op.render_verse(p):
         problems.append("OperationLayout.verse differs from the plan: run tools/build_operation.py --write-verse")
     print(f"{len(gates)} barriers, {len(p.stages)} stages, "
-          f"{sum(1 for d in planned.values() if d['tag'] in ('kt_op_bot_tag', 'kt_op_retake_tag'))} bots")
+          f"{sum(1 for d in planned.values() if d['tag'] in ('kt_op_bot_tag', 'kt_op_retake_tag', 'kt_op_retake2_tag'))} bots")
     print("\n".join("FAIL " + x for x in problems) if problems else "operation logic ok")
     return 1 if problems else 0
 

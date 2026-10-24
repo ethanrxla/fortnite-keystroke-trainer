@@ -2,7 +2,7 @@
 #
 # One long run (player 2026-10-21: "one long pipeline"): L1 compound (5 rooms), L2 Fight Lab (room A, then room B), L3
 # bombsite A. Arriving in the crawl room (the hub portal or the OPERATION sign, KT16_Op_Arrive) or standing in it
-# starts a run: every gate closes, the bots clear, the loadout is granted (grenades are on the floor). Rooms run in the order of
+# starts a run: every gate closes, the bots clear; the player keeps their own loadout (grenades are on the floor). Rooms run in the order of
 # KTOpStages (OperationLayout.verse, generated with the layout):
 #   * a room's bots spawn when you walk into its box (the first room on START);
 #   * when every bot of the room is eliminated its gate (a blue barrier) opens and the HUD points to the next room;
@@ -41,6 +41,11 @@ kt_op_arrive_tag<public> := class(tag){}
 kt_op_loadout_tag<public> := class(tag){}
 kt_op_grenade_tag<public> := class(tag){}
 kt_op_retake_tag<public> := class(tag){}
+# The second retake wave (player 2026-10-24: "making the end harder with more bots spawning"): spawns Wave2At of the way
+# through the hold.
+kt_op_retake2_tag<public> := class(tag){}
+# Build-reset barrels over the level (tools/build_operation.py Clear_*; player 2026-10-24: builds stayed after a run).
+kt_op_clear_tag<public> := class(tag){}
 # The bomb console's hold-to-plant button on the A plate (tools/build_operation.py Site_PlantButton).
 kt_op_plant_tag<public> := class(tag){}
 
@@ -98,6 +103,7 @@ kt_operation_device<public> := class(creative_device):
     @editable StartStage:int = 0
     @editable PlantSeconds:float = 5.0
     @editable HoldSeconds:float = 40.0
+    @editable Wave2At:float = 0.4
     @editable BriefingSeconds:float = 6.0
     @editable GoldSeconds:float = 360.0
     @editable SilverSeconds:float = 540.0
@@ -110,6 +116,9 @@ kt_operation_device<public> := class(creative_device):
     # The bots of the current stage that were spawned (all of them, or Pick of them).
     var Active:[]guard_spawner_device = array{}
     var Loadout:?item_granter_device = false
+    var Wave2:[]guard_spawner_device = array{}
+    var Clears:[]explosive_device = array{}
+    var Wave2Up:logic = false
     var Grenades:?item_granter_device = false
 
     var Runner:?player = false
@@ -157,6 +166,13 @@ kt_operation_device<public> := class(creative_device):
                 set BotStage += array{HoldIndex}
                 Listener := kt_op_bot_listener{Stage := HoldIndex, Owner := Self}
                 S.EliminatedEvent.Subscribe(Listener.OnEliminated)
+        for (O : FindCreativeObjectsWithTag(kt_op_clear_tag), E := explosive_device[O]):
+            set Clears += array{E}
+        # Wave 2 is never a stage's own bots (BotStage -1): Tick spawns it during the hold.
+        for (O : FindCreativeObjectsWithTag(kt_op_retake2_tag), S := guard_spawner_device[O]):
+            set Wave2 += array{S}
+            set Bots += array{S}
+            set BotStage += array{-1}
         for (O : FindCreativeObjectsWithTag(kt_op_gate_tag), B := barrier_device[O]):
             Pos := B.GetTransform().Translation
             var Nearest:int = -1
@@ -227,6 +243,7 @@ kt_operation_device<public> := class(creative_device):
                 S.Despawn()
             ShowHud(P)
             set RunStart = GetSimulationElapsedTime()
+            ClearBuilds(A)
             EnterStage(StartStage)
             Respawn(C)
             if (B := StartButton?):
@@ -329,7 +346,13 @@ kt_operation_device<public> := class(creative_device):
                     else if (S.Kind = 4, GetSimulationElapsedTime() - StageStart >= HoldSeconds):
                         for (B : StageBots(Stage)):
                             B.Despawn()
+                        DropWave2()
                         ClearStage()
+                    else if (S.Kind = 4, not Wave2Up?, GetSimulationElapsedTime() - StageStart >= HoldSeconds * Wave2At):
+                        set Wave2Up = true
+                        for (B : Wave2):
+                            B.Enable()
+                            B.Spawn()
                     else if (S.Kind = 5, KTOpInBox(Pos, S)?):
                         ClearStage()
                 UpdateHud(InStorm)
@@ -359,13 +382,25 @@ kt_operation_device<public> := class(creative_device):
         if (not Cleared?):
             for (S : StageBots(Stage)):
                 S.Despawn()
+            DropWave2()
             EnterStage(Stage)
+
+    # Every player build in the level goes (the barrels spare team 2's breakable pieces): at the start of a run and
+    # when it ends or is abandoned. The barrels re-arm themselves (On Exploded -> Reset).
+    ClearBuilds(A:agent):void =
+        for (E : Clears):
+            E.Explode(A)
+
+    DropWave2():void =
+        set Wave2Up = false
+        for (B : Wave2):
+            B.Despawn()
+            B.Disable()
 
     Respawn(C:fort_character):void =
         if (S := KTOpStages[Stage], C.TeleportTo[S.Checkpoint + vector3{Z := 60.0}, C.GetTransform().Rotation]) {}
-        if (P := Runner?, G := Loadout?):
-            G.GrantItem(P)
-        # Grenades are floor pickups in the crawl room and at the grenade room's door (tools/build_operation.py
+        # The player keeps their own loadout (player 2026-10-24: "spawn in with their already equipped loadout"); the
+        # Loadout granter is no longer used. Grenades are floor pickups in the crawl room and at the grenade room's door (tools/build_operation.py
         # KT16_Op_Nade_*; player 2026-10-21), not granted.
 
     UpdateHud(InStorm:logic):void =
@@ -414,6 +449,8 @@ kt_operation_device<public> := class(creative_device):
 
     Abort(Why:string):void =
         KTLog("op_abort", "operation", 0, Runs, Stage, rep_result.Unchecked, "why={Why}")
+        if (P := Runner?):
+            ClearBuilds(P)
         set Running = false
         HideHud()
         set Runner = false
@@ -422,6 +459,8 @@ kt_operation_device<public> := class(creative_device):
     EndAfter(Seconds:float)<suspends>:void =
         Sleep(Seconds)
         if (not Running?):
+            if (P := Runner?):
+                ClearBuilds(P)
             HideHud()
             set Runner = false
             FreePlay()
@@ -429,13 +468,13 @@ kt_operation_device<public> := class(creative_device):
     # Runtime checks for the playtest runner (AutoTestDevice): every room has its bots and its gate.
     RunSmokeTests<public>(P:player, Report:autotest_report)<suspends>:void =
         Report.Check("OP01-stages", logic{KTOpStages.Length = 11}, "eleven stages in the layout")
-        # Grenade 2, peek 2 (1 spawns), high ground 2, breach 2, towers 2, peek and reset 2, site 3, retake wave 3 (tools/build_operation.py).
-        Report.Check("OP02-bots", logic{Bots.Length = 18}, "operation bots found: {Bots.Length} (want 18)")
+        # Grenade 2, peek 2 (1 spawns), high ground 2, breach 2, towers 2, peek and reset 2, site 3, retake wave 3, second retake wave 3 (tools/build_operation.py).
+        Report.Check("OP02-bots", logic{Bots.Length = 21}, "operation bots found: {Bots.Length} (want 21)")
         var Missing:int = 0
         for (I -> S : KTOpStages, S.Gates.Length > 0):
             if ((for (G -> St : GateStage, St = I) { G }).Length = 0):
                 set Missing += 1
         Report.Check("OP03-gates", logic{Missing = 0 and Gates.Length >= 7}, "every gated room has a barrier ({Gates.Length} found)")
-        Report.Check("OP04-start", logic{PlantButton? and Loadout?}, "plant console and loadout granter")
+        Report.Check("OP04-start", logic{PlantButton? and Clears.Length >= 4}, "plant console and build-reset barrels")
 
 OpText<localizes>(S:string):message = "{S}"

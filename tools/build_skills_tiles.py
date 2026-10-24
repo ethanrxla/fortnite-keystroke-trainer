@@ -9,6 +9,9 @@ tiles), under the sight line to the bots: EASY, MEDIUM, HARD, HAND CANNON, HEAVY
 with its word, a grid of hit dummies over the whole plate (hitbox.place_grid), wired On Hit -> a hidden trigger under
 the floor tagged for kt_skills_test_device (SkillsTest.verse). The difficulty tiles have a small light that is on for
 the chosen level. The interact buttons behind the shoot line stay.
+Player 2026-10-24: in front of the shoot line they were "innapropriate": they now hang on the aim room's back wall
+(x -35840, between its two EXIT plates), facing the shoot line at eye height, built like the EXIT plates
+(tools/build_room_exits.py: plate OFF the wall, hidden dummies between plate and wall).
 """
 import argparse
 import pathlib
@@ -23,8 +26,10 @@ from build_range_modes import FONT, TEX_FOLDER  # noqa: E402
 
 PREFIX = "KT15_SkillsTile_"
 LIGHT = "/CRD_PointLight/SetupAssets/PID_Device_PointLight.PID_Device_PointLight"
-FACE_X = SHOOT_X + 160.0        # the plates stand just past the shoot line, facing back at the player (-X)
-Z = 58.0                         # centre: the plate stands on the floor, top at about 1 m
+from build_drill_plates import OFF, DUMMY_OFF  # noqa: E402
+BACK_WALL_X = -35840.0           # the aim room's back wall face (tools/build_room_exits.py EXITS["Aim"])
+FACE_X = BACK_WALL_X + OFF       # the plates stand off the back wall, facing the shoot line (+X)
+Z = 220.0                        # centre at eye height; the EXIT plates hang higher (470)
 TILE_W, TILE_H, PITCH = 95.0, 95.0, 165.0
 # name, plate rgb (linear), trigger tag, light tag, light rgb
 TILES = [("EASY", (0.02, 0.25, 0.04), "kt_skills_easy_tag", "kt_skills_light_easy_tag", (0.2, 1.0, 0.3)),
@@ -59,10 +64,11 @@ def texture(name, rgb):
     return out, f"{TEX_FOLDER}/{asset}.{asset}"
 
 
-def plate(g, label, x, y, z, material):
-    """A TILE_W x TILE_H plate facing -X: Grid.plane is square, so scale it and check its long side runs along y."""
+def plate(g, label, x, y, z, material, yaw=270.0):
+    """A TILE_W x TILE_H plate (yaw 270 faces +X, as the EXIT plates on this wall): Grid.plane is square, so scale it
+    and check its long side runs along y."""
     m = g.m
-    path = g.plane(label, x, y, z, TILE_H, 90.0, material)
+    path = g.plane(label, x, y, z, TILE_H, yaw, material)
     t = m.tool(bm.ACTOR, "get_actor_transform", actor={"refPath": path})
     for sx, sy in ((TILE_W / 100.0, TILE_H / 100.0), (TILE_H / 100.0, TILE_W / 100.0)):
         m.tool(bm.ACTOR, "set_actor_transform", actor={"refPath": path},
@@ -94,16 +100,19 @@ def main():
                    asset_name=tex.split(".")[-1], source_file=str(png))
             m.tool(ag.AS, "save_assets", asset_paths=[tex])
         path, bounds = plate(g, label + "_Plate", FACE_X, y, Z, g.icon_material(tex))
-        trig = b.device(bm.TRIGGER, label + "_Trigger", FACE_X + 200.0, y, -400.0)
+        trig = b.device(bm.TRIGGER, label + "_Trigger", FACE_X + 300.0, y, -400.0)
         b.props(trig, {"visible in Game": False})
         b.tag(trig, tag)
         saved = [path, trig]
         centre = tuple((bounds["min"][k] + bounds["max"][k]) / 2 for k in "xyz")
-        dummies = hitbox.place_grid(b, label + "_Hit", (centre[0], centre[1], 100.0), 150.0, 200.0, 180.0, (FACE_X - 5.0, y), [(trig, "Trigger")])
+        # Hit area: wider than the plate, a little above and below it (tools/refit_hitboxes.py uses the same rule).
+        zb, zt = bounds["min"]["z"] - 10.0, bounds["max"]["z"] + 20.0
+        dummies = hitbox.place_grid(b, label + "_Hit", (centre[0], centre[1], (zb + zt) / 2), 150.0, zt - zb, 0.0,
+                                    (BACK_WALL_X + DUMMY_OFF, y), [(trig, "Trigger")])
         for dummy in dummies:
             hitbox.hide(m, dummy)
         if light_tag:
-            li = b.device(LIGHT, label + "_Light", FACE_X - 200.0, y, 160.0)
+            li = b.device(LIGHT, label + "_Light", FACE_X + 200.0, y, Z + 60.0)
             b.tag(li, light_tag)
             for key, value in {"initialState": False, "maximumRadius": 220.0,
                                "lightColor": {"r": light_rgb[0], "g": light_rgb[1], "b": light_rgb[2], "a": 1}}.items():
