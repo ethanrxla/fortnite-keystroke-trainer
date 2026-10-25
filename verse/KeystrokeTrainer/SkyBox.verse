@@ -72,8 +72,10 @@ kt_sky_box_device<public> := class(creative_device):
     var Resting:logic = false
     Hud:text_block = text_block{DefaultTextColor := NamedColors.White, DefaultTextSize := 24.0}
     var Panel:?canvas = false
+    Hype:kt_hype_voice = kt_hype_voice{}
 
     OnBegin<override>()<suspends>:void =
+        Hype.Load(Self)
         Origin := GetTransform().Translation
         for (O : FindCreativeObjectsWithTag(kt_sky_bot_tag), S := guard_spawner_device[O]):
             Cells := (S.GetTransform().Translation.X - Origin.X) / CellSize
@@ -188,6 +190,7 @@ kt_sky_box_device<public> := class(creative_device):
                 Pos := C.GetTransform().Translation
                 if (Fell[Pos]):
                     set Falls += 1
+                    Hype.Play("sky_fall", P, false)
                     BackToBox(C)
                     return
                 if (not OnStrip[Pos], not NearStrip[Pos]):
@@ -253,9 +256,12 @@ kt_sky_box_device<public> := class(creative_device):
         set Pending = -1.0
         set Resting = true
         T := GetSimulationElapsedTime() - RunStart
-        NewBest := logic{Best <= 0.0 or T < Best}
-        if (NewBest?):
-            set Best = T
+        # The runner's own saved best (Progress.verse), not the session's: a new best for this player.
+        Ms := if (V := Round[T * 1000.0]) then V else 0
+        SavedMs := if (P := Runner?) then KTRecordSky(P, Ms) else Ms
+        NewBest := logic{SavedMs = Ms}
+        set Best = SavedMs * 0.001
+        if (P := Runner?) then Hype.Play(if (NewBest?) then "best" else "sky_clear", P, true)
         Clock := KTSkyClock(T)
         KTLog("sky_summary", "sky_box", 0, 3, 0, rep_result.Unchecked, "time_s={T}|falls={Falls}|best_s={Best}")
         Hud.SetText(SkyText("SKY BOX CLEAR  {Clock}   falls {Falls}\n{if (NewBest?) then "New best!" else "Best: {KTSkyClock(Best)}"}   next run in {RestartSeconds}s"))

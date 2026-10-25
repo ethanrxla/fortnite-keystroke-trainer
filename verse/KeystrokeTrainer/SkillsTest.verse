@@ -181,6 +181,7 @@ kt_skills_hud := class:
         SetBar(1.0)
 
 kt_skills_test_device<public> := class(creative_device):
+    Hype:kt_hype_voice = kt_hype_voice{}
     var Centre:vector3 = vector3{}
     # Covers the lane and the whole aim plate's wide spawners from the device on the A2 lane.
     @editable HalfExtent:vector3 = vector3{X := 6500.0, Y := 3400.0, Z := 1500.0}
@@ -244,6 +245,7 @@ kt_skills_test_device<public> := class(creative_device):
                 T.Cancel()
 
     OnBegin<override>()<suspends>:void =
+        Hype.Load(Self)
         set Centre = GetTransform().Translation
         for (O : FindCreativeObjectsWithTag(kt_skills_bot_tag), S := guard_spawner_device[O], Inside[S.GetTransform().Translation]):
             set Bots += array{S}
@@ -483,7 +485,13 @@ kt_skills_test_device<public> := class(creative_device):
             "difficulty={KTSkillsLevelName(Lvl)}|weapon={KTSkillsWeaponName(Wpn)}|hits={BotsHit}|misses={Misses}|skipped={Skipped}|avg_ms={Avg}|best={Record}|run={Run}|mode={Mode}|participant={Participant}|metric=elimination_completion|eliminations={Hits}|eligible={Hits + Misses}|ungraded={Ungraded}|stopped={if (Stopped?) then 1 else 0}|damage={TotalDamage}|weakpoint_events={Weakpoints}|shots_fired=unknown|bullet_accuracy=unknown|headshot_accuracy=unknown")
         Hud.Title.SetText(SkillsText(if (Stopped?) then "SKILLS TEST STOPPED" else "SKILLS TEST DONE"))
         Hud.Show("{Hits}/{Hits + Misses}", Hits, Misses, Avg)
-        Hud.Message.SetText(SkillsText("{BotsHit} bots hit | {Ungraded} ungraded | Bullet accuracy unavailable"))
+        # The player's saved best for this round (Progress.verse), from clean finished rounds only.
+        var BestText:string = ""
+        if (not Stopped?, Skipped = 0, Ungraded = 0, P := player[A]):
+            Saved := KTRecordSkills(P, "{KTSkillsLevelName(Lvl)}|{KTSkillsWeaponName(Wpn)}|{if (AsWide?) then "wide" else "narrow"}", Hits)
+            set BestText = if (Saved = Hits) then " | Personal best!" else " | Best {Saved}"
+            if (Saved = Hits) then Hype.Play("best", A, true)
+        Hud.Message.SetText(SkillsText("{BotsHit} bots hit | {Ungraded} ungraded{BestText}"))
         Sleep(3.0)
 
     PauseAimBots(Pause:logic):void =

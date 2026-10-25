@@ -90,6 +90,10 @@ KTOpMedal<public>(Seconds:float, Deaths:int, GoldSeconds:float, SilverSeconds:fl
     else if (Seconds <= SilverSeconds and Deaths <= 2) then "SILVER"
     else "BRONZE"
 
+# 1 bronze, 2 silver, 3 gold (Progress.verse OpBestMedal).
+KTOpMedalRank<public>(Medal:string)<computes>:int =
+    if (Medal = "GOLD") then 3 else if (Medal = "SILVER") then 2 else 1
+
 # m:ss for the HUD and the summary.
 KTOpClock<public>(Seconds:float)<transacts>:string =
     Whole := if (V := Floor[Seconds]) then Max(V, 0) else 0
@@ -150,10 +154,12 @@ kt_operation_device<public> := class(creative_device):
     StormBlock:color_block = color_block{DefaultColor := KTHudStormBg, DefaultOpacity := 0.0}
     StormText:text_block = text_block{DefaultTextColor := KTHudStormText, DefaultTextSize := 16.0}
     var Panel:?canvas = false
+    Hype:kt_hype_voice = kt_hype_voice{}
     var Outside:float = 0.0
     var Planting:float = 0.0
 
     OnBegin<override>()<suspends>:void =
+        Hype.Load(Self)
         for (O : FindCreativeObjectsWithTag(kt_op_bot_tag), S := guard_spawner_device[O]):
             Index := KTOpStageAt(S.GetTransform().Translation)
             if (Index >= 0):
@@ -311,6 +317,7 @@ kt_operation_device<public> := class(creative_device):
 
     ClearStage():void =
         set Cleared = true
+        if (P := Runner?, S := KTOpStages[Stage], S.Kind < 3) then Hype.Play("op_room", P, false)
         for (I -> G : Gates, GateStage[I] = Stage):
             G.Disable()
         Now := GetSimulationElapsedTime()
@@ -447,10 +454,13 @@ kt_operation_device<public> := class(creative_device):
 
     Finish():void =
         Total := GetSimulationElapsedTime() - RunStart
-        NewBest := logic{Best <= 0.0 or Total < Best}
-        if (NewBest?):
-            set Best = Total
         Ms := if (V := Round[Total * 1000.0]) then V else 0
+        # The runner's own saved best time and medal (Progress.verse), not the session's.
+        Rank := KTOpMedalRank(KTOpMedal(Total, Deaths, GoldSeconds, SilverSeconds))
+        SavedMs := if (P := Runner?) then KTRecordOp(P, Ms, Rank) else Ms
+        NewBest := logic{SavedMs = Ms}
+        set Best = SavedMs * 0.001
+        if (P := Runner?) then Hype.Play(if (Rank = 3) then "op_gold" else if (NewBest?) then "best" else "op_done", P, true)
         KTLog("op_summary", "operation", 0, Runs, KTOpStages.Length, rep_result.Ok,
             "ms={Ms}|deaths={Deaths}|best_ms={if (V := Round[Best * 1000.0]) then V else 0}|medal={KTOpMedal(Total, Deaths, GoldSeconds, SilverSeconds)}")
         Title.SetText(OpText("OPERATION COMPLETE"))

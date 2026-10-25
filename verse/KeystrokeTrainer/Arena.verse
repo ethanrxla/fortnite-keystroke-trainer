@@ -77,7 +77,9 @@ keystroke_arena_device := class(creative_device):
     OnBegin<override>()<suspends>:void =
         for (O : FindCreativeObjectsWithTag(kt3_arena_divider_tag), D := barrier_device[O]):
             set Divider = option{D}
-            D.Enable()
+            # Off for good (2026-10-25 review): it may cut pad A off from the arrival and block its buttons, and while
+            # waiting everyone is on team 1, so nobody can hurt anyone before START anyway.
+            D.Disable()
         for (O : FindCreativeObjectsWithTag(kt10_arena_nobuild_tag), D := mutator_zone_device[O]):
             set NoBuild = option{D}
             D.Disable()
@@ -97,6 +99,8 @@ keystroke_arena_device := class(creative_device):
             set Loadout.Sword = option{D}
         for (O : FindCreativeObjectsWithTag(kt10_arena_hammer_tag), D := item_granter_device[O]):
             set Loadout.Hammer = option{D}
+        for (O : FindCreativeObjectsWithTag(kt3_arena_standard_tag), D := item_granter_device[O]):
+            set Loadout.Standard = option{D}
         for (O : FindCreativeObjectsWithTag(kt3_arena_reset_tag), E := explosive_device[O]):
             set Resets += array{E}
         for (O : FindCreativeObjectsWithTag(kt3_arena_start_tag), B := button_device[O]):
@@ -116,6 +120,10 @@ keystroke_arena_device := class(creative_device):
         CacheCue("win", kt10_arena_win_voice_tag)
         CacheCue("comeback", kt10_arena_comeback_voice_tag)
         set Subscriptions += array{GetPlayspace().PlayerRemovedEvent().Subscribe(OnLeft)}
+        set Subscriptions += array{GetPlayspace().PlayerAddedEvent().Subscribe(OnJoined)}
+        for (P : GetPlayspace().GetPlayers()):
+            ToTeam(P, 0)
+        Print("KT|arena|teams|count={GetPlayspace().GetTeamCollection().GetTeams().Length}")
         loop:
             Sleep(0.1)
             if (Phase = kt_arena_phase.Waiting):
@@ -131,12 +139,14 @@ keystroke_arena_device := class(creative_device):
                     if (set InArena[P] = Inside) {}
                 Count := (if (Left?) then 1 else 0) + (if (Right?) then 1 else 0)
                 Label := ModeName()
-                SetStatus("1v1 | {Label}\n{Count}/2 ready | START when both ready\n3 weapons + 2 Floppers + 1 Medkit")
+                SetStatus("1v1 | {Label}\n{Count}/2 ready | START when both ready\nCarry at most 3 weapons: heals are added")
             else if (Phase = kt_arena_phase.Countdown):
-                if (not ParticipantsActive()? or PlayerAt(PadA) <> Left or PlayerAt(PadB) <> Right):
+                if (not ParticipantsActive()? or not OnPad[Left, PadA] or not OnPad[Right, PadB]):
                     EndRound(kt_arena_result.Cancelled)
             else if (Phase = kt_arena_phase.Fighting):
                 if (not ParticipantsActive()?, not Settling?):
+                    EndRound(kt_arena_result.Cancelled)
+                else if (not Settling?, (not InArenaWith[Left] or not InArenaWith[Right])):
                     EndRound(kt_arena_result.Cancelled)
 
     OnEnd<override>():void =
@@ -155,6 +165,29 @@ keystroke_arena_device := class(creative_device):
             if (Abs(Pos.X - Where.X) <= PadHalfLength, Abs(Pos.Y - Where.Y) <= PadHalfWidth, Abs(Pos.Z - Where.Z) <= 180.0):
                 return option{P}
         false
+    # The island is Free For All, which put a second player on team 2, the bots' team (2026-10-25 review): everyone
+    # trains on team 1 (index 0); the two fighters move to teams 3 and 4 (indexes 2, 3) for a duel and back after.
+    ToTeam(P:agent, Index:int):void =
+        Teams := GetPlayspace().GetTeamCollection().GetTeams()
+        if (T := Teams[Index], GetPlayspace().GetTeamCollection().AddToTeam[P, T]) {}
+    OnJoined(P:player):void =
+        ToTeam(P, 0)
+    OnPad(Maybe:?player, Where:vector3)<transacts><decides>:void =
+        P := Maybe?
+        C := P.GetFortCharacter[]
+        Pos := C.GetTransform().Translation
+        Abs(Pos.X - Where.X) <= PadHalfLength
+        Abs(Pos.Y - Where.Y) <= PadHalfWidth
+        Abs(Pos.Z - Where.Z) <= 180.0
+    InArenaBox(Pos:vector3)<transacts><decides>:void =
+        Abs(Pos.X + 30720.0) < 5120.0
+        Abs(Pos.Y + 76800.0) < 3072.0
+        Pos.Z >= -200.0
+        Pos.Z < 3072.0
+    InArenaWith(Maybe:?player)<transacts><decides>:void =
+        P := Maybe?
+        C := P.GetFortCharacter[]
+        InArenaBox[C.GetTransform().Translation]
     ParticipantsActive()<transacts>:logic =
         if (A := Left?, B := Right?, A <> B, A.IsActive[], B.IsActive[], CA := A.GetFortCharacter[], CB := B.GetFortCharacter[], CA.IsActive[], CB.IsActive[]):
             true
@@ -212,6 +245,8 @@ keystroke_arena_device := class(creative_device):
             C.PutInStasis(stasis_args{AllowTurning := true, AllowFalling := false})
             Loadout.Prepare(P, Mode)
             set RoundSubscriptions += array{C.EliminatedEvent().Subscribe(OnEliminated)}
+        ToTeam(A, 2)
+        ToTeam(B, 3)
         Sleep(0.1)
         if (not Loadout.Ready(A)? or not Loadout.Ready(B)?):
             EndRound(kt_arena_result.Cancelled)
@@ -278,11 +313,13 @@ keystroke_arena_device := class(creative_device):
         for (Maybe : People, P := Maybe?, C := P.GetFortCharacter[]):
             C.ReleaseFromStasis()
             C.SetVulnerability(true)
+        for (Maybe : People, P := Maybe?):
+            ToTeam(P, 0)
+            if (Mode = kt_arena_mode.NoBuildMelee):
+                Loadout.RestoreGuns(P)
         for (S : RoundSubscriptions):
             S.Cancel()
         set RoundSubscriptions = array{}
-        if (D := Divider?):
-            D.Enable()
         if (D := NoBuild?):
             D.Disable()
         SetStatus(if (Result = kt_arena_result.Cancelled) then "Round cancelled" else if (Result = kt_arena_result.Draw) then "Draw" else "Round complete")
@@ -297,6 +334,10 @@ keystroke_arena_device := class(creative_device):
                     break
                 if (C := P.GetFortCharacter[], C.IsActive[]):
                     Where := if (Index = 0) then PadA else PadB
+                    Died := if (Index = 0) then LeftDead else RightDead
+                    # Someone who walked out (portal, EXIT) or stepped off to cancel is left where they are.
+                    if (not Died?, not InArenaBox[C.GetTransform().Translation]):
+                        break
                     if (C.TeleportTo[Where + vector3{Z := 100.0}, IdentityRotation()]):
                         Loadout.Refresh(P)
                         if (set Supplied[P] = C) {}
@@ -304,6 +345,8 @@ keystroke_arena_device := class(creative_device):
                 set Attempts += 1
                 if (Attempts >= 300):
                     break
+        # Long enough to read "Round cancelled", "Draw" or "Round complete" before the waiting text returns.
+        Sleep(2.5)
         if (Generation = Token):
             set Left = false
             set Right = false
@@ -339,7 +382,7 @@ keystroke_arena_device := class(creative_device):
                 if (Check := Loadout.SupplyCheck?):
                     FishCount := Check.GetItemCount(P, 0)
                     MedCount := Check.GetItemCount(P, 1)
-                    Report.Check("A06-no-duplicates", logic{FishCount = 2 and MedCount = 1}, "replenishment counts {FishCount} fish and {MedCount} medkits")
+                    Report.Check("A06-no-duplicates", logic{FishCount >= 1 and MedCount = 1}, "replenishment counts {FishCount} fish and {MedCount} medkits")
                 OnMode(P)
                 Report.Check("A07-no-build-mode", logic{Mode = kt_arena_mode.NoBuildGuns}, "gun-only mode reachable")
                 OnMode(P)

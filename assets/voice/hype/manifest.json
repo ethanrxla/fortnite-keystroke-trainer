@@ -1,0 +1,377 @@
+{
+  "hype_rep_1": {
+    "id": "hype_rep_1",
+    "event": "rep",
+    "text": "Clean rep. Your keyboard just blushed.",
+    "render_sha": "a60e9acb8921b68dff4b8de26a3d8e69d1719e98f414ea2e7811a737f1aaaaf9",
+    "voice": "pFZP5JQG7iQjIQuC4Bku",
+    "model": "eleven_multilingual_v2",
+    "settings": {
+      "stability": 0.5,
+      "similarity_boost": 0.75,
+      "style": 0.15,
+      "use_speaker_boost": true
+    },
+    "duration_seconds": 2.136235827664399
+  },
+  "hype_rep_2": {
+    "id": "hype_rep_2",
+    "event": "rep",
+    "text": "That rep was smoother than a fresh edit reset.",
+    "render_sha": "650497ff7e856cdda1bd35d1cb18641a6a9ae99ac79831d34dd05f294446fe67",
+    "voice": "pFZP5JQG7iQjIQuC4Bku",
+    "model": "eleven_multilingual_v2",
+    "settings": {
+      "stability": 0.5,
+      "similarity_boost": 0.75,
+      "style": 0.15,
+      "use_speaker_boost": true
+    },
+    "duration_seconds": 2.8328344671201813
+  },
+  "hype_rep_3": {
+    "id": "hype_rep_3",
+    "event": "rep",
+    "text": "Look at you, building like rent is due.",
+    "render_sha": "a21f1a86862a799389a95fc1c79b3f708eba7549f3e98b6637c921916698e1e2",
+    "voice": "pFZP5JQG7iQjIQuC4Bku",
+    "model": "eleven_multilingual_v2",
+    "settings": {
+      "stability": 0.5,
+      "similarity_boost": 0.75,
+      "style": 0.15,
+      "use_speaker_boost": true
+    },
+    "duration_seconds": 2.089795918367347
+  },
+  "hype_rep_4": {
+    "id": "hype_rep_4",
+    "event": "rep",
+    "text": "Another one. The walls are filing a complaint.",
+    "render_sha": "f3775fe4204651042cd0fc95a0abb21193c85ed1e304a2c5ca875d53fbd6b2a2",
+    "voice": "pFZP5JQG7iQjIQuC4Bku",
+    "model": "eleven_multilingual_v2",
+    "settings": {
+      "stability": 0.5,
+      "similarity_boost": 0.75,
+      "style": 0.15,
+      "use_speaker_boost": true
+    },
+    "duration_seconds": 2.693514739229025
+  },
+  "hype_rep_5": {
+    "id": "hype_rep_5",
+    "event": "rep",
+    "text": "Rep done. Your fingers are in their main character era.",
+    "render_sha": "d3e2febb120a54b25c58ae448083604728b70b0c966931def5d20450aaf68945",
+    "voice": "pFZP5JQG7iQjIQuC4Bku",
+    "model": "eleven_multilingual_v2",
+    "settings": {
+      "stability": 0.5,
+      "similarity_boost": 0.75,
+      "style": 0.15,
+      "use_speaker_boost": true
+    },
+    "duration_seconds": 3.575873015873016
+  },
+  "hype_rep_6": {
+    "id": "hype_rep_6",
+    "event": "rep",
+    "text": "Slow is smooth, and smooth is lowkey cracked.",
+    "render_sha": "ffdbd2d02173a2023f59753dd7ab4dbdd6eb738e62ef003e71849cf80362bcac",
+    "voice": "pFZP5JQG7iQjIQuC4Bku",
+    "model": "eleven_multilingual_v2",
+    "settings": {
+      "stability": 0.5,
+      "similarity_boost": 0.75,
+      "style": 0.15,
+      "use_speaker_boost": true
+    },
+    "duration_seconds": 3.111473922902494
+  },
+  "hype_set_1": {
+    "id": "hype_set_1",
+    "event": "set",
+    "text": "Set complete! Hydrate, stretch, and flex on the bots.",
+    "render_sha": "83f6515d8563eef4ad5d2a19b9002a463d104ba4723bd2cc01b857628ef2cc9e",
+    "voice": "pFZP5JQG7iQjIQuC4Bku",
+    "model": "eleven_multilingual_v2",
+    "settings": {
+      "stability": 0.5,
+      "similarity_boost": 0.75,
+      "style": 0.15,
+      "use_speaker_boost": true
+    },
+    "duration_seconds": 3.622312925170068
+  },
+  "hype_set_2": {
+    "id": "hype_set_2",
+    "event": "set",
+    "text": "Set done. Your muscle memory just leveled up.",
+    "render_sha": "32ce66e8197413cd44a9fd9d5d080e3d95225fac78cd85ecdc9a8fea73bc4a49",
+    "voice": "pFZP5JQG7iQjIQuC4Bku",
+    "model": "eleven_multilingual_v2",
+    "settings": {
+      "stability": 0.5,
+      "similarity_boost": 0.75,
+      "style": 0.15,
+      "use_speaker_boost": true
+    },
+    "duration_seconds": 2.6006349206349206
+  },
+  "hype_set_3": {
+    "id": "hype_set_3",
+    "event": "set",
+    "text": "That's a wrap. Somewhere, a pro player felt a disturbance.",
+    "render_sha": "8b61ff6d2e721c4bacf1e99976ae5c15099778c3460f20224db25dd3ef7af8a3",
+    "voice": "pFZP5JQG7iQjIQuC4Bku",
+    "model": "eleven_multilingual_v2",
+    "settings": {
+      "stability": 0.5,
+      "similarity_boost": 0.75,
+      "style": 0.15,
+      "use_speaker_boost": true
+    },
+    "duration_seconds": 3.5294331065759637
+  },
+  "hype_set_4": {
+    "id": "hype_set_4",
+    "event": "set",
+    "text": "Set finished. Go again, or go brag. Both are valid.",
+    "render_sha": "9f0e62c33ad99c78e6a4b86290e5cc2302c3b31799456a1f5f49a8b9d6efbd04",
+    "voice": "pFZP5JQG7iQjIQuC4Bku",
+    "model": "eleven_multilingual_v2",
+    "settings": {
+      "stability": 0.5,
+      "similarity_boost": 0.75,
+      "style": 0.15,
+      "use_speaker_boost": true
+    },
+    "duration_seconds": 3.575873015873016
+  },
+  "hype_set_5": {
+    "id": "hype_set_5",
+    "event": "set",
+    "text": "Done! Your build tempo is officially a vibe.",
+    "render_sha": "7452867bae68f778f87780eb54ac6289e1fe2abd7021fdc66be9b5d411212af8",
+    "voice": "pFZP5JQG7iQjIQuC4Bku",
+    "model": "eleven_multilingual_v2",
+    "settings": {
+      "stability": 0.5,
+      "similarity_boost": 0.75,
+      "style": 0.15,
+      "use_speaker_boost": true
+    },
+    "duration_seconds": 2.5541950113378684
+  },
+  "hype_sky_clear_1": {
+    "id": "hype_sky_clear_1",
+    "event": "sky_clear",
+    "text": "Sky Box cleared! You boxed so hard the clouds took notes.",
+    "render_sha": "bc0f4713e9fddc78c9e17534ec479005d564f739fa55588846aa7a264b38b2ad",
+    "voice": "pFZP5JQG7iQjIQuC4Bku",
+    "model": "eleven_multilingual_v2",
+    "settings": {
+      "stability": 0.5,
+      "similarity_boost": 0.75,
+      "style": 0.15,
+      "use_speaker_boost": true
+    },
+    "duration_seconds": 3.9938321995464854
+  },
+  "hype_sky_clear_2": {
+    "id": "hype_sky_clear_2",
+    "event": "sky_clear",
+    "text": "All four down. Up here, you are the weather.",
+    "render_sha": "d25e2244a06563a11f3094345acb1b610e9b51e5a306dbd3c4bc8f619a4a0f10",
+    "voice": "pFZP5JQG7iQjIQuC4Bku",
+    "model": "eleven_multilingual_v2",
+    "settings": {
+      "stability": 0.5,
+      "similarity_boost": 0.75,
+      "style": 0.15,
+      "use_speaker_boost": true
+    },
+    "duration_seconds": 3.3436734693877552
+  },
+  "hype_sky_clear_3": {
+    "id": "hype_sky_clear_3",
+    "event": "sky_clear",
+    "text": "Sky Box clear. Gravity is honestly jealous.",
+    "render_sha": "c54c26cee1d3181c4ed5c4c9169b2f21d3381f7af4304ddf0b1641f7698f21d8",
+    "voice": "pFZP5JQG7iQjIQuC4Bku",
+    "model": "eleven_multilingual_v2",
+    "settings": {
+      "stability": 0.5,
+      "similarity_boost": 0.75,
+      "style": 0.15,
+      "use_speaker_boost": true
+    },
+    "duration_seconds": 3.01859410430839
+  },
+  "hype_sky_fall_1": {
+    "id": "hype_sky_fall_1",
+    "event": "sky_fall",
+    "text": "Gravity, one. You, zero. Run it back.",
+    "render_sha": "06f134a2b3f50102263c4414dbff6cb882173565e0d4c8dfdffcb6578514f83f",
+    "voice": "pFZP5JQG7iQjIQuC4Bku",
+    "model": "eleven_multilingual_v2",
+    "settings": {
+      "stability": 0.5,
+      "similarity_boost": 0.75,
+      "style": 0.15,
+      "use_speaker_boost": true
+    },
+    "duration_seconds": 2.507755102040816
+  },
+  "hype_sky_fall_2": {
+    "id": "hype_sky_fall_2",
+    "event": "sky_fall",
+    "text": "Oops. The floor was more of a suggestion. Back to your box.",
+    "render_sha": "cca90d74f1aca04310ebbf3fe93015fe652923c24b3427c09283f50c5627d250",
+    "voice": "pFZP5JQG7iQjIQuC4Bku",
+    "model": "eleven_multilingual_v2",
+    "settings": {
+      "stability": 0.5,
+      "similarity_boost": 0.75,
+      "style": 0.15,
+      "use_speaker_boost": true
+    },
+    "duration_seconds": 3.1579138321995464
+  },
+  "hype_op_room_1": {
+    "id": "hype_op_room_1",
+    "event": "op_room",
+    "text": "Room clear. Next door, next problem.",
+    "render_sha": "7b690d4b2cb0a7cf6d29937693f16fd42492f6273ce39168fe24e84dc225951b",
+    "voice": "pFZP5JQG7iQjIQuC4Bku",
+    "model": "eleven_multilingual_v2",
+    "settings": {
+      "stability": 0.5,
+      "similarity_boost": 0.75,
+      "style": 0.15,
+      "use_speaker_boost": true
+    },
+    "duration_seconds": 2.36843537414966
+  },
+  "hype_op_room_2": {
+    "id": "hype_op_room_2",
+    "event": "op_room",
+    "text": "Clean. They never stood a chance.",
+    "render_sha": "1c4a79c8bcd4738889916473f5c529b7a05187bf27b475196eb1abcf803d8450",
+    "voice": "pFZP5JQG7iQjIQuC4Bku",
+    "model": "eleven_multilingual_v2",
+    "settings": {
+      "stability": 0.5,
+      "similarity_boost": 0.75,
+      "style": 0.15,
+      "use_speaker_boost": true
+    },
+    "duration_seconds": 2.2755555555555556
+  },
+  "hype_op_room_3": {
+    "id": "hype_op_room_3",
+    "event": "op_room",
+    "text": "That room just got edited out of existence.",
+    "render_sha": "ccea591e9f2403c88e78308bbddb6ad7c80f3df7f542f2b57dab3f2c3e19c364",
+    "voice": "pFZP5JQG7iQjIQuC4Bku",
+    "model": "eleven_multilingual_v2",
+    "settings": {
+      "stability": 0.5,
+      "similarity_boost": 0.75,
+      "style": 0.15,
+      "use_speaker_boost": true
+    },
+    "duration_seconds": 2.507755102040816
+  },
+  "hype_op_room_4": {
+    "id": "hype_op_room_4",
+    "event": "op_room",
+    "text": "Room down. Keep that energy moving.",
+    "render_sha": "dade2e90bc72945ae560f15db9be04e0e3ec6477ba734825415c50ae548bfe62",
+    "voice": "pFZP5JQG7iQjIQuC4Bku",
+    "model": "eleven_multilingual_v2",
+    "settings": {
+      "stability": 0.5,
+      "similarity_boost": 0.75,
+      "style": 0.15,
+      "use_speaker_boost": true
+    },
+    "duration_seconds": 2.414875283446712
+  },
+  "hype_op_done_1": {
+    "id": "hype_op_done_1",
+    "event": "op_done",
+    "text": "Bombsite destroyed. Mission complete, legend.",
+    "render_sha": "20b0df5c5c272eb5ad41a4d384e121419c407016bd6a1b5dc641a0902189e398",
+    "voice": "pFZP5JQG7iQjIQuC4Bku",
+    "model": "eleven_multilingual_v2",
+    "settings": {
+      "stability": 0.5,
+      "similarity_boost": 0.75,
+      "style": 0.15,
+      "use_speaker_boost": true
+    },
+    "duration_seconds": 2.8792743764172335
+  },
+  "hype_op_done_2": {
+    "id": "hype_op_done_2",
+    "event": "op_done",
+    "text": "Operation done. Somebody call the highlight reel.",
+    "render_sha": "6ad069739be32aefea25b3b24cbf8c0f1d57019aeee1b5e8f0a63fc9633e078a",
+    "voice": "pFZP5JQG7iQjIQuC4Bku",
+    "model": "eleven_multilingual_v2",
+    "settings": {
+      "stability": 0.5,
+      "similarity_boost": 0.75,
+      "style": 0.15,
+      "use_speaker_boost": true
+    },
+    "duration_seconds": 2.7399546485260773
+  },
+  "hype_op_done_3": {
+    "id": "hype_op_done_3",
+    "event": "op_done",
+    "text": "Boom. Planted, held, extracted. Textbook.",
+    "render_sha": "15ce69459c453d73cb60a8e9aed2455dd16a4b1c8839899c1ee028d3c730865c",
+    "voice": "pFZP5JQG7iQjIQuC4Bku",
+    "model": "eleven_multilingual_v2",
+    "settings": {
+      "stability": 0.5,
+      "similarity_boost": 0.75,
+      "style": 0.15,
+      "use_speaker_boost": true
+    },
+    "duration_seconds": 2.7399546485260773
+  },
+  "hype_op_gold_1": {
+    "id": "hype_op_gold_1",
+    "event": "op_gold",
+    "text": "Gold medal! Somebody put that on the fridge.",
+    "render_sha": "66acc3166ddf41a63520ecf35e9b80063100a05ccd91c5e8ab4315ff115b2c1f",
+    "voice": "pFZP5JQG7iQjIQuC4Bku",
+    "model": "eleven_multilingual_v2",
+    "settings": {
+      "stability": 0.5,
+      "similarity_boost": 0.75,
+      "style": 0.15,
+      "use_speaker_boost": true
+    },
+    "duration_seconds": 2.5541950113378684
+  },
+  "hype_best_1": {
+    "id": "hype_best_1",
+    "event": "best",
+    "text": "New personal best! Screenshot it, you earned the flex.",
+    "render_sha": "390e4f02b7fd44d8aeee2c1e3d072a5bd6fb6404556f1316f058ec1750ca5e88",
+    "voice": "pFZP5JQG7iQjIQuC4Bku",
+    "model": "eleven_multilingual_v2",
+    "settings": {
+      "stability": 0.5,
+      "similarity_boost": 0.75,
+      "style": 0.15,
+      "use_speaker_boost": true
+    },
+    "duration_seconds": 3.3436734693877552
+  }
+}

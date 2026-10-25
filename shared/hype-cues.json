@@ -1,0 +1,31 @@
+{
+  "version": 1,
+  "note": "Corny hype lines played in the island (player 2026-10-25: 'add more corny voice lines'). Not teaching text. Each event plays one line at random, at most every HypeCooldown seconds per player (HypeVoice.verse). Render: python tools/render_arena_voice.py --set hype --render; import and bind: tools/build_hype_voice.py.",
+  "cues": [
+    {"id": "hype_rep_1", "event": "rep", "text": "Clean rep. Your keyboard just blushed."},
+    {"id": "hype_rep_2", "event": "rep", "text": "That rep was smoother than a fresh edit reset."},
+    {"id": "hype_rep_3", "event": "rep", "text": "Look at you, building like rent is due."},
+    {"id": "hype_rep_4", "event": "rep", "text": "Another one. The walls are filing a complaint."},
+    {"id": "hype_rep_5", "event": "rep", "text": "Rep done. Your fingers are in their main character era."},
+    {"id": "hype_rep_6", "event": "rep", "text": "Slow is smooth, and smooth is lowkey cracked."},
+    {"id": "hype_set_1", "event": "set", "text": "Set complete! Hydrate, stretch, and flex on the bots."},
+    {"id": "hype_set_2", "event": "set", "text": "Set done. Your muscle memory just leveled up."},
+    {"id": "hype_set_3", "event": "set", "text": "That's a wrap. Somewhere, a pro player felt a disturbance."},
+    {"id": "hype_set_4", "event": "set", "text": "Set finished. Go again, or go brag. Both are valid."},
+    {"id": "hype_set_5", "event": "set", "text": "Done! Your build tempo is officially a vibe."},
+    {"id": "hype_sky_clear_1", "event": "sky_clear", "text": "Sky Box cleared! You boxed so hard the clouds took notes."},
+    {"id": "hype_sky_clear_2", "event": "sky_clear", "text": "All four down. Up here, you are the weather."},
+    {"id": "hype_sky_clear_3", "event": "sky_clear", "text": "Sky Box clear. Gravity is honestly jealous."},
+    {"id": "hype_sky_fall_1", "event": "sky_fall", "text": "Gravity, one. You, zero. Run it back."},
+    {"id": "hype_sky_fall_2", "event": "sky_fall", "text": "Oops. The floor was more of a suggestion. Back to your box."},
+    {"id": "hype_op_room_1", "event": "op_room", "text": "Room clear. Next door, next problem."},
+    {"id": "hype_op_room_2", "event": "op_room", "text": "Clean. They never stood a chance."},
+    {"id": "hype_op_room_3", "event": "op_room", "text": "That room just got edited out of existence."},
+    {"id": "hype_op_room_4", "event": "op_room", "text": "Room down. Keep that energy moving."},
+    {"id": "hype_op_done_1", "event": "op_done", "text": "Bombsite destroyed. Mission complete, legend."},
+    {"id": "hype_op_done_2", "event": "op_done", "text": "Operation done. Somebody call the highlight reel."},
+    {"id": "hype_op_done_3", "event": "op_done", "text": "Boom. Planted, held, extracted. Textbook."},
+    {"id": "hype_op_gold_1", "event": "op_gold", "text": "Gold medal! Somebody put that on the fridge."},
+    {"id": "hype_best_1", "event": "best", "text": "New personal best! Screenshot it, you earned the flex."}
+  ]
+}

@@ -99,6 +99,7 @@ kt_range_evidence_listener := class:
             Trial.Cancel()
 
 kt_gun_range_lane_device := class(creative_device):
+    Hype:kt_hype_voice = kt_hype_voice{}
     @editable LaneHalfWidth:float = 480.0
     @editable LaneLength:float = 12000.0
     @editable Reps:int = 15
@@ -125,6 +126,7 @@ kt_gun_range_lane_device := class(creative_device):
     var Lights:[]?customizable_light_device = array{false, false, false, false, false}
 
     OnBegin<override>()<suspends>:void =
+        Hype.Load(Self)
         set Here = GetTransform().Translation
         set Targets = PairTargets(LaneTriggers(kt_range_up_tag), LaneTriggers(kt_range_down_tag), LaneTriggers(kt_range_hit_tag))
         set WideTargets = PairTargets(LaneTriggers(kt_range_wide_up_tag), LaneTriggers(kt_range_wide_down_tag),
@@ -355,7 +357,14 @@ kt_gun_range_lane_device := class(creative_device):
         KTLog("summary", "gun_range", 0, Rep, 0, rep_result.Unchecked,
             "hits={Hits}|misses={Misses}|avg_ms={Avg}|near_hits={NearHits}|far_hits={FarHits}|left={if (Left?) then 1 else 0}|difficulty={KTRangeLevelName(Lvl)}|mode={Mode}|lane={LaneNumber}|run={Run}|participant={Participant}|metric=target_completion|eligible={Hits + Misses}|ungraded={Ungraded}|bullseyes={Bullseyes}|shots_fired=unknown|bullet_accuracy=unknown")
         Hud.Title.SetText(KTRangeText(if (Left?) then "ROUND STOPPED" else "RANGE  LANE {LaneNumber}  DONE"))
-        Hud.Message.SetText(KTRangeText(if (Left?) then "Round stopped. Interrupted targets are ungraded." else "{Hits}/{Hits + Misses} targets | {Bullseyes} bullseyes | {Ungraded} ungraded. START to retry."))
+        # The player's saved best for this difficulty and mode (Progress.verse), from finished rounds only.
+        var BestText:string = ""
+        if (not Left?, Hits + Misses > 0, P := player[A], PerMille := Quotient[Hits * 1000, Hits + Misses]):
+            Best := KTRecordRange(P, "{KTRangeLevelName(Lvl)}|{Mode}", PerMille)
+            BestPct := if (V := Quotient[Best, 10]) then V else 0
+            set BestText = if (Best = PerMille) then " | Personal best!" else " | Best {BestPct}%"
+            if (Best = PerMille) then Hype.Play("best", A, true)
+        Hud.Message.SetText(KTRangeText(if (Left?) then "Round stopped. Interrupted targets are ungraded." else "{Hits}/{Hits + Misses} targets | {Bullseyes} bullseyes | {Ungraded} ungraded{BestText}. START to retry."))
         # The lane's targets come back in the deferred block above, once the summary has shown.
         Sleep(if (Left?) then 2.0 else 5.0)
 

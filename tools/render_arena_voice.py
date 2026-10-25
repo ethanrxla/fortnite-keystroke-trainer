@@ -1,4 +1,5 @@
-"""Offline cached arena banter. Dry run unless --render; never runs in gameplay."""
+"""Offline cached voice lines: the arena banter (shared/arena-cues.json) or, with --set hype, the corny hype lines
+(shared/hype-cues.json, 2026-10-25). Dry run unless --render; never runs in gameplay."""
 import argparse
 import hashlib
 import json
@@ -7,6 +8,7 @@ from pathlib import Path
 import gen_voice as voice
 
 ROOT = Path(__file__).resolve().parents[1]
+SETS = {'arena': ('shared/arena-cues.json', 'assets/voice/arena'), 'hype': ('shared/hype-cues.json', 'assets/voice/hype')}
 OUT = ROOT / 'assets/voice/arena'
 
 
@@ -30,9 +32,13 @@ def verify(path):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--render', action='store_true')
+    parser.add_argument('--set', choices=sorted(SETS), default='arena')
     args = parser.parse_args()
+    global OUT
+    source, out = SETS[args.set]
+    OUT = ROOT / out
     selection = json.loads((ROOT / 'assets/voice/voice_selection.json').read_text())
-    cues = json.loads((ROOT / 'shared/arena-cues.json').read_text())['cues']
+    cues = json.loads((ROOT / source).read_text(encoding='utf-8'))['cues']
     manifest_path = OUT / 'manifest.json'
     manifest = json.loads(manifest_path.read_text()) if manifest_path.exists() else {}
     stale = [cue for cue in cues if manifest.get(cue['id'], {}).get('render_sha') != signature(cue['text'], selection)

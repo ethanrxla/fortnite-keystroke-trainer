@@ -50,6 +50,8 @@ arena_loadout_service := class:
     var Weapons:?item_remover_device = false
     var Sword:?item_granter_device = false
     var Hammer:?item_granter_device = false
+    # AR and shotgun, given back after a melee round took the guns (2026-10-25 review).
+    var Standard:?item_granter_device = false
     var SupplyCheck:?conditional_button_device = false
     var HammerChoice:[player]logic = map{}
     Refresh(P:player):void =
@@ -66,6 +68,13 @@ arena_loadout_service := class:
                 G.GrantItem(P)
             else if (G := Sword?):
                 G.GrantItem(P)
+        Refresh(P)
+    # After a melee round: the sword or hammer goes and the standard guns come back.
+    RestoreGuns(P:player):void =
+        if (R := Weapons?):
+            R.Remove(P)
+        if (G := Standard?):
+            G.GrantItem(P)
         Refresh(P)
     Ready(P:player)<transacts>:logic =
         if (Check := SupplyCheck?, Check.HasAllItems[P]):

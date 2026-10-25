@@ -54,19 +54,23 @@ HEADER_Z = {}
 # A header over each wing's plates (player 2026-10-13: "what plates represent those drills? im unsure in the lobby").
 # The swap drills sit with piece switching: the armory is for equipment only (player 2026-10-13).
 HEADERS = {"build": "BUILD DRILLS", "piece": "MOVEMENT DRILLS", "edit": "EDIT DRILLS", "armory": "WEAPON DRILLS"}
-WING_ARRIVAL = {"B": "KT3_03_Dest", "P": "KT3_04_Dest", "E": "KT3_05_Dest", "W": "KT3_03_Dest"}   # swap plates live in the build wing
-# code or area, plate words, rgb (linear), walls in order of preference, lane code or teleporter to arrive at
+# Gun/piece swap lives in the edit wing since 2026-10-25 (player: "gun/ piece swap would be moved from the build room to
+# the editing room"), so W arrives there.
+WING_ARRIVAL = {"B": "KT3_03_Dest", "P": "KT3_04_Dest", "E": "KT3_05_Dest", "W": "KT3_05_Dest"}
+# code or area, plate words, rgb (linear), walls in order of preference, lane code or teleporter to arrive at. Each
+# wing's plates are placed in this order, left to right, three to a wing (player 2026-10-25): build: piece switch, 90s,
+# box up; movement: ramp rush, Sky Box, tunnel (Wall Take is hidden for release, no plate); edit: gun/piece swap, edit
+# peek, Piece Lab.
 PLATES = [
     ("B5", "PIECE SWITCH", (0.05, 0.16, 0.30), ["build_north"], "lane"),
     ("P2", "RAMP RUSH", (0.20, 0.06, 0.30), ["piece_west"], "lane"),
     ("P6", "90s", (0.05, 0.16, 0.30), ["build_north", "build_east"], "lane"),
     ("P4", "BOX UP", (0.05, 0.16, 0.30), ["build_north", "build_east"], "lane"),
     ("SKY", "SKY BOX", (0.03, 0.22, 0.30), ["piece_west"], "KT18_Sky_Rift_Start"),
-    ("TAKE", "WALL TAKE", (0.30, 0.10, 0.02), ["piece_west"], "KT33_WallTake_Arrive"),
     ("P7", "TUNNEL", (0.20, 0.06, 0.30), ["piece_west"], "lane"),
+    ("W3", "GUN/PIECE SWAP", (0.28, 0.20, 0.02), ["edit_south"], "lane"),
     ("E7", "EDIT PEEK", (0.04, 0.24, 0.10), ["edit_south"], "lane"),
     ("LAB", "PIECE LAB", (0.10, 0.20, 0.04), ["edit_south"], "KT12_Gate_LabIn"),
-    ("W3", "GUN/PIECE SWAP", (0.28, 0.20, 0.02), ["build_north"], "lane"),
 ]
 SECTION_SIGNS = ["build", "movement", "editing"]
 # Areas whose own teleporter has a target group: its Teleport sends you on to that group (the Piece Lab entry went to
@@ -79,7 +83,7 @@ SHARED_ROOM = {"P4": "P6"}
 # arrival they send you to. Shooting one ends the drill (DrillDevice WatchLeave sees you leave the lane).
 # Each wing's EXIT arrival is a pad of its own on the wing floor in front of its plates: the wing teleporters put a
 # player under the map from the half wall room (player 2026-10-13).
-EXIT_ROOMS = {"B5": "build_north", "W3": "build_north", "P6": "build_north", "P2": "piece_west", "P7": "piece_west",
+EXIT_ROOMS = {"B5": "build_north", "W3": "edit_south", "P6": "build_north", "P2": "piece_west", "P7": "piece_west",
               "W2": "piece_west", "E7": "edit_south"}
 EXIT_Z, EXIT_SIZE = 470.0, 200.0
 # Lane rooms no longer get exit rifts: the EXIT plates replace them, and the rift pad behind the start was walked into

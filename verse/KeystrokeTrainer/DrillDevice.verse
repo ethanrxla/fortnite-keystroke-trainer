@@ -117,6 +117,10 @@ keystroke_drill_device := class(creative_device, kt_bot_count_target):
     # kt_lane_granter_tag nearest this lane grants its loadout at the start of each rep, replacing the inventory.
     @editable RefillEachRep:logic = false
     @editable BotClearSeconds:float = 180.0
+    # One player at a time (player 2026-10-25: "2 players cant be in some of the same drills ... a player should see
+    # like the drill is currently full"): while this lane or another in its room runs a set, a plate shot shows "in use".
+    # AllowGuests (the tunnel): the second player is let into the room instead and starts when the pad is free.
+    @editable AllowGuests:logic = false
     # Wire a gun target's hit event to GunHit and a pickaxe target's hit event to PickaxeHit in the
     # editor (device event binding, not Verse). target_hit checks read these. Unlinked is fine.
     # Leaving the lane ends the set (and a section's run): more than this far, in cm, from the current rep's start
@@ -145,6 +149,7 @@ keystroke_drill_device := class(creative_device, kt_bot_count_target):
     var Metronome:audio_player_device = audio_player_device{}
 
     var Busy:logic = false
+    Hype:kt_hype_voice = kt_hype_voice{}
     # Set when the player leaves the lane mid-set (see AbandonDistance).
     var Abandoned:logic = false
     # Practice does not write progress, so remember its briefing separately for fast repeats.
@@ -173,6 +178,7 @@ keystroke_drill_device := class(creative_device, kt_bot_count_target):
         set HitsTaken += 1
 
     OnBegin<override>()<suspends>:void =
+        Hype.Load(Self)
         if (not FindDrill[DrillId]):
             Print("KT|config_error|{DrillId}|tempo=0|rep=0|step=0|result=missing|t=0.0|reason=unknown_drill_id")
         set Pressure = if (T := NearestTrigger[kt_pressure_tag]) then T else PressureTrigger
@@ -257,9 +263,31 @@ keystroke_drill_device := class(creative_device, kt_bot_count_target):
             S.Disable()
 
     OnStartShot(Agent:?agent):void =
-        if (A := Agent?, Player := player[A], not Busy?, Character := Player.GetFortCharacter[]):
-            Back := Character.GetTransform().Translation
-            spawn{ PlaySet(Player, Back, 0) }
+        if (A := Agent?, Player := player[A], Character := Player.GetFortCharacter[]):
+            if (not Busy?, not RoomBusy[]):
+                Back := Character.GetTransform().Translation
+                spawn{ PlaySet(Player, Back, 0) }
+            else if (AllowGuests?):
+                if (Character.TeleportTo[PadPosition() + vector3{Z := 100.0}, Character.GetTransform().Rotation]) {}
+            else:
+                spawn{ ShowFull(Player) }
+
+    # A short note for a player whose plate shot found the drill taken.
+    ShowFull(Player:player)<suspends>:void =
+        if (UI := GetPlayerUI[Player]):
+            Name := if (Drill := FindDrill[DrillId]) then Drill.Name else "This drill"
+            Note := text_block{DefaultTextColor := NamedColors.White, DefaultTextSize := 28.0}
+            Note.SetText(CueText("{Name} is full: one player at a time.\nTry again in a moment."))
+            Panel := canvas:
+                Slots := array:
+                    canvas_slot:
+                        Anchors := anchors{Minimum := vector2{X := 0.5, Y := 0.3}, Maximum := vector2{X := 0.5, Y := 0.3}}
+                        Alignment := vector2{X := 0.5, Y := 0.0}
+                        SizeToContent := true
+                        Widget := Note
+            UI.AddWidget(Panel, player_ui_slot{InputMode := ui_input_mode.None})
+            Sleep(3.0)
+            UI.RemoveWidget(Panel)
 
     NearestTrigger(TagType:castable_subtype(tag))<transacts><decides>:trigger_device =
         Here := GetTransform().Translation
@@ -293,7 +321,7 @@ keystroke_drill_device := class(creative_device, kt_bot_count_target):
         var NeedsLeave:logic = false
         loop:
             Sleep(0.25)
-            if (not Busy?):
+            if (not Busy?, not RoomBusy[]):
                 if (Player := PlayerOnPad[]):
                     if (not NeedsLeave?):
                         set OnPadTime += 0.25
@@ -478,6 +506,7 @@ keystroke_drill_device := class(creative_device, kt_bot_count_target):
                 Sleep(ClearWaitSeconds)
                 MovePlayer(Player, TrackOrigin(Drill, Min(Rep + 1, Reps)))
             if (Rep < Reps, not Abandoned?):
+                Hype.Play("rep", Player, false)
                 Cue.SetText(CueText("{Drill.Code}  {Drill.Name}   rep {Rep}/{Reps} done\nNext rep in a moment"))
                 Sleep(RepRestSeconds)
         if (Abandoned?):
@@ -497,6 +526,9 @@ keystroke_drill_device := class(creative_device, kt_bot_count_target):
         Accuracy := if (Reps > 0) then (CleanReps * 1.0) / (Reps * 1.0) else 0.0
         Eligible := CanRecordVerifiedSet(ScoringEnabled, UncheckedSteps, Reps)
         Decision := RecordVerifiedSet(Player, Drill.Id, Accuracy, Eligible)
+        # Every finished set counts in the player's saved stats (Progress.verse; player 2026-10-25: drill statistics).
+        Stats := KTDrillStatsLine(KTCountSet(Player, Drill.Id, Reps))
+        Hype.Play("set", Player, true)
         if (Active := Subscription?):
             Active.Cancel()
         AverageLatency := AverageOf(Latencies)
@@ -512,9 +544,9 @@ keystroke_drill_device := class(creative_device, kt_bot_count_target):
         Clearer.Trigger(Player)
         if (Eligible?):
             Stuck := if (IsPlateau(GetDrillProgress(Player, Drill.Id).RecentAccuracy)?) then "\n{PlateauLine}" else ""
-            Cue.SetText(CueText("{ResultLine(CleanReps, Reps, Decision)}\n{CoachLine(Band, HitsTaken, Drill.Tip)}\nThink: {Drill.Reflect}{Stuck}"))
+            Cue.SetText(CueText("{ResultLine(CleanReps, Reps, Decision)}\n{CoachLine(Band, HitsTaken, Drill.Tip)}\nThink: {Drill.Reflect}{Stuck}\n{Stats}"))
         else:
-            Cue.SetText(CueText("Practice complete - {if (FlowMode?) then "flow pace" else "{Apm} APM"}\nBuild accuracy not verified. No progression saved.\n{Drill.Tip}\nThink: {Drill.Reflect}"))
+            Cue.SetText(CueText("Practice complete - {if (FlowMode?) then "flow pace" else "{Apm} APM"}\n{Stats}\n{Drill.Tip}\nThink: {Drill.Reflect}"))
         Sleep(if (not Eligible? or Band = technique_band.Solid or Band = technique_band.Sharp) then ResultCleanSeconds else ResultSeconds)
         if (UI := GetPlayerUI[Player]):
             UI.RemoveWidget(Canvas)
