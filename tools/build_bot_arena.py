@@ -72,8 +72,7 @@ def main():
     piece(b, "KT4_Arena_Ramp", RAMP, x1 - 3.0 * C, ym + C / 2, 0.0)
     piece(b, "KT4_Arena_Floor", FLOOR, x1 - 2.0 * C, ym + C / 2, H)
     # Live bots on the far side, spread across the width.
-    for i, dy in enumerate((-3 * C, 3 * C)):
-        bot(b, f"KT4_Arena_Bot_{i}", x1 - 1.5 * C, ym + dy)
+    # No bots: the arena is player vs player (player 2026-10-25: "there shouldnt be bots in the 1v1 arena").
 
     sign = acts.get("KT_Sign_Area_Arena")
     if sign:
