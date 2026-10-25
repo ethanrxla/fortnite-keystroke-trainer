@@ -46,6 +46,10 @@ kt_op_retake_tag<public> := class(tag){}
 kt_op_retake2_tag<public> := class(tag){}
 # Build-reset barrels over the level (tools/build_operation.py Clear_*; player 2026-10-24: builds stayed after a run).
 kt_op_clear_tag<public> := class(tag){}
+# Their breakable walls (the peek wall, the breach boxes' walls) and the spares under the compound that replace a
+# destroyed one (EnemySlots.verse; player 2026-10-25: "this wall and the two boxes stopped spawning").
+kt_op_slot_wall_tag<public> := class(tag){}
+kt_op_spare_wall_tag<public> := class(tag){}
 # The bomb console's hold-to-plant button on the A plate (tools/build_operation.py Site_PlantButton).
 kt_op_plant_tag<public> := class(tag){}
 
@@ -118,6 +122,7 @@ kt_operation_device<public> := class(creative_device):
     var Loadout:?item_granter_device = false
     var Wave2:[]guard_spawner_device = array{}
     var Clears:[]explosive_device = array{}
+    Walls:kt_enemy_slots = kt_enemy_slots{Room := "operation"}
     var Wave2Up:logic = false
     var Grenades:?item_granter_device = false
 
@@ -168,6 +173,7 @@ kt_operation_device<public> := class(creative_device):
                 S.EliminatedEvent.Subscribe(Listener.OnEliminated)
         for (O : FindCreativeObjectsWithTag(kt_op_clear_tag), E := explosive_device[O]):
             set Clears += array{E}
+        Walls.Setup(FindCreativeObjectsWithTag(kt_op_slot_wall_tag), FindCreativeObjectsWithTag(kt_op_spare_wall_tag))
         # Wave 2 is never a stage's own bots (BotStage -1): Tick spawns it during the hold.
         for (O : FindCreativeObjectsWithTag(kt_op_retake2_tag), S := guard_spawner_device[O]):
             set Wave2 += array{S}
@@ -332,6 +338,12 @@ kt_operation_device<public> := class(creative_device):
                     return
                 if (Cleared?, Here = Stage + 1):
                     EnterStage(Stage + 1)
+                else if (Here > Stage):
+                    # Ahead of the open door (player 2026-10-25: "an opening where users can enter the bombsite
+                    # before clearing the enemies on room 7"): back to this room's start.
+                    KTLog("op_skip", "operation", 0, Runs, Stage, rep_result.Unchecked, "at={Here}")
+                    Respawn(C)
+                    return
                 var InStorm:logic = false
                 if (S := KTOpStages[Stage], S.Kind = 1, not Cleared?):
                     Edge := KTOpStormX(GetSimulationElapsedTime() - StormStart)
@@ -385,11 +397,19 @@ kt_operation_device<public> := class(creative_device):
             DropWave2()
             EnterStage(Stage)
 
-    # Every player build in the level goes (the barrels spare team 2's breakable pieces): at the start of a run and
-    # when it ends or is abandoned. The barrels re-arm themselves (On Exploded -> Reset).
+    # Every player build in the level goes, at the start of a run and when it ends or is abandoned. Their breakable walls
+    # drop out of the barrels' reach first (the barrels flattened them, 2026-10-25) and come back after, with spares for
+    # the ones destroyed. The barrels re-arm themselves (On Exploded -> Reset).
     ClearBuilds(A:agent):void =
+        spawn{ ResetBuilds(A) }
+
+    ResetBuilds(A:agent)<suspends>:void =
+        Walls.Stash()
+        Sleep(0.1)
         for (E : Clears):
             E.Explode(A)
+        Sleep(0.4)
+        Walls.Restore()
 
     DropWave2():void =
         set Wave2Up = false
@@ -475,6 +495,7 @@ kt_operation_device<public> := class(creative_device):
             if ((for (G -> St : GateStage, St = I) { G }).Length = 0):
                 set Missing += 1
         Report.Check("OP03-gates", logic{Missing = 0 and Gates.Length >= 7}, "every gated room has a barrier ({Gates.Length} found)")
-        Report.Check("OP04-start", logic{PlantButton? and Clears.Length >= 4}, "plant console and build-reset barrels")
+        Report.Check("OP04-start", logic{PlantButton? and Clears.Length >= 4 and Walls.Slots.Length >= 9 and Walls.Spares.Length >= 40},
+            "plant console, build-reset barrels, their walls and spares")
 
 OpText<localizes>(S:string):message = "{S}"

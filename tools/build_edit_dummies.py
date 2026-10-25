@@ -3,7 +3,7 @@
     python tools/build_edit_dummies.py [--dry-run]
 
 Edit drills that end on a shot (shared/drills.json, a target_hit gun check):
-  * E2 edit_window    right-hand peek: per track, a dummy behind the wall and one cell to the right.
+  * E2 edit_window    right-hand peek: per track, a dummy behind the wall's right-middle tile (PEEK_RIGHT).
   * E4 edit_half_wall jump shot: per track, a dummy straight behind the wall on a low pedestal, so the
                       shot is taken over the wall from a jump.
   * E7 edit_peek      right-hand peek, same placement as E2.
@@ -30,6 +30,9 @@ LANES = {"E2": "peek", "E4": "jump", "E7": "peek"}
 AHEAD = 2 * bm.CELL            # cells in front of the lane origin, inside the room
 PEDESTAL = 120.0               # cm, for the jump-shot dummy
 FACE_PLAYER_YAW = 180.0        # a dummy at yaw 0 faces +X; the player approaches from -X
+# The peek dummy stands behind the right-middle tile of your own wall (the edit guide's tile 5). It used to be a whole
+# cell right, behind the next lane's wall, out of sight from your start (player 2026-10-25: "i dont see a dummy").
+PEEK_RIGHT = 170.0
 
 
 def main():
@@ -78,7 +81,7 @@ def main():
                         "top": PEDESTAL, "thick": PEDESTAL, "mat": "Edit"})
                 dm = b.device(bm.DUMMY, f"KT3_Dummy_{code}_{k}", ox + AHEAD, y, PEDESTAL)
             else:
-                dm = b.device(bm.DUMMY, f"KT3_Dummy_{code}_{k}", ox + AHEAD, y + bm.CELL, 0.0)
+                dm = b.device(bm.DUMMY, f"KT3_Dummy_{code}_{k}", ox + AHEAD, y + PEEK_RIGHT, 0.0)
             # Face the player, who comes from -X (lanes run +X). PlaceDevice ignores rotation and left them at
             # yaw 90, side-on (player 2026-10-10: "dummies placed sideways").
             cur = b.m.tool(bm.ACTOR, "get_actor_transform", actor={"refPath": dm})["location"]

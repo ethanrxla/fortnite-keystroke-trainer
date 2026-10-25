@@ -29,9 +29,9 @@ KTSkyWaveOf<public>(Cells:float, Wave2:float, Wave3:float)<computes>:int =
     if (Cells < Wave2) then 0 else if (Cells < Wave3) then 1 else 2
 
 kt_sky_bot_listener := class:
-    Wave:int
+    Index:int
     Owner:kt_sky_box_device
-    OnEliminated(R:device_ai_interaction_result):void = Owner.BotDown(Wave)
+    OnEliminated(R:device_ai_interaction_result):void = Owner.BotDown(Index)
 
 kt_sky_box_device<public> := class(creative_device):
     @editable CellSize:float = 512.0
@@ -63,6 +63,13 @@ kt_sky_box_device<public> := class(creative_device):
     var LastWave:int = 0
     var Clearers:[]trigger_device = array{}
     var PracticeStart:float = 0.0
+    # Which bots of the current wave are still up (by index into Bots): the wave is clear when none is.
+    var Alive:[]logic = array{}
+    # Bumped whenever a run starts, restarts or ends: a delayed restart from an older run does nothing (2026-10-25: a
+    # clear logged sky_summary ten times and restarted ten times, one per 0.25 s tick until the first restart).
+    var RunId:int = 0
+    # Between a clear and the next run: no completion checks, the CLEAR text stays up.
+    var Resting:logic = false
     Hud:text_block = text_block{DefaultTextColor := NamedColors.White, DefaultTextSize := 24.0}
     var Panel:?canvas = false
 
@@ -73,15 +80,16 @@ kt_sky_box_device<public> := class(creative_device):
             W := if (AllAtOnce?) then 0 else KTSkyWaveOf(Cells, Wave2Cells, Wave3Cells)
             if (W > LastWave):
                 set LastWave = W
+            S.EliminatedEvent.Subscribe(kt_sky_bot_listener{Index := Bots.Length, Owner := Self}.OnEliminated)
             set Bots += array{S}
             set BotWave += array{W}
-            S.EliminatedEvent.Subscribe(kt_sky_bot_listener{Wave := W, Owner := Self}.OnEliminated)
+            set Alive += array{false}
         for (O : FindCreativeObjectsWithTag(kt_sky_clear_tag), T := trigger_device[O]):
             set Clearers += array{T}
         for (O : FindCreativeObjectsWithTag(kt_sky_loadout_tag), G := item_granter_device[O]):
             set Loadout = option{G}
         Clear()
-        KTLog("setup", "sky_box", 0, 0, 0, rep_result.Unchecked, "bots={Bots.Length}|loadout={if (Loadout?) then 1 else 0}")
+        KTLog("setup", "sky_box", 0, 0, 0, rep_result.Unchecked, "bots={Bots.Length}|loadout={if (Loadout?) then 1 else 0}|clearers={Clearers.Length}")
         loop:
             Sleep(0.25)
             Tick()
@@ -99,19 +107,29 @@ kt_sky_box_device<public> := class(creative_device):
     OnStrip(Pos:vector3)<decides><transacts>:void =
         O := Top()
         Pos.X >= O.X - 100.0
-        Pos.X <= O.X + SkyLengthCells * CellSize + 100.0
+        Pos.X <= O.X + (SkyLengthCells + 1.0) * CellSize + 100.0
         Abs(Pos.Y - O.Y) <= CellSize * 1.5 + 200.0
         Pos.Z >= O.Z - FallDepth
         Pos.Z <= O.Z + 2000.0
 
     Fell(Pos:vector3)<decides><transacts>:void =
+        Pos.Z < Top().Z - FallDepth
+        NearStrip[Pos]
+
+    # The air around the strip. Off the strip but in here is a fall in progress, not leaving (2026-10-25 review: walking
+    # off a side passed OnStrip's edge before dropping FallDepth, so it ended the run instead of resetting it).
+    NearStrip(Pos:vector3)<decides><transacts>:void =
         O := Top()
-        Pos.Z < O.Z - FallDepth
         Pos.X >= O.X - 3000.0
         Pos.X <= O.X + SkyLengthCells * CellSize + 3000.0
         Abs(Pos.Y - O.Y) <= 4000.0
+        Pos.Z <= O.Z + 2000.0
+
+    AnyAlive()<decides><transacts>:void =
+        (for (A : Alive, A?) { A }).Length > 0
 
     Clear():void =
+        set Alive = for (S : Bots) { false }
         for (S : Bots):
             S.Despawn()
             S.Disable()
@@ -124,15 +142,19 @@ kt_sky_box_device<public> := class(creative_device):
         set PracticeStart = GetSimulationElapsedTime()
         set Down = 0
         set Pending = -1.0
-        for (S : WaveBots(W)):
+        set Resting = false
+        for (I -> S : Bots, BotWave[I] = W):
+            if (set Alive[I] = true) {}
             S.Enable()
             S.Spawn()
         KTLog("sky_wave", "sky_box", 0, W + 1, 0, rep_result.Unchecked, "bots={WaveBots(W).Length}|falls={Falls}")
 
-    BotDown(W:int):void =
-        if (Running?, W = Wave):
+    # Each bot of the current wave counts once; a late event from a bot a reset removed is ignored.
+    BotDown(Index:int):void =
+        if (Running?, not Resting?, Alive[Index]?, BotWave[Index] = Wave):
+            if (set Alive[Index] = false) {}
             set Down += 1
-            if (Down >= WaveBots(W).Length):
+            if (not AnyAlive[], Pending < 0.0):
                 set Pending = GetSimulationElapsedTime() + WaveGapSeconds
 
     Tick():void =
@@ -146,14 +168,20 @@ kt_sky_box_device<public> := class(creative_device):
             if (not P.IsActive[]):
                 Finish("left")
                 return
+            # Eliminated: AwaitRespawn puts them back in the box. Until then the respawned character stands somewhere
+            # else and must not read as leaving (2026-10-25 review).
+            if (Waiting?):
+                return
             if (C := P.GetFortCharacter[], C.IsActive[]):
                 Pos := C.GetTransform().Translation
                 if (Fell[Pos]):
                     set Falls += 1
                     BackToBox(C)
                     return
-                if (not OnStrip[Pos]):
+                if (not OnStrip[Pos], not NearStrip[Pos]):
                     Finish("left")
+                    return
+                if (Resting?):
                     return
                 if (Pending > 0.0, Now >= Pending):
                     if (Wave < LastWave):
@@ -166,6 +194,7 @@ kt_sky_box_device<public> := class(creative_device):
                 spawn{ AwaitRespawn(P) }
 
     Begin(P:player):void =
+        set RunId += 1
         set Runner = option{P}
         set Running = true
         set Falls = 0
@@ -187,6 +216,7 @@ kt_sky_box_device<public> := class(creative_device):
 
     BackToBox(C:fort_character):void =
         # Clear while the player is still below the strip, then put them in their box facing the bots (+X).
+        set RunId += 1
         ClearBuilds()
         if (C.TeleportTo[StartPoint(), IdentityRotation()]) {}
         if (P := Runner?, G := Loadout?):
@@ -208,6 +238,8 @@ kt_sky_box_device<public> := class(creative_device):
         set Waiting = false
 
     Done():void =
+        set Pending = -1.0
+        set Resting = true
         T := GetSimulationElapsedTime() - RunStart
         NewBest := logic{Best <= 0.0 or T < Best}
         if (NewBest?):
@@ -216,18 +248,23 @@ kt_sky_box_device<public> := class(creative_device):
         KTLog("sky_summary", "sky_box", 0, 3, 0, rep_result.Unchecked, "time_s={T}|falls={Falls}|best_s={Best}")
         Hud.SetText(SkyText("SKY BOX CLEAR  {Clock}   falls {Falls}\n{if (NewBest?) then "New best!" else "Best: {KTSkyClock(Best)}"}   next run in {RestartSeconds}s"))
         Clear()
-        spawn{ Again() }
+        spawn{ Again(RunId) }
 
-    Again()<suspends>:void =
+    # The next run starts from your box with the strip's builds cleared, unless the run already ended or restarted.
+    Again(Id:int)<suspends>:void =
         Sleep(RestartSeconds)
-        if (Running?, P := Runner?, C := P.GetFortCharacter[], C.IsActive[], OnStrip[C.GetTransform().Translation]):
+        if (Id <> RunId):
+            return
+        if (Running?, P := Runner?, C := P.GetFortCharacter[], C.IsActive[], Pos := C.GetTransform().Translation, OnStrip[Pos] or NearStrip[Pos]):
             set Falls = 0
             set RunStart = GetSimulationElapsedTime()
-            StartWave(0)
+            BackToBox(C)
         else:
             Finish("done")
 
     Finish(Why:string):void =
+        set RunId += 1
+        set Resting = false
         ClearBuilds()
         if (Why <> "done"):
             KTLog("sky_summary", "sky_box", 0, Wave + 1, 0, rep_result.Unchecked, "ended={Why}|falls={Falls}")

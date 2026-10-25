@@ -61,12 +61,19 @@ CLS = {k: f"{PIECES}PBWA_W1_{n}.PBWA_W1_{n}_C" for k, n in
 METAL = "/Game/Building/ActorBlueprints/Player/Metal/L1/"
 CLS.update({"mwall": f"{METAL}PBWA_M1_Solid.PBWA_M1_Solid_C", "mfloor": f"{METAL}PBWA_M1_Floor.PBWA_M1_Floor_C",
             "mramp": f"{METAL}PBWA_M1_StairW.PBWA_M1_StairW_C"})
+# Their breakable walls are Creative's metal wall prop (the size and pivot of a metal build wall), which Verse can move:
+# EnemySlots.verse puts them back on every run, a spare for each one destroyed (player 2026-10-25: "this wall and the
+# two boxes stopped spawning"; the build-reset barrels flattened the build pieces and nothing could restore them).
+PROP_WALL = "/Game/Building/ActorBlueprints/Wall/Construction_MetalWall_Solid_01.Construction_MetalWall_Solid_01_C"
+SPARE_WALLS = 48
+SPARE_Z = -9000.0                 # under the compound, below every clear barrel's reach
 # Bombsite A: the strip south of Fight Lab rooms A and B, open to room A on its north side.
 SITE_X0, SITE_X1, SITE_Y0, SITE_Y1 = -50 * C, -30 * C, -146 * C, -136 * C     # x -25600..-15360, y -74752..-69632
 # The site's north wall (with the doors from room B) on a player wall line, half a cell north of the old edge
 # (player 2026-10-24: doors not aligned); the strip it gains is site.
 SITE_N = SITE_Y1 + C / 2          # y -69376
 SITE_WALL = 2 * H
+SITE_DOOR_H = 2 * H               # the doors from room B into the site
 PLANT = (-19712.0, -17664.0, -73472.0, -71424.0)      # the A plate: 4 x 4 player cells
 EXTRACT = (SITE_X0, -24576.0, SITE_Y0, -73728.0)      # south-west corner, 2 x 2 cells, beside the EXIT plate
 CONSOLE = (-18176.0, -72960.0)                        # the bomb console, on the plate clear of the Default crate
@@ -115,13 +122,17 @@ def door_y():
 
 class Plan:
     def __init__(self):
-        self.slabs, self.pieces, self.devices, self.signs, self.stages = [], [], [], [], []
+        self.slabs, self.pieces, self.devices, self.signs, self.stages, self.props = [], [], [], [], [], []
 
     def slab(self, label, x0, x1, y0, y1, top, thick, zone="Void"):
         self.slabs.append({"label": PREFIX + label, "bounds": (x0, x1, y0, y1), "top": top, "thick": thick, "mat": zone})
 
     def piece(self, label, kind, x, y, z, yaw, props=None):
         self.pieces.append({"label": PREFIX + label, "cls": CLS[kind], "xf": (x, y, z, yaw), "props": props or {}})
+
+    def prop(self, label, x, y, z, yaw, tag):
+        """Their breakable wall (PROP_WALL), at a build wall's transform."""
+        self.props.append({"label": PREFIX + label, "xf": (x, y, z, yaw), "tag": tag})
 
     def crate(self, label, i, j, levels=1):
         """A metal crate on the player grid: cell (i, j) centred at (i*512, j*512), 4 walls and a lid per level."""
@@ -132,12 +143,17 @@ class Plan:
                 self.piece(f"{label}_{k}{e}", "mwall", x + dx, y + dy, k * H, yaw, ENEMY_TEAM)
             self.piece(f"{label}_{k}Lid", "mfloor", x, y - C / 2, (k + 1) * H, 0.0, ENEMY_TEAM)
 
-    def wall(self, label, i, j, k, edge, props=None):
+    def wall(self, label, i, j, k, edge, props=None, slot=False):
+        """A wall on an edge of cell (i, j), k levels up. slot: their breakable wall, a prop Verse restores."""
         cx, cy = cell(i, j)
         if edge in "WE":
-            self.piece(label, "wall", cx + (-C / 2 if edge == "W" else C / 2), cy, k * H, 90.0, props)
+            x, y, yaw = cx + (-C / 2 if edge == "W" else C / 2), cy, 90.0
         else:
-            self.piece(label, "wall", cx, cy + (-C / 2 if edge == "S" else C / 2), k * H, 0.0, props)
+            x, y, yaw = cx, cy + (-C / 2 if edge == "S" else C / 2), 0.0
+        if slot:
+            self.prop(label, x, y, k * H, yaw, "kt_op_slot_wall_tag")
+        else:
+            self.piece(label, "wall", x, y, k * H, yaw, props)
 
     def flat(self, label, kind, i, j, z, yaw=0.0, props=None):
         r = math.radians(yaw)
@@ -223,10 +239,8 @@ def plan():
     p.slab("R3_Cover_N", cx - WALL_T / 2, cx + WALL_T / 2, gy1, YC1, ROOF, ROOF)
     p.slab("R3_Cover_Top", cx - WALL_T / 2, cx + WALL_T / 2, gy0, gy1, ROOF, ROOF - H)
     # Their wall in the gap (player 2026-10-21: "the wall should be enemy build and there should be a bot there"):
-    # team 2 and breakable. Shot out, it comes back on a session restart (Verse cannot rebuild a piece). The label
-    # stays: the edit guide's target list names it.
-    p.piece("R3_EditWall", "wall", cx, (gy0 + gy1) / 2, 0.0, 90.0,
-            {**team2, "bCanBeDamaged": True, "bIsInvulnerable": False})
+    # breakable, and back on every run (a restorable prop, EnemySlots.verse).
+    p.prop("R3_EditWall", cx, (gy0 + gy1) / 2, 0.0, 90.0, "kt_op_slot_wall_tag")
     wx, wy = cx, (gy0 + gy1) / 2
     for n, side in enumerate((-1, 1)):
         p.device(f"R3_Bot_{n}", bm.GUARD, wx + 220.0, wy + side * 170.0, 0.0, bot_props("VERY HIGH", 100, 0),
@@ -255,13 +269,12 @@ def plan():
     p.gate("Gate_R4", PARTITIONS[3], gate_y, along_x=False)
 
     # Room 5 BREACH (i -52..-51): two closed bot boxes beside the door; shoot in, eliminate, the lab door opens. The
-    # boxes are theirs (player 2026-10-24: "these are our builds, they should be enemy builds"): team 2 and breakable,
-    # back on a session restart like the peek room's wall.
-    theirs = {**team2, "bCanBeDamaged": True, "bIsInvulnerable": False}
+    # boxes are theirs (player 2026-10-24: "these are our builds, they should be enemy builds"): breakable walls, back on
+    # every run like the peek room's wall; the cone is theirs and indestructible (team 2), so it outlasts the barrels.
     for n, j in enumerate((-135, -133)):
         for e in "NSEW":
-            p.wall(f"R5_Box{n}_{e}", -52, j, 0, e, theirs)
-        p.flat(f"R5_Box{n}_Cone", "cone", -52, j, H, props=theirs)
+            p.wall(f"R5_Box{n}_{e}", -52, j, 0, e, slot=True)
+        p.flat(f"R5_Box{n}_Cone", "cone", -52, j, H, props=team2)
         p.bot(f"R5_Bot_{n}", -52, j, 0.0, "VERY HIGH")
     p.stage("Breach", "L1 COMPOUND", "Room 5: their boxes guard the door. Shoot in, eliminate both, breach into the lab.",
             ((PARTITIONS[3], YC0, -100.0), (LABWALL_X, YC1, ROOF)), (-26112.0, gate_y, 0.0), gate=(LABWALL_X, gate_y))
@@ -302,10 +315,11 @@ def plan():
             "Room B: two hold the far wall. Edit, shoot, reset. The doors to bombsite A are behind them.",
             lab_box(LABMID_X, LAB_X1, SITE_N, YC1), (LABMID_X + 256.0, gate_y, 0.0), gate=site_gates)
     for n, (x, y) in enumerate(site_gates):
-        p.gate(f"Gate_Site{n}", x, y, along_x=True, height=LAB_CEIL)
-    p.signs.append({"label": PREFIX + "Sign_LabA", "pos": (-24320.0, YC0 + 120, 260), "yaw": 90, "zone": "Edit",
+        p.gate(f"Gate_Site{n}", x, y, along_x=True, height=SITE_DOOR_H)
+    # On room A's and room B's south wall (the site's north wall, SITE_N, since 2026-10-24).
+    p.signs.append({"label": PREFIX + "Sign_LabA", "pos": (-24320.0, SITE_N + 120, 260), "yaw": 90, "zone": "Edit",
                     "size": 30, "text": "6  TOWERS\nOne on top of each tower. Edit your way up.\nRoom B is straight ahead"})
-    p.signs.append({"label": PREFIX + "Sign_LabB", "pos": (-17920.0, YC0 + 120, 260), "yaw": 90, "zone": "Aim",
+    p.signs.append({"label": PREFIX + "Sign_LabB", "pos": (-17920.0, SITE_N + 120, 260), "yaw": 90, "zone": "Aim",
                     "size": 30, "text": "7  PEEK AND RESET\nTwo behind their cover. Edit, shoot, reset.\n"
                                         "Bombsite A: through the doors in this wall"})
     site(p)
@@ -345,7 +359,7 @@ def plan():
                         "size": 30, "text": text})
     # Pieces the player builds against go on the player build grid (player 2026-10-21: "builds are also not in line"):
     # half a cell from the room grid, the bots on them with them. The direction keeps each group clear of its walls.
-    for d in p.pieces + p.devices:
+    for d in p.pieces + p.devices + p.props:
         for prefix, (sx, sy) in GRID_SHIFT.items():
             if d["label"].startswith(PREFIX + prefix):
                 if "xf" in d:
@@ -354,6 +368,10 @@ def plan():
                 else:
                     x, y, z = d["pos"]
                     d["pos"] = (x + sx, y + sy, z)
+    # Spares for their breakable walls, each in its own cell under the compound (EnemySlots.verse takes one for every
+    # wall destroyed).
+    for k in range(SPARE_WALLS):
+        p.prop(f"Spare_Wall_{k}", X0 + (k % 16) * C, YC0 + (k // 16) * C, SPARE_Z, 0.0, "kt_op_spare_wall_tag")
     p.signs.append({"label": PREFIX + "Sign_Brief", "pos": (X0 + 120, -68096.0, 330), "yaw": 0, "zone": "Scenario",
                     "size": 24, "text": "OPERATION\nCompound > Fight Lab > Bombsite A, one room at a time.\n"
                                         "Each door opens when its room is clear. Die and you restart that room.\n"
@@ -369,14 +387,18 @@ def site(p):
     p.slab("Site_Floor", x0, x1, y0, y1, 0.0, 100.0, "Scenario")
     # Outer walls. North: closed to room A (2026-10-21, no second way in), two one-cell doors from room B.
     p.slab("Site_Wall_S", x0 - WALL_T, x1 + WALL_T, y0 - WALL_T, y0, SITE_WALL, SITE_WALL + 100)
-    p.slab("Site_Wall_W", x0 - WALL_T, x0, y0, y1, SITE_WALL, SITE_WALL + 100)
+    p.slab("Site_Wall_W", x0 - WALL_T, x0, y0, y1, LAB_CEIL, LAB_CEIL + 100)
     p.slab("Site_Wall_E", x1, x1 + WALL_T, y0, y1, SITE_WALL, SITE_WALL + 100)
     # As tall as the Fight Lab's walls, so nobody builds over from room B instead of using the gated doors.
-    p.slab("Site_Wall_N_A", x0, LABMID_X, y1 - WALL_T, y1, LAB_CEIL, LAB_CEIL + 100)
+    p.slab("Site_Wall_N_A", LABWALL_X - WALL_T / 2, LABMID_X, y1 - WALL_T, y1, LAB_CEIL, LAB_CEIL + 100)
     edges = [LABMID_X] + [v for i in SITE_DOORS for v in (i * C - C / 2, i * C + C / 2)] + [x1]
     for n in range(0, len(edges), 2):
         if edges[n + 1] > edges[n]:
             p.slab(f"Site_Wall_N_B{n // 2}", edges[n], edges[n + 1], y1 - WALL_T, y1, LAB_CEIL, LAB_CEIL + 100)
+    # The doors are SITE_DOOR_H tall with wall above (player 2026-10-25: the full-height slots read as openings); their
+    # gates (room B's) fill exactly the door.
+    for n, i in enumerate(SITE_DOORS):
+        p.slab(f"Site_Wall_N_Lintel{n}", i * C - C / 2, i * C + C / 2, y1 - WALL_T, y1, LAB_CEIL, LAB_CEIL - SITE_DOOR_H)
     # The A plate (orange) and the extraction pad (green), painted on the floor.
     p.slab("Site_Plate_A", *PLANT, 6.0, 6.0, "Edit")
     # The plant zone, marked so it reads from the doors (player 2026-10-21: "clearly defined with props / controls"):
@@ -535,9 +557,17 @@ def place(b, p, only=None):
         p.pieces = [x for x in p.pieces if keep(x["label"])]
         p.devices = [x for x in p.devices if keep(x["label"])]
         p.signs = [x for x in p.signs if keep(x["label"])]
+        p.props = [x for x in p.props if keep(x["label"])]
         gone = [a for a in found if keep(a["label"])]
     else:
-        gone = [a for a in found if a["label"].startswith(PREFIX) or a["label"] in OLD]
+        # The floor grenades keep their item list, which only UEFN can set (2026-10-25: a full rebuild left them
+        # empty). --grenades-only still replaces them.
+        gone = [a for a in found if (a["label"].startswith(PREFIX) or a["label"] in OLD)
+                and not a["label"].startswith(PREFIX + "Nade_")]
+        kept = {a["label"] for a in found if a["label"].startswith(PREFIX + "Nade_")}
+        p.devices = [d for d in p.devices if d["label"] not in kept]
+        if kept:
+            print(f"kept {len(kept)} floor grenade spawners (their item list is set in UEFN)")
     backup = bm.ROOT / "backups" / f"operation-{datetime.date.today()}"
     backup.mkdir(parents=True, exist_ok=True)
     (backup / f"removed-{datetime.datetime.now():%H%M%S}.json").write_text(
@@ -555,6 +585,13 @@ def place(b, p, only=None):
         path = b.labelled(ref["refPath"], pc["label"])
         b.props(path, {"bForciblyStructurallySupported": True, "bIsInvulnerable": True, "bCanBeDamaged": False,
                        **pc.get("props", {})})
+        saved.append(path)
+    for pr in p.props:
+        x, y, z, yaw = pr["xf"]
+        ref = b.m.tool(bm.SCENE, "add_to_scene_from_class", actor_type={"refPath": PROP_WALL}, name=pr["label"],
+                       xform=bm.xform(x, y, z, yaw=yaw))
+        path = b.labelled(ref["refPath"], pr["label"])
+        b.tag(path, pr["tag"])
         saved.append(path)
     loadout = json.loads((bm.ROOT / "shared" / "practice-loadout.json").read_text(encoding="utf-8"))["items"]
     for d in p.devices:
@@ -631,8 +668,8 @@ def main():
     args = ap.parse_args()
     p = plan()
     errors = check(p)
-    print(f"plan: {len(p.slabs)} slabs, {len(p.pieces)} pieces, {len(p.devices)} devices, {len(p.signs)} signs, "
-          f"{len(p.stages)} stages")
+    print(f"plan: {len(p.slabs)} slabs, {len(p.pieces)} pieces, {len(p.props)} wall props, {len(p.devices)} devices, "
+          f"{len(p.signs)} signs, {len(p.stages)} stages")
     for n, s in enumerate(p.stages):
         tag = "kt_op_retake_tag" if s["kind"] == 4 else "kt_op_bot_tag"
         bots = sum(1 for d in p.devices if d["tag"] == tag) if s["kind"] == 4 else 0 if s["kind"] in (3, 5) else             sum(1 for d in p.devices if d["tag"] == tag and all(s["box"][0][k] <= d["pos"][k] <= s["box"][1][k] for k in range(3)))

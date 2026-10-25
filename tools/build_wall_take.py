@@ -34,7 +34,8 @@ MANIPULATOR = "/CRD_PropManipulationDevice/SetupAssets/PID_Device_PropManipulato
 BOT = {"guardTeamOption": "Team Index", "guard Team Index": {"teamType": "TeamIndex", "teamIndex": 2},
        "enabledAtGameStart": True, "allowInfiniteSpawn": True, "spawnCount": 1, "spawnOnTimer": True, "spawnTimer": 3.0,
        "showHealthBar": True, "accuracy": "VERY HIGH", "enablePatrol": False, "useDeviceSpawnLocation": True,
-       "spawnRadius_InMeter": 0}   # max accuracy; spawn inside the box (player 2026-10-20)
+       "spawnRadius_InMeter": 0,   # max accuracy; spawn inside the box (player 2026-10-20)
+       "bGrantDefaultPickaxe": False}   # no pickaxe: it hacked its own walls out (player 2026-10-21)
 
 
 def plan(ledge, off):
@@ -68,14 +69,75 @@ def plan(ledge, off):
     return pieces, centre(*you), centre(*enemy)
 
 
+PROP_WALL = "/Game/Building/ActorBlueprints/Wall/Construction_MetalWall_Solid_01.Construction_MetalWall_Solid_01_C"
+SPARE_WALLS = 30
+SPARE_Z = -9000.0
+ENEMY_TEAM = {"Team": "HumanPvP_Team2", "TeamIndex": 4}
+
+
+def restorable(b, acts, dry_run):
+    """The box as it stands, made to come back on every visit (player 2026-10-25: "the dummy either shoots through the
+    back wall or there is none"). The wall facing your floor (Enemy_W) becomes the metal wall prop that WallTake.verse
+    puts back from SPARE_WALLS spares under the room (EnemySlots.verse); the other walls and the cone become
+    indestructible enemy pieces, so the bot's pickaxe (bGrantDefaultPickaxe cannot be turned off over MCP) cannot open
+    the back. A hidden barrel in the box (tagged kt_wall_take_clear_tag) clears your own pieces on each visit."""
+    from build_room_resets import BARREL
+    m = b.m
+    w = acts[PREFIX + "Enemy_W"]
+    t = m.tool(bm.ACTOR, "get_actor_transform", actor={"refPath": w["actorPath"]})
+    loc, yaw = t["location"], t["rotation"]["yaw"]
+    cx = (acts[PREFIX + "Enemy_W"]["bounds"]["min"]["x"] + acts[PREFIX + "Enemy_E"]["bounds"]["max"]["x"]) / 2
+    cy = (acts[PREFIX + "Enemy_S"]["bounds"]["min"]["y"] + acts[PREFIX + "Enemy_N"]["bounds"]["max"]["y"]) / 2
+    print(f"Enemy_W -> prop at ({loc['x']:.0f}, {loc['y']:.0f}, {loc['z']:.0f}) yaw {yaw:.0f}; box centre ({cx:.0f}, "
+          f"{cy:.0f}); {SPARE_WALLS} spares at z {SPARE_Z:.0f}")
+    if dry_run:
+        return
+    for label, a in acts.items():
+        if label.startswith((PREFIX + "Spare_Wall_", PREFIX + "Clear")):
+            m.tool(bm.SCENE, "remove_from_scene", actor={"refPath": a["actorPath"]})
+    if "Construction_MetalWall" not in w["class"]["refPath"]:
+        m.tool(bm.SCENE, "remove_from_scene", actor={"refPath": w["actorPath"]})
+        ref = m.tool(bm.SCENE, "add_to_scene_from_class", actor_type={"refPath": PROP_WALL}, name=PREFIX + "Enemy_W",
+                     xform=bm.xform(loc["x"], loc["y"], loc["z"], yaw=yaw))
+        path = b.labelled(ref["refPath"], PREFIX + "Enemy_W")
+        b.tag(path, "kt_wall_take_wall_tag")
+        m.tool(bm.SCENE, "save_actor", actor={"refPath": path})
+    for name in ("Enemy_N", "Enemy_E", "Enemy_S", "Enemy_Cone", "You_Floor", "High_Floor", "High_Stairs"):
+        path = acts[PREFIX + name]["actorPath"]
+        b.props(path, {"bCanBeDamaged": False, "bIsInvulnerable": True, "bForciblyStructurallySupported": True,
+                       **(ENEMY_TEAM if name.startswith("Enemy_") else {})})
+        m.tool(bm.SCENE, "save_actor", actor={"refPath": path})
+    for k in range(SPARE_WALLS):
+        label = f"{PREFIX}Spare_Wall_{k}"
+        ref = m.tool(bm.SCENE, "add_to_scene_from_class", actor_type={"refPath": PROP_WALL}, name=label,
+                     xform=bm.xform(cx + (k % 6 - 3) * C, cy + (k // 6 - 2) * C, SPARE_Z))
+        path = b.labelled(ref["refPath"], label)
+        b.tag(path, "kt_wall_take_spare_wall_tag")
+        m.tool(bm.SCENE, "save_actor", actor={"refPath": path})
+    boom = b.device(bm.EXPLOSIVE, PREFIX + "Clear", cx, cy, 200.0)
+    for key, value in {**BARREL, "blast Radius": 1.5}.items():
+        try:
+            b.props(boom, {key: value})
+        except RuntimeError as exc:
+            print(f"  barrel {key} refused ({str(exc)[-60:]})")
+    b.tag(boom, "kt_wall_take_clear_tag")
+    m.tool(bm.SCENE, "save_actor", actor={"refPath": boom})
+    print(f"Enemy_W is a restorable prop; {SPARE_WALLS} spares; N/E/S, cone and your pieces indestructible; clear barrel")
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--dry-run", action="store_true")
     ap.add_argument("--grid-offset", type=float, default=256.0)   # the player grid (2026-10-13)
+    ap.add_argument("--restorable", action="store_true",
+                    help="only make the standing box restorable (prop front wall, spares, clear barrel); no rebuild")
     args = ap.parse_args()
     b = bm.Builder()
     m = b.m
     acts = {a["label"]: a for a in (m.tool(bm.SCENE, "find_actors", name="KT", collision_channels=[]) or [])}
+    if args.restorable:
+        restorable(b, acts, args.dry_run)
+        return
     pieces, you, enemy = plan(acts["KT_Ledge_W2"]["bounds"], args.grid_offset)
     for p in pieces:
         print(f"  {p[0]:12} {p[1]:5} ({p[2]:.0f}, {p[3]:.0f}, {p[4]:.0f}) yaw {p[5]:.0f}")

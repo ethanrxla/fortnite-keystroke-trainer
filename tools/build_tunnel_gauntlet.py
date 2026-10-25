@@ -28,7 +28,7 @@ PREFIX = "KT38_Tunnel_"
 ENEMY_TEAM = {"Team": "HumanPvP_Team2", "TeamIndex": 4}     # Creative team 2, the bots' team (EFortTeam HumanPvP_Team2)
 C, H = bm.CELL, bm.LEVEL_H
 METAL = "/Game/Building/ActorBlueprints/Player/Metal/L1/"
-CLS = {k: f"{METAL}PBWA_M1_{n}.PBWA_M1_{n}_C" for k, n in (("wall", "Solid"), ("cone", "RoofC"))}
+CLS = {k: f"{METAL}PBWA_M1_{n}.PBWA_M1_{n}_C" for k, n in (("wall", "Solid"), ("cone", "RoofC"), ("floor", "Floor"))}
 START = (41472.0, -40448.0)
 FLOOR_Z = 0.0
 # Box cell centres (multiples of 512), alternating two cells either side of the start row, then down the row.
@@ -52,7 +52,10 @@ def pieces():
     for i, (cx, cy) in enumerate(BOXES):
         assert cx % C == 0 and cy % C == 0, (cx, cy)
         out += [(f"Box{i}_N", "wall", cx, cy + C / 2, FLOOR_Z, 0.0), (f"Box{i}_S", "wall", cx, cy - C / 2, FLOOR_Z, 0.0),
-                (f"Box{i}_E", "wall", cx + C / 2, cy, FLOOR_Z, 90.0), (f"Box{i}_Cone", "cone", cx, cy - C / 2, FLOOR_Z + H, 0.0)]
+                (f"Box{i}_E", "wall", cx + C / 2, cy, FLOOR_Z, 90.0), (f"Box{i}_Cone", "cone", cx, cy - C / 2, FLOOR_Z + H, 0.0),
+                # A floor under the bot: the boxes stand over the gap, a level above the room floor, and without one the
+                # bot spawned and dropped to the floor (player 2026-10-25: "they fall onto the floor").
+                (f"Box{i}_Floor", "floor", cx, cy - C / 2, FLOOR_Z, 0.0)]
     for i, (x, y) in enumerate(COVER):
         assert x % C == C / 2 and y % C == 0, (x, y)
         out.append((f"Cover{i}", "wall", x, y, FLOOR_Z, 90.0))
