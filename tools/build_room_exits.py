@@ -41,7 +41,10 @@ EXITS = {
     "OpExtract": (-25600.0, 1, [-74240.0], EXIT_Z),
     # the crawl room, where an Operation run starts: its west wall (player 2026-10-21, one way in, so a way out here)
     "OpStart": (-35840.0, 1, [-69120.0], EXIT_Z),
-    "Free": (7166.0 - 200.0, 1, [-34816.0], EXIT_Z),             # free-standing at the free build's west edge
+    # free-standing at the free build's west edge; the second sits one cell north of the RESET button, in view of where
+    # you land (KT2_FreeArrival, KT25_SignShot_KT2_FreeLabel_Arrive; player 2026-10-25: "there needs to be an exit
+    # tile nearby")
+    "Free": (7166.0 - 200.0, 1, [-34816.0, -32768.0], EXIT_Z),
 }
 
 
