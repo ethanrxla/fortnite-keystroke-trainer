@@ -11,6 +11,12 @@ from .typing_detector import TypingDetector
 
 
 class GameplayInputGate:
+    # A latch can stick: Esc or Enter closed by the mouse leaves it "open", and every press after that is dropped
+    # (2026-10-25: a whole session recorded nothing). After STALE_S seconds latched, STALE_PRESSES presses in a row that
+    # the typing detector reads as gameplay, not typing, release it.
+    STALE_S = 20.0
+    STALE_PRESSES = 8
+
     def __init__(self, profile=None, clock=time.perf_counter):
         self.clock = clock
         self.typing = TypingDetector(())
@@ -19,6 +25,8 @@ class GameplayInputGate:
         self.focused = False
         self.menu = False
         self.chat = False
+        self.latched_at = 0.0
+        self.stale_presses = 0
         self.generation = 0
         self._held_controls = set()
         self._lock = threading.RLock()
@@ -74,7 +82,20 @@ class GameplayInputGate:
                         self.typing.reset()
                     elif not self.menu:
                         self.chat = not self.chat
+                    self.latched_at = now
+                    self.stale_presses = 0
                     self.generation += 1
+                return None
+            if self.focused and (self.menu or self.chat) and now - self.latched_at >= self.STALE_S:
+                if self.typing.press(key, now):
+                    self.stale_presses = 0
+                else:
+                    self.stale_presses += 1
+                    if self.stale_presses >= self.STALE_PRESSES:
+                        self.menu = self.chat = False
+                        self.stale_presses = 0
+                        self.typing.reset()
+                        self.generation += 1
                 return None
             if self.focused and not self.menu and not self.chat and self.typing.press(key, now):
                 if self.typing_until <= now:

@@ -41,6 +41,18 @@ class GameplayInputGateTests(unittest.TestCase):
         self.assertIsNotNone(g.press('f', True))
         self.assertFalse(g.accepts(token))
 
+    def test_stuck_menu_latch_releases_after_gameplay_presses(self):
+        clock = [0.0]
+        g = GameplayInputGate(clock=lambda: clock[0])
+        g.press('esc', True, now=0.0)          # menu "opened", then closed with the mouse: the latch sticks
+        g.release('esc')
+        self.assertIsNone(g.press('f', True, now=1.0))
+        t = GameplayInputGate.STALE_S + 1.0
+        for n in range(GameplayInputGate.STALE_PRESSES):
+            self.assertIsNone(g.press(('f', 'q', 'mouse_x2', 'space')[n % 4], True, now=t + n * 0.7))
+        clock[0] = t + 10.0
+        self.assertIsNotNone(g.press('f', True, now=t + 10.0))
+
     def test_alt_tab_does_not_clear_open_menu(self):
         g = GameplayInputGate()
         g.press('esc', True)
