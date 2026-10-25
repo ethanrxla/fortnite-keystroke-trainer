@@ -9,9 +9,11 @@ tiles), under the sight line to the bots: EASY, MEDIUM, HARD, HAND CANNON, HEAVY
 with its word, a grid of hit dummies over the whole plate (hitbox.place_grid), wired On Hit -> a hidden trigger under
 the floor tagged for kt_skills_test_device (SkillsTest.verse). The difficulty tiles have a small light that is on for
 the chosen level. The interact buttons behind the shoot line stay.
-Player 2026-10-24: in front of the shoot line they were "innapropriate": they now hang on the aim room's back wall
-(x -35840, between its two EXIT plates), facing the shoot line at eye height, built like the EXIT plates
-(tools/build_room_exits.py: plate OFF the wall, hidden dummies between plate and wall).
+Player 2026-10-25: only the two gun tiles stay, HAND CANNON and HEAVY AR, on the gun range's back wall between its
+north EXIT plate (y -91648) and the verse beside it ("place the handcannon and heavy ar buttons here, and remove the
+other buttons cause they are redundant"; difficulty and start keep their interact buttons). Shooting one hands you
+that gun. Built like the EXIT plates (tools/build_room_exits.py: plate OFF the wall, hidden dummies between plate and
+wall). Their hidden triggers stay by the Skills Test (its device only takes triggers inside its HalfExtent box).
 """
 import argparse
 import pathlib
@@ -27,17 +29,15 @@ from build_range_modes import FONT, TEX_FOLDER  # noqa: E402
 PREFIX = "KT15_SkillsTile_"
 LIGHT = "/CRD_PointLight/SetupAssets/PID_Device_PointLight.PID_Device_PointLight"
 from build_drill_plates import OFF, DUMMY_OFF  # noqa: E402
-BACK_WALL_X = -35840.0           # the aim room's back wall face (tools/build_room_exits.py EXITS["Aim"])
-FACE_X = BACK_WALL_X + OFF       # the plates stand off the back wall, facing the shoot line (+X)
-Z = 220.0                        # centre at eye height; the EXIT plates hang higher (470)
+BACK_WALL_X = -35840.0           # the gun range's back wall face (KT8_Range_Wall_Back; EXITS["Range"])
+FACE_X = BACK_WALL_X + OFF       # the plates stand off the back wall, facing the booths (+X)
+Z = 300.0                        # centre just under the EXIT plates (470)
+WALL_YS = (-91990.0, -92300.0)   # between the north EXIT plate (y -91648, 200 wide) and the verse at y -92588
+TRIGGER_AT = (SHOOT_X - 300.0, LANE_Y)   # hidden triggers stay inside the Skills Test device's box
 TILE_W, TILE_H, PITCH = 95.0, 95.0, 165.0
 # name, plate rgb (linear), trigger tag, light tag, light rgb
-TILES = [("EASY", (0.02, 0.25, 0.04), "kt_skills_easy_tag", "kt_skills_light_easy_tag", (0.2, 1.0, 0.3)),
-         ("MEDIUM", (0.30, 0.22, 0.01), "kt_skills_medium_tag", "kt_skills_light_medium_tag", (1.0, 0.8, 0.1)),
-         ("HARD", (0.30, 0.02, 0.02), "kt_skills_hard_tag", "kt_skills_light_hard_tag", (1.0, 0.15, 0.1)),
-         ("HAND CANNON", (0.18, 0.08, 0.02), "kt_skills_handcannon_shot_tag", None, None),
-         ("HEAVY AR", (0.06, 0.08, 0.10), "kt_skills_heavy_ar_shot_tag", None, None),
-         ("START", (0.25, 0.25, 0.28), "kt_skills_start_shot_tag", None, None)]
+TILES = [("HAND CANNON", (0.18, 0.08, 0.02), "kt_skills_handcannon_shot_tag", None, None),
+         ("HEAVY AR", (0.06, 0.08, 0.10), "kt_skills_heavy_ar_shot_tag", None, None)]
 
 
 def texture(name, rgb):
@@ -83,7 +83,7 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--dry-run", action="store_true")
     args = ap.parse_args()
-    ys = [LANE_Y + (k - (len(TILES) - 1) / 2) * PITCH for k in range(len(TILES))]
+    ys = list(WALL_YS)
     for (name, *_), y in zip(TILES, ys):
         print(f"  {name:12} at ({FACE_X:.0f}, {y:.0f}, {Z:.0f})")
     if args.dry_run:
@@ -100,7 +100,7 @@ def main():
                    asset_name=tex.split(".")[-1], source_file=str(png))
             m.tool(ag.AS, "save_assets", asset_paths=[tex])
         path, bounds = plate(g, label + "_Plate", FACE_X, y, Z, g.icon_material(tex))
-        trig = b.device(bm.TRIGGER, label + "_Trigger", FACE_X + 300.0, y, -400.0)
+        trig = b.device(bm.TRIGGER, label + "_Trigger", TRIGGER_AT[0], TRIGGER_AT[1] + (y - WALL_YS[0]), -400.0)
         b.props(trig, {"visible in Game": False})
         b.tag(trig, tag)
         saved = [path, trig]

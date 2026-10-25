@@ -4,8 +4,9 @@
 # after a window set by the difficulty (Easy 2.0 s, Medium 1.4 s, Hard 1.0 s; player 2026-10-20: at 0.8 s the bots
 # "spawn and die right after" because the spawn itself used most of the window; SpawnGrace is added on top). Eliminate it before it goes: the game's
 # own elimination feed shows the kill. Bots do not shoot back (their spawner has no weapon; VERIFY in a playtest).
-# The DIFFICULTY button cycles Easy / Medium / Hard, the WEAPON button swaps Hand Cannon / Heavy AR (granted on press and
-# at START). The live HUD shows the rep, hits, misses and average reaction; your best per difficulty is kept for the
+# The DIFFICULTY button cycles Easy / Medium / Hard, the WEAPON button swaps Hand Cannon / Heavy AR and hands you that
+# gun; so do the HAND CANNON / HEAVY AR tiles on the gun range's back wall. The test itself uses whatever you have
+# equipped (player 2026-10-25): START grants nothing and nothing clears your inventory. The live HUD shows the rep, hits, misses and average reaction; your best per difficulty is kept for the
 # session. Every rep logs KT|skills_test|... (reaction from the moment the bot appeared, not from the spawn request, so
 # spawn latency does not count against you). A bot that fails to appear within 2 s is skipped, not counted as a miss.
 #
@@ -351,7 +352,7 @@ kt_skills_test_device<public> := class(creative_device):
             Grant(A)
             UpdateButtons()
 
-    # The granters are set to clear the inventory first, so the swap leaves exactly one gun.
+    # Adds the gun to what you carry (the granters keep the inventory, tools/build_skills_test.py).
     Grant(A:agent):void =
         if (Weapon = 0, G := HandCannon?):
             G.GrantItem(A)
@@ -359,7 +360,6 @@ kt_skills_test_device<public> := class(creative_device):
             G.GrantItem(A)
 
     Round(A:agent)<suspends>:void =
-        Grant(A)
         Lvl := Level
         Wpn := Weapon
         AsWide := Wide
