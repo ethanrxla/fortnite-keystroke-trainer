@@ -113,6 +113,55 @@ def place_grid(b, label, centre, face_w, face_h, yaw, depth_xy, targets, cell_ma
     return paths
 
 
+# What a shot actually collides with (2026-10-25, trace_world across an upright, unscaled dummy at yaw 0): the figure,
+# not the hull above. Its one solid part is the chest, local y -20..20 and z 80..150 above the actor, with a 5 cm gap
+# at y -15 (z 100..120) that the dummy turned round (yaw + 180, mirrored in y) fills; the head rises 30 cm above it. A
+# tile covered by squashed hull cells came out patchy, with its top third bare (player 2026-10-25: "when we shoot, the
+# button isnt activated").
+CHEST_Y = 40.0
+CHEST_Z = (80.0, 150.0)
+HEAD_ABOVE = 30.0
+
+
+def place_tile_pairs(b, label, centre_xy, width, bottom, top, yaw, depth_xy, targets, rows=2):
+    """Cover a tile (`width` across, centred at centre_xy, `bottom`..`top` in z) with rows of dummy pairs, each pair
+    one dummy and the same dummy turned round, stretched so the chest fills the tile's width and its row, standing at
+    depth_xy's distance in front of the tile. The top row's head ends HEAD_ABOVE * z scale above `top`. yaw: the
+    facing that puts the tile's width along the dummy's local y (shots travel along its local x)."""
+    m = b.m
+    sy = width / CHEST_Y
+    row_h = (top - bottom) / rows
+    sz = row_h / (CHEST_Z[1] - CHEST_Z[0])
+    cx, cy = centre_xy
+    dx, dy = depth_xy
+    th = math.radians(yaw)
+    nx, ny = math.cos(th), math.sin(th)
+    depth = (dx - cx) * nx + (dy - cy) * ny
+    x, y = cx + nx * depth, cy + ny * depth
+    paths = []
+    k = 0
+    for r in range(rows):
+        base_z = bottom + r * row_h - CHEST_Z[0] * sz
+        for turn in (0.0, 180.0):
+            name = label if k == 0 else f"{label}_{k}"
+            k += 1
+            d = b.device(bm.DUMMY, name, x, y, base_z)
+            xf = bm.xform(x, y, base_z, 0.15, sy, sz, yaw=(yaw + turn) % 360)
+            m.tool(bm.ACTOR, "set_actor_transform", actor={"refPath": d}, xform=xf)
+            b.props(d, {"infiniteHealth": True})
+            try:
+                b.props(d, {"showHealthBar": False})
+            except RuntimeError:
+                pass
+            for path, fn in targets:
+                b.bind(d, "On Hit", path, fn)
+            m.tool(bm.SCENE, "save_actor", actor={"refPath": d})
+            paths.append(d)
+    for path, _fn in targets:
+        m.tool(bm.SCENE, "save_actor", actor={"refPath": path})
+    return paths
+
+
 def on_hit_targets(m, dummy_path, candidates):
     """(target path, function) for every On Hit binding of an existing dummy. ListEventBindings lists a device's
     incoming links, so the candidate targets are asked which of theirs come from this dummy."""

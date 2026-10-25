@@ -204,6 +204,8 @@ keystroke_drill_device := class(creative_device, kt_bot_count_target):
             for (O : FindCreativeObjectsWithTag(kt_lane_bot_tag), S := guard_spawner_device[O], Distance(S.GetTransform().Translation, Here) < 9000.0):
                 set LaneBots += array{S}
                 S.EliminatedEvent.Subscribe(OnBotDown)
+                # Bots hold their box (AiLeash.verse; 2026-10-25: a tunnel bot walked out and fell to the floor).
+                KTLeashGuards(S, 60.0, 160.0)
             set LaneBots = KTBotsByDistance(LaneBots, Here + StartOffset)
             set BotSign = KTBotCountWire(Self, Here + StartOffset, TagSearchRadius, Self)
             SetBotCount(BotsToClear)
@@ -236,18 +238,23 @@ keystroke_drill_device := class(creative_device, kt_bot_count_target):
 
     SpawnBots()<suspends>:void =
         set BotsDown = 0
+        # Only the rep's bots are enabled: enabling a spawner also spawns its guard, so enabling all of them put every
+        # box's bot in the room while the rep counted BotCount (player 2026-10-25: "clear 2 bots however there are more
+        # bots present").
         for (S : LaneBots):
             S.Despawn()
-            S.Enable()
+            S.Disable()
         Spawned := BotCount
         set RepBots = Spawned
         for (N := 1..Spawned, S := LaneBots[Mod[N - 1, Max(LaneBots.Length, 1)]]):
+            S.Enable()
             S.Spawn()
             Sleep(0.2)
 
     DespawnBots():void =
         for (S : LaneBots):
             S.Despawn()
+            S.Disable()
 
     OnStartShot(Agent:?agent):void =
         if (A := Agent?, Player := player[A], not Busy?, Character := Player.GetFortCharacter[]):

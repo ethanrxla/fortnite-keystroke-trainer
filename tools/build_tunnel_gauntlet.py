@@ -31,10 +31,13 @@ METAL = "/Game/Building/ActorBlueprints/Player/Metal/L1/"
 CLS = {k: f"{METAL}PBWA_M1_{n}.PBWA_M1_{n}_C" for k, n in (("wall", "Solid"), ("cone", "RoofC"), ("floor", "Floor"))}
 START = (41472.0, -40448.0)
 FLOOR_Z = 0.0
-# Box cell centres (multiples of 512), alternating two cells either side of the start row, then down the row.
-BOXES = [(42496.0, -39424.0), (43520.0, -41472.0), (44544.0, -39424.0), (45568.0, -41472.0), (45568.0, -40448.0)]
-# Cover walls across the line of fire (yaw 90 = a wall on an x edge, at 256 mod 512), one cell off the start row.
-COVER = [(43008.0 + 256.0, -40960.0), (44032.0 + 256.0, -39936.0), (45056.0 - 256.0, -40960.0)]
+# Box cell centres (multiples of 512), either side of the start row (y -40448), then on it. The room's south wall's
+# inner face is y -41494, so the left boxes sit one cell off the row: at two cells (y -41472) they were half inside
+# the wall and their bots dropped out (player 2026-10-25: "a box thats like inside the left wall").
+BOXES = [(42496.0, -39424.0), (43520.0, -40960.0), (44544.0, -39424.0), (45056.0, -40960.0), (45568.0, -40448.0)]
+# Cover walls across the line of fire (yaw 90 = a wall on an x edge, at 256 mod 512), one cell off the start row and
+# never on a box's edge.
+COVER = [(43008.0 + 256.0, -39936.0), (44032.0 + 256.0, -40960.0), (44544.0 + 256.0, -39936.0)]
 BOT = {"guardTeamOption": "Team Index", "guard Team Index": {"teamType": "TeamIndex", "teamIndex": 2},
        "enabledAtGameStart": False, "allowInfiniteSpawn": True, "spawnCount": 1, "spawnOnTimer": False,
        "accuracy": "HIGH", "enablePatrol": False, "useDeviceSpawnLocation": True, "useDeviceSpawnRotation": True,
@@ -43,7 +46,7 @@ BOT = {"guardTeamOption": "Team Index", "guard Team Index": {"teamType": "TeamIn
 # (player 2026-10-20: "bots dont spawn inside boxes"). main() prints it back after placing.
 # Five manned-able boxes; the lane spawns BOTS of them (player 2026-10-20: "there should be just 2 bots", and later a
 # player choice of how many).
-BOTS = 2
+BOTS = 5      # every box manned (player 2026-10-25: "fix the level to represent how many bots are there")
 LANE = {"abandonDistance": 9000.0, "botsToClear": BOTS, "clearEachRep": True}
 
 

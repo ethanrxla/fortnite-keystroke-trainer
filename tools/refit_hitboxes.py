@@ -32,7 +32,9 @@ FAMILIES = [
 CELL_MAX = {"KT25_": 270.0}
 
 
-HIT_INSET = 3.0     # cm the expanded hit areas stay inside the tile's top and bottom (place_grid sizes cells x1.01)
+HIT_INSET = 3.0     # cm the tile hit areas start above the tile's bottom edge
+HEAD_TOP = 4.0      # cm the top row's dummy heads may rise above the tile's top edge (the counter's lip is ~10 cm higher)
+TILE_ROWS = 3       # rows of dummy pairs on a tile: more rows overlap more and keep the top heads short
 
 
 def centre_size(bounds):
@@ -103,17 +105,22 @@ def main():
             if other == label or re.fullmatch(re.escape(label) + r"_\d+", other):
                 m.tool(bm.SCENE, "remove_from_scene", actor={"refPath": oa["actorPath"]})
         c, w, h = centre_size(face["bounds"])
-        expanded = label.startswith(("KT26_RangeMode_", "KT15_SkillsTile_"))
-        if expanded:
-            # Wider than the tile, but never taller (player 2026-10-24: "the height of the button should be less than or
-            # equal to the height of the tile"): a hit area above the tile stood in the line of fire over the range
-            # counter and stopped shots at the lane targets. HIT_INSET keeps the dummies' own spill inside the tile.
-            zb, zt = face["bounds"]["min"]["z"] + HIT_INSET, face["bounds"]["max"]["z"] - HIT_INSET
-            c, w, h = (c[0], c[1], (zb + zt) / 2), 150.0, zt - zb
         loc = t["location"]
         yaw = round(t["rotation"]["yaw"] / 90.0) * 90.0 % 360          # the base facing, ignoring an old mirror
-        cell = next((v for k, v in CELL_MAX.items() if label.startswith(k)), hitbox.CELL_MAX)
-        paths = hitbox.place_grid(b, label, c, w, h, yaw, (loc["x"], loc["y"]), targets, cell)
+        if label.startswith(("KT26_RangeMode_", "KT15_SkillsTile_")):
+            # The tile's own size, solid all over, and nothing over the range counter (player 2026-10-25: "the hitbox
+            # needs to be the size of the tile, and slightly lower so that it doesnt go over the counter"): rows of
+            # dummy pairs whose chests fill the tile (hitbox.place_tile_pairs); the top row's head stops HEAD_TOP above
+            # the tile's top edge, under the counter's lip.
+            zb, zt = face["bounds"]["min"]["z"] + HIT_INSET, face["bounds"]["max"]["z"] + HEAD_TOP
+            k = hitbox.HEAD_ABOVE / (TILE_ROWS * (hitbox.CHEST_Z[1] - hitbox.CHEST_Z[0]))     # head per cm of tile
+            top = (zt + zb * k) / (1 + k)
+            paths = hitbox.place_tile_pairs(b, label, (c[0], c[1]), w, zb, top, yaw % 180, (loc["x"], loc["y"]), targets,
+                                            rows=TILE_ROWS)
+        else:
+            cell = next((v for k, v in CELL_MAX.items() if label.startswith(k)), hitbox.CELL_MAX)
+            paths = hitbox.place_grid(b, label, c, w, h, yaw, (loc["x"], loc["y"]), targets, cell)
+        expanded = label.startswith(("KT26_RangeMode_", "KT15_SkillsTile_"))
         if expanded:
             for dummy in paths:
                 hitbox.hide(m, dummy)

@@ -31,7 +31,7 @@ KTSkyWaveOf<public>(Cells:float, Wave2:float, Wave3:float)<computes>:int =
 kt_sky_bot_listener := class:
     Index:int
     Owner:kt_sky_box_device
-    OnEliminated(R:device_ai_interaction_result):void = Owner.BotDown(Index)
+    OnEliminated(R:device_ai_interaction_result):void = Owner.BotDown(Index, R)
 
 kt_sky_box_device<public> := class(creative_device):
     @editable CellSize:float = 512.0
@@ -81,6 +81,8 @@ kt_sky_box_device<public> := class(creative_device):
             if (W > LastWave):
                 set LastWave = W
             S.EliminatedEvent.Subscribe(kt_sky_bot_listener{Index := Bots.Length, Owner := Self}.OnEliminated)
+            # Each bot holds its box (2026-10-25: bots walked out of their open side and fell off the strip).
+            KTLeashGuards(S, 60.0, 160.0)
             set Bots += array{S}
             set BotWave += array{W}
             set Alive += array{false}
@@ -149,13 +151,23 @@ kt_sky_box_device<public> := class(creative_device):
             S.Spawn()
         KTLog("sky_wave", "sky_box", 0, W + 1, 0, rep_result.Unchecked, "bots={WaveBots(W).Length}|falls={Falls}")
 
-    # Each bot of the current wave counts once; a late event from a bot a reset removed is ignored.
-    BotDown(Index:int):void =
+    # Each bot of the current wave counts once; a late event from a bot a reset removed is ignored. A bot eliminated
+    # by nobody (it fell off the strip) does not count: it comes back in its box (player 2026-10-25: a run "cleared"
+    # and sent you back to the start because the bots had thrown themselves off).
+    BotDown(Index:int, R:device_ai_interaction_result):void =
+        if (not R.Source?, Running?, not Resting?, Alive[Index]?):
+            spawn{ Respawn(Index) }
+            return
         if (Running?, not Resting?, Alive[Index]?, BotWave[Index] = Wave):
             if (set Alive[Index] = false) {}
             set Down += 1
             if (not AnyAlive[], Pending < 0.0):
                 set Pending = GetSimulationElapsedTime() + WaveGapSeconds
+
+    Respawn(Index:int)<suspends>:void =
+        Sleep(1.0)
+        if (Running?, not Resting?, Alive[Index]?, S := Bots[Index]):
+            S.Spawn()
 
     Tick():void =
         Now := GetSimulationElapsedTime()

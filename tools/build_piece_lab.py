@@ -36,10 +36,18 @@ ROWS = [
 ]
 
 
+# The floor, roof (cone) and stairs rows are gone (player 2026-10-25: "some floors and cones in the piece lab that are
+# messing up movement, like i got stuck under a ramp. they are also not in line, so you can remove them"). Their rows
+# keep their place in ROWS so the wall row stays where it is.
+RETIRED = {"floor", "roof", "stairs"}
+
+
 def plan(x0, y0):
     """(label, kind, x, y, z, goal) for every practice piece: one row per kind, 1024 cm apart, rows 1024 cm apart in x."""
     out = []
     for r, (kind, z, goals) in enumerate(ROWS):
+        if kind in RETIRED:
+            continue
         x = x0 + (4 + 2 * r) * bm.CELL
         span = len(goals)
         for n, goal in enumerate(goals):
