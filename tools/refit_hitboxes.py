@@ -11,6 +11,7 @@ Player 2026-10-12: "increase the hitboxes of the buttons in the main lobby and e
 the area of the tile/plate ... there are areas where when you click it the button doesnt activate".
 """
 import argparse
+import math
 import pathlib
 import re
 import sys
@@ -115,8 +116,11 @@ def main():
             zb, zt = face["bounds"]["min"]["z"] + HIT_INSET, face["bounds"]["max"]["z"] + HEAD_TOP
             k = hitbox.HEAD_ABOVE / (TILE_ROWS * (hitbox.CHEST_Z[1] - hitbox.CHEST_Z[0]))     # head per cm of tile
             top = (zt + zb * k) / (1 + k)
-            paths = hitbox.place_tile_pairs(b, label, (c[0], c[1]), w, zb, top, yaw % 180, (loc["x"], loc["y"]), targets,
-                                            rows=TILE_ROWS)
+            # 5 cm in front of the tile, on the shooter's side (the plate's yaw + 90: the gun tiles' single dummy stood
+            # in the back wall behind its tile, so no shot reached it; 2026-10-25).
+            pyaw = math.radians(m.tool(bm.ACTOR, "get_actor_transform", actor={"refPath": face["actorPath"]})["rotation"]["yaw"] + 90.0)
+            front = (c[0] + 5.0 * math.cos(pyaw), c[1] + 5.0 * math.sin(pyaw))
+            paths = hitbox.place_tile_pairs(b, label, (c[0], c[1]), w, zb, top, yaw % 180, front, targets, rows=TILE_ROWS)
         else:
             cell = next((v for k, v in CELL_MAX.items() if label.startswith(k)), hitbox.CELL_MAX)
             paths = hitbox.place_grid(b, label, c, w, h, yaw, (loc["x"], loc["y"]), targets, cell)
