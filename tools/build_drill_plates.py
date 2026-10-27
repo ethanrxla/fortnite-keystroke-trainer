@@ -342,6 +342,11 @@ def main():
                     or (v[0] == "x" and abs(p["x"] - (v[1] + v[4][0] * OFF)) < 1 and v[2] <= p["y"] <= v[3]))
         spans.setdefault(wall, []).append(p)
     for wall, ps in spans.items():
+        # The art panel (KT20_SignArt_) replaced the text header; a second billboard beside it is a duplicate
+        # (player 2026-10-27).
+        if f"KT20_SignArt_{PREFIX}Header_{wall}" in by:
+            print(f"header {wall}: art panel in place, no billboard")
+            continue
         axis, face, _, _, n = WALLS[wall]
         along = [q["x"] if axis == "y" else q["y"] for q in ps]
         c = (min(along) + max(along)) / 2
